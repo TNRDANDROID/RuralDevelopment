@@ -1,7 +1,7 @@
 package com.nic.RuralInspection.api;
 
 /**
- * Created by AchanthiSundar on 20-01-2016.
+ * Created by AchanthiSundar on 28-12-2018.
  */
 public class NoNetworkException extends Exception{
 
