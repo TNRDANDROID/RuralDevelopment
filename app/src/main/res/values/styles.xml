@@ -1,0 +1,40 @@
+<resources>
+
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+    </style>
+    <style name="font_circular_medium">
+        <item name="android:fontFamily">@string/font_circular_medium</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="font_circular_book">
+        <item name="android:fontFamily">@string/font_circular_book</item>
+        <item name="android:textStyle">normal</item>
+    </style>
+
+    <style name="font_circular_black">
+        <item name="android:fontFamily">@string/font_circular_black</item>
+        <item name="android:textStyle">normal</item>
+    </style>
+
+    <style name="font_circular_bold">
+        <item name="android:fontFamily">@string/font_circular_bold</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="font_roboto_light">
+        <item name="android:fontFamily">@string/roboto_light</item>
+        <item name="android:textStyle">normal</item>
+    </style>
+
+    <style name="font_normal">
+        <item name="android:fontFamily">@string/font_normal</item>
+        <item name="android:textStyle">normal</item>
+    </style>
+
+</resources>

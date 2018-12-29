@@ -1,0 +1,15 @@
+<resources>
+    <string name="app_name">RuralInspection</string>
+    <string name="hint_password">Password</string>
+    <string name="hint_username">UserName</string>
+    <string name="btn_login">Login</string>
+    <string name="font_medium">din_pro_medium.otf</string>
+    <string name="font_light">din_pro_light.otf</string>
+    <string name="font_circular_medium">circular-medium.ttf</string>
+    <string name="font_circular_bold">circular-bold.ttf</string>
+    <string name="font_circular_book">circular-book.ttf</string>
+    <string name="roboto_light">ROBOTO-LIGHT.TTF</string>
+    <string name="roboto_medium">ROBOTO-MEDIUM.TTF</string>
+    <string name="font_circular_black">circular-black.ttf</string>
+    <string name="font_normal">Avenir-Roman.ttf</string>
+</resources>

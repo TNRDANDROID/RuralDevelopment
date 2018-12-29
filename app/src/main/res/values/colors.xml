@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#006c93</color>
+    <color name="colorPrimaryDark">#006c93</color>
+    <color name="colorAccent">#FF4081</color>
+
+    <color name="blue_background">#242b35</color>
+    <color name="border_line">#252b34</color>
+    <color name="account_status_green_color">#45c240</color>
+    <color name="subscription_type_red_color">#fc4b5f</color>
+    <color name="background_light_gray">#f1f1f1</color>
+
+</resources>
