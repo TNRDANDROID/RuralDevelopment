@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="Encoding">
+    <file url="file://$PROJECT_DIR$/app/src/assets" charset="windows-1251" />
+    <file url="file://$PROJECT_DIR$/app/src/assets/fonts/Avenir-Roman.ttf" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/app/src/assets/fonts/circular-black.ttf" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/app/src/assets/fonts/circular-blackitalic.ttf" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/app/src/assets/fonts/circular-bold.ttf" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/app/src/assets/fonts/circular-bolditalic.ttf" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/app/src/assets/fonts/circular-book.ttf" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/app/src/assets/fonts/circular-bookitalic.ttf" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/app/src/assets/fonts/circular-medium.ttf" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/app/src/assets/fonts/circular-mediumitalic.ttf" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/app/src/main/assets" charset="windows-1251" />
+    <file url="file://$PROJECT_DIR$/app/src/main/assets/fonts/Avenir-Roman.ttf" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/app/src/main/assets/fonts/circular-black.ttf" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/app/src/main/assets/fonts/circular-blackitalic.ttf" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/app/src/main/assets/fonts/circular-bold.ttf" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/app/src/main/assets/fonts/circular-bolditalic.ttf" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/app/src/main/assets/fonts/circular-book.ttf" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/app/src/main/assets/fonts/circular-bookitalic.ttf" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/app/src/main/assets/fonts/circular-medium.ttf" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/app/src/main/assets/fonts/circular-mediumitalic.ttf" charset="UTF-8" />
+  </component>
+</project>

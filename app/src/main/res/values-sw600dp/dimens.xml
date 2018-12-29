@@ -1,0 +1,30 @@
+<resources>
+    <!-- Default screen margins, per the Android Design guidelines. -->
+    <dimen name="activity_horizontal_margin">15dp</dimen>
+    <dimen name="activity_vertical_margin">16dp</dimen>
+    <dimen name="menu_height">70dp</dimen>
+    <dimen name="margin_left_20dp">40dp</dimen>
+    <dimen name="margin_left_30dp">60dp</dimen>
+    <dimen name="menu_icon_size">36dp</dimen>
+    <dimen name="menu_title_size">20dp</dimen>
+    <dimen name="dashboard_icon_size">60dp</dimen>
+    <dimen name="header">70dp</dimen>
+    <dimen name="padding">20dp</dimen>
+    <dimen name="margin">50dp</dimen>
+    <dimen name="logo_height">160dp</dimen>
+    <dimen name="report_bottom">150dp</dimen>
+    <dimen name="inner_header">80dp</dimen>
+    <dimen name="track_item_height">130dp</dimen>
+    <dimen name="sliding_height">100dp</dimen>
+    <dimen name="dashboard_margin">15dp</dimen>
+    <dimen name="viewpager_height">200dp</dimen>
+    <dimen name="dashboard_count_size">50dp</dimen>
+    <dimen name="cms_button_size">60dp</dimen>
+    <dimen name="map_height">400dp</dimen>
+    <dimen name="date_text_size">16sp</dimen>
+    <dimen name="message_response">110dp</dimen>
+    <dimen name="asset_item_height">140dp</dimen>
+    <dimen name="inner_header_1">80dp</dimen>
+
+
+</resources>
