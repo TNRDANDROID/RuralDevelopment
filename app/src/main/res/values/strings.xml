@@ -12,4 +12,5 @@
     <string name="roboto_medium">ROBOTO-MEDIUM.TTF</string>
     <string name="font_circular_black">circular-black.ttf</string>
     <string name="font_normal">Avenir-Roman.ttf</string>
+    <string name="no_internet">Your internet seems to be offline!</string>
 </resources>

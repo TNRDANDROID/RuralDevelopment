@@ -5,13 +5,12 @@ import android.util.Log;
 
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.nic.RuralInspection.NICApplication;
+import com.nic.RuralInspection.Application.NICApplication;
+import com.nic.RuralInspection.Support.ProgressHUD;
 
 
 import org.json.JSONArray;
 import org.json.JSONObject;
-
-import java.util.Map;
 
 /**
  * Created by AchanthiSundar on 28-12-2018.
@@ -19,6 +18,8 @@ import java.util.Map;
 public class ApiService {
     private Context context;
     private static ApiService apiService = null;
+    private ProgressHUD progressHUD;
+
 
 
     public static ApiService getInstance(Context c) {
@@ -30,6 +31,10 @@ public class ApiService {
 
     public ApiService(Context c) {
         this.context = c;
+        try {
+            progressHUD = ProgressHUD.show(this.context, "Connecting", true, false, null);
+        } catch (Exception e) {
+        }
 
     }
 
@@ -38,11 +43,15 @@ public class ApiService {
         return new CustomRequest(api, method, url , type, new Response.Listener<ServerResponse>() {
             @Override
             public void onResponse(ServerResponse myResponse) {
+                hideProgress();
                 listener.OnMyResponse(myResponse);
+                Log.d("Response", myResponse.getResponse().toString());
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError volleyError) {
+                hideProgress();
+                Log.d("Volley Response", "error response");
                 listener.OnError(volleyError);
             }
         });
@@ -93,5 +102,12 @@ public class ApiService {
         request.setTimeout();
         NICApplication.getInstance().addToRequestQueue(request);
     }
-
+    void hideProgress() {
+        try {
+            if (progressHUD != null)
+                progressHUD.cancel();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }

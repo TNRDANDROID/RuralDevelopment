@@ -1,10 +1,9 @@
-package com.nic.RuralInspection;
+package com.nic.RuralInspection.Application;
 
 import android.app.Application;
 import android.content.Context;
 import android.content.res.Resources;
 import android.text.TextUtils;
-import android.util.Log;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;

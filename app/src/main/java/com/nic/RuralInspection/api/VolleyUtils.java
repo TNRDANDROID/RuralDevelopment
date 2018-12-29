@@ -11,7 +11,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.HttpHeaderParser;
 import com.android.volley.toolbox.StringRequest;
-import com.nic.RuralInspection.NICApplication;
+import com.nic.RuralInspection.Application.NICApplication;
 
 
 import java.io.UnsupportedEncodingException;

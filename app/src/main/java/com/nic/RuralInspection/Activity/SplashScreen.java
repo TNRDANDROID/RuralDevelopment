@@ -1,35 +1,20 @@
 package com.nic.RuralInspection.Activity;
 
-import android.os.AsyncTask;
+import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.StringRequest;
+import com.android.volley.VolleyError; ;
 import com.nic.RuralInspection.R;
 import com.nic.RuralInspection.api.Api;
 import com.nic.RuralInspection.api.ApiService;
 import com.nic.RuralInspection.api.ServerResponse;
 
-import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.net.URLEncoder;
-import java.util.Iterator;
-
-import javax.net.ssl.HttpsURLConnection;
 
 /**
  * Created by AchanthiSundar on 28-12-2018.
@@ -38,30 +23,26 @@ import javax.net.ssl.HttpsURLConnection;
 public class SplashScreen extends AppCompatActivity implements View.OnClickListener, Api.ServerResponseListener {
     private TextView textView;
     private Button button;
+    private static int SPLASH_TIME_OUT = 2000;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.splash_screen);
-        callnetwork();
+       showSignInScreen();
     }
 
-    public void callnetwork() {
-        textView = (TextView) findViewById(R.id.text);
-        button = (Button) findViewById(R.id.button);
-        button.setOnClickListener(this);
 
-    }
 
     @Override
     public void onClick(View v) {
-        if (v.equals(button)) {
-            try {
-                callSampleApi();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
+//        if (v.equals(button)) {
+//            try {
+//                callSampleApi();
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//            }
+//        }
     }
 
     /* public class SendPostRequest extends AsyncTask<String, Void, String> {
@@ -157,6 +138,20 @@ public class SplashScreen extends AppCompatActivity implements View.OnClickListe
         }
         return result.toString();
     }*/
+
+    private void showSignInScreen() {
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+
+                Intent i = new Intent(SplashScreen.this, LoginScreen.class);
+
+                startActivity(i);
+                finish();
+                overridePendingTransition(R.anim.slide_in, R.anim.slide_out);
+            }
+        }, SPLASH_TIME_OUT);
+    }
     private void callSampleApi() {
 
         new ApiService(this).makeRequest("petProfile", Api.Method.GET, "https://www.tnrd.gov.in/project/webservices_forms/inspection/login_services.php", "not cache", this);
@@ -168,8 +163,8 @@ public class SplashScreen extends AppCompatActivity implements View.OnClickListe
         JSONObject responseInnerJSONObj = null;
         String loginResponse = null;
         loginResponse = serverResponse.getResponse();
-
-        Toast.makeText(this,loginResponse,Toast.LENGTH_LONG).show();
+textView.setText(loginResponse);
+//        Toast.makeText(this,loginResponse,Toast.LENGTH_LONG).show();
 //            int status = responseInnerJSONObj.getInt("Status");
 //            String message = responseInnerJSONObj.getString(AppConstant.KEY_MESSAGE);
 //
