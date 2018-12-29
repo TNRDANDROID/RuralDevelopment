@@ -1,4 +1,4 @@
-package com.nic.RuralMonitoring.api;
+package com.nic.RuralInspection.api;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;
@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Created by AchanthiSundar on 28-12-2018.
+ * Created by AchanthiSundar on 20-01-2016.
  */
 
 public class JRequest<T> extends com.android.volley.toolbox.JsonRequest<T> {

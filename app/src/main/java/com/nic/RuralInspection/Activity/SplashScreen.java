@@ -1,105 +1,87 @@
-package com.nic.RuralMonitoring.Activity;
+package com.nic.RuralInspection.Activity;
 
-import android.content.Context;
-import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.QuickContactBadge;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.nic.RuralMonitoring.R;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.nic.RuralInspection.R;
+import com.nic.RuralInspection.api.Api;
+import com.nic.RuralInspection.api.ApiService;
+import com.nic.RuralInspection.api.ServerResponse;
 
-import org.apache.http.HttpResponse;
-import org.apache.http.NameValuePair;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.message.BasicNameValuePair;
+import org.json.JSONException;
 import org.json.JSONObject;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
-import org.xml.sax.XMLReader;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
-import java.io.StringReader;
-import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.ProtocolException;
 import java.net.URL;
 import java.net.URLEncoder;
-import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
 
 import javax.net.ssl.HttpsURLConnection;
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
 
 /**
  * Created by AchanthiSundar on 28-12-2018.
  */
 
-public class SplashScreen extends AppCompatActivity implements View.OnClickListener{
-private TextView textView ;
-private Button button;
+public class SplashScreen extends AppCompatActivity implements View.OnClickListener, Api.ServerResponseListener {
+    private TextView textView;
+    private Button button;
+
     @Override
-    public void onCreate(Bundle savedInstanceState ) {
-        super.onCreate(savedInstanceState );
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
         setContentView(R.layout.splash_screen);
         callnetwork();
     }
-public void callnetwork() {
-    textView = (TextView)findViewById(R.id.text);
-    button = (Button)findViewById(R.id.button);
-    button.setOnClickListener(this);
 
-}
+    public void callnetwork() {
+        textView = (TextView) findViewById(R.id.text);
+        button = (Button) findViewById(R.id.button);
+        button.setOnClickListener(this);
+
+    }
 
     @Override
     public void onClick(View v) {
         if (v.equals(button)) {
             try {
-                SendPostRequest login = new SendPostRequest();
-                login.execute();
+                callSampleApi();
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
     }
 
-    public class SendPostRequest extends AsyncTask<String, Void, String> {
+    /* public class SendPostRequest extends AsyncTask<String, Void, String> {
 
-        protected void onPreExecute(){}
+         protected void onPreExecute(){}
 
-        protected String doInBackground(String... arg0) {
+         protected String doInBackground(String... arg0) {
 
-            try {
+             try {
 
-                URL url = new URL("https://www.tnrd.gov.in/project/webservices_forms/inspection/login_services.php"); // here is your URL path
+                 URL url = new URL("https://www.tnrd.gov.in/project/webservices_forms/inspection/login_services.php"); // here is your URL path
 
-                JSONObject postDataParams = new JSONObject();
-                postDataParams.put("name", "abc");
-                postDataParams.put("email", "abc@gmail.com");
-                Log.e("params",postDataParams.toString());
+                 JSONObject postDataParams = new JSONObject();
+                 postDataParams.put("name", "abc");
+                 postDataParams.put("email", "abc@gmail.com");
+                 Log.e("params",postDataParams.toString());
 
-                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-                conn.setReadTimeout(15000 /* milliseconds */);
-                conn.setConnectTimeout(15000 /* milliseconds */);
+                 HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                 conn.setReadTimeout(15000 *//* milliseconds *//*);
+                conn.setConnectTimeout(15000 *//* milliseconds *//*);
                 conn.setRequestMethod("GET");
                 conn.setDoInput(true);
                 conn.setDoOutput(true);
@@ -174,5 +156,35 @@ public void callnetwork() {
 
         }
         return result.toString();
-    }}
+    }*/
+    private void callSampleApi() {
 
+        new ApiService(this).makeRequest("petProfile", Api.Method.GET, "https://www.tnrd.gov.in/project/webservices_forms/inspection/login_services.php", "not cache", this);
+    }
+
+
+    @Override
+    public void OnMyResponse(ServerResponse serverResponse) {
+        JSONObject responseInnerJSONObj = null;
+        String loginResponse = null;
+        loginResponse = serverResponse.getResponse();
+
+        Toast.makeText(this,loginResponse,Toast.LENGTH_LONG).show();
+//            int status = responseInnerJSONObj.getInt("Status");
+//            String message = responseInnerJSONObj.getString(AppConstant.KEY_MESSAGE);
+//
+//            if (status == 1) {
+//                if ("SignIn".equalsIgnoreCase(apiType)) {
+//                    JSONObject userJSONObject = responseInnerJSONObj.getJSONObject(AppConstant.KEY_USER);
+//                    String id = userJSONObject.getString(AppConstant.KEY_USER_ID);
+//                    String username = userJSONObject.getString(AppConstant.KEY_USER_NAME);
+//                }
+//            }
+
+    }
+
+    @Override
+    public void OnError(VolleyError volleyError) {
+
+    }
+}

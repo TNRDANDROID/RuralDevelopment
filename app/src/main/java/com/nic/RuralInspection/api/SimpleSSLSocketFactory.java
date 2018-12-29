@@ -1,4 +1,4 @@
-package com.nic.RuralMonitoring.api;
+package com.nic.RuralInspection.api;
 
 import java.io.IOException;
 import java.net.Socket;

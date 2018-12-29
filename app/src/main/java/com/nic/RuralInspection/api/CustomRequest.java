@@ -1,4 +1,4 @@
-package com.nic.RuralMonitoring.api;
+package com.nic.RuralInspection.api;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;
@@ -15,7 +15,7 @@ import java.util.Iterator;
 import java.util.Map;
 
 /**
- * Created by AchanthiSundar on 28-12-2018.
+ * Created by AchanthiSundar on 20-01-2016.
  */
 
 public class CustomRequest<T> extends Request<T> { //implements Response.Listener<T>, Response.ErrorListener{
@@ -29,7 +29,7 @@ public class CustomRequest<T> extends Request<T> { //implements Response.Listene
     private String type;
 
 
-    public CustomRequest(int forResponse, int method, String url, Map<String, String> params,
+    public CustomRequest(int forResponse, int method, String url ,
                          Response.Listener<T> reponseListener, Response.ErrorListener errorListener) {
         super(method, url, errorListener);
         this.request = forResponse;
@@ -37,12 +37,12 @@ public class CustomRequest<T> extends Request<T> { //implements Response.Listene
         this.mUrl = url;
         this.listener = reponseListener;
         this.errorListener = errorListener;
-        this.mParams = params;
+
 
     }
 
 
-    public CustomRequest(String api, int method, String url, Map<String, String> params, String type,
+    public CustomRequest(String api, int method, String url , String type,
                          Response.Listener<T> reponseListener, Response.ErrorListener errorListener) {
         super(method, url, errorListener);
         this.api = api;
@@ -50,7 +50,7 @@ public class CustomRequest<T> extends Request<T> { //implements Response.Listene
         this.mUrl = url;
         this.listener = reponseListener;
         this.errorListener = errorListener;
-        this.mParams = params;
+
         this.type = type;
     }
 

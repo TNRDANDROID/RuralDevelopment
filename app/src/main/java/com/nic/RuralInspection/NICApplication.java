@@ -1,4 +1,4 @@
-package com.nic.RuralMonitoring;
+package com.nic.RuralInspection;
 
 import android.app.Application;
 import android.content.Context;
@@ -10,6 +10,7 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.Volley;
+import com.nic.RuralInspection.api.LruBitmapCache;
 
 /**
  * Created by AchanthiSundar on 28-12-2018.
@@ -27,6 +28,9 @@ public class NICApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+
+        mInstance = this;
+        context = getApplicationContext();
 
     }
 
@@ -60,6 +64,14 @@ public class NICApplication extends Application {
         return mRequestQueue;
     }
 
+    public ImageLoader getImageLoader() {
+        getRequestQueue();
+        if (mImageLoader == null) {
+            mImageLoader = new ImageLoader(this.mRequestQueue,
+                    new LruBitmapCache());
+        }
+        return this.mImageLoader;
+    }
 
     public <T> void addToRequestQueue(Request<T> req, String tag) {
         // set the default tag if tag is empty
@@ -77,6 +89,7 @@ public class NICApplication extends Application {
             mRequestQueue.cancelAll(tag);
         }
     }
+
 
 
     @Override

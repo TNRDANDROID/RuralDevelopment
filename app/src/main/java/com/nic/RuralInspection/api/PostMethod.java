@@ -1,4 +1,4 @@
-package com.nic.RuralMonitoring.api;
+package com.nic.RuralInspection.api;
 
 import android.content.Context;
 

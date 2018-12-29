@@ -1,4 +1,4 @@
-package com.nic.RuralMonitoring.api;
+package com.nic.RuralInspection.api;
 
 import android.content.Context;
 
@@ -11,14 +11,14 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.HttpHeaderParser;
 import com.android.volley.toolbox.StringRequest;
-import com.nic.RuralMonitoring.NICApplication;
+import com.nic.RuralInspection.NICApplication;
 
 
 import java.io.UnsupportedEncodingException;
 import java.util.Map;
 
 /**
- * Created by AchanthiSundar on 28-12-2018.
+ * Created by AchanthiSundar on 20-01-2016.
  */
 public class VolleyUtils {
 

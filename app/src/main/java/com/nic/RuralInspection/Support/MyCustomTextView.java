@@ -1,4 +1,4 @@
-package com.nic.RuralMonitoring.Support;
+package com.nic.RuralInspection.Support;
 
 import android.content.Context;
 import android.content.res.TypedArray;
@@ -6,7 +6,7 @@ import android.graphics.Typeface;
 import android.util.AttributeSet;
 import android.widget.TextView;
 
-import com.nic.RuralMonitoring.R;
+import com.nic.RuralInspection.R;
 
 
 /**

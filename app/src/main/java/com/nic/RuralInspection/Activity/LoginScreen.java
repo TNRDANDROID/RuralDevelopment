@@ -1,10 +1,10 @@
-package com.nic.RuralMonitoring.Activity;
+package com.nic.RuralInspection.Activity;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.WindowManager;
 
-import com.nic.RuralMonitoring.R;
+import com.nic.RuralInspection.R;
 
 /**
  * Created by AchanthiSundar on 28-12-2018.

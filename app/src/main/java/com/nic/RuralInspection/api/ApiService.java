@@ -1,11 +1,11 @@
-package com.nic.RuralMonitoring.api;
+package com.nic.RuralInspection.api;
 
 import android.content.Context;
 import android.util.Log;
 
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.nic.RuralMonitoring.NICApplication;
+import com.nic.RuralInspection.NICApplication;
 
 
 import org.json.JSONArray;
@@ -14,7 +14,7 @@ import org.json.JSONObject;
 import java.util.Map;
 
 /**
- * Created by AchanthiSundar on 28-12-2018.
+ * Created by AchanthiSundar on 20-01-2016.
  */
 public class ApiService {
     private Context context;
@@ -33,9 +33,9 @@ public class ApiService {
 
     }
 
-    public CustomRequest getRequest(String api, int method, String url, Map<String, String> parmas, String type, final Api.ServerResponseListener listener) {
+    public CustomRequest getRequest(String api, int method, String url , String type, final Api.ServerResponseListener listener) {
         Log.d("url*",url);
-        return new CustomRequest(api, method, url, parmas, type, new Response.Listener<ServerResponse>() {
+        return new CustomRequest(api, method, url , type, new Response.Listener<ServerResponse>() {
             @Override
             public void onResponse(ServerResponse myResponse) {
                 listener.OnMyResponse(myResponse);
@@ -82,8 +82,8 @@ public class ApiService {
         NICApplication.getInstance().addToRequestQueue(request);
     }
 
-    public void makeRequest(String api, int method, String url, Map<String, String> parmas, String type, Api.ServerResponseListener listener) {
-        CustomRequest request = getRequest(api, method, url, parmas, type, listener);
+    public void makeRequest(String api, int method, String url , String type, Api.ServerResponseListener listener) {
+        CustomRequest request = getRequest(api, method, url , type, listener);
         request.setTimeout();
         NICApplication.getInstance().addToRequestQueue(request);
     }

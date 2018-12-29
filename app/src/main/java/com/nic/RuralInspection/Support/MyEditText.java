@@ -1,4 +1,4 @@
-package com.nic.RuralMonitoring.Support;
+package com.nic.RuralInspection.Support;
 
 import android.content.Context;
 import android.graphics.Typeface;

@@ -1,4 +1,4 @@
-package com.nic.RuralMonitoring.Activity;
+package com.nic.RuralInspection.Activity;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;

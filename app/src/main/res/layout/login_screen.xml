@@ -1,6 +1,193 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:customfontdemo="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/login_background"
+    tools:context=".Activity.LoginScreen">
 
-</android.support.constraint.ConstraintLayout>
+
+
+    <ImageView
+        android:id="@+id/imageView1"
+        android:layout_width="@dimen/_68sdp"
+        android:layout_height="@dimen/_68sdp"
+        android:layout_alignParentTop="true"
+        android:layout_centerInParent="true"
+        android:layout_marginTop="@dimen/_20sdp"
+        android:background="@mipmap/tamilnadu_logo"
+        android:scaleType="centerCrop" />
+
+    <com.nic.RuralInspection.Support.MyCustomTextView
+        android:id="@+id/rural"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_10sdp"
+        android:layout_below="@+id/imageView1"
+        android:layout_centerInParent="true"
+        android:padding="3dp"
+        android:text="Rural Development"
+        android:textColor="#FFFFFF"
+        android:textSize="17sp"
+        android:textStyle="bold"
+        customfontdemo:fontName="@string/font_circular_medium" />
+
+    <com.nic.RuralInspection.Support.MyCustomTextView
+        android:id="@+id/amp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/rural"
+        android:layout_centerInParent="true"
+        android:padding="3dp"
+        android:text=" &amp;"
+        android:textColor="#FFFFFF"
+        android:textSize="17sp"
+        android:textStyle="bold"
+        customfontdemo:fontName="@string/font_circular_medium" />
+
+    <com.nic.RuralInspection.Support.MyCustomTextView
+        android:id="@+id/dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/amp"
+        android:layout_centerInParent="true"
+        android:padding="3dp"
+        android:text="Panchayat Raj Department"
+        android:textColor="#FFFFFF"
+        android:textSize="17sp"
+        android:textStyle="bold"
+        customfontdemo:fontName="@string/font_circular_medium" />
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+
+        android:layout_below="@+id/dp"
+        android:layout_centerInParent="true"
+        android:orientation="vertical">
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/margin"
+
+            android:background="@drawable/gray_background"
+            android:orientation="vertical">
+
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/input_layout_email"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="5dp"
+                android:layout_marginTop="@dimen/settings_edit_layout">
+
+                <com.nic.RuralInspection.Support.MyEditTextView
+                    android:id="@+id/email_id"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="25dp"
+                    android:background="@android:color/transparent"
+                    android:hint="User Name"
+                    android:inputType="textNoSuggestions"
+                    android:singleLine="true"
+                    android:textColor="@android:color/black"
+                    android:textSize="20dp" />
+            </android.support.design.widget.TextInputLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:background="@color/border_line" />
+
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/input_layout_password"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="5dp"
+                android:layout_marginTop="@dimen/settings_edit_layout">
+
+                <com.scottyab.showhidepasswordedittext.ShowHidePasswordEditText
+                    android:id="@+id/password"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="25dp"
+                    android:background="@android:color/transparent"
+                    android:hint="Password"
+                    android:paddingRight="@dimen/margin"
+                    android:singleLine="true"
+                    android:textColor="@android:color/black"
+                    android:textSize="20dp"
+                    tools:ignore="HardcodedText" />
+            </android.support.design.widget.TextInputLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:background="@color/border_line" />
+
+            <ImageView
+                android:layout_width="170dp"
+                android:layout_height="@dimen/widget_bottom_layout_height"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginLeft="@dimen/margin"
+                android:layout_marginRight="@dimen/margin"
+                android:text="Sign in"
+                android:textAllCaps="false"
+                android:textColor="@android:color/white"
+                android:textSize="@dimen/menu_title_size" />
+
+            <Button
+                android:id="@+id/btn_sign_in"
+                android:layout_width="130dp"
+                android:layout_height="40dp"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginLeft="@dimen/margin"
+                android:layout_marginRight="@dimen/margin"
+                android:background="@drawable/login_button"
+                android:text="Sign in"
+                android:textAllCaps="false"
+                android:textColor="@android:color/white"
+                android:textSize="@dimen/menu_title_size" />
+
+            <ImageView
+                android:layout_width="170dp"
+                android:layout_height="@dimen/padding"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginLeft="@dimen/margin"
+                android:layout_marginRight="@dimen/margin"
+                android:text="Sign in"
+                android:textAllCaps="false"
+                android:textColor="@android:color/white"
+                android:textSize="@dimen/menu_title_size" />
+
+        </LinearLayout>
+
+
+    </LinearLayout>
+
+
+    <com.nic.RuralInspection.Support.MyCustomTextView
+        android:id="@+id/textView1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:padding="@dimen/_13sdp"
+        android:text="Sofware Designed &amp; Developed by NIC"
+        android:textColor="#FFFFFF"
+        android:textSize="@dimen/_15sdp"
+        android:textStyle="bold"
+        customfontdemo:fontName="@string/font_circular_medium" />
+
+
+
+
+</RelativeLayout>
