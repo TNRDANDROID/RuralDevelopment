@@ -13,7 +13,6 @@ import com.android.volley.toolbox.HttpHeaderParser;
 import com.android.volley.toolbox.StringRequest;
 import com.nic.RuralInspection.Application.NICApplication;
 
-
 import java.io.UnsupportedEncodingException;
 import java.util.Map;
 

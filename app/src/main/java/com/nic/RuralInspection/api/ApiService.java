@@ -8,13 +8,8 @@ import com.android.volley.VolleyError;
 import com.nic.RuralInspection.Application.NICApplication;
 import com.nic.RuralInspection.Support.ProgressHUD;
 
-
 import org.json.JSONArray;
 import org.json.JSONObject;
-
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 
 /**
  * Created by AchanthiSundar on 28-12-2018.

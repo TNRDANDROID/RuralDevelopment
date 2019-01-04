@@ -8,13 +8,15 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.android.volley.VolleyError; ;
+import com.android.volley.VolleyError;
 import com.nic.RuralInspection.R;
 import com.nic.RuralInspection.api.Api;
 import com.nic.RuralInspection.api.ApiService;
 import com.nic.RuralInspection.api.ServerResponse;
 
 import org.json.JSONObject;
+
+;
 
 /**
  * Created by AchanthiSundar on 28-12-2018.

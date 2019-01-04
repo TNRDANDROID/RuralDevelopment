@@ -1,6 +1,5 @@
 package com.nic.RuralInspection.Activity;
 
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
@@ -12,7 +11,6 @@ import android.widget.LinearLayout;
 
 import com.nic.RuralInspection.Dialog.MyDialog;
 import com.nic.RuralInspection.R;
-import com.nic.RuralInspection.Support.MyCustomTextView;
 
 /**
  * Created by AchanthiSundar on 28-12-2018.
