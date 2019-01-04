@@ -9,5 +9,11 @@
     <color name="account_status_green_color">#45c240</color>
     <color name="subscription_type_red_color">#fc4b5f</color>
     <color name="background_light_gray">#f1f1f1</color>
+    <color name="sky_blue">#7661bee1</color>
+
+    <color name="dashboard_line_dark">#818080</color>
+    <color name="dashboard_line_light">#EBEBEB</color>
+    <color name="tool_bar_blue">#344050</color>
+
 
 </resources>

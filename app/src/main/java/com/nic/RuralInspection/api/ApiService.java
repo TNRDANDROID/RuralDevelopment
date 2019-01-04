@@ -12,6 +12,10 @@ import com.nic.RuralInspection.Support.ProgressHUD;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+
 /**
  * Created by AchanthiSundar on 28-12-2018.
  */
@@ -32,7 +36,7 @@ public class ApiService {
     public ApiService(Context c) {
         this.context = c;
         try {
-            progressHUD = ProgressHUD.show(this.context, "Connecting", true, false, null);
+            progressHUD = ProgressHUD.show(this.context, "Loading...", true, false, null);
         } catch (Exception e) {
         }
 
