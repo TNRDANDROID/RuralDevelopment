@@ -2,9 +2,7 @@ package com.nic.RuralInspection.Activity;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.RequiresApi;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -27,21 +25,11 @@ import com.nic.RuralInspection.api.Api;
 import com.nic.RuralInspection.api.ApiService;
 import com.nic.RuralInspection.api.ServerResponse;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedReader;
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.util.HashMap;
-import java.util.Map;
-
-import constant.AppConstant;
-import session.PrefManager;
+import com.nic.RuralInspection.constant.AppConstant;
+import com.nic.RuralInspection.session.PrefManager;
 
 /**
  * Created by AchanthiSundar on 28-12-2018.

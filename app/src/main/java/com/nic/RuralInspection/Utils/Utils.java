@@ -59,7 +59,7 @@ import javax.crypto.Cipher;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 
-import constant.AppConstant;
+import com.nic.RuralInspection.constant.AppConstant;
 
 
 public class Utils {

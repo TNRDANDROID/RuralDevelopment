@@ -1,20 +1,10 @@
-package session;
+package com.nic.RuralInspection.session;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
 
 
-import com.nic.RuralInspection.Utils.Utils;
-
-import org.json.JSONArray;
-
-import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
-import constant.AppConstant;
+import com.nic.RuralInspection.constant.AppConstant;
 
 
 /**

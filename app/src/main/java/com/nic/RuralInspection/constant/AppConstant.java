@@ -1,4 +1,4 @@
-package constant;
+package com.nic.RuralInspection.constant;
 
 import android.os.Environment;
 

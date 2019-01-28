@@ -37,8 +37,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import constant.AppConstant;
-import session.PrefManager;
+import com.nic.RuralInspection.constant.AppConstant;
+import com.nic.RuralInspection.session.PrefManager;
 
 /**
  * Created by AchanthiSundar on 28-12-2018.
