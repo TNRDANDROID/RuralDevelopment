@@ -33,7 +33,6 @@ import com.karumi.dexter.MultiplePermissionsReport;
 import com.karumi.dexter.PermissionToken;
 import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
-import com.miguelcatalan.materialsearchview.MaterialSearchView;
 import com.nic.RuralInspection.R;
 import com.nic.RuralInspection.Support.MyCustomTextView;
 import com.nic.RuralInspection.Utils.CameraUtils;
@@ -49,7 +48,6 @@ import java.util.List;
  */
 
 public class ViewInspectionReportScreen extends AppCompatActivity implements View.OnClickListener {
-    private MaterialSearchView searchView = null;
     private ScrollView scrollView;
     private MyCustomTextView action_tv;
     private List<View> viewArrayList = new ArrayList<>();
