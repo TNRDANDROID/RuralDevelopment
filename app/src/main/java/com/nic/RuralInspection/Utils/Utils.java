@@ -9,7 +9,6 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.Matrix;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
@@ -30,17 +29,20 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.Toast;
-
 
 import com.nic.RuralInspection.Application.NICApplication;
 import com.nic.RuralInspection.BuildConfig;
 import com.nic.RuralInspection.R;
 import com.nic.RuralInspection.Support.MyCustomTextView;
 
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.math.BigInteger;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.ParseException;
@@ -53,6 +55,12 @@ import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.crypto.Cipher;
+import javax.crypto.spec.IvParameterSpec;
+import javax.crypto.spec.SecretKeySpec;
+
+import constant.AppConstant;
+
 
 public class Utils {
 
@@ -64,6 +72,8 @@ public class Utils {
     private static final int MINUTE_MILLIS = 60 * SECOND_MILLIS;
     private static final int HOUR_MILLIS = 60 * MINUTE_MILLIS;
     private static final int DAY_MILLIS = 24 * HOUR_MILLIS;
+    private static String CIPHER_NAME = "AES/CBC/PKCS5PADDING";
+    private static int CIPHER_KEY_LEN = 16; //128 bits
 
     private static void initializeSharedPreference() {
         sharedPreferences = NICApplication.getGlobalContext()
@@ -88,18 +98,18 @@ public class Utils {
         return status;
     }
 
-    public static Boolean isValidEmail(String email){
+    public static Boolean isValidEmail(String email) {
         Boolean status = true;
         String mail[] = email.split(",");
-        for(int i =0; i< mail.length; i++){
-            if(!validateMail(mail[i])){
+        for (int i = 0; i < mail.length; i++) {
+            if (!validateMail(mail[i])) {
                 return false;
             }
         }
         return status;
     }
 
-    public static boolean validateMail(String email){
+    public static boolean validateMail(String email) {
         String emailPattern = "[a-zA-Z0-9._-]+@[a-z]+\\.+[a-z]+";
         if (email.matches(emailPattern)) {
             return true;
@@ -182,7 +192,7 @@ public class Utils {
     }
 
     public static boolean checkValidTime(String d1, String d2) {
-        SimpleDateFormat dfDate = new SimpleDateFormat("dd MMM,yy h:mm aa",Locale.US);
+        SimpleDateFormat dfDate = new SimpleDateFormat("dd MMM,yy h:mm aa", Locale.US);
         boolean b = false;
         try {
             if (dfDate.parse(d1).before(dfDate.parse(d2))) {
@@ -620,14 +630,15 @@ public class Utils {
 //    }
 
     public static String name = "";
-    public static Boolean getMessageQuestionForSelectBox( String value) {
+
+    public static Boolean getMessageQuestionForSelectBox(String value) {
         // TODO Auto-generated method stub
         Boolean questionName = false;
         try {
             if ("gpsmode".equalsIgnoreCase(value.split("=")[0])) {
                 name = "1";
                 questionName = true;
-            }else if("lpm".equalsIgnoreCase(value.split("=")[0])){
+            } else if ("lpm".equalsIgnoreCase(value.split("=")[0])) {
                 name = "2";
                 questionName = true;
             }
@@ -637,23 +648,23 @@ public class Utils {
         return questionName;
     }
 
-    public static String getAnswerValue( String value) {
+    public static String getAnswerValue(String value) {
         String questionName = "";
         try {
-            if(name.equalsIgnoreCase("1")){
-                if("assisted".equalsIgnoreCase(value)){
+            if (name.equalsIgnoreCase("1")) {
+                if ("assisted".equalsIgnoreCase(value)) {
                     questionName = "Deep Indoor";
-                }else if("msbased".equalsIgnoreCase(value)){
+                } else if ("msbased".equalsIgnoreCase(value)) {
                     questionName = "Indoor";
-                }else if("standalone".equalsIgnoreCase(value)){
+                } else if ("standalone".equalsIgnoreCase(value)) {
                     questionName = "Out Door";
                 }
-            }else if(name.equalsIgnoreCase("2")){
-                if("alwayson".equalsIgnoreCase(value)){
+            } else if (name.equalsIgnoreCase("2")) {
+                if ("alwayson".equalsIgnoreCase(value)) {
                     questionName = "On";
-                }else if("standby".equalsIgnoreCase(value)){
+                } else if ("standby".equalsIgnoreCase(value)) {
                     questionName = "Low";
-                }else if("hibernate".equalsIgnoreCase(value)){
+                } else if ("hibernate".equalsIgnoreCase(value)) {
                     questionName = "Very Low";
                 }
             }
@@ -773,8 +784,6 @@ public class Utils {
         }
         return false;
     }
-
-
 
 
     public static Date getDateFromString(String dateString) {
@@ -917,150 +926,155 @@ public class Utils {
         activity.startActivity(Intent.createChooser(shareIntent, "share via"));
     }
 
-    public static String getTimeAgo(long fromTime, long toTime) {
-        long diff = toTime - fromTime;
-        if (diff < MINUTE_MILLIS) {
-            return "just now";
-        } else if (diff < 2 * MINUTE_MILLIS) {
-            return "a minute ago";
-        } else if (diff < 50 * MINUTE_MILLIS) {
-            return diff / MINUTE_MILLIS + " minutes";
-        } else if (diff < 90 * MINUTE_MILLIS) {
-            return "an hour ago";
-        } else if (diff < 24 * HOUR_MILLIS) {
-            return diff / HOUR_MILLIS + " hours";
-        } else if (diff < 48 * HOUR_MILLIS) {
-            return "yesterday";
-        } else {
-            return diff / DAY_MILLIS + " days";
-        }
+
+    public static String randomChar() {
+        char[] chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789".toCharArray();
+        Random rnd = new Random();
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < 15; i++)
+            sb.append(chars[rnd.nextInt(chars.length)]);
+        Log.d("rand", sb.toString());
+        return sb.toString();
     }
 
-//    public static int setSpinnerSelection(List<CommonModel> spinnerList, String filterName) {
-//        int position = 0;
-//        for (int i = 0; i < spinnerList.size(); i++) {
-//            if (filterName.equals(spinnerList.get(i).getName())) {
-//                position = i;
-//                break;
-//            }
-//        }
-//        return position;
-//    }
-//
-//    public static int getZoomLevel(Circle circle) {
-//        int zoomLevel = 0;
-//        if (circle != null) {
-//            double radius = circle.getRadius();
-//            double scale = radius / 500;
-//            zoomLevel = (int) (16 - Math.log(scale) / Math.log(2));
-//        }
-//        return zoomLevel;
-//    }
+    public static String getSHA(String UserPassWord) {
+        try {
 
-    public static String getHumidityUnit(String humidity) {
-        String humidityValue = "";
-        if (Float.parseFloat(humidity) >= 0) {
-            humidityValue = humidity ;
-        } else {
-            humidityValue = "Error";
-        }
-        return humidityValue;
-    }
+            // Static getInstance method is called with hashing SHA
+            MessageDigest md = MessageDigest.getInstance("SHA-256");
 
-    public  static String censorWord (String str) {
-        if(str.length() > 2){
-            return str.substring(0,1) + repeatStringX(str.length() - 2) +str.substring(str.length()-1);
-        } else{
-            return str;
-        }
-    }
+            // digest() method called
+            // to calculate message digest of an input
+            // and return array of byte
+            byte[] messageDigest = md.digest(UserPassWord.getBytes());
 
-    public static String censorEmail (String email){
-        //String arr[] = email.split("@");
-        return email.replaceAll("(?<=.{2}).(?=[^@]*?@)", "*");
-    }
+            // Convert byte array into signum representation
+            BigInteger no = new BigInteger(1, messageDigest);
 
-    public static String repeatStringX(int size){
-        String str = "";
-        for(int i=0; i<size; i++){
-            str += "*";
-        }
-        return str;
-    }
+            // Convert message digest into hex value
+            String hashtext = no.toString(16);
 
-    public static int generateRandomNumber(){
-        Random rand = new Random();
-        int  n = rand.nextInt(50) + 1;
-        return n;
-    }
-
-    public static boolean checkNullValues(String value){
-        if(value != null && !value.contains("null") && !value.contains("NULL"))
-            return true;
-        return false;
-    }
-
-    public static void showRefreshToast(Context activity){
-        Toast.makeText(activity, "This provides the last reported data!", Toast.LENGTH_SHORT).show();
-    }
-
-    //input format = 11:00 PM     output format = 23:00
-    public static String convertTimeFor24Hours(String time){
-        String timeArr[]        = time.split(" ");
-        int time_int            = 0;
-        String final_time       = "";
-
-        if(timeArr.length > 0){
-            String timeValue     = timeArr[0];
-            String amPM          = timeArr[1];
-
-            if(timeValue.split(":").length > 0){
-                time_int        = Integer.parseInt(timeValue.split(":")[0]);
-                if(amPM.equalsIgnoreCase("pm")){
-                    time_int    = time_int + 12;
-                }
-                final_time      = String.valueOf(time_int) + ":"+timeValue.split(":")[1];
-                return final_time;
+            while (hashtext.length() < 32) {
+                hashtext = "0" + hashtext;
             }
+
+            return hashtext;
         }
-        return final_time;
+
+        // For specifying wrong message digest algorithms
+        catch (NoSuchAlgorithmException e) {
+            System.out.println("Exception thrown"
+                    + " for incorrect algorithm: " + e);
+
+            return null;
+        }
     }
 
-    //input format = 23:00:00     output format= 11:00 PM
-    public static String updateAlertTime(String time){
-        String final_time = "";
-        if(!time.isEmpty()){
-            String timeArr[]        = time.split(":");
-            int hour                = Integer.parseInt(timeArr[0]);
-            int twelveHourFormat    = hour - 12;
-            String amPM             = "AM";
-            if(twelveHourFormat > 0){
-                amPM                = "PM";
-                hour                = twelveHourFormat;
+    public static final String md5(final String s) {
+        final String MD5 = "MD5";
+        try {
+            // Create MD5 Hash
+            MessageDigest digest = java.security.MessageDigest
+                    .getInstance(MD5);
+            digest.update(s.getBytes());
+            byte messageDigest[] = digest.digest();
+
+            // Create Hex String
+            StringBuilder hexString = new StringBuilder();
+            for (byte aMessageDigest : messageDigest) {
+                String h = Integer.toHexString(0xFF & aMessageDigest);
+                while (h.length() < 2)
+                    h = "0" + h;
+                hexString.append(h);
             }
-            return String.valueOf(hour)+":"+timeArr[1]+" "+amPM;
+            return hexString.toString();
+
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
         }
-        return final_time;
+        return "";
     }
 
-    public static int calculateZoomLevel(int screenWidth) {
-        double equatorLength = 40075004; // in meters
-        double widthInPixels = screenWidth;
-        double metersPerPixel = equatorLength / 256;
-        int zoomLevel = 1;
-        while ((metersPerPixel * widthInPixels) > 2000) {
-            metersPerPixel /= 2;
-            ++zoomLevel;
+
+    public static String encrypt(String key, String iv, String data) {
+
+        try {
+            IvParameterSpec ivSpec = new IvParameterSpec(iv.getBytes("UTF-8"));
+            SecretKeySpec secretKey = new SecretKeySpec(fixKey(key).getBytes("UTF-8"), "AES");
+
+            Cipher cipher = Cipher.getInstance( CIPHER_NAME);
+            cipher.init(Cipher.ENCRYPT_MODE, secretKey, ivSpec);
+
+            byte[] encryptedData = cipher.doFinal((data.getBytes()));
+
+            String encryptedDataInBase64 = android.util.Base64.encodeToString(encryptedData,0);
+            String ivInBase64 = android.util.Base64.encodeToString(iv.getBytes("UTF-8"),0);
+
+            return encryptedDataInBase64 + ":" + ivInBase64;
+
+        } catch (Exception ex) {
+            throw new RuntimeException(ex);
         }
-        Log.i("ADNAN", "zoom level = "+zoomLevel);
-        return zoomLevel;
+
+
     }
 
-    public static Bitmap rotateImage(Bitmap sourceImage, float angle)
-    {
-        Matrix matrix = new Matrix();
-        matrix.postRotate(angle);
-        return Bitmap.createBitmap(sourceImage, 0, 0, sourceImage.getWidth(), sourceImage.getHeight(), matrix, true);
+    private static String fixKey(String key) {
+
+        if (key.length() < CIPHER_KEY_LEN) {
+            int numPad = CIPHER_KEY_LEN - key.length();
+
+            for (int i = 0; i < numPad; i++) {
+                key += "0"; //0 pad to len 16 bytes
+            }
+
+            return key;
+
+        }
+
+        if (key.length() >  CIPHER_KEY_LEN) {
+            return key.substring(0, CIPHER_KEY_LEN); //truncate to 16 bytes
+        }
+
+        return key;
+    }
+
+    /**
+     * Decrypt data using AES Cipher (CBC) with 128 bit key
+     *
+     * @param key  - key to use should be 16 bytes long (128 bits)
+     * @param data - encrypted data with iv at the end separate by :
+     * @return decrypted data string
+     */
+
+
+
+    public static String decrypt(String key, String data) {
+
+        try {
+            String[] parts = data.split(":");
+
+            IvParameterSpec iv = new IvParameterSpec(android.util.Base64.decode(parts[1],1));
+            // System.out.println(fixKey(iv));
+            SecretKeySpec secretKey = new SecretKeySpec(fixKey(key).getBytes("UTF-8"), "AES");
+
+            Cipher cipher = Cipher.getInstance( CIPHER_NAME);
+            cipher.init(Cipher.DECRYPT_MODE, secretKey, iv);
+
+            byte[] decodedEncryptedData = android.util.Base64. decode(parts[0],1);
+
+            byte[] original = cipher.doFinal(decodedEncryptedData);
+
+            return new String(original);
+        } catch (Exception ex) {
+            throw new RuntimeException(ex);
+        }
+    }
+    public static JSONObject serviceListJsonParams() throws JSONException {
+        JSONObject dataSet = new JSONObject();
+        dataSet.put(AppConstant.KEY_SERVICE_ID, AppConstant.KEY_SERVICE_LIST);
+        Log.d("object", "" + dataSet);
+        return dataSet;
     }
 
 }

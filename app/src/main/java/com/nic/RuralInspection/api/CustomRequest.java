@@ -29,12 +29,13 @@ public class CustomRequest<T> extends Request<T> { //implements Response.Listene
     private String type;
 
 
-    public CustomRequest(int forResponse, int method, String url ,
+    public CustomRequest(int forResponse, int method, String url, Map<String, String> params,
                          Response.Listener<T> reponseListener, Response.ErrorListener errorListener) {
         super(method, url, errorListener);
         this.request = forResponse;
         this.mMethod = method;
         this.mUrl = url;
+        this.mParams = params;
         this.listener = reponseListener;
         this.errorListener = errorListener;
 
@@ -42,19 +43,19 @@ public class CustomRequest<T> extends Request<T> { //implements Response.Listene
     }
 
 
-    public CustomRequest(String api, int method, String url , String type,
+    public CustomRequest(String api, int method, String url, Map<String, String> params, String type,
                          Response.Listener<T> reponseListener, Response.ErrorListener errorListener) {
         super(method, url, errorListener);
         this.api = api;
         this.mMethod = method;
         this.mUrl = url;
+        this.mParams = params;
         this.listener = reponseListener;
         this.errorListener = errorListener;
 
         this.type = type;
     }
 
-    
 
     public void setTimeout() {
         int socketTimeout = 30000;// 30 seconds - change to what you want

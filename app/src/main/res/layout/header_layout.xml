@@ -2,7 +2,8 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:customfontdemo="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="match_parent"
+    android:background="#FFF">
 
 
 
@@ -16,18 +17,19 @@
         android:layout_marginLeft="25dp"
         android:layout_marginRight="25dp"
         android:layout_marginTop="15dp"
-        android:background="@drawable/card_view"
+
         card_view:cardCornerRadius="5dp"
-        card_view:cardElevation="10dp">
+        card_view:cardElevation="5dp">
 
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:padding="@dimen/_5sdp">
+            android:padding="@dimen/_5sdp"
+            android:orientation="horizontal">
 
             <com.nic.RuralInspection.Support.MyCustomTextView
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
                 android:paddingLeft="5dp"
@@ -41,7 +43,7 @@
 
             <com.nic.RuralInspection.Support.MyCustomTextView
                 android:id="@+id/district_tv"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="left"
                 android:paddingLeft="5dp"
@@ -60,6 +62,8 @@
         android:id="@+id/scheme_block_tv"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/_20sdp"
+        android:layout_marginRight="@dimen/_20sdp"
         android:layout_below="@+id/district_card"
         android:orientation="vertical">
 
@@ -141,12 +145,12 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:gravity="center"
-                android:orientation="vertical">
+                android:orientation="horizontal">
 
                 <com.nic.RuralInspection.Support.MyCustomTextView
-
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="start"
                     android:padding="10dp"
                     android:text="Block"
                     android:textAlignment="center"
@@ -154,6 +158,9 @@
                     android:textSize="18sp"
                     customfontdemo:fontName="@string/font_circular_book" />
 
+               <ImageView
+                   android:layout_width="25dp"
+                   android:layout_height="25dp" />
 
             </LinearLayout>
 
@@ -202,6 +209,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_gravity="center"
             android:orientation="horizontal">
 
             <LinearLayout
@@ -215,6 +223,7 @@
 
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:layout_marginRight="@dimen/_1sdp"
                     android:padding="10dp"
                     android:text="Fin Year"
                     android:textAlignment="center"

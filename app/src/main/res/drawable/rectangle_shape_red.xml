@@ -30,9 +30,9 @@
             <path
                 android:name="bezier"
                 android:pathData="M 0.5,-0.5 L 3,220.5 L 139.5,-0.5 L 0.5,-0.5 "
-                android:fillColor="@color/tool_bar_blue"
-                android:strokeColor="@color/tool_bar_blue"
-                android:strokeWidth="1"
+                android:fillColor="#EA4335"
+                android:strokeColor="#EA4335"
+                android:strokeWidth="1 "
                 />
 
         </vector>

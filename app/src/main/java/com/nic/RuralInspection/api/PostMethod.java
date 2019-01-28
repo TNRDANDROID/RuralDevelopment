@@ -31,8 +31,8 @@ import java.util.List;
 
 public class PostMethod {
 
-	static String param[];
-	static String paramValue[];
+	public  static String param[];
+	public static String paramValue[];
 	String Url;
 	DefaultHttpClient httpClient = null;
 

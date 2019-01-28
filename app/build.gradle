@@ -2,6 +2,7 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 26
+    buildToolsVersion '27.0.3'
     defaultConfig {
         applicationId "com.nic.RuralInspection"
         minSdkVersion 21
@@ -24,6 +25,7 @@ repositories {
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation project(':MaterialSearchViewLibrary')
     implementation 'com.android.support:appcompat-v7:26.1.0'
     implementation 'com.android.support:support-v4:26.1.0'
     implementation 'com.android.support:design:26.1.0'
@@ -32,6 +34,8 @@ dependencies {
     implementation 'com.github.scottyab:showhidepasswordedittext:0.8'
     implementation 'com.intuit.sdp:sdp-android:1.0.6'
     implementation 'com.android.support:cardview-v7:26.1.0'
+    implementation 'com.google.code.gson:gson:2.6.2'
+    implementation 'com.karumi:dexter:4.2.0'
     implementation files('libs/volley.jar')
 
     android {

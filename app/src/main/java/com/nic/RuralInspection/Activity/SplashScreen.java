@@ -31,9 +31,8 @@ public class SplashScreen extends AppCompatActivity implements View.OnClickListe
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.splash_screen);
-       showSignInScreen();
+        showSignInScreen();
     }
-
 
 
     @Override
@@ -154,10 +153,8 @@ public class SplashScreen extends AppCompatActivity implements View.OnClickListe
             }
         }, SPLASH_TIME_OUT);
     }
-    private void callSampleApi() {
 
-        new ApiService(this).makeRequest("petProfile", Api.Method.GET, "https://www.tnrd.gov.in/project/webservices_forms/inspection/login_services.php", "not cache", this);
-    }
+
 
 
     @Override
@@ -165,7 +162,7 @@ public class SplashScreen extends AppCompatActivity implements View.OnClickListe
         JSONObject responseInnerJSONObj = null;
         String loginResponse = null;
         loginResponse = serverResponse.getResponse();
-textView.setText(loginResponse);
+        textView.setText(loginResponse);
 //        Toast.makeText(this,loginResponse,Toast.LENGTH_LONG).show();
 //            int status = responseInnerJSONObj.getInt("Status");
 //            String message = responseInnerJSONObj.getString(AppConstant.KEY_MESSAGE);

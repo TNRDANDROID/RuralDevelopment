@@ -3,13 +3,17 @@ package com.nic.RuralInspection.api;
 import android.content.Context;
 import android.util.Log;
 
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Response;
+import com.android.volley.RetryPolicy;
 import com.android.volley.VolleyError;
 import com.nic.RuralInspection.Application.NICApplication;
 import com.nic.RuralInspection.Support.ProgressHUD;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
+
+import java.util.Map;
 
 /**
  * Created by AchanthiSundar on 28-12-2018.
@@ -37,9 +41,9 @@ public class ApiService {
 
     }
 
-    public CustomRequest getRequest(String api, int method, String url , String type, final Api.ServerResponseListener listener) {
+    public CustomRequest getRequest(String api, int method, String url , Map<String, String> parmas, String type, final Api.ServerResponseListener listener) {
         Log.d("url*",url);
-        return new CustomRequest(api, method, url , type, new Response.Listener<ServerResponse>() {
+        return new CustomRequest(api, method, url ,parmas, type, new Response.Listener<ServerResponse>() {
             @Override
             public void onResponse(ServerResponse myResponse) {
                 hideProgress();
@@ -74,11 +78,13 @@ public class ApiService {
         return new JRequest(api, method, url, parmas, type, new Response.Listener<ServerResponse>() {
             @Override
             public void onResponse(ServerResponse jsonObject) {
+                hideProgress();
                 listener.OnMyResponse(jsonObject);
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError volleyError) {
+                hideProgress();
                 listener.OnError(volleyError);
             }
         });
@@ -90,13 +96,21 @@ public class ApiService {
         NICApplication.getInstance().addToRequestQueue(request);
     }
 
-    public void makeRequest(String api, int method, String url , String type, Api.ServerResponseListener listener) {
-        CustomRequest request = getRequest(api, method, url , type, listener);
-        request.setTimeout();
+    public void makeRequest(String api, int method, String url, Map<String, String> parmas , String type, Api.ServerResponseListener listener) {
+        CustomRequest request = getRequest(api, method, url ,parmas, type, listener);
+        int socketTimeout = 30000;//30 seconds - change to what you want
+        RetryPolicy policy = new DefaultRetryPolicy(socketTimeout, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
+        request.setRetryPolicy(policy);
+        if ("cache".equalsIgnoreCase(type)) {
+            request.setShouldCache(true);
+        } else {
+            request.setShouldCache(false);
+        }
         NICApplication.getInstance().addToRequestQueue(request);
     }
 
     public void makeJSONObjectRequest(String api, int method, String url, JSONObject parmas, String type, final Api.ServerResponseListener listener) {
+        Log.d("url*",url);
         JRequest request = getJSONObjectRequest(api, method, url, parmas, type, listener);
         request.setTimeout();
         NICApplication.getInstance().addToRequestQueue(request);
