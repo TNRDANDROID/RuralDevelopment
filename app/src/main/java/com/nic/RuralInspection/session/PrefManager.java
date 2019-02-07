@@ -39,6 +39,9 @@ public class PrefManager {
     private static final String KEY_PV_NAME = "Pv_Name";
     private static final String KEY_LEVELS = "Levels";
     private static final String SERVICE_AUTH_KEY = "service_auth_key";
+    private static final String KEY_SPINNER_SELECTED_BLOCKNAME = "spinner_selected_blockname";
+    private static final String KEY_SPINNER_SELECTED_SCHEMENAME = "spinner_selected_schemename";
+    private static final String KEY_SPINNER_SELECTED_FINYEAR = "spinner_selected_finyear";
 
 
     public PrefManager(Context context) {
@@ -101,9 +104,10 @@ public class PrefManager {
         return pref.getString(KEY_ENCRYPT_PASS, null);
     }
 
-    public void setDistrictCode(String key) {
-        editor.putString(KEY_DISTRICT_CODE, key);
+    public Object setDistrictCode(Object key) {
+        editor.putString(KEY_DISTRICT_CODE, String.valueOf(key));
         editor.commit();
+        return key;
     }
 
     public String getDistrictCode() {
@@ -111,9 +115,10 @@ public class PrefManager {
     }
 
 
-    public void setBlockCode(String key) {
-        editor.putString(KEY_BLOCK_CODE, key);
+    public Object setBlockCode(Object key) {
+        editor.putString(KEY_BLOCK_CODE, String.valueOf(key));
         editor.commit();
+        return key;
     }
 
     public String getBlockCode() {
@@ -122,9 +127,10 @@ public class PrefManager {
 
 
 
-    public void setPvCode(String key) {
-        editor.putString(KEY_PV_CODE, key);
+    public Object setPvCode(Object key) {
+        editor.putString(KEY_PV_CODE, String.valueOf(key));
         editor.commit();
+        return key;
     }
 
     public String getPvCode() {
@@ -134,18 +140,20 @@ public class PrefManager {
 
 
 
-    public void setDistrictName(String key) {
-        editor.putString(KEY_DISTRICT_NAME, key);
+    public Object setDistrictName(Object key) {
+        editor.putString(KEY_DISTRICT_NAME, String.valueOf(key));
         editor.commit();
+        return key;
     }
 
     public String getDistrictName() {
         return pref.getString(KEY_DISTRICT_NAME, null);
     }
 
-    public void setBlockName(String key) {
-        editor.putString(KEY_BLOCK_NAME, key);
+    public Object setBlockName(Object key) {
+        editor.putString(KEY_BLOCK_NAME, String.valueOf(key));
         editor.commit();
+        return key;
     }
 
     public String getBlockName() {
@@ -153,9 +161,10 @@ public class PrefManager {
     }
 
 
-    public void setPvName(String key) {
-        editor.putString(KEY_PV_NAME, key);
+    public Object setPvName(Object key) {
+        editor.putString(KEY_PV_NAME, String.valueOf(key));
         editor.commit();
+        return key;
     }
 
     public String getPvName() {
@@ -165,9 +174,10 @@ public class PrefManager {
 
 
 
-    public void setLevels(String key) {
-        editor.putString(KEY_LEVELS, key);
+    public Object setLevels(Object key) {
+        editor.putString(KEY_LEVELS, String.valueOf(key));
         editor.commit();
+        return key;
     }
 
     public String getLevels() {
@@ -175,7 +185,32 @@ public class PrefManager {
     }
 
 
+    public void setKeySpinnerSelectedBlockname(String userName) {
+        editor.putString(KEY_SPINNER_SELECTED_BLOCKNAME, userName);
+        editor.commit();
+    }
 
+    public String   getKeySpinnerSelectedBlockname() {
+        return pref.getString(KEY_SPINNER_SELECTED_BLOCKNAME, null);
+    }
+
+    public void setKeySpinnerSelectedSchemename(String userName) {
+        editor.putString(KEY_SPINNER_SELECTED_SCHEMENAME, userName);
+        editor.commit();
+    }
+
+    public String   getKeySpinnerSelectedSchemename() {
+        return pref.getString(KEY_SPINNER_SELECTED_SCHEMENAME, null);
+    }
+
+    public void setKeySpinnerSelectedFinyear(String userName) {
+        editor.putString(KEY_SPINNER_SELECTED_FINYEAR, userName);
+        editor.commit();
+    }
+
+    public String   getKeySpinnerSelectedFinyear() {
+        return pref.getString(KEY_SPINNER_SELECTED_FINYEAR, null);
+    }
     public void setServiceAuthKey(String key) {
         editor.putString(SERVICE_AUTH_KEY, key);
         editor.commit();

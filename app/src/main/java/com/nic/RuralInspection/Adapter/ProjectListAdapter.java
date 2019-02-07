@@ -12,7 +12,7 @@ import android.widget.Filterable;
 
 import com.nic.RuralInspection.Activity.AddInspectionReportScreen;
 import com.nic.RuralInspection.Activity.ViewInspectionReportScreen;
-import com.nic.RuralInspection.Model.ProjectListValue;
+import com.nic.RuralInspection.Model.BlockListValue;
 import com.nic.RuralInspection.R;
 import com.nic.RuralInspection.Support.MyCustomTextView;
 
@@ -25,8 +25,8 @@ import java.util.List;
 
 public class ProjectListAdapter extends RecyclerView.Adapter<ProjectListAdapter.MyViewHolder> implements Filterable {
     private Context context;
-    private List<ProjectListValue> projectList;
-    private List<ProjectListValue> projectListFiltered;
+    private List<BlockListValue> projectList;
+    private List<BlockListValue> projectListFiltered;
     private ProjectsAdapterListener listener;
 
     @Override
@@ -76,7 +76,7 @@ public class ProjectListAdapter extends RecyclerView.Adapter<ProjectListAdapter.
 
     }
 
-    public ProjectListAdapter(Context context, List<ProjectListValue> projectList, ProjectsAdapterListener listener) {
+    public ProjectListAdapter(Context context, List<BlockListValue> projectList, ProjectsAdapterListener listener) {
         this.context = context;
         this.listener = listener;
         this.projectList = projectList;
@@ -108,7 +108,7 @@ public class ProjectListAdapter extends RecyclerView.Adapter<ProjectListAdapter.
 
     @Override
     public int getItemCount() {
-        return 20;
+        return projectList.size();
     }
 
     @Override
@@ -120,8 +120,8 @@ public class ProjectListAdapter extends RecyclerView.Adapter<ProjectListAdapter.
                 if (charString.isEmpty()) {
                     projectListFiltered = projectList;
                 } else {
-                    List<ProjectListValue> filteredList = new ArrayList<>();
-                    for (ProjectListValue row : projectList) {
+                    List<BlockListValue> filteredList = new ArrayList<>();
+                    for (BlockListValue row : projectList) {
 
                         // name match condition. this might differ depending on your requirement
                         // here we are looking for name or phone number match
@@ -142,14 +142,14 @@ public class ProjectListAdapter extends RecyclerView.Adapter<ProjectListAdapter.
 
             @Override
             protected void publishResults(CharSequence charSequence, FilterResults filterResults) {
-                projectListFiltered = (ArrayList<ProjectListValue>) filterResults.values;
+                projectListFiltered = (ArrayList<BlockListValue>) filterResults.values;
                 notifyDataSetChanged();
             }
         };
     }
 
     public interface ProjectsAdapterListener {
-        void setProjectList(ProjectListValue projectList);
+        void setProjectList(BlockListValue projectList);
     }
 
 }

@@ -3,6 +3,7 @@ package com.nic.RuralInspection.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Handler;
@@ -20,6 +21,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.android.volley.VolleyError;
+import com.nic.RuralInspection.DataBase.DBHelper;
 import com.nic.RuralInspection.R;
 import com.nic.RuralInspection.Support.MyEditTextView;
 import com.nic.RuralInspection.Utils.FontCache;
@@ -53,6 +55,8 @@ public class LoginScreen extends AppCompatActivity implements View.OnClickListen
     private TextInputLayout inputLayoutEmail;
     private TextInputLayout inputLayoutPassword;
     private ShowHidePasswordEditText passwordEditText;
+    public static DBHelper dbHelper;
+    public static SQLiteDatabase db;
     JSONObject jsonObject;
 
     String sb;
@@ -63,6 +67,13 @@ public class LoginScreen extends AppCompatActivity implements View.OnClickListen
         super.onCreate(savedInstanceState);
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
         setContentView(R.layout.login_screen);
+        try {
+            dbHelper = new DBHelper(this);
+            db = dbHelper.getWritableDatabase();
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
         intializeUI();
     }
 
@@ -106,7 +117,7 @@ public class LoginScreen extends AppCompatActivity implements View.OnClickListen
                         checkLoginScreen();
 
                     }
-                },500);
+                }, 500);
                 break;
         }
     }
@@ -128,6 +139,14 @@ public class LoginScreen extends AppCompatActivity implements View.OnClickListen
     }
 
     private void checkLoginScreen() {
+        try{
+            db.execSQL("DELETE FROM "+DBHelper.BLOCK_TABLE_NAME);
+            db.execSQL("DELETE FROM "+DBHelper.SCHEME_TABLE_NAME);
+            db.execSQL("DELETE FROM "+DBHelper.FINANCIAL_YEAR_TABLE_NAME);
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
         String username = userName.getText().toString().trim();
         String password = passwordEditText.getText().toString().trim();
 
@@ -198,19 +217,17 @@ public class LoginScreen extends AppCompatActivity implements View.OnClickListen
                         String user_data = loginResponse.getString(AppConstant.USER_DATA);
                         String decryptedKey = Utils.decrypt(prefManager.getEncryptPass(), key);
                         String userDataDecrypt = Utils.decrypt(prefManager.getEncryptPass(), user_data);
+                        Log.d("userdatadecry", "" + userDataDecrypt);
                         jsonObject = new JSONObject(userDataDecrypt);
-                        prefManager.setDistrictCode(String.valueOf(jsonObject.get(AppConstant.DISTRICT_CODE)));
-                        prefManager.setBlockCode(String.valueOf(jsonObject.get(AppConstant.BLOCK_CODE)));
-                        prefManager.setPvCode(String.valueOf(jsonObject.get(AppConstant.PV_CODE)));
-                        prefManager.setDistrictName(String.valueOf(jsonObject.get(AppConstant.DISTRICT_NAME)));
-                        prefManager.setBlockName(String.valueOf(jsonObject.get(AppConstant.BLOCK_NAME)));
-                        prefManager.setPvName(String.valueOf(jsonObject.get(AppConstant.PV_NAME)));
-                        prefManager.setLevels(String.valueOf( jsonObject.get(AppConstant.LEVELS)));
-                        Log.d("userdata", "" + prefManager.getDistrictCode()+prefManager.getBlockCode()+prefManager.getPvCode()+prefManager.getDistrictName()+prefManager.getBlockName()+prefManager.getPvName()+prefManager.getLevels());
+                        prefManager.setDistrictCode(jsonObject.get(AppConstant.DISTRICT_CODE));
+                        prefManager.setBlockCode(jsonObject.get(AppConstant.BLOCK_CODE));
+                        prefManager.setPvCode(jsonObject.get(AppConstant.PV_CODE));
+                        prefManager.setDistrictName(jsonObject.get(AppConstant.DISTRICT_NAME));
+                        prefManager.setBlockName(jsonObject.get(AppConstant.BLOCK_NAME));
+                        prefManager.setPvName(jsonObject.get(AppConstant.PV_NAME));
+                        prefManager.setLevels(jsonObject.get(AppConstant.LEVELS));
+                        Log.d("userdata", "" + prefManager.getDistrictCode() + prefManager.getBlockCode() + prefManager.getPvCode() + prefManager.getDistrictName() + prefManager.getBlockName() + prefManager.getPvName() + prefManager.getLevels());
                         prefManager.setUserPassKey(decryptedKey);
-                        String authKey = Utils.encrypt(prefManager.getUserPassKey(), getResources().getString(R.string.init_vector), jsonParams().toString().replaceAll(" ", "").replaceAll(",", ""));
-                        Log.d("auth",""+authKey);
-                        prefManager.setUserAuthKey(authKey);
                         showHomeScreen();
                     } else {
                         if (response.equals("LOGIN_FAILED")) {
@@ -224,27 +241,6 @@ public class LoginScreen extends AppCompatActivity implements View.OnClickListen
         } catch (JSONException e) {
             e.printStackTrace();
         }
-    }
-
-    public ArrayList<String> blockListParams() {
-        ArrayList<String> arrli = new ArrayList<String>();
-        arrli.add("\"");
-        arrli.add(AppConstant.KEY_SERVICE_ID);
-        arrli.add(":");
-        arrli.add(AppConstant.BLOCK_LIST_ALL);
-        arrli.add("\"");
-        //traversing elements of ArrayList object
-
-        Log.d("paarams", "" + arrli);
-        return arrli;
-
-    }
-
-    public JSONObject jsonParams() throws JSONException {
-        JSONObject dataSet = new JSONObject();
-        dataSet.put(AppConstant.KEY_SERVICE_ID, AppConstant.BLOCK_LIST_ALL);
-        Log.d("object", "" + dataSet);
-        return dataSet;
     }
 
 

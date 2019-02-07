@@ -10,8 +10,11 @@ public class UrlGenerator {
         return "https://www.tnrd.gov.in/project/webservices_forms/login_service/login_services.php";
     }
 
-    public static String getBlockListUrl() {
+    public static String getServicesListUrl() {
         return "https://www.tnrd.gov.in/project/webservices_forms/master_services/master_services.php";
     }
 
+    public static String getInspectionServicesListUrl() {
+        return "https://www.tnrd.gov.in/project/webservices_forms/inspection/inspection_services.php";
+    }
 }

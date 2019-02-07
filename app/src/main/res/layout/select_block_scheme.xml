@@ -60,98 +60,106 @@
                 android:orientation="horizontal">
 
 
-                    <CheckBox
-                        android:id="@+id/high_value_projects"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentStart="true"
-                        android:layout_centerInParent="true"
-                        android:layout_marginLeft="20dp"
-                        android:checked="true"
-                        android:gravity="center"
-                        android:text="High Value Projects Only"
-                        android:textColor="@android:color/black"
-                        android:textSize="13sp" />
-
-                    <CheckBox
-                        android:id="@+id/all_projects"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentEnd="true"
-                        android:layout_centerInParent="true"
-                        android:layout_marginRight="20dp"
-                        android:gravity="center"
-                        android:text="All Projects"
-                        android:textColor="@android:color/black"
-                        android:textSize="13sp" />
-
-
-            </RelativeLayout>
-
-
-            <com.nic.RuralInspection.Support.MyCustomTextView
-                android:id="@+id/tv_create_alert_type_title"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/margin_left_20dp"
-                android:layout_marginRight="@dimen/margin_left_20dp"
-                android:layout_marginTop="@dimen/padding"
-                android:text="Select Block"
-                android:textColor="@android:color/black"
-                android:textSize="@dimen/_15sdp"
-                android:visibility="visible"
-                customfontdemo:fontName="@string/font_circular_bold" />
-
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/header"
-                android:layout_marginLeft="@dimen/margin_left_20dp"
-                android:layout_marginRight="@dimen/margin_left_20dp"
-                android:layout_marginTop="@dimen/padding"
-                android:background="@drawable/rectangle_box"
-                android:orientation="vertical"
-                android:visibility="visible">
-
-                <com.nic.RuralInspection.Support.MyCustomTextView
-
+                <CheckBox
+                    android:id="@+id/high_value_projects"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentStart="true"
                     android:layout_centerInParent="true"
-                    android:layout_marginLeft="15dp"
-
+                    android:layout_marginLeft="20dp"
+                    android:checked="true"
+                    android:gravity="center"
+                    android:text="High Value Projects Only"
                     android:textColor="@android:color/black"
-                    android:textSize="@dimen/_15sdp"
-                    android:visibility="visible"
-                    customfontdemo:fontName="@string/font_normal" />
+                    android:textSize="13sp" />
 
-                <Spinner
-                    android:id="@+id/block"
-                    android:layout_width="fill_parent"
+                <CheckBox
+                    android:id="@+id/all_projects"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentEnd="true"
                     android:layout_centerInParent="true"
-                    android:layout_marginLeft="10dp"
-                    android:layout_marginRight="10dp"
-                    android:gravity="center" />
+                    android:layout_marginRight="20dp"
+                    android:gravity="center"
+                    android:text="All Projects"
+                    android:textColor="@android:color/black"
+                    android:textSize="13sp" />
+
 
             </RelativeLayout>
 
-            <CheckBox
-                android:id="@+id/all_block"
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:id="@+id/block_layout"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="start"
-                android:layout_marginLeft="@dimen/margin_left_20dp"
-                android:layout_marginRight="@dimen/margin_left_20dp"
-                android:layout_marginTop="@dimen/padding"
+                android:orientation="vertical">
+
+                <com.nic.RuralInspection.Support.MyCustomTextView
+                    android:id="@+id/tv_create_alert_type_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/margin_left_20dp"
+                    android:layout_marginRight="@dimen/margin_left_20dp"
+                    android:layout_marginTop="@dimen/padding"
+                    android:text="Select Block"
+                    android:textColor="@android:color/black"
+                    android:textSize="@dimen/_15sdp"
+                    android:visibility="visible"
+                    customfontdemo:fontName="@string/font_circular_bold" />
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/header"
+                    android:layout_marginLeft="@dimen/margin_left_20dp"
+                    android:layout_marginRight="@dimen/margin_left_20dp"
+                    android:layout_marginTop="@dimen/padding"
+                    android:background="@drawable/rectangle_box"
+                    android:orientation="vertical"
+                    android:visibility="visible">
+
+                    <com.nic.RuralInspection.Support.MyCustomTextView
+
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentStart="true"
+                        android:layout_centerInParent="true"
+                        android:layout_marginLeft="15dp"
+
+                        android:textColor="@android:color/black"
+                        android:textSize="@dimen/_15sdp"
+                        android:visibility="visible"
+                        customfontdemo:fontName="@string/font_normal" />
+
+                    <Spinner
+                        android:id="@+id/block"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
+                        android:layout_centerInParent="true"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginRight="10dp"
+                        android:gravity="center" />
+
+                </RelativeLayout>
+
+                <CheckBox
+                    android:id="@+id/all_block"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="start"
+                    android:layout_marginLeft="@dimen/margin_left_20dp"
+                    android:layout_marginRight="@dimen/margin_left_20dp"
+                    android:layout_marginTop="@dimen/padding"
 
 
-                android:gravity="center"
-                android:text="All Block"
+                    android:gravity="center"
+                    android:text="All Block"
 
-                android:textColor="@android:color/black"
-                android:textSize="13sp" />
+                    android:textColor="@android:color/black"
+                    android:textSize="13sp" />
+
+
+            </LinearLayout>
 
             <com.nic.RuralInspection.Support.MyCustomTextView
                 android:id="@+id/alert_severity_title"

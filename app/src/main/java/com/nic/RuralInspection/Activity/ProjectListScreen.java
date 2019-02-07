@@ -20,7 +20,7 @@ import android.widget.SearchView;
 
 import com.android.volley.VolleyError;
 import com.nic.RuralInspection.Adapter.ProjectListAdapter;
-import com.nic.RuralInspection.Model.ProjectListValue;
+import com.nic.RuralInspection.Model.BlockListValue;
 import com.nic.RuralInspection.R;
 import com.nic.RuralInspection.api.Api;
 import com.nic.RuralInspection.api.ServerResponse;
@@ -34,7 +34,7 @@ import java.util.List;
 
 public class ProjectListScreen extends AppCompatActivity implements View.OnClickListener, Api.ServerResponseListener, ProjectListAdapter.ProjectsAdapterListener {
     private RecyclerView recyclerView;
-    private List<ProjectListValue> projectListValues;
+    private List<BlockListValue> projectListValues;
     private ProjectListAdapter mAdapter;
     private ImageView back_img;
     private NestedScrollView scrollView;
@@ -66,6 +66,7 @@ public class ProjectListScreen extends AppCompatActivity implements View.OnClick
         recyclerView.setHasFixedSize(true);
         recyclerView.setNestedScrollingEnabled(false);
         recyclerView.setAdapter(mAdapter);
+        recyclerView.setFocusable(false);
 //        whiteNotificationBar(recyclerView);
 
 
@@ -164,7 +165,7 @@ public class ProjectListScreen extends AppCompatActivity implements View.OnClick
     }
 
     @Override
-    public void setProjectList(ProjectListValue projectList) {
+    public void setProjectList(BlockListValue projectList) {
 
     }
 }

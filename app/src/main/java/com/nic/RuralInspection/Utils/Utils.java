@@ -35,6 +35,7 @@ import com.nic.RuralInspection.BuildConfig;
 import com.nic.RuralInspection.R;
 import com.nic.RuralInspection.Support.MyCustomTextView;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -43,10 +44,12 @@ import java.io.FileOutputStream;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.sql.Array;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -60,6 +63,7 @@ import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 
 import com.nic.RuralInspection.constant.AppConstant;
+import com.nic.RuralInspection.session.PrefManager;
 
 
 public class Utils {
@@ -74,6 +78,7 @@ public class Utils {
     private static final int DAY_MILLIS = 24 * HOUR_MILLIS;
     private static String CIPHER_NAME = "AES/CBC/PKCS5PADDING";
     private static int CIPHER_KEY_LEN = 16; //128 bits
+    private static PrefManager prefManager;
 
     private static void initializeSharedPreference() {
         sharedPreferences = NICApplication.getGlobalContext()
@@ -1002,13 +1007,13 @@ public class Utils {
             IvParameterSpec ivSpec = new IvParameterSpec(iv.getBytes("UTF-8"));
             SecretKeySpec secretKey = new SecretKeySpec(fixKey(key).getBytes("UTF-8"), "AES");
 
-            Cipher cipher = Cipher.getInstance( CIPHER_NAME);
+            Cipher cipher = Cipher.getInstance(CIPHER_NAME);
             cipher.init(Cipher.ENCRYPT_MODE, secretKey, ivSpec);
 
             byte[] encryptedData = cipher.doFinal((data.getBytes()));
 
-            String encryptedDataInBase64 = android.util.Base64.encodeToString(encryptedData,0);
-            String ivInBase64 = android.util.Base64.encodeToString(iv.getBytes("UTF-8"),0);
+            String encryptedDataInBase64 = android.util.Base64.encodeToString(encryptedData, 0);
+            String ivInBase64 = android.util.Base64.encodeToString(iv.getBytes("UTF-8"), 0);
 
             return encryptedDataInBase64 + ":" + ivInBase64;
 
@@ -1032,7 +1037,7 @@ public class Utils {
 
         }
 
-        if (key.length() >  CIPHER_KEY_LEN) {
+        if (key.length() > CIPHER_KEY_LEN) {
             return key.substring(0, CIPHER_KEY_LEN); //truncate to 16 bytes
         }
 
@@ -1048,20 +1053,19 @@ public class Utils {
      */
 
 
-
     public static String decrypt(String key, String data) {
 
         try {
             String[] parts = data.split(":");
 
-            IvParameterSpec iv = new IvParameterSpec(android.util.Base64.decode(parts[1],1));
+            IvParameterSpec iv = new IvParameterSpec(android.util.Base64.decode(parts[1], 1));
             // System.out.println(fixKey(iv));
             SecretKeySpec secretKey = new SecretKeySpec(fixKey(key).getBytes("UTF-8"), "AES");
 
-            Cipher cipher = Cipher.getInstance( CIPHER_NAME);
+            Cipher cipher = Cipher.getInstance(CIPHER_NAME);
             cipher.init(Cipher.DECRYPT_MODE, secretKey, iv);
 
-            byte[] decodedEncryptedData = android.util.Base64. decode(parts[0],1);
+            byte[] decodedEncryptedData = android.util.Base64.decode(parts[0], 1);
 
             byte[] original = cipher.doFinal(decodedEncryptedData);
 
@@ -1070,11 +1074,126 @@ public class Utils {
             throw new RuntimeException(ex);
         }
     }
+
     public static JSONObject serviceListJsonParams() throws JSONException {
         JSONObject dataSet = new JSONObject();
         dataSet.put(AppConstant.KEY_SERVICE_ID, AppConstant.KEY_SERVICE_LIST);
+        Log.d("serviceList", "" + dataSet);
+        return dataSet;
+    }
+
+    public static JSONObject inspectionServiceListJsonParams() throws JSONException {
+        JSONObject dataSet = new JSONObject();
+        dataSet.put(AppConstant.KEY_SERVICE_ID, AppConstant.KEY_INSPECTION_LIST);
+        Log.d("inspectionList", "" + dataSet);
+        return dataSet;
+    }
+
+
+    public static JSONObject districtListJsonParams() throws JSONException {
+        JSONObject dataSet = new JSONObject();
+        dataSet.put(AppConstant.KEY_SERVICE_ID, AppConstant.KEY_DISTRICT_LIST_ALL);
+        Log.d("districtList", "" + dataSet);
+        return dataSet;
+    }
+
+
+    public static JSONObject blockListJsonParams() throws JSONException {
+        JSONObject dataSet = new JSONObject();
+        dataSet.put(AppConstant.KEY_SERVICE_ID, AppConstant.KEY_BLOCK_LIST_ALL);
+        Log.d("blockList", "" + dataSet);
+        return dataSet;
+    }
+
+
+    public static JSONObject  blockListDistrictWiseJsonParams(Activity activity) throws JSONException {
+        prefManager = new PrefManager(activity);
+        JSONObject dataSet = new JSONObject();
+        dataSet.put(AppConstant.KEY_SERVICE_ID, AppConstant.KEY_BLOCK_LIST_DISTRICT_WISE);
+//        JSONArray jsonArray = new JSONArray();
+//        jsonArray.put(prefManager.getDistrictCode());
+        dataSet.put(AppConstant.DISTRICT_CODE, prefManager.getDistrictCode());
+        Log.d("blockListDistrictWise", "" + dataSet);
+        return dataSet;
+    }
+
+
+    public static JSONObject workListDistrictFinYearWiseJsonParams(Activity activity) throws JSONException {
+        prefManager = new PrefManager(activity);
+        JSONObject dataSet = new JSONObject();
+        dataSet.put(AppConstant.KEY_SERVICE_ID, AppConstant.KEY_WORK_LIST_DISTRICT_FINYEAR_WISE);
+        dataSet.put(AppConstant.DISTRICT_CODE, prefManager.getDistrictCode());
+        dataSet.put(AppConstant.FINANCIAL_YEAR, prefManager.getKeySpinnerSelectedFinyear());
+        Log.d("WorkListDistFinYearWise", "" + dataSet);
+        return dataSet;
+    }
+
+
+    public static JSONObject villageListDistrictWiseJsonParams() throws JSONException {
+        JSONObject dataSet = new JSONObject();
+        dataSet.put(AppConstant.KEY_SERVICE_ID, AppConstant.KEY_VILLAGE_LIST_DISTRICT_WISE);
+        Log.d("villageListDistrictWise", "" + dataSet);
+        return dataSet;
+    }
+
+
+    public static JSONObject villageListDistrictBlockWiseJsonParams() throws JSONException {
+        JSONObject dataSet = new JSONObject();
+        dataSet.put(AppConstant.KEY_SERVICE_ID, AppConstant.KEY_VILLAGE_LIST_DISTRICT_BLOCK_WISE);
+        Log.d("villageListDistBlock", "" + dataSet);
+        return dataSet;
+    }
+
+
+    public static JSONObject habitationListDistrictWiseJsonParams() throws JSONException {
+        JSONObject dataSet = new JSONObject();
+        dataSet.put(AppConstant.KEY_SERVICE_ID, AppConstant.KEY_HABITATION_LIST_DISTRICT_WISE);
+        Log.d("habitationListDist", "" + dataSet);
+        return dataSet;
+    }
+
+
+    public static JSONObject habitationListDistrictBlockWiseJsonParams() throws JSONException {
+        JSONObject dataSet = new JSONObject();
+        dataSet.put(AppConstant.KEY_SERVICE_ID, AppConstant.KEY_HABITATION_LIST_DISTRICT_BLOCK_WISE);
+        Log.d("habitListDistBloc", "" + dataSet);
+        return dataSet;
+    }
+
+    public static JSONObject habitationListDistrictBlockVillageWiseJsonParams() throws JSONException {
+        JSONObject dataSet = new JSONObject();
+        dataSet.put(AppConstant.KEY_SERVICE_ID, AppConstant.KEY_HABITATION_LIST_DISTRICT_BLOCK_VILLAGE_WISE);
         Log.d("object", "" + dataSet);
         return dataSet;
     }
 
+    public static JSONObject workTypeStageLinkJsonParams() throws JSONException {
+        JSONObject dataSet = new JSONObject();
+        dataSet.put(AppConstant.KEY_SERVICE_ID, AppConstant.KEY_WORK_TYPE_STAGE_LINK);
+        Log.d("object", "" + dataSet);
+        return dataSet;
+    }
+
+    public static JSONObject schemeListAllJsonParams() throws JSONException {
+        JSONObject dataSet = new JSONObject();
+        dataSet.put(AppConstant.KEY_SERVICE_ID, AppConstant.KEY_SCHEME_LIST_ALL);
+        Log.d("object", "" + dataSet);
+        return dataSet;
+    }
+
+    public static JSONObject schemeListDistrictWiseJsonParams(Activity activity) throws JSONException {
+        prefManager = new PrefManager(activity);
+        JSONObject dataSet = new JSONObject();
+        dataSet.put(AppConstant.KEY_SERVICE_ID, AppConstant.KEY_SCHEME_LIST_DISTRICT_WISE);
+        dataSet.put(AppConstant.DISTRICT_CODE,prefManager.getDistrictCode());
+        Log.d("object", "" + dataSet);
+        return dataSet;
+    }
+
+    public static JSONObject schemeFinyearListJsonParams() throws JSONException {
+        JSONObject dataSet = new JSONObject();
+        dataSet.put(AppConstant.KEY_SERVICE_ID, AppConstant.KEY_SCHEME_FINYEAR_LIST);
+        Log.d("object", "" + dataSet);
+        return dataSet;
+    }
 }

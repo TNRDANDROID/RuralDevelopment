@@ -8,6 +8,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Typeface;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
@@ -26,6 +27,7 @@ import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.Toast;
 
+import com.android.volley.VolleyError;
 import com.karumi.dexter.Dexter;
 import com.karumi.dexter.MultiplePermissionsReport;
 import com.karumi.dexter.PermissionToken;
@@ -36,7 +38,10 @@ import com.nic.RuralInspection.Support.MyCustomTextView;
 import com.nic.RuralInspection.Utils.CameraUtils;
 import com.nic.RuralInspection.Utils.FontCache;
 import com.nic.RuralInspection.Utils.Utils;
+import com.nic.RuralInspection.api.Api;
+import com.nic.RuralInspection.api.ServerResponse;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -45,7 +50,7 @@ import java.util.List;
  * Created by NIC on 23-01-2019.
  */
 
-public class AddInspectionReportScreen extends AppCompatActivity implements View.OnClickListener {
+public class AddInspectionReportScreen extends AppCompatActivity implements View.OnClickListener , Api.ServerResponseListener {
 
     private ScrollView scrollView;
     private MyCustomTextView take_photo;
@@ -129,6 +134,21 @@ public class AddInspectionReportScreen extends AppCompatActivity implements View
         done.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                int childCount = mobileNumberLayout.getChildCount();
+                for (int i = 0; i < childCount; i++) {
+                    View vv = mobileNumberLayout.getChildAt(i);
+                    EditText myEditTextView = (EditText) vv.findViewById(R.id.description);
+
+// ImageView imageView = (ImageView) findViewById(R.id.image_view);
+// Bitmap bitmap = ((BitmapDrawable)imageView.getDrawable()).getBitmap();
+// ByteArrayOutputStream baos = new ByteArrayOutputStream();
+// bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+// byte[] imageInByte = baos.toByteArray();
+
+
+                    String str=myEditTextView.getText().toString();
+                    Toast.makeText(getApplicationContext(),str,Toast.LENGTH_LONG).show();
+                }
                 dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
                 dialog.dismiss();
                 focusOnView(scrollView, action_tv);
@@ -465,4 +485,13 @@ public class AddInspectionReportScreen extends AppCompatActivity implements View
 
     }
 
+    @Override
+    public void OnMyResponse(ServerResponse serverResponse) {
+
+    }
+
+    @Override
+    public void OnError(VolleyError volleyError) {
+
+    }
 }
