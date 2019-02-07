@@ -3,7 +3,9 @@ package com.nic.RuralInspection.Adapter;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,10 +13,14 @@ import android.widget.Filter;
 import android.widget.Filterable;
 
 import com.nic.RuralInspection.Activity.AddInspectionReportScreen;
+import com.nic.RuralInspection.Activity.LoginScreen;
 import com.nic.RuralInspection.Activity.ViewInspectionReportScreen;
+import com.nic.RuralInspection.DataBase.DBHelper;
 import com.nic.RuralInspection.Model.BlockListValue;
 import com.nic.RuralInspection.R;
 import com.nic.RuralInspection.Support.MyCustomTextView;
+import com.nic.RuralInspection.constant.AppConstant;
+import com.nic.RuralInspection.session.PrefManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,12 +34,12 @@ public class ProjectListAdapter extends RecyclerView.Adapter<ProjectListAdapter.
     private List<BlockListValue> projectList;
     private List<BlockListValue> projectListFiltered;
     private ProjectsAdapterListener listener;
+    private PrefManager prefManager;
 
     @Override
     public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.project_list, parent, false);
         return new MyViewHolder(itemView);
-
     }
 
 
@@ -57,6 +63,21 @@ public class ProjectListAdapter extends RecyclerView.Adapter<ProjectListAdapter.
 //                    listener.setProjectList(projectListFiltered.get(getAdapterPosition()));
 //                }
 //            });
+
+            Cursor ProjectValues = getRawEvents("SELECT * FROM " + DBHelper.WORK_LIST_DISTRICT_FINYEAR_WISE, null);
+            StringBuffer stringBuffer = new StringBuffer();
+
+            int i = 1;
+
+            while (ProjectValues.moveToNext()) {
+                BlockListValue projectvalues = new BlockListValue();
+                String workname = ProjectValues.getString(ProjectValues.getColumnIndexOrThrow(AppConstant.WORK_NAME));
+                String asAmount = ProjectValues.getString(ProjectValues.getColumnIndexOrThrow(AppConstant.AS_AMOUNT));
+                projectvalues.setWorkName(workname);
+                projectvalues.setAsAmount(asAmount);
+                projectList.add(projectvalues);
+                i++;
+            }
         }
 
 
@@ -81,6 +102,7 @@ public class ProjectListAdapter extends RecyclerView.Adapter<ProjectListAdapter.
         this.listener = listener;
         this.projectList = projectList;
         this.projectListFiltered = projectList;
+        prefManager = new PrefManager(context);
     }
 
     public void viewInspectionReport() {
@@ -103,12 +125,15 @@ public class ProjectListAdapter extends RecyclerView.Adapter<ProjectListAdapter.
 
     @Override
     public void onBindViewHolder(ProjectListAdapter.MyViewHolder holder, int position) {
-
     }
 
     @Override
     public int getItemCount() {
         return projectList.size();
+    }
+
+    public void  loadDBValues(){
+
     }
 
     @Override
@@ -151,5 +176,8 @@ public class ProjectListAdapter extends RecyclerView.Adapter<ProjectListAdapter.
     public interface ProjectsAdapterListener {
         void setProjectList(BlockListValue projectList);
     }
-
+    public Cursor getRawEvents(String sql, String string) {
+        Cursor cursor = LoginScreen.db.rawQuery(sql, null);
+        return cursor;
+    }
 }

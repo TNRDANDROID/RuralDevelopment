@@ -39,8 +39,8 @@ public class PrefManager {
     private static final String KEY_PV_NAME = "Pv_Name";
     private static final String KEY_LEVELS = "Levels";
     private static final String SERVICE_AUTH_KEY = "service_auth_key";
-    private static final String KEY_SPINNER_SELECTED_BLOCKNAME = "spinner_selected_blockname";
-    private static final String KEY_SPINNER_SELECTED_SCHEMENAME = "spinner_selected_schemename";
+    private static final String KEY_SPINNER_SELECTED_BLOCKCODE = "spinner_selected_block_code";
+    private static final String KEY_SPINNER_SELECTED_SCHEME_SEQ_ID = "spinner_selected_scheme_seq_Id";
     private static final String KEY_SPINNER_SELECTED_FINYEAR = "spinner_selected_finyear";
 
 
@@ -185,22 +185,22 @@ public class PrefManager {
     }
 
 
-    public void setKeySpinnerSelectedBlockname(String userName) {
-        editor.putString(KEY_SPINNER_SELECTED_BLOCKNAME, userName);
+    public void setKeySpinnerSelectedBlockcode(String userName) {
+        editor.putString(KEY_SPINNER_SELECTED_BLOCKCODE, userName);
         editor.commit();
     }
 
-    public String   getKeySpinnerSelectedBlockname() {
-        return pref.getString(KEY_SPINNER_SELECTED_BLOCKNAME, null);
+    public String   getKeySpinnerSelectedBlockcode() {
+        return pref.getString(KEY_SPINNER_SELECTED_BLOCKCODE, null);
     }
 
-    public void setKeySpinnerSelectedSchemename(String userName) {
-        editor.putString(KEY_SPINNER_SELECTED_SCHEMENAME, userName);
+    public void setKeySpinnerSelectedSchemeSeqId(String userName) {
+        editor.putString(KEY_SPINNER_SELECTED_SCHEME_SEQ_ID, userName);
         editor.commit();
     }
 
-    public String   getKeySpinnerSelectedSchemename() {
-        return pref.getString(KEY_SPINNER_SELECTED_SCHEMENAME, null);
+    public String   getKeySpinnerSelectedSchemeSeqId() {
+        return pref.getString(KEY_SPINNER_SELECTED_SCHEME_SEQ_ID, null);
     }
 
     public void setKeySpinnerSelectedFinyear(String userName) {

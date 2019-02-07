@@ -384,11 +384,11 @@ public class SelectBlockSchemeScreen extends AppCompatActivity implements View.O
         if (!"Select Block".equalsIgnoreCase(Block.get(sp_block.getSelectedItemPosition()).getBlockName()) || (all_block.isChecked())) {
             if (!"Select Scheme".equalsIgnoreCase(Scheme.get(sp_scheme.getSelectedItemPosition()).getSchemeName() )||( all_scheme.isChecked())) {
                 if (!"Select Financial year".equalsIgnoreCase(FinYearList.get(sp_financialYear.getSelectedItemPosition()).getFinancialYear())) {
-                    String blockName = Block.get(sp_block.getSelectedItemPosition()).getBlockName();
-                    String schemeName = Scheme.get(sp_scheme.getSelectedItemPosition()).getSchemeName();
+                    String blockCode = Block.get(sp_block.getSelectedItemPosition()).getBlockCode();
+                    String sequentialID = Scheme.get(sp_scheme.getSelectedItemPosition()).getSchemeSequentialID();;
                     String financialYear = FinYearList.get(sp_financialYear.getSelectedItemPosition()).getFinancialYear();
-                    prefManager.setKeySpinnerSelectedBlockname(blockName);
-                    prefManager.setKeySpinnerSelectedSchemename(schemeName);
+                    prefManager.setKeySpinnerSelectedBlockcode(blockCode);
+                    prefManager.setKeySpinnerSelectedSchemeSeqId(sequentialID);
                     prefManager.setKeySpinnerSelectedFinyear(financialYear);
                     getWorkListDistrictFinYearWiseService();
                 } else {
