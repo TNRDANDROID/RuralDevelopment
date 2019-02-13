@@ -18,6 +18,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -38,6 +39,8 @@ import com.nic.RuralInspection.Support.MyCustomTextView;
 import com.nic.RuralInspection.Utils.CameraUtils;
 import com.nic.RuralInspection.Utils.FontCache;
 import com.nic.RuralInspection.Utils.Utils;
+import com.nic.RuralInspection.constant.AppConstant;
+import com.nic.RuralInspection.session.PrefManager;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -77,6 +80,10 @@ public class ViewInspectionReportScreen extends AppCompatActivity implements Vie
     public static final String VIDEO_EXTENSION = "mp4";
 
     private static String imageStoragePath;
+    private ImageView back_img;
+    private MyCustomTextView district_tv,scheme_name_tv,block_name_tv,fin_year_tv;
+    private MyCustomTextView projectName, amountTv, levelTv;
+    PrefManager prefManager;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -85,12 +92,35 @@ public class ViewInspectionReportScreen extends AppCompatActivity implements Vie
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-//        intializeUI();
+       intializeUI();
     }
 
     public void intializeUI() {
+        prefManager = new PrefManager(this);
+
+        district_tv = (MyCustomTextView) findViewById(R.id.district_tv);
+        scheme_name_tv = (MyCustomTextView) findViewById(R.id.scheme_name_tv);
+        block_name_tv = (MyCustomTextView) findViewById(R.id.block_name_tv);
+        fin_year_tv = (MyCustomTextView) findViewById(R.id.fin_year_tv);
+
+        projectName = (MyCustomTextView) findViewById(R.id.project_title_tv);
+        amountTv = (MyCustomTextView) findViewById(R.id.amount_tv);
+        levelTv = (MyCustomTextView) findViewById(R.id.level_tv);
+
         scrollView = (ScrollView) findViewById(R.id.scroll_view);
         action_tv = (MyCustomTextView) findViewById(R.id.action_tv);
+        back_img = (ImageView) findViewById(R.id.backimg);
+
+        district_tv.setText(prefManager.getDistrictName());
+        scheme_name_tv.setText(prefManager.getSchemeName());
+        block_name_tv.setText(prefManager.getBlockName());
+        fin_year_tv.setText(prefManager.getFinancialyearName());
+
+        projectName.setText(getIntent().getStringExtra(AppConstant.WORK_NAME));
+        amountTv.setText(getIntent().getStringExtra(AppConstant.AS_AMOUNT));
+        levelTv.setText(getIntent().getStringExtra(AppConstant.WORK_SATGE_NAME));
+
+        back_img.setOnClickListener(this);
         action_tv.setOnClickListener(this);
     }
 
@@ -100,167 +130,9 @@ public class ViewInspectionReportScreen extends AppCompatActivity implements Vie
             case R.id.action_tv:
 //                imageWithDescription(action_tv, "mobile", scrollView);
                 break;
-        }
-    }
-
-    public void imageWithDescription(final MyCustomTextView action_tv, final String type, final ScrollView scrollView) {
-
-
-        final Dialog dialog = new Dialog(this,
-                R.style.AppTheme);
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        dialog.setContentView(R.layout.add_photo);
-        dialog.setCanceledOnTouchOutside(false);
-        dialog.setCancelable(false);
-        dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
-        dialog.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
-        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(0));
-        WindowManager.LayoutParams lp = dialog.getWindow().getAttributes();
-        lp.dimAmount = 0.7f;
-        dialog.getWindow().getAttributes().windowAnimations = R.style.DialogAnimation;
-        dialog.show();
-
-
-        final LinearLayout mobileNumberLayout = (LinearLayout) dialog.findViewById(R.id.mobile_number_layout);
-
-        Button done = (Button) dialog.findViewById(R.id.btn_save);
-        done.setGravity(Gravity.CENTER);
-        done.setVisibility(View.VISIBLE);
-        done.setTypeface(FontCache.getInstance(this).getFont(FontCache.Font.HEAVY));
-
-
-        done.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
-                dialog.dismiss();
-                focusOnView(scrollView, action_tv);
-            }
-        });
-        final String values = action_tv.getText().toString().replace("NA", "");
-        Button btnAddMobile = (Button) dialog.findViewById(R.id.btn_add);
-        btnAddMobile.setTypeface(FontCache.getInstance(this).getFont(FontCache.Font.MEDIUM));
-//        if ("Mobile".equalsIgnoreCase(type)) {
-//            toolBarTitle.setText("Enter Mobile");
-//            tv_create_asset_title.setText("You can enter upto 5 Mobile numbers");
-//            btnAddMobile.setText("Add Mobile");
-//        } else {
-//            btnAddMobile.setText("Add Email");
-//            toolBarTitle.setText("Enter Email");
-//            tv_create_asset_title.setText("You can enter upto 5 Emails");
-//        }
-
-        viewArrayList.clear();
-        btnAddMobile.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (viewArrayList.size() < 10) {
-                    dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
-                    updateView(ViewInspectionReportScreen.this, mobileNumberLayout, "", type);
-                } else {
-                    if ("Mobile".equalsIgnoreCase(type))
-                        Utils.showAlert(ViewInspectionReportScreen.this, "You can add upto 5 mobile numbers");
-                    else
-                        Utils.showAlert(ViewInspectionReportScreen.this, "You can add upto 5 emails");
-
-                }
-            }
-        });
-
-//        done.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                try {
-//                    scrollView.fullScroll(View.FOCUS_DOWN);
-//                    mobileList.clear();
-//                    int childCount = mobileNumberLayout.getChildCount();
-//                    for (int i = 0; i < childCount; i++) {
-//                        View vv = mobileNumberLayout.getChildAt(i);
-//                        MyEditTextView myEditTextView = (MyEditTextView) vv.findViewById(R.id.email_edit_text);
-//
-//                        String emailOrMobile = myEditTextView.getText().toString();
-//
-//                        if ("Email".equalsIgnoreCase(type)) {
-//                            if (emailOrMobile.length() > 0) {
-//                                if (Utils.isEmailValid(emailOrMobile) && !Utils.contains(mobileList, emailOrMobile)) {
-//                                    mobileList.add(emailOrMobile);
-//                                    isValidEmailOrMobile = true;
-//                                } else {
-//                                    isValidEmailOrMobile = false;
-//                                }
-//                            } else {
-//                                isValidEmailOrMobile = false;
-//                            }
-//                        }
-//                    }
-//
-//                    if (mobileList.size() > 0) {
-//                        if (isValidEmailOrMobile) {
-//                            dialog.dismiss();
-//                            mobileNumberTextView.setText(Utils.emailOrNumberValues(mobileList));
-//                        } else {
-//                            if ("Mobile".equalsIgnoreCase(type)) {
-//                                Utils.showAlert(activity, "Mobile Number can't be left blank or Mobile Number already exist!");
-//                            } else {
-//                                Utils.showAlert(activity, "Email field can't be left blank or Email already exist or Invalid Email Adderess!");
-//                            }
-//                        }
-//                    } else {
-//                        if ("Email".equalsIgnoreCase(type)) {
-//                            Utils.showAlert(activity, "Email field can't be left blank or Email already exist!");
-//                        } else {
-//                            Utils.showAlert(activity, "Mobile Number can't be left blank or Mobile Number already exist!");
-//                        }
-//                    }
-//
-//                    /*if (mobileList.size() >= 0) {
-//                        if(isValidEmailOrMobile){
-//                            dialog.dismiss();
-//                            mobileNumberTextView.setText(Utils.emailOrNumberValues(mobileList));
-//                        } else{
-//                            if ("Mobile".equalsIgnoreCase(type)) {
-//                                Utils.showAlert(activity, "Invalid Mobile Number!");
-//                            } else {
-//                                Utils.showAlert(activity, "Invalid Email Address!");
-//                            }
-//                        }
-//                    } else {
-//                        if ("Mobile".equalsIgnoreCase(type)) {
-//                            if(!isValidEmailOrMobile){
-//                                Utils.showAlert(activity, "Invalid Mobile Number!");
-//                            } else{
-//                                Utils.showAlert(activity, "Mobile Number can't be left blank or Mobile Number already exist!");
-//                            }
-//                        } else {
-//                            if(!isValidEmailOrMobile){
-//                                Utils.showAlert(activity, "Invalid Email Address!");
-//                            } else {
-//                                Utils.showAlert(activity, "Email field can't be left blank or Email already exist!");
-//                            }
-//                        }
-//                    }*/
-//                } catch (ArrayIndexOutOfBoundsException a) {
-//                    a.printStackTrace();
-//                }
-//
-//            }
-//        });
-
-        if (!values.isEmpty()) {
-            if (values.contains(",")) {
-                String[] mobileOrEmail = values.split(",");
-                for (int i = 0; i < mobileOrEmail.length; i++) {
-                    if (viewArrayList.size() < 5) {
-                        updateView(ViewInspectionReportScreen.this, mobileNumberLayout, mobileOrEmail[i], type);
-                    }
-                }
-            } else {
-                if (viewArrayList.size() < 5) {
-                    updateView(ViewInspectionReportScreen.this, mobileNumberLayout, values, type);
-                }
-            }
-        } else {
-            updateView(ViewInspectionReportScreen.this, mobileNumberLayout, values, type);
+            case R.id.backimg:
+                onBackPress();
+                break;
         }
     }
 
@@ -274,187 +146,10 @@ public class ViewInspectionReportScreen extends AppCompatActivity implements Vie
         });
     }
 
-    //Method for update single view based on email or mobile type
-    public View updateView(final Activity activity, final LinearLayout emailOrMobileLayout, final String values, final String type) {
-        final View hiddenInfo = activity.getLayoutInflater().inflate(R.layout.image_with_description, emailOrMobileLayout, false);
-        final ImageView imageView_close = (ImageView) hiddenInfo.findViewById(R.id.imageView_close);
-        imageView = (ImageView) hiddenInfo.findViewById(R.id.image_view);
-        final EditText myEditTextView = (EditText) hiddenInfo.findViewById(R.id.description);
-
-
-        Typeface typeFace = Typeface.createFromAsset(activity.getAssets(), "fonts/Avenir-Roman.ttf");
-
-        myEditTextView.setSelection(0);
-        if ("Mobile".equalsIgnoreCase(type)) {
-
-            if (!values.isEmpty()) {
-                if (values.length() > 0 && values.contains("-")) {
-                    String[] mobile = values.split("-");
-                    if (mobile.length == 2) {
-                        myEditTextView.setText(values.split("-")[1]);
-                        int countryCode = Integer.parseInt(values.split("-")[0]);
-
-                    }
-                } /*else {
-                    myEditTextView.setText(values);
-                }*/
-            }
-        }
-        imageView_close.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                try {
-                    if (viewArrayList.size() != 1) {
-                        ((LinearLayout) hiddenInfo.getParent()).removeView(hiddenInfo);
-                        viewArrayList.remove(hiddenInfo);
-                    }
-
-                } catch (IndexOutOfBoundsException a) {
-                    a.printStackTrace();
-                }
-            }
-        });
-        imageView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                if (CameraUtils.checkPermissions(ViewInspectionReportScreen.this)) {
-                    captureImage();
-                } else {
-                    requestCameraPermission(MEDIA_TYPE_IMAGE);
-                }
-
-
-            }
-        });
-        emailOrMobileLayout.addView(hiddenInfo);
-
-        View vv = emailOrMobileLayout.getChildAt(viewArrayList.size());
-        EditText myEditTextView1 = (EditText) vv.findViewById(R.id.description);
-        //myEditTextView1.setSelection(myEditTextView1.length());
-        myEditTextView1.requestFocus();
-        viewArrayList.add(hiddenInfo);
-        return hiddenInfo;
-    }
-
-    private void captureImage() {
-        Intent intent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
-
-        File file = CameraUtils.getOutputMediaFile(MEDIA_TYPE_IMAGE);
-        if (file != null) {
-            imageStoragePath = file.getAbsolutePath();
-        }
-
-        Uri fileUri = CameraUtils.getOutputMediaFileUri(this, file);
-
-        intent.putExtra(MediaStore.EXTRA_OUTPUT, fileUri);
-
-        // start the image capture Intent
-        startActivityForResult(intent, CAMERA_CAPTURE_IMAGE_REQUEST_CODE);
-    }
-
-
-    private void requestCameraPermission(final int type) {
-        Dexter.withActivity(ViewInspectionReportScreen.this)
-                .withPermissions(Manifest.permission.CAMERA,
-                        Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                .withListener(new MultiplePermissionsListener() {
-                    @Override
-                    public void onPermissionsChecked(MultiplePermissionsReport report) {
-                        if (report.areAllPermissionsGranted()) {
-
-                            if (type == MEDIA_TYPE_IMAGE) {
-                                // capture picture
-                                captureImage();
-                            } else {
-//                                captureVideo();
-                            }
-
-                        } else if (report.isAnyPermissionPermanentlyDenied()) {
-                            showPermissionsAlert();
-                        }
-                    }
-
-                    @Override
-                    public void onPermissionRationaleShouldBeShown(List<PermissionRequest> permissions, PermissionToken token) {
-                        token.continuePermissionRequest();
-                    }
-                }).check();
-    }
-
-
-    private void showPermissionsAlert() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(ViewInspectionReportScreen.this);
-        builder.setTitle("Permissions required!")
-                .setMessage("Camera needs few permissions to work properly. Grant them in settings.")
-                .setPositiveButton("GOTO SETTINGS", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        CameraUtils.openSettings(ViewInspectionReportScreen.this);
-                    }
-                })
-                .setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-
-                    }
-                }).show();
-    }
-
-    public void previewCapturedImage() {
-        try {
-            // hide video preview
-
-
-            Bitmap bitmap = CameraUtils.optimizeBitmap(BITMAP_SAMPLE_SIZE, imageStoragePath);
-
-            imageView.setImageBitmap(bitmap);
-
-        } catch (NullPointerException e) {
-            e.printStackTrace();
-        }
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        // if the result is capturing Image
-        if (requestCode == CAMERA_CAPTURE_IMAGE_REQUEST_CODE) {
-            if (resultCode == RESULT_OK) {
-                // Refreshing the gallery
-                CameraUtils.refreshGallery(getApplicationContext(), imageStoragePath);
-
-                // successfully captured the image
-                // display it in image view
-                previewCapturedImage();
-            } else if (resultCode == RESULT_CANCELED) {
-                // user cancelled Image capture
-                Toast.makeText(getApplicationContext(),
-                        "User cancelled image capture", Toast.LENGTH_SHORT)
-                        .show();
-            } else {
-                // failed to capture image
-                Toast.makeText(getApplicationContext(),
-                        "Sorry! Failed to capture image", Toast.LENGTH_SHORT)
-                        .show();
-            }
-        } else if (requestCode == CAMERA_CAPTURE_VIDEO_REQUEST_CODE) {
-            if (resultCode == RESULT_OK) {
-                // Refreshing the gallery
-                CameraUtils.refreshGallery(getApplicationContext(), imageStoragePath);
-
-                // video successfully recorded
-                // preview the recorded video
-//                previewVideo();
-            } else if (resultCode == RESULT_CANCELED) {
-                // user cancelled recording
-                Toast.makeText(getApplicationContext(),
-                        "User cancelled video recording", Toast.LENGTH_SHORT)
-                        .show();
-            } else {
-                // failed to record video
-                Toast.makeText(getApplicationContext(),
-                        "Sorry! Failed to record video", Toast.LENGTH_SHORT)
-                        .show();
-            }
-        }
+    public void onBackPress() {
+        super.onBackPressed();
+        setResult(Activity.RESULT_CANCELED);
+        overridePendingTransition(R.anim.slide_enter, R.anim.slide_exit);
     }
 
     @Override

@@ -60,8 +60,6 @@ public class ProjectListAdapter extends RecyclerView.Adapter<ProjectListAdapter.
             levelTv = (MyCustomTextView) itemView.findViewById(R.id.level_tv);
             viewReport = (MyCustomTextView) itemView.findViewById(R.id.view_inspection_report);
             addReport = (MyCustomTextView) itemView.findViewById(R.id.add_inspection_report);
-            viewReport.setOnClickListener(this);
-
         }
 
 
@@ -69,7 +67,7 @@ public class ProjectListAdapter extends RecyclerView.Adapter<ProjectListAdapter.
         public void onClick(View v) {
             switch (v.getId()) {
                 case R.id.view_inspection_report:
-                    viewInspectionReport();
+                   // viewInspectionReport();
                     break;
                 case R.id.add_inspection_report:
               // addInspectionReport();
@@ -83,10 +81,26 @@ public class ProjectListAdapter extends RecyclerView.Adapter<ProjectListAdapter.
 
 
 
-    public void viewInspectionReport() {
-        Intent intent = new Intent(context, ViewInspectionReportScreen.class);
+    public void viewInspectionReport(int position) {
+
+        String workid = projectListValues.get(position).getWorkID();
+        String workName = projectListValues.get(position).getWorkName();
+        String workGroupID = projectListValues.get(position).getWorkGroupID();
+        String workTypeID = projectListValues.get(position).getWorkTypeID();
+        String stageName = projectListValues.get(position).getWorkStageName();
+        String asAmount = projectListValues.get(position).getAsAmount();
+
         Activity activity = (Activity) context;
-        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        Intent intent = new Intent(context, ViewInspectionReportScreen.class);
+
+        intent.putExtra(AppConstant.WORK_ID,workid);
+        intent.putExtra(AppConstant.WORK_NAME,workName);
+        intent.putExtra(AppConstant.WORK_GROUP_ID,workGroupID);
+        intent.putExtra(AppConstant.WORK_TYPE_ID,workTypeID);
+        intent.putExtra(AppConstant.WORK_SATGE_NAME,stageName);
+        intent.putExtra(AppConstant.AS_AMOUNT,asAmount);
+
+        //intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         activity.startActivity(intent);
         activity.overridePendingTransition(R.anim.slide_in, R.anim.slide_out);
     }
@@ -101,8 +115,8 @@ public class ProjectListAdapter extends RecyclerView.Adapter<ProjectListAdapter.
         String asAmount = projectListValues.get(position).getAsAmount();
 
         Activity activity = (Activity) context;
-
         Intent intent = new Intent(context, AddInspectionReportScreen.class);
+
         intent.putExtra(AppConstant.WORK_ID,workid);
         intent.putExtra(AppConstant.WORK_NAME,workName);
         intent.putExtra(AppConstant.WORK_GROUP_ID,workGroupID);
@@ -127,6 +141,13 @@ public class ProjectListAdapter extends RecyclerView.Adapter<ProjectListAdapter.
             @Override
             public void onClick(View v) {
                 addInspectionReport(position);
+            }
+        });
+
+        holder.viewReport.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                viewInspectionReport(position);
             }
         });
 

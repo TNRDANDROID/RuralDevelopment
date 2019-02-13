@@ -170,8 +170,7 @@ public class LoginScreen extends AppCompatActivity implements View.OnClickListen
             //Utils.showAlert(this, getResources().getString(R.string.no_internet));
             AlertDialog.Builder ab = new AlertDialog.Builder(
                     LoginScreen.this);
-            ab.setMessage(Html
-                    .fromHtml("<font color=#A52A2A>Internet Connection is not avaliable..Please Turn ON Network Connection OR Continue With Off-line Mode..</font>"));
+            ab.setMessage("Internet Connection is not avaliable..Please Turn ON Network Connection OR Continue With Off-line Mode..");
             ab.setPositiveButton("Settings",
                     new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog,

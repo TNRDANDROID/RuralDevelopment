@@ -108,7 +108,7 @@ public class SelectBlockSchemeScreen extends AppCompatActivity implements View.O
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
                     all_projects.setChecked(false);
-                    Toast.makeText(SelectBlockSchemeScreen.this, "high value projects", Toast.LENGTH_SHORT).show();
+                   // Toast.makeText(SelectBlockSchemeScreen.this, "high value projects", Toast.LENGTH_SHORT).show();
                 } else {
                     all_projects.setChecked(true);
                 }
@@ -120,7 +120,7 @@ public class SelectBlockSchemeScreen extends AppCompatActivity implements View.O
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
                     high_value_projects.setChecked(false);
-                    Toast.makeText(SelectBlockSchemeScreen.this, "All projects", Toast.LENGTH_SHORT).show();
+                 //   Toast.makeText(SelectBlockSchemeScreen.this, "All projects", Toast.LENGTH_SHORT).show();
                 } else {
                     high_value_projects.setChecked(true);
                 }
@@ -135,7 +135,7 @@ public class SelectBlockSchemeScreen extends AppCompatActivity implements View.O
                     prefManager.setBlockName("All");
                 } else {
                     all_block.setChecked(false);
-                    pref_Block = arr_block[position];
+                    pref_Block = Block.get(position).getBlockName();
                     prefManager.setBlockName(pref_Block);
                 }
             }
@@ -165,7 +165,7 @@ public class SelectBlockSchemeScreen extends AppCompatActivity implements View.O
                     prefManager.setSchemeName("All");
                 } else {
                     all_scheme.setChecked(false);
-                    pref_Scheme = arr_scheme[position];
+                    pref_Scheme = Scheme.get(position).getSchemeName();
                     prefManager.setSchemeName(pref_Scheme);
                 }
             }
@@ -190,7 +190,7 @@ public class SelectBlockSchemeScreen extends AppCompatActivity implements View.O
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 if(position >= 1) {
-                    pref_finYear = arr_financialYear[position];
+                    pref_finYear = FinYearList.get(position).getFinancialYear();
                     prefManager.setFinancialyearName(pref_finYear);
                 }
             }
@@ -212,11 +212,8 @@ public class SelectBlockSchemeScreen extends AppCompatActivity implements View.O
                 break;
             case R.id.btn_save:
                 if (Utils.isOnline()) {
-                   // fetchBlockSchemeFinYearValueInDB();
                     getWorkListDistrictFinYearWiseService();
-                   // projectListScreen();
                 } else {
-                    //Utils.showAlert(this, getResources().getString(R.string.no_internet));
                     projectListScreen_offline();
                 }
 
@@ -239,7 +236,6 @@ public class SelectBlockSchemeScreen extends AppCompatActivity implements View.O
                 if (!"Select Financial year".equalsIgnoreCase(FinYearList.get(sp_financialYear.getSelectedItemPosition()).getFinancialYear())) {
                     String blockCode = Block.get(sp_block.getSelectedItemPosition()).getBlockCode();
                     String sequentialID = Scheme.get(sp_scheme.getSelectedItemPosition()).getSchemeSequentialID();
-                    String financialYear = FinYearList.get(sp_financialYear.getSelectedItemPosition()).getFinancialYear();
 
                     String highValueProject = null;
 
@@ -291,10 +287,6 @@ public class SelectBlockSchemeScreen extends AppCompatActivity implements View.O
     public void loadOfflineBlockListDBValues() {
 
         Cursor BlockList = getRawEvents("SELECT * FROM " + BLOCK_TABLE_NAME, null);
-
-        arr_block = new String[BlockList.getCount() + 1];
-        arr_block[0] = "Select Block";
-        int i = 1;
         Block.clear();
         BlockListValue blockListValue = new BlockListValue();
         blockListValue.setBlockName("Select Block");
@@ -310,20 +302,16 @@ public class SelectBlockSchemeScreen extends AppCompatActivity implements View.O
                     blockList.setBlockCode(blockCode);
                     blockList.setBlockName(blockName);
                     Block.add(blockList);
-                    arr_block[i] = blockList.getBlockName();
-                    i++;
                 }while (BlockList.moveToNext());
             }
         }
-        sp_block.setAdapter(new MyAdapter(SelectBlockSchemeScreen.this, R.layout.spinner_value,arr_block));
+        sp_block.setAdapter(new CommonAdapter(this,Block,"BlockList"));
     }
 
     public void loadOfflineSchemeListDBValues() {
 
         Cursor SchemeList = getRawEvents("SELECT * FROM " + DBHelper.SCHEME_TABLE_NAME, null);
-        arr_scheme = new String[SchemeList.getCount() + 1];
-        arr_scheme[0] = "Select Scheme";
-        int i = 1;
+
         Scheme.clear();
         BlockListValue schemeListValue = new BlockListValue();
         schemeListValue.setSchemeName("Select Scheme");
@@ -337,21 +325,17 @@ public class SelectBlockSchemeScreen extends AppCompatActivity implements View.O
                     schemeList.setSchemeSequentialID(schemeSequentialID);
                     schemeList.setSchemeName(schemeName);
                     Scheme.add(schemeList);
-                    arr_scheme[i] = schemeList.getSchemeName();
-                    i++;
 
                 }while (SchemeList.moveToNext());
             }
         }
-        sp_scheme.setAdapter(new MyAdapter(SelectBlockSchemeScreen.this, R.layout.spinner_value, arr_scheme));
+        sp_scheme.setAdapter(new CommonAdapter(this,Scheme , "SchemeList"));
     }
 
     public void loadOfflineFinYearListDBValues() {
 
         Cursor FinYear = getRawEvents("SELECT fin_year FROM " + DBHelper.FINANCIAL_YEAR_TABLE_NAME, null);
-        arr_financialYear = new String[FinYear.getCount() + 1];
-        arr_financialYear[0] = "Select Financial year";
-        int i = 1;
+
         BlockListValue finYearListValue = new BlockListValue();
         finYearListValue.setFinancialYear("Select Financial year");
         FinYearList.add(finYearListValue);
@@ -362,14 +346,12 @@ public class SelectBlockSchemeScreen extends AppCompatActivity implements View.O
                     String financialYear = FinYear.getString(FinYear.getColumnIndexOrThrow(AppConstant.FINANCIAL_YEAR));
                     finyearList.setFinancialYear(financialYear);
                     FinYearList.add(finyearList);
-                    arr_financialYear[i] = finyearList.getFinancialYear();
-                    Log.d("finyeardb", "" + finyearList);
-                    i++;
+                 //   Log.d("finyeardb", "" + finyearList);
                 } while (FinYear.moveToNext());
             }
         }
 
-        sp_financialYear.setAdapter(new MyAdapter(SelectBlockSchemeScreen.this, R.layout.spinner_value, arr_financialYear));
+        sp_financialYear.setAdapter(new CommonAdapter(this, FinYearList, "FinYearList"));
     }
 
     public void getWorkListDistrictFinYearWiseService() {

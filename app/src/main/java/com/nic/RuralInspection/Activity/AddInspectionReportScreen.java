@@ -98,6 +98,7 @@ public class AddInspectionReportScreen extends AppCompatActivity implements View
     private Spinner sp_observation,sp_stage;
     private List<BlockListValue> stageListValues = new ArrayList<>();
     private List<String> observationList = new ArrayList<String>();
+    private ImageView back_img;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -105,7 +106,7 @@ public class AddInspectionReportScreen extends AppCompatActivity implements View
         setContentView(R.layout.add_inspection_with_toolbar);
         intializeUI();
         viewStage();
-     //  viewObservation();
+       viewObservation();
     }
 
     public void intializeUI() {
@@ -124,6 +125,9 @@ public class AddInspectionReportScreen extends AppCompatActivity implements View
         sp_observation = (Spinner) findViewById(R.id.observation);
         sp_stage = (Spinner) findViewById(R.id.stageSelect);
 
+        back_img = (ImageView) findViewById(R.id.backimg);
+        back_img.setOnClickListener(this);
+
         take_photo.setOnClickListener(this);
 
         district_tv.setText(prefManager.getDistrictName());
@@ -141,6 +145,9 @@ public class AddInspectionReportScreen extends AppCompatActivity implements View
         switch (v.getId()) {
             case R.id.take_photo:
                 imageWithDescription(take_photo, "mobile", scrollView);
+                break;
+            case R.id.backimg:
+                onBackPress();
                 break;
         }
     }
@@ -185,7 +192,7 @@ public class AddInspectionReportScreen extends AppCompatActivity implements View
         observationList.add("SRI");
         observationList.add("U");
 
-        sp_observation.setAdapter(new ArrayAdapter<String>(this, R.layout.spinner_drop_down_item, observationList));
+        sp_observation.setAdapter(new ArrayAdapter<String>(this, R.layout.spinner_value,R.id.spinner_list_value, observationList));
 
     }
 
