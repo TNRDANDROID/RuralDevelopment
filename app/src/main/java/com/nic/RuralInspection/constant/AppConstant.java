@@ -46,14 +46,25 @@ public class AppConstant {
     public static String PV_NAME = "pvname";
     public static String LEVELS = "levels";
     public static String SCHEME_SEQUENTIAL_ID = "scheme_seq_id";
+
+
+    public static String SCHEME_NAME = "scheme_name";
+    public static String FINANCIAL_YEAR = "fin_year";
+    public static String JSON_DATA = "JSON_DATA";
+
     public static String SCHEME_ID = "scheme_id";
-    public static String WORD_ID = "work_id";
+    public static String WORK_GROUP_ID = "work_group_id";
+    public static String WORK_TYPE_ID = "work_type_id";
+    public static String WORK_ID = "work_id";
     public static String WORK_NAME = "work_name";
     public static String AS_AMOUNT = "as_value";
     public static String TS_AMOUNT = "ts_value";
     public static String IS_HIGH_VALUE_PROJECT = "is_high_value";
-    public static String SCHEME_NAME = "scheme_name";
-    public static String FINANCIAL_YEAR = "fin_year";
-    public static String JSON_DATA = "JSON_DATA";
+    public static String WORK_STAGE_CODE = "work_stage_code";
+    public static String WORK_STAGE_ORDER = "work_stage_order";
+    public static String WORK_SATGE_NAME = "work_stage_name";
+
+    public static String STAGE_LIST = "work_type_stage_link";
+    public static String CURRENT_STAGE = "current_stage_of_work";
 
 }

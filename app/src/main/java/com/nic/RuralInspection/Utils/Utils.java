@@ -1123,7 +1123,7 @@ public class Utils {
         JSONObject dataSet = new JSONObject();
         dataSet.put(AppConstant.KEY_SERVICE_ID, AppConstant.KEY_WORK_LIST_DISTRICT_FINYEAR_WISE);
         dataSet.put(AppConstant.DISTRICT_CODE, prefManager.getDistrictCode());
-        dataSet.put(AppConstant.FINANCIAL_YEAR, prefManager.getKeySpinnerSelectedFinyear());
+        dataSet.put(AppConstant.FINANCIAL_YEAR, prefManager.getFinancialyearName());
         Log.d("WorkListDistFinYearWise", "" + dataSet);
         return dataSet;
     }
@@ -1193,6 +1193,13 @@ public class Utils {
     public static JSONObject schemeFinyearListJsonParams() throws JSONException {
         JSONObject dataSet = new JSONObject();
         dataSet.put(AppConstant.KEY_SERVICE_ID, AppConstant.KEY_SCHEME_FINYEAR_LIST);
+        Log.d("object", "" + dataSet);
+        return dataSet;
+    }
+
+    public static JSONObject stageListJsonParams() throws JSONException {
+        JSONObject dataSet = new JSONObject();
+        dataSet.put(AppConstant.KEY_SERVICE_ID,AppConstant.STAGE_LIST);
         Log.d("object", "" + dataSet);
         return dataSet;
     }

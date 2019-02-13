@@ -14,12 +14,26 @@ public class BlockListValue {
     private String schemeSequentialID;
     private String selectedBlockCode;
     private String schemeID;
+    private String workGroupID;
+    private String workTypeID;
     private String workID;
     private String workName;
     private String asAmount;
     private String tsAmount;
     private String isHighValue;
+    private String workStageCode;
+    private String workStageOrder;
+    private String workStageName;
+    private String projectID;
+    private String observationName;
 
+//    public BlockListValue(String bcode, String scheme_id, String work_id, String as_value, String is_high_value) {
+//        this.blockCode = bcode;
+//        this.schemeID = scheme_id;
+//        this.workID = work_id;
+//        this.asAmount = as_value;
+//        this.isHighValue = is_high_value;
+//    }
 
     public String getFinancialYear() {
         return financialYear;
@@ -57,12 +71,20 @@ public class BlockListValue {
 
     private String Name;
 
+    public void setProjectName(String projectName) {
+        this.projectName = projectName;
+    }
+
     public String getProjectName() {
         return projectName;
     }
 
-    public void setProjectName(String projectName) {
-        this.projectName = projectName;
+    public void setProjectID(String projectID) {
+        this.projectID = projectID;
+    }
+
+    public String getProjectID() {
+        return projectID;
     }
 
 
@@ -106,6 +128,22 @@ public class BlockListValue {
         this.schemeID = schemeID;
     }
 
+    public void setWorkGroupID(String workGroupID) {
+        this.workGroupID = workGroupID;
+    }
+
+    public String getWorkGroupID() {
+        return workGroupID;
+    }
+
+    public void setWorkTypeID(String workTypeID) {
+        this.workTypeID = workTypeID;
+    }
+
+    public String getWorkTypeID() {
+        return workTypeID;
+    }
+
     public String getWorkID() {
         return workID;
     }
@@ -145,4 +183,38 @@ public class BlockListValue {
     public void setIsHighValue(String isHighValue) {
         this.isHighValue = isHighValue;
     }
+
+    public void setWorkStageCode(String workStageCode) {
+        this.workStageCode = workStageCode;
+    }
+
+    public String getWorkStageCode() {
+        return workStageCode;
+    }
+
+    public void setWorkStageOrder(String workStageOrder) {
+        this.workStageOrder = workStageOrder;
+    }
+
+    public String getWorkStageOrder() {
+        return workStageOrder;
+    }
+
+    public void setWorkStageName(String workStageName) {
+        this.workStageName = workStageName;
+    }
+
+    public String getWorkStageName() {
+        return workStageName;
+    }
+
+    public void setObservationName(String observationName) {
+        this.observationName = observationName;
+    }
+
+    public String getObservationName() {
+        return observationName;
+    }
+
+
 }

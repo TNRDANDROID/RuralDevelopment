@@ -30,6 +30,7 @@ public class PrefManager {
     private static final String KEY_USER_PASS_KEY = "pass_key";
     private static final String KEY_ENCRYPT_PASS = "pass";
     private static final String KEY_USER_NAME = "UserName";
+    private static final String KEY_USER_PASSWORD = "UserPassword";
     private static final String KEY_DECRYPT_KEY = "Decrypt_Key";
     private static final String KEY_DISTRICT_CODE = "District_Code";
     private static final String KEY_BLOCK_CODE = "Block_Code";
@@ -42,6 +43,8 @@ public class PrefManager {
     private static final String KEY_SPINNER_SELECTED_BLOCKCODE = "spinner_selected_block_code";
     private static final String KEY_SPINNER_SELECTED_SCHEME_SEQ_ID = "spinner_selected_scheme_seq_Id";
     private static final String KEY_SPINNER_SELECTED_FINYEAR = "spinner_selected_finyear";
+    private static final String KEY_SCHEME_NAME = "Scheme_Name";
+    private static final String KEY_FINANCIALYEAR_NAME = "FinancialYear_Name";
 
 
     public PrefManager(Context context) {
@@ -90,9 +93,14 @@ public class PrefManager {
         editor.commit();
     }
 
-    public String   getUserName() {
-        return pref.getString(KEY_USER_NAME, null);
+    public String   getUserName() { return pref.getString(KEY_USER_NAME, null); }
+
+    public void setUserPassword(String userPassword) {
+        editor.putString(KEY_USER_PASSWORD, userPassword);
+        editor.commit();
     }
+
+    public String   getUserPassword() { return pref.getString(KEY_USER_PASSWORD, null); }
 
 
     public void setEncryptPass(String pass) {
@@ -220,7 +228,19 @@ public class PrefManager {
         return pref.getString(SERVICE_AUTH_KEY, null);
     }
 
+    public  void setSchemeName(String key) {
+        editor.putString(KEY_SCHEME_NAME,key);
+        editor.commit();
+    }
 
+    public String getSchemeName() {return pref.getString(KEY_SCHEME_NAME,null);}
+
+    public void setFinancialyearName(String key) {
+        editor.putString(KEY_FINANCIALYEAR_NAME,key);
+        editor.commit();
+    }
+
+    public String getFinancialyearName() {return pref.getString(KEY_FINANCIALYEAR_NAME,null);}
 
     public void clearSharedPreferences(Context context) {
         pref = _context.getSharedPreferences(AppConstant.PREF_NAME, PRIVATE_MODE);

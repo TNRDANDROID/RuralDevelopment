@@ -47,8 +47,10 @@ public class CommonAdapter extends BaseAdapter {
 
     public View getView(int position, View convertView, ViewGroup parent) {
         LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View view = inflater.inflate(R.layout.spinner_drop_down_item, parent, false);
-        TextView tv_type = (TextView) view.findViewById(R.id.tv_spinner_item);
+//        View view = inflater.inflate(R.layout.spinner_drop_down_item, parent, false);
+//        TextView tv_type = (TextView) view.findViewById(R.id.tv_spinner_item);
+        View view = inflater.inflate(R.layout.spinner_value, parent, false);
+        TextView tv_type = (TextView) view.findViewById(R.id.spinner_list_value);
         BlockListValue BlockListValue = BlockList.get(position);
         if(type.equalsIgnoreCase("BlockList")) {
             tv_type.setText(BlockListValue.getBlockName());
@@ -56,6 +58,10 @@ public class CommonAdapter extends BaseAdapter {
             tv_type.setText(BlockListValue.getSchemeName());
         }else if(type.equalsIgnoreCase("FinYearList")){
             tv_type.setText(BlockListValue.getFinancialYear());
+        }else if(type.equalsIgnoreCase("StageList")){
+            tv_type.setText(BlockListValue.getWorkStageName());
+        }else if(type.equalsIgnoreCase("ObservationList")){
+            tv_type.setText(BlockListValue.getObservationName());
         }
         return view;
     }

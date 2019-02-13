@@ -13,6 +13,7 @@ public class DBHelper extends SQLiteOpenHelper {
     public static final String SCHEME_TABLE_NAME = "SchemeList";
     public static final String FINANCIAL_YEAR_TABLE_NAME = "FinancialYear";
     public static final String WORK_LIST_DISTRICT_FINYEAR_WISE = "WorkListDistFinYearWise";
+    public static final String WORK_STAGE_TABLE = "work_type_stage_link";
     private Context context;
 
     public DBHelper(Context context) {
@@ -37,13 +38,25 @@ public class DBHelper extends SQLiteOpenHelper {
         db.execSQL("CREATE TABLE " + FINANCIAL_YEAR_TABLE_NAME + " ("
                 + "fin_year  varchar(32))");
 
+        db.execSQL("CREATE TABLE " + WORK_STAGE_TABLE + " ("
+                + "work_group_id  varchar(4)," +
+                "work_type_id  varchar(4)," +
+                "work_stage_order  varchar(4)," +
+                "work_stage_code  varchar(32)," +
+                "work_stage_name varchar(4))");
+
         db.execSQL("CREATE TABLE " + WORK_LIST_DISTRICT_FINYEAR_WISE + " ("
-                + "bcode  varchar(4)," +
+                + "dcode  varchar(4)," +
+                "bcode  varchar(4)," +
                 "scheme_id  varchar(4)," +
+                "work_group_id  varchar(4)," +
+                "work_type_id  varchar(4)," +
+                "fin_year  varchar(4)," +
                 "work_id  varchar(4)," +
                 "work_name  varchar(32)," +
                 "as_value  varchar(32)," +
                 "ts_value  varchar(32)," +
+                "current_stage_of_work  varchar(32)," +
                 "is_high_value varchar(4))");
     }
 
