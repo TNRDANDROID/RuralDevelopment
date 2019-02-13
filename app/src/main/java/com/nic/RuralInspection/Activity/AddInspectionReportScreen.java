@@ -6,6 +6,7 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Typeface;
 import android.graphics.drawable.BitmapDrawable;
@@ -20,11 +21,14 @@ import android.view.Gravity;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
+import android.widget.SimpleAdapter;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.android.volley.VolleyError;
@@ -33,6 +37,9 @@ import com.karumi.dexter.MultiplePermissionsReport;
 import com.karumi.dexter.PermissionToken;
 import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
+import com.nic.RuralInspection.Adapter.CommonAdapter;
+import com.nic.RuralInspection.DataBase.DBHelper;
+import com.nic.RuralInspection.Model.BlockListValue;
 import com.nic.RuralInspection.R;
 import com.nic.RuralInspection.Support.MyCustomTextView;
 import com.nic.RuralInspection.Utils.CameraUtils;
@@ -40,11 +47,15 @@ import com.nic.RuralInspection.Utils.FontCache;
 import com.nic.RuralInspection.Utils.Utils;
 import com.nic.RuralInspection.api.Api;
 import com.nic.RuralInspection.api.ServerResponse;
+import com.nic.RuralInspection.constant.AppConstant;
+import com.nic.RuralInspection.session.PrefManager;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.nic.RuralInspection.Activity.LoginScreen.db;
 
 /**
  * Created by NIC on 23-01-2019.
@@ -54,7 +65,9 @@ public class AddInspectionReportScreen extends AppCompatActivity implements View
 
     private ScrollView scrollView;
     private MyCustomTextView take_photo;
+    private MyCustomTextView district_tv,scheme_name_tv,block_name_tv,fin_year_tv;
     private List<View> viewArrayList = new ArrayList<>();
+    PrefManager prefManager;
 
     private Context context;
 
@@ -81,19 +94,46 @@ public class AddInspectionReportScreen extends AppCompatActivity implements View
     public static final String VIDEO_EXTENSION = "mp4";
 
     private static String imageStoragePath;
+    private MyCustomTextView projectName, amountTv, levelTv;
+    private Spinner sp_observation,sp_stage;
+    private List<BlockListValue> stageListValues = new ArrayList<>();
+    private List<String> observationList = new ArrayList<String>();
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.add_inspection_with_toolbar);
-
         intializeUI();
+        viewStage();
+     //  viewObservation();
     }
 
     public void intializeUI() {
         scrollView = (ScrollView) findViewById(R.id.scroll_view);
         take_photo = (MyCustomTextView) findViewById(R.id.take_photo);
+        prefManager = new PrefManager(this);
+
+        district_tv = (MyCustomTextView) findViewById(R.id.district_tv);
+        scheme_name_tv = (MyCustomTextView) findViewById(R.id.scheme_name_tv);
+        block_name_tv = (MyCustomTextView) findViewById(R.id.block_name_tv);
+        fin_year_tv = (MyCustomTextView) findViewById(R.id.fin_year_tv);
+
+        projectName = (MyCustomTextView) findViewById(R.id.project_title_tv);
+        amountTv = (MyCustomTextView) findViewById(R.id.amount_tv);
+        levelTv = (MyCustomTextView) findViewById(R.id.level_tv);
+        sp_observation = (Spinner) findViewById(R.id.observation);
+        sp_stage = (Spinner) findViewById(R.id.stageSelect);
+
         take_photo.setOnClickListener(this);
+
+        district_tv.setText(prefManager.getDistrictName());
+        scheme_name_tv.setText(prefManager.getSchemeName());
+        block_name_tv.setText(prefManager.getBlockName());
+        fin_year_tv.setText(prefManager.getFinancialyearName());
+
+        projectName.setText(getIntent().getStringExtra(AppConstant.WORK_NAME));
+        amountTv.setText(getIntent().getStringExtra(AppConstant.AS_AMOUNT));
+        levelTv.setText(getIntent().getStringExtra(AppConstant.WORK_SATGE_NAME));
     }
 
     @Override
@@ -103,6 +143,50 @@ public class AddInspectionReportScreen extends AppCompatActivity implements View
                 imageWithDescription(take_photo, "mobile", scrollView);
                 break;
         }
+    }
+
+    public void viewStage() {
+        stageListValues.clear();
+        String workGroupId = getIntent().getStringExtra(AppConstant.WORK_GROUP_ID);
+        String workTypeid = getIntent().getStringExtra(AppConstant.WORK_TYPE_ID);
+
+        String sql = "select * from "+DBHelper.WORK_STAGE_TABLE +"  where (work_group_id = "+workGroupId+" and work_type_id = "+workTypeid+") order by work_stage_order asc";
+        Cursor stages = getRawEvents(sql,null);
+
+        BlockListValue stagelist = new BlockListValue();
+        stagelist.setWorkStageName("Select Stage");
+        stageListValues.add(stagelist);
+
+        if(stages.getCount() > 0) {
+            if(stages.moveToFirst()) {
+                do {
+                    BlockListValue stagelistval = new BlockListValue();
+                    String workGroupID = stages.getString(stages.getColumnIndexOrThrow(AppConstant.WORK_GROUP_ID));
+                    String workTypeId = stages.getString(stages.getColumnIndexOrThrow(AppConstant.WORK_TYPE_ID));
+                    String workStageOrder = stages.getString(stages.getColumnIndexOrThrow(AppConstant.WORK_STAGE_ORDER));
+                    String workStageCode = stages.getString(stages.getColumnIndexOrThrow(AppConstant.WORK_STAGE_CODE));
+                    String workstageNmae = stages.getString(stages.getColumnIndexOrThrow(AppConstant.WORK_SATGE_NAME));
+                    stagelistval.setWorkGroupID(workGroupID);
+                    stagelistval.setWorkTypeID(workTypeId);
+                    stagelistval.setWorkStageOrder(workStageOrder);
+                    stagelistval.setWorkStageCode(workStageCode);
+                    stagelistval.setWorkStageName(workstageNmae);
+                    stageListValues.add(stagelistval);
+                }while (stages.moveToNext());
+            }
+        }
+        sp_stage.setAdapter(new CommonAdapter(this, stageListValues, "StageList"));
+    }
+
+    public void viewObservation(){
+        observationList.clear();
+        observationList.add("Select Observation");
+        observationList.add("S");
+        observationList.add("SRI");
+        observationList.add("U");
+
+        sp_observation.setAdapter(new ArrayAdapter<String>(this, R.layout.spinner_drop_down_item, observationList));
+
     }
 
     public void imageWithDescription(final MyCustomTextView action_tv, final String type, final ScrollView scrollView) {
@@ -157,16 +241,6 @@ public class AddInspectionReportScreen extends AppCompatActivity implements View
         final String values = action_tv.getText().toString().replace("NA", "");
         Button btnAddMobile = (Button) dialog.findViewById(R.id.btn_add);
         btnAddMobile.setTypeface(FontCache.getInstance(this).getFont(FontCache.Font.MEDIUM));
-//        if ("Mobile".equalsIgnoreCase(type)) {
-//            toolBarTitle.setText("Enter Mobile");
-//            tv_create_asset_title.setText("You can enter upto 5 Mobile numbers");
-//            btnAddMobile.setText("Add Mobile");
-//        } else {
-//            btnAddMobile.setText("Add Email");
-//            toolBarTitle.setText("Enter Email");
-//            tv_create_asset_title.setText("You can enter upto 5 Emails");
-//        }
-
         viewArrayList.clear();
         btnAddMobile.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -474,12 +548,16 @@ public class AddInspectionReportScreen extends AppCompatActivity implements View
         }
     }
 
+    public void onBackPress() {
+        super.onBackPressed();
+        setResult(Activity.RESULT_CANCELED);
+        overridePendingTransition(R.anim.slide_enter, R.anim.slide_exit);
+    }
+
     @Override
     public void onBackPressed() {
 
         super.onBackPressed();
-        //Intent intent = new Intent(this, HomeScreenActivity.class);
-        //startActivity(intent);
         finish();
         overridePendingTransition(R.anim.slide_enter, R.anim.slide_exit);
 
@@ -493,5 +571,10 @@ public class AddInspectionReportScreen extends AppCompatActivity implements View
     @Override
     public void OnError(VolleyError volleyError) {
 
+    }
+
+    public Cursor getRawEvents(String sql, String string) {
+        Cursor cursor = db.rawQuery(sql, null);
+        return cursor;
     }
 }

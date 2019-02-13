@@ -126,7 +126,8 @@ public class LoginScreen extends AppCompatActivity implements View.OnClickListen
         boolean valid = true;
         String username = userName.getText().toString().trim();
         prefManager.setUserName(username);
-        String password = passwordEditText.getText().toString();
+        String password = passwordEditText.getText().toString().trim();
+
 
         if (username.isEmpty()) {
             valid = false;
@@ -139,16 +140,23 @@ public class LoginScreen extends AppCompatActivity implements View.OnClickListen
     }
 
     private void checkLoginScreen() {
-        try{
-            db.execSQL("DELETE FROM "+DBHelper.BLOCK_TABLE_NAME);
-            db.execSQL("DELETE FROM "+DBHelper.SCHEME_TABLE_NAME);
-            db.execSQL("DELETE FROM "+DBHelper.FINANCIAL_YEAR_TABLE_NAME);
+        if ((Utils.isOnline())) {
+
+            try{
+                db.delete(DBHelper.BLOCK_TABLE_NAME,null,null);
+                db.delete(DBHelper.SCHEME_TABLE_NAME,null,null);
+                db.delete(DBHelper.FINANCIAL_YEAR_TABLE_NAME,null ,null);
+                db.delete(DBHelper.WORK_STAGE_TABLE,null ,null);
+                db.delete(DBHelper.WORK_LIST_DISTRICT_FINYEAR_WISE,null,null);
+
+            }
+            catch (Exception e) {
+                e.printStackTrace();
+            }
         }
-        catch (Exception e) {
-            e.printStackTrace();
-        }
-        String username = userName.getText().toString().trim();
-        String password = passwordEditText.getText().toString().trim();
+        final String username = userName.getText().toString().trim();
+        final String password = passwordEditText.getText().toString().trim();
+        prefManager.setUserPassword(password);
 
         if (Utils.isOnline()) {
             if (!validate())
@@ -159,7 +167,28 @@ public class LoginScreen extends AppCompatActivity implements View.OnClickListen
                 Utils.showAlert(this, "Please enter your username and password!");
             }
         } else {
-            Utils.showAlert(this, getResources().getString(R.string.no_internet));
+            //Utils.showAlert(this, getResources().getString(R.string.no_internet));
+            AlertDialog.Builder ab = new AlertDialog.Builder(
+                    LoginScreen.this);
+            ab.setMessage(Html
+                    .fromHtml("<font color=#A52A2A>Internet Connection is not avaliable..Please Turn ON Network Connection OR Continue With Off-line Mode..</font>"));
+            ab.setPositiveButton("Settings",
+                    new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog,
+                                            int whichButton) {
+                            Intent I = new Intent(
+                                    android.provider.Settings.ACTION_WIRELESS_SETTINGS);
+                            startActivity(I);
+                        }
+                    });
+            ab.setNegativeButton("Continue With Off-Line",
+                    new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog,
+                                            int whichButton) {
+                            offline_mode(username,password);
+                        }
+                    });
+            ab.show();
         }
     }
 
@@ -263,62 +292,15 @@ public class LoginScreen extends AppCompatActivity implements View.OnClickListen
         overridePendingTransition(R.anim.slide_in, R.anim.slide_out);
     }
 
-    public void loginMethod(String username, String password) {
-        name = Base64.encodeToString((username).getBytes(), Base64.DEFAULT);
-        pass = Base64.encodeToString((password).getBytes(), Base64.DEFAULT);
-
-
-        if ((name.equals("") && pass.equals(""))) {
-            userName.setFocusableInTouchMode(true);
-            Utils.showAlert(LoginScreen.this, "Please Enter UserName");
-
-        } else if (name.equals("")) {
-            userName.setFocusableInTouchMode(true);
-            Utils.showAlert(LoginScreen.this, "Please Enter UserName");
-
-        } else if (pass.equals("")) {
-            passwordEditText.setFocusableInTouchMode(true);
-            Utils.showAlert(LoginScreen.this, "Please Enter Password");
-
-        } else {
-            if (Utils.isOnline()) {
-//                if (!validate())
-//                    return;
-//                pDialog = ProgressHUD.show(this, "Connecting", true, false, null);
-
-
-            } else {
-                //Utils.showAlert(this, getResources().getString(R.string.no_internet));
-                AlertDialog.Builder ab = new AlertDialog.Builder(
-                        LoginScreen.this);
-                ab.setMessage(Html
-                        .fromHtml("<font color=#A52A2A>Internet Connection is not avaliable..Please Turn ON Network Connection OR Continue With Off-line Mode..</font>"));
-                ab.setPositiveButton("Setting Internet Connection",
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog,
-                                                int whichButton) {
-                                Intent I = new Intent(
-                                        android.provider.Settings.ACTION_WIRELESS_SETTINGS);
-                                startActivity(I);
-                            }
-                        });
-                ab.setNegativeButton("Continue With Off-Line",
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog,
-                                                int whichButton) {
-                                offline_mode();
-                            }
-                        });
-                ab.show();
-
-            }
+    public void offline_mode(String name,String pass) {
+        String userName = prefManager.getUserName();
+        String password = prefManager.getUserPassword();
+        if(name.equals(userName) && pass.equals(password)) {
+            showHomeScreen();
         }
-
-    }
-
-
-    public void offline_mode() {
-
+        else {
+            Utils.showAlert(this,"No data available for offline. Please Turn On Your Network");
+        }
     }
 
 }

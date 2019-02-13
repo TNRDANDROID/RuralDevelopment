@@ -82,11 +82,47 @@
                 android:layout_alignParentStart="true"
                 android:layout_alignParentTop="true" />
 
+            <LinearLayout
+                android:id="@+id/project_list_header"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/header">
+
+                <com.nic.RuralInspection.Support.MyCustomTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingStart="@dimen/_15sdp"
+                    android:text="Project List ("
+                    android:textColor="@color/account_status_green_color"
+                    android:textSize="@dimen/_12sdp"
+                    android:textStyle="italic" />
+
+                <com.nic.RuralInspection.Support.MyCustomTextView
+                    android:id="@+id/count_list"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingStart="@dimen/_2sdp"
+                    android:text=""
+                    android:textColor="@color/account_status_green_color"
+                    android:textSize="@dimen/_12sdp"
+                    android:textStyle="italic" />
+                <com.nic.RuralInspection.Support.MyCustomTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingStart="@dimen/_5sdp"
+                    android:text="Project Found )"
+                    android:textColor="@color/account_status_green_color"
+                    android:textSize="@dimen/_12sdp"
+                    android:textStyle="italic" />
+            </LinearLayout>
+
+
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/project_list"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"
+                android:layout_marginTop="@dimen/_20sdp"
                 android:layout_below="@+id/header"
                 android:fadeScrollbars="false"
                 android:scrollbarSize="4dp"

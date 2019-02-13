@@ -50,11 +50,10 @@ public class Dashboard extends AppCompatActivity implements Api.ServerResponseLi
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.dashboard);
-        if (Utils.isOnline()) {
-            intializeUI();
-        } else {
-            Utils.showAlert(this, getResources().getString(R.string.no_internet));
-        }
+        intializeUI();
+//        else {
+//            Utils.showAlert(this, getResources().getString(R.string.no_internet));
+//        }
     }
 
     private void intializeUI() {
@@ -65,12 +64,16 @@ public class Dashboard extends AppCompatActivity implements Api.ServerResponseLi
         uploadInspectionReport.setOnClickListener(this);
         logout.setOnClickListener(this);
         district_tv.setText(prefManager.getDistrictName());
-        fetchAllResponseFromApi();
+
+        if (Utils.isOnline()) {
+            fetchAllResponseFromApi();
+        }
+
     }
 
     public void fetchAllResponseFromApi(){
-        getServiceList();
-        getInspectionServiceList();
+       // getServiceList();
+       // getInspectionServiceList();
         if (prefManager.getLevels().equalsIgnoreCase("D")) {
             getBlockList();
         } else {
@@ -78,7 +81,7 @@ public class Dashboard extends AppCompatActivity implements Api.ServerResponseLi
         }
         getSchemeList();
         getFinYearList();
-
+        getStageList();
     }
 
 
@@ -90,6 +93,29 @@ public class Dashboard extends AppCompatActivity implements Api.ServerResponseLi
         }
     }
 
+    public void getSchemeList() {
+        try {
+            new ApiService(this).makeJSONObjectRequest("SchemeList", Api.Method.POST, UrlGenerator.getServicesListUrl(), schemeListJsonParams(), "not cache", this);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void getFinYearList() {
+        try {
+            new ApiService(this).makeJSONObjectRequest("FinYearList", Api.Method.POST, UrlGenerator.getServicesListUrl(), finyearListJsonParams(), "not cache", this);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void getStageList() {
+        try {
+            new ApiService(this).makeJSONObjectRequest("StageList", Api.Method.POST, UrlGenerator.getServicesListUrl(), stageListJsonParams(), "not cache", this);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
 
     public JSONObject blockListJsonParams() throws JSONException {
         String authKey = Utils.encrypt(prefManager.getUserPassKey(), getResources().getString(R.string.init_vector), Utils.blockListDistrictWiseJsonParams(this).toString());
@@ -98,14 +124,6 @@ public class Dashboard extends AppCompatActivity implements Api.ServerResponseLi
         dataSet.put(AppConstant.DATA_CONTENT, authKey);
         Log.d("blockListDistrictWise", "" + authKey);
         return dataSet;
-    }
-
-    public void getSchemeList() {
-        try {
-            new ApiService(this).makeJSONObjectRequest("SchemeList", Api.Method.POST, UrlGenerator.getServicesListUrl(), schemeListJsonParams(), "not cache", this);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
     }
 
     public JSONObject schemeListJsonParams() throws JSONException {
@@ -117,14 +135,6 @@ public class Dashboard extends AppCompatActivity implements Api.ServerResponseLi
         return dataSet;
     }
 
-    public void getFinYearList() {
-        try {
-            new ApiService(this).makeJSONObjectRequest("FinYearList", Api.Method.POST, UrlGenerator.getServicesListUrl(), finyearListJsonParams(), "not cache", this);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-    }
-
     public JSONObject finyearListJsonParams() throws JSONException {
         String authKey = Utils.encrypt(prefManager.getUserPassKey(), getResources().getString(R.string.init_vector), Utils.schemeFinyearListJsonParams().toString());
         JSONObject dataSet = new JSONObject();
@@ -134,6 +144,14 @@ public class Dashboard extends AppCompatActivity implements Api.ServerResponseLi
         return dataSet;
     }
 
+    public JSONObject stageListJsonParams() throws JSONException {
+        String authKey = Utils.encrypt(prefManager.getUserPassKey(), getResources().getString(R.string.init_vector), Utils.stageListJsonParams().toString());
+        JSONObject dataSet = new JSONObject();
+        dataSet.put(AppConstant.KEY_USER_NAME, prefManager.getUserName());
+        dataSet.put(AppConstant.DATA_CONTENT, authKey);
+        Log.d("StageList", "" + authKey);
+        return dataSet;
+    }
 
     @Override
     public void onClick(View v) {
@@ -260,11 +278,14 @@ public class Dashboard extends AppCompatActivity implements Api.ServerResponseLi
                 }
                 Log.d("FinYear", "" + responseDecryptedSchemeKey);
             }
-            if ("WorkListDistrictWise".equals(urlType) && responseObj != null) {
+            if ("StageList".equals(urlType) && responseObj != null) {
                 String key = responseObj.getString(AppConstant.ENCODE_DATA);
                 String responseDecryptedKey = Utils.decrypt(prefManager.getUserPassKey(), key);
-                Log.d("key", "" + responseDecryptedKey);
-
+                JSONObject jsonObject = new JSONObject(responseDecryptedKey);
+                if (jsonObject.getString("STATUS").equalsIgnoreCase("OK") && jsonObject.getString("RESPONSE").equalsIgnoreCase("OK")) {
+                    loadStageList(jsonObject.getJSONArray(AppConstant.JSON_DATA));
+                }
+                Log.d("StageList", "" + responseDecryptedKey);
             }
         } catch (JSONException e) {
             e.printStackTrace();
@@ -286,7 +307,7 @@ public class Dashboard extends AppCompatActivity implements Api.ServerResponseLi
                 blockListValues.put(AppConstant.BLOCK_NAME, blockName);
 
                 LoginScreen.db.insert(DBHelper.BLOCK_TABLE_NAME, null, blockListValues);
-                Log.d("LocalDBblockList", "" + blockListValues);
+               // Log.d("LocalDBblockList", "" + blockListValues);
 
             }
         } catch (JSONException j) {
@@ -345,6 +366,36 @@ public class Dashboard extends AppCompatActivity implements Api.ServerResponseLi
         }
     }
 
+    private void loadStageList(JSONArray jsonArray) {
+        try {
+            updatedJsonArray = new JSONArray();
+            updatedJsonArray = jsonArray;
+
+            for (int i = 0; i < jsonArray.length(); i++) {
+                String workGroupID = jsonArray.getJSONObject(i).getString(AppConstant.WORK_GROUP_ID);
+                String workTypeID = jsonArray.getJSONObject(i).getString(AppConstant.WORK_TYPE_ID);
+                String workStageOrder = jsonArray.getJSONObject(i).getString(AppConstant.WORK_STAGE_ORDER);
+                String workStageCode = jsonArray.getJSONObject(i).getString(AppConstant.WORK_STAGE_CODE);
+                String workStageName = jsonArray.getJSONObject(i).getString(AppConstant.WORK_SATGE_NAME);
+
+                ContentValues WorkStageLocalDbValues = new ContentValues();
+                WorkStageLocalDbValues.put(AppConstant.WORK_GROUP_ID, workGroupID);
+                WorkStageLocalDbValues.put(AppConstant.WORK_TYPE_ID, workTypeID);
+                WorkStageLocalDbValues.put(AppConstant.WORK_STAGE_ORDER, workStageOrder);
+                WorkStageLocalDbValues.put(AppConstant.WORK_STAGE_CODE, workStageCode);
+                WorkStageLocalDbValues.put(AppConstant.WORK_SATGE_NAME, workStageName);
+
+                LoginScreen.db.insert(DBHelper.WORK_STAGE_TABLE, null, WorkStageLocalDbValues);
+                Log.d("LocalDBSchemeList", "" + WorkStageLocalDbValues);
+
+            }
+
+        } catch (JSONException j) {
+            j.printStackTrace();
+        } catch (ArrayIndexOutOfBoundsException a) {
+            a.printStackTrace();
+        }
+    }
 
     @Override
     public void OnError(VolleyError volleyError) {
