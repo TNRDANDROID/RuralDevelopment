@@ -18,8 +18,8 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:background="#FFF">
+            android:background="#FFF"
+            android:orientation="vertical">
 
             <android.support.v7.widget.CardView xmlns:card_view="http://schemas.android.com/apk/res-auto"
                 android:id="@+id/district_card"
@@ -309,10 +309,10 @@
                         android:layout_below="@+id/toolbar"
                         android:layout_centerHorizontal="true"
                         android:layout_centerInParent="true"
+                        android:layout_marginBottom="5dp"
                         android:layout_marginLeft="15dp"
                         android:layout_marginRight="15dp"
                         android:layout_marginTop="15dp"
-                        android:layout_marginBottom="5dp"
 
                         card_view:cardCornerRadius="5dp"
                         card_view:cardElevation="5dp">
@@ -529,7 +529,7 @@
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:orientation="vertical">
+                            android:orientation="horizontal">
 
                             <LinearLayout
 
@@ -1006,7 +1006,20 @@
                         </LinearLayout>
                     </android.support.v7.widget.CardView>
 
+
                 </LinearLayout>
+
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/image_list_with_description"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+
+                    android:layout_marginBottom="15dp"
+                    android:layout_marginLeft="15dp"
+                    android:layout_marginRight="15dp"
+                    android:fadeScrollbars="false"
+                    android:scrollbarSize="4dp"
+                    android:scrollbars="vertical" />
 
 
             </LinearLayout>

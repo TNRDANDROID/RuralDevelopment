@@ -133,6 +133,7 @@ public class ProjectListAdapter extends RecyclerView.Adapter<ProjectListAdapter.
 
     @Override
     public void onBindViewHolder(final ProjectListAdapter.MyViewHolder holder, final int position) {
+//        final BlockListValue blockListValue = projectListFiltered.get(position);
         holder.projectName.setText(projectListValues.get(position).getWorkName());
         holder.amountTv.setText(projectListValues.get(position).getAsAmount());
         holder.levelTv.setText(projectListValues.get(position).getWorkStageName());
@@ -169,14 +170,14 @@ public class ProjectListAdapter extends RecyclerView.Adapter<ProjectListAdapter.
             protected FilterResults performFiltering(CharSequence charSequence) {
                 String charString = charSequence.toString();
                 if (charString.isEmpty()) {
-                    projectListFiltered = projectListValues;
+                    projectListFiltered =   projectListValues;
                 } else {
                     List<BlockListValue> filteredList = new ArrayList<>();
                     for (BlockListValue row : projectListValues) {
 
                         // name match condition. this might differ depending on your requirement
                         // here we are looking for name or phone number match
-                        if (row.getProjectName().toLowerCase().contains(charString.toLowerCase()) || row.getProjectName().contains(charSequence)) {
+                        if (row.getWorkName().toLowerCase().contains(charString.toLowerCase()) || row.getWorkName().contains(charSequence)) {
                             filteredList.add(row);
                         } else {
 

@@ -1,48 +1,26 @@
 package com.nic.RuralInspection.Activity;
 
 
-import android.Manifest;
 import android.app.Activity;
-import android.app.Dialog;
 import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.Typeface;
-import android.graphics.drawable.ColorDrawable;
-import android.net.Uri;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.support.annotation.Nullable;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.view.Gravity;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ScrollView;
-import android.widget.Toast;
 
-import com.karumi.dexter.Dexter;
-import com.karumi.dexter.MultiplePermissionsReport;
-import com.karumi.dexter.PermissionToken;
-import com.karumi.dexter.listener.PermissionRequest;
-import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
+import com.nic.RuralInspection.Adapter.ImageDescriptionAdapter;
+import com.nic.RuralInspection.Adapter.ProjectListAdapter;
 import com.nic.RuralInspection.R;
 import com.nic.RuralInspection.Support.MyCustomTextView;
-import com.nic.RuralInspection.Utils.CameraUtils;
-import com.nic.RuralInspection.Utils.FontCache;
-import com.nic.RuralInspection.Utils.Utils;
 import com.nic.RuralInspection.constant.AppConstant;
 import com.nic.RuralInspection.session.PrefManager;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -83,6 +61,8 @@ public class ViewInspectionReportScreen extends AppCompatActivity implements Vie
     private ImageView back_img;
     private MyCustomTextView district_tv,scheme_name_tv,block_name_tv,fin_year_tv;
     private MyCustomTextView projectName, amountTv, levelTv;
+    private ImageDescriptionAdapter imageAdapter;
+    private RecyclerView recyclerView;
     PrefManager prefManager;
 
     @Override
@@ -110,6 +90,7 @@ public class ViewInspectionReportScreen extends AppCompatActivity implements Vie
         scrollView = (ScrollView) findViewById(R.id.scroll_view);
         action_tv = (MyCustomTextView) findViewById(R.id.action_tv);
         back_img = (ImageView) findViewById(R.id.backimg);
+        recyclerView = (RecyclerView) findViewById(R.id.image_list_with_description);
 
         district_tv.setText(prefManager.getDistrictName());
         scheme_name_tv.setText(prefManager.getSchemeName());
@@ -122,6 +103,14 @@ public class ViewInspectionReportScreen extends AppCompatActivity implements Vie
 
         back_img.setOnClickListener(this);
         action_tv.setOnClickListener(this);
+        imageAdapter = new ImageDescriptionAdapter(this );
+
+        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
+        recyclerView.setLayoutManager(mLayoutManager);
+        recyclerView.setItemAnimator(new DefaultItemAnimator());
+        recyclerView.setHasFixedSize(true);
+        recyclerView.setNestedScrollingEnabled(false);
+        recyclerView.setAdapter(imageAdapter);
     }
 
     @Override

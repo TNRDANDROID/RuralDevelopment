@@ -17,6 +17,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.SearchView;
@@ -48,7 +49,7 @@ public class ProjectListScreen extends AppCompatActivity implements View.OnClick
     private ImageView back_img;
     private NestedScrollView scrollView;
     private SearchView searchView;
-    private MyCustomTextView district_tv,scheme_name_tv,block_name_tv,fin_year_tv,list_count,emptyView;
+    private MyCustomTextView district_tv,scheme_name_tv,block_name_tv,fin_year_tv,list_count,not_found_tv;
     PrefManager prefManager;
 
 
@@ -71,7 +72,7 @@ public class ProjectListScreen extends AppCompatActivity implements View.OnClick
         block_name_tv = (MyCustomTextView) findViewById(R.id.block_name_tv);
         fin_year_tv = (MyCustomTextView) findViewById(R.id.fin_year_tv);
         recyclerView = (RecyclerView) findViewById(R.id.project_list);
-        emptyView = (MyCustomTextView) findViewById(R.id.not_found_tv);
+        not_found_tv = (MyCustomTextView) findViewById(R.id.not_found_tv);
         list_count = (MyCustomTextView) findViewById(R.id.count_list);
         projectListValues = new ArrayList<>();
         back_img = (ImageView) findViewById(R.id.backimg);
@@ -172,6 +173,7 @@ public class ProjectListScreen extends AppCompatActivity implements View.OnClick
         else
         {
             list_count.setText("0");
+            not_found_tv.setVisibility(View.VISIBLE);
         }
 
     }
@@ -193,18 +195,33 @@ public class ProjectListScreen extends AppCompatActivity implements View.OnClick
             @Override
             public boolean onQueryTextSubmit(String query) {
                 // filter recycler view when query submitted
-  //             mAdapter.getFilter().filter(query);
+               mAdapter.getFilter().filter(query);
                 return false;
             }
 
             @Override
             public boolean onQueryTextChange(String query) {
                 // filter recycler view when text is changed
-  //             mAdapter.getFilter().filter(query);
+               mAdapter.getFilter().filter(query);
                 return false;
             }
         });
         return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.action_search) {
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
