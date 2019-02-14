@@ -393,7 +393,11 @@ public class SelectBlockSchemeScreen extends AppCompatActivity implements View.O
                 Log.d("responseWorkList", "" + jsonObject.getJSONArray(AppConstant.JSON_DATA));
 
             }
+            else {
+                Utils.showAlert(this,"No Record Found!");
+            }
         } catch (JSONException e) {
+
             e.printStackTrace();
         }
     }

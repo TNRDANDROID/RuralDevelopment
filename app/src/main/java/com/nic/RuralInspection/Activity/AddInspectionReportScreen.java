@@ -6,15 +6,21 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Typeface;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Gravity;
@@ -42,6 +48,7 @@ import com.nic.RuralInspection.DataBase.DBHelper;
 import com.nic.RuralInspection.Model.BlockListValue;
 import com.nic.RuralInspection.R;
 import com.nic.RuralInspection.Support.MyCustomTextView;
+import com.nic.RuralInspection.Support.MyLocationListener;
 import com.nic.RuralInspection.Utils.CameraUtils;
 import com.nic.RuralInspection.Utils.FontCache;
 import com.nic.RuralInspection.Utils.Utils;
@@ -55,17 +62,18 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import static android.Manifest.permission.ACCESS_FINE_LOCATION;
 import static com.nic.RuralInspection.Activity.LoginScreen.db;
 
 /**
  * Created by NIC on 23-01-2019.
  */
 
-public class AddInspectionReportScreen extends AppCompatActivity implements View.OnClickListener , Api.ServerResponseListener {
+public class AddInspectionReportScreen extends AppCompatActivity implements View.OnClickListener, Api.ServerResponseListener {
 
     private ScrollView scrollView;
     private MyCustomTextView take_photo;
-    private MyCustomTextView district_tv,scheme_name_tv,block_name_tv,fin_year_tv;
+    private MyCustomTextView district_tv, scheme_name_tv, block_name_tv, fin_year_tv;
     private List<View> viewArrayList = new ArrayList<>();
     PrefManager prefManager;
 
@@ -95,10 +103,16 @@ public class AddInspectionReportScreen extends AppCompatActivity implements View
 
     private static String imageStoragePath;
     private MyCustomTextView projectName, amountTv, levelTv;
-    private Spinner sp_observation,sp_stage;
+    private Spinner sp_observation, sp_stage;
     private List<BlockListValue> stageListValues = new ArrayList<>();
     private List<String> observationList = new ArrayList<String>();
     private ImageView back_img;
+    LocationManager mlocManager = null;
+    LocationListener mlocListener;
+    public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
+    static ArrayList<String> latitude = new ArrayList<String>();
+    static ArrayList<String> longitude = new ArrayList<String>();
+
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -106,7 +120,7 @@ public class AddInspectionReportScreen extends AppCompatActivity implements View
         setContentView(R.layout.add_inspection_with_toolbar);
         intializeUI();
         viewStage();
-       viewObservation();
+        viewObservation();
     }
 
     public void intializeUI() {
@@ -138,6 +152,19 @@ public class AddInspectionReportScreen extends AppCompatActivity implements View
         projectName.setText(getIntent().getStringExtra(AppConstant.WORK_NAME));
         amountTv.setText(getIntent().getStringExtra(AppConstant.AS_AMOUNT));
         levelTv.setText(getIntent().getStringExtra(AppConstant.WORK_SATGE_NAME));
+        mlocManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        mlocListener = new MyLocationListener();
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
+        mlocManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, mlocListener);
     }
 
     @Override
@@ -157,15 +184,15 @@ public class AddInspectionReportScreen extends AppCompatActivity implements View
         String workGroupId = getIntent().getStringExtra(AppConstant.WORK_GROUP_ID);
         String workTypeid = getIntent().getStringExtra(AppConstant.WORK_TYPE_ID);
 
-        String sql = "select * from "+DBHelper.WORK_STAGE_TABLE +"  where (work_group_id = "+workGroupId+" and work_type_id = "+workTypeid+") order by work_stage_order asc";
-        Cursor stages = getRawEvents(sql,null);
+        String sql = "select * from " + DBHelper.WORK_STAGE_TABLE + "  where (work_group_id = " + workGroupId + " and work_type_id = " + workTypeid + ") order by work_stage_order asc";
+        Cursor stages = getRawEvents(sql, null);
 
         BlockListValue stagelist = new BlockListValue();
         stagelist.setWorkStageName("Select Stage");
         stageListValues.add(stagelist);
 
-        if(stages.getCount() > 0) {
-            if(stages.moveToFirst()) {
+        if (stages.getCount() > 0) {
+            if (stages.moveToFirst()) {
                 do {
                     BlockListValue stagelistval = new BlockListValue();
                     String workGroupID = stages.getString(stages.getColumnIndexOrThrow(AppConstant.WORK_GROUP_ID));
@@ -179,20 +206,20 @@ public class AddInspectionReportScreen extends AppCompatActivity implements View
                     stagelistval.setWorkStageCode(workStageCode);
                     stagelistval.setWorkStageName(workstageNmae);
                     stageListValues.add(stagelistval);
-                }while (stages.moveToNext());
+                } while (stages.moveToNext());
             }
         }
         sp_stage.setAdapter(new CommonAdapter(this, stageListValues, "StageList"));
     }
 
-    public void viewObservation(){
+    public void viewObservation() {
         observationList.clear();
         observationList.add("Select Observation");
         observationList.add("S");
         observationList.add("SRI");
         observationList.add("U");
 
-        sp_observation.setAdapter(new ArrayAdapter<String>(this, R.layout.spinner_value,R.id.spinner_list_value, observationList));
+        sp_observation.setAdapter(new ArrayAdapter<String>(this, R.layout.spinner_value, R.id.spinner_list_value, observationList));
 
     }
 
@@ -237,8 +264,8 @@ public class AddInspectionReportScreen extends AppCompatActivity implements View
 // byte[] imageInByte = baos.toByteArray();
 
 
-                    String str=myEditTextView.getText().toString();
-                    Toast.makeText(getApplicationContext(),str,Toast.LENGTH_LONG).show();
+                    String str = myEditTextView.getText().toString();
+                    Toast.makeText(getApplicationContext(), str, Toast.LENGTH_LONG).show();
                 }
                 dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
                 dialog.dismiss();
@@ -349,16 +376,16 @@ public class AddInspectionReportScreen extends AppCompatActivity implements View
                 String[] mobileOrEmail = values.split(",");
                 for (int i = 0; i < mobileOrEmail.length; i++) {
                     if (viewArrayList.size() < 5) {
-                        updateView( this, mobileNumberLayout, mobileOrEmail[i], type);
+                        updateView(this, mobileNumberLayout, mobileOrEmail[i], type);
                     }
                 }
             } else {
                 if (viewArrayList.size() < 5) {
-                    updateView( this, mobileNumberLayout, values, type);
+                    updateView(this, mobileNumberLayout, values, type);
                 }
             }
         } else {
-            updateView( this, mobileNumberLayout, values, type);
+            updateView(this, mobileNumberLayout, values, type);
         }
     }
 
@@ -415,11 +442,35 @@ public class AddInspectionReportScreen extends AppCompatActivity implements View
         imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                mlocManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+                mlocListener = new MyLocationListener();
 
-                if (CameraUtils.checkPermissions( AddInspectionReportScreen.this)) {
-                    captureImage();
+
+                // permission was granted, yay! Do the
+                // location-related task you need to do.
+                if (ContextCompat.checkSelfPermission(AddInspectionReportScreen.this,
+                        ACCESS_FINE_LOCATION)
+                        == PackageManager.PERMISSION_GRANTED) {
+
+                    //Request location updates:
+                    mlocManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, mlocListener);
+
+                }
+
+                if (mlocManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+                    if (MyLocationListener.latitude > 0) {
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                            if (CameraUtils.checkPermissions(AddInspectionReportScreen.this)) {
+                                captureImage();
+                            } else {
+                                requestCameraPermission(MEDIA_TYPE_IMAGE);
+                            }
+                        }
+                    } else {
+                        Utils.showAlert(AddInspectionReportScreen.this, "Satellite communication not available to get GPS Co-ordination Please Capture Photo in Open Area..");
+                    }
                 } else {
-                    requestCameraPermission(MEDIA_TYPE_IMAGE);
+                    Utils.showAlert(AddInspectionReportScreen.this, "GPS is not turned on...");
                 }
 
 
@@ -453,7 +504,7 @@ public class AddInspectionReportScreen extends AppCompatActivity implements View
 
 
     private void requestCameraPermission(final int type) {
-        Dexter.withActivity( this)
+        Dexter.withActivity(this)
                 .withPermissions(Manifest.permission.CAMERA,
                         Manifest.permission.WRITE_EXTERNAL_STORAGE)
                 .withListener(new MultiplePermissionsListener() {
@@ -482,12 +533,12 @@ public class AddInspectionReportScreen extends AppCompatActivity implements View
 
 
     private void showPermissionsAlert() {
-        AlertDialog.Builder builder = new AlertDialog.Builder( this);
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Permissions required!")
                 .setMessage("Camera needs few permissions to work properly. Grant them in settings.")
                 .setPositiveButton("GOTO SETTINGS", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
-                        CameraUtils.openSettings( AddInspectionReportScreen.this);
+                        CameraUtils.openSettings(AddInspectionReportScreen.this);
                     }
                 })
                 .setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
@@ -583,5 +634,37 @@ public class AddInspectionReportScreen extends AppCompatActivity implements View
     public Cursor getRawEvents(String sql, String string) {
         Cursor cursor = db.rawQuery(sql, null);
         return cursor;
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case MY_PERMISSIONS_REQUEST_LOCATION: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    captureImage();
+                    // permission was granted, yay! Do the
+                    // location-related task you need to do.
+                    if (ContextCompat.checkSelfPermission(this,
+                            ACCESS_FINE_LOCATION)
+                            == PackageManager.PERMISSION_GRANTED) {
+
+                        //Request location updates:
+//                        mlocManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, mlocListener);
+
+                    }
+
+                } else {
+
+                    // permission denied, boo! Disable the
+                    // functionality that depends on this permission.
+                    Toast.makeText(this, "permission denied", Toast.LENGTH_LONG).show();
+                }
+                return;
+            }
+
+        }
     }
 }

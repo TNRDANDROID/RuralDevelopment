@@ -98,7 +98,7 @@ public class ApiService {
 
     public void makeRequest(String api, int method, String url, Map<String, String> parmas , String type, Api.ServerResponseListener listener) {
         CustomRequest request = getRequest(api, method, url ,parmas, type, listener);
-        int socketTimeout = 30000;//30 seconds - change to what you want
+        int socketTimeout = 130000;//30 seconds - change to what you want
         RetryPolicy policy = new DefaultRetryPolicy(socketTimeout, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
         request.setRetryPolicy(policy);
         if ("cache".equalsIgnoreCase(type)) {
