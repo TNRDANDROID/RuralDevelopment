@@ -235,7 +235,7 @@ public class AddInspectionReportScreen extends AppCompatActivity implements View
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 
         work_id = getIntent().getStringExtra(AppConstant.WORK_ID);
-        String stage_of_work_on_inspection = getIntent().getStringExtra(AppConstant.WORK_SATGE_NAME);
+        String stage_of_work_on_inspection = stageListValues.get(sp_stage.getSelectedItemPosition()).getWorkStageCode();
         String date_of_inspection = sdf.format(new Date());
         String inspected_by = "inspected_by";
         String observation = sp_observation.getSelectedItem().toString();
@@ -283,42 +283,47 @@ public class AddInspectionReportScreen extends AppCompatActivity implements View
 
         done.setOnClickListener(new View.OnClickListener() {
 
-            String inspectionID_sql = "SELECT inspection_id FROM "+DBHelper.INSPECTION +" order by inspection_id DESC limit 1";
-            Cursor inpection_Cursor = getRawEvents(inspectionID_sql,null);
-            int inspectionID = inpection_Cursor.getInt('0');
-
             @Override
             public void onClick(View v) {
+                int inspectionID = 0;
+
+                Cursor inpection_Cursor = getRawEvents("SELECT inspection_id FROM "+DBHelper.INSPECTION +" order by inspection_id DESC limit 1",null);
+                if(inpection_Cursor.getCount() > 0){
+                   inspectionID = inpection_Cursor.getInt(0);
+                }
+
                 int childCount = mobileNumberLayout.getChildCount();
-                for (int i = 0; i < childCount; i++) {
-                    View vv = mobileNumberLayout.getChildAt(i);
-                    EditText myEditTextView = (EditText) vv.findViewById(R.id.description);
+                if(childCount > 0) {
+                    for (int i = 0; i < childCount; i++) {
+                        View vv = mobileNumberLayout.getChildAt(i);
+                        EditText myEditTextView = (EditText) vv.findViewById(R.id.description);
 
-                    ImageView imageView = (ImageView)vv. findViewById(R.id.image_view);
-                    Bitmap bitmap = ((BitmapDrawable)imageView.getDrawable()).getBitmap();
-                    ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                    bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
-                    byte[] imageInByte = baos.toByteArray();
+                        ImageView imageView = (ImageView)vv. findViewById(R.id.image_view);
+                        Bitmap bitmap = ((BitmapDrawable)imageView.getDrawable()).getBitmap();
+                        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+                        byte[] imageInByte = baos.toByteArray();
 
 
-                    String description = myEditTextView.getText().toString();
+                        String description = myEditTextView.getText().toString();
 
-                    if (MyLocationListener.latitude > 0) {
-                        offlatTextValue = "" + MyLocationListener.latitude;
-                        offlanTextValue = "" + MyLocationListener.longitude;
+                        if (MyLocationListener.latitude > 0) {
+                            offlatTextValue = "" + MyLocationListener.latitude;
+                            offlanTextValue = "" + MyLocationListener.longitude;
+                        }
+
+                        // Toast.makeText(getApplicationContext(),str,Toast.LENGTH_LONG).show();
+                        ContentValues imageValue = new ContentValues();
+
+                        imageValue.put(AppConstant.INSPECTION_ID,inspectionID);
+                        imageValue.put(AppConstant.WORK_ID,work_id);
+                        imageValue.put(AppConstant.LATITUDE,offlatTextValue);
+                        imageValue.put(AppConstant.LONGITUDE,offlanTextValue);
+                        imageValue.put(AppConstant.IMAGE,imageInByte);
+                        imageValue.put(AppConstant.DESCRIPTION,description);
+
+                        LoginScreen.db.insert(DBHelper.CAPTURED_PHOTO,null,imageValue);
                     }
-
-                    // Toast.makeText(getApplicationContext(),str,Toast.LENGTH_LONG).show();
-                    ContentValues imageValue = new ContentValues();
-
-                    imageValue.put(AppConstant.INSPECTION_ID,inspectionID);
-                    imageValue.put(AppConstant.WORK_ID,work_id);
-                    imageValue.put(AppConstant.LATITUDE,offlatTextValue);
-                    imageValue.put(AppConstant.LONGITUDE,offlanTextValue);
-                    imageValue.put(AppConstant.IMAGE,imageInByte);
-                    imageValue.put(AppConstant.DESCRIPTION,description);
-
-                    LoginScreen.db.insert(DBHelper.CAPTURED_PHOTO,null,imageValue);
                 }
                 dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
                 dialog.dismiss();

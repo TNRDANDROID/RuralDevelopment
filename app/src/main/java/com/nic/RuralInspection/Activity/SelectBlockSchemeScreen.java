@@ -233,7 +233,7 @@ public class SelectBlockSchemeScreen extends AppCompatActivity implements View.O
         sp_financialYear.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                if (position >= 1) {
+                if (position > 0) {
                     pref_finYear = FinYearList.get(position).getFinancialYear();
                     prefManager.setFinancialyearName(pref_finYear);
                 }
@@ -304,34 +304,55 @@ public class SelectBlockSchemeScreen extends AppCompatActivity implements View.O
         overridePendingTransition(R.anim.slide_enter, R.anim.slide_exit);
     }
 
+//    public void projectListScreen() {
+//
+//        if (!"Select Financial year".equalsIgnoreCase(FinYearList.get(sp_financialYear.getSelectedItemPosition()).getFinancialYear())) {
+//            if (!"Select Block".equalsIgnoreCase(Block.get(sp_block.getSelectedItemPosition()).getBlockName()) || (all_block.isChecked())) {
+//                if (!"Select Village".equalsIgnoreCase(Village.get(sp_village.getSelectedItemPosition()).getVillageListPvName()) || (all_village.isChecked())) {
+//                    if (!"Select Scheme".equalsIgnoreCase(Scheme.get(sp_scheme.getSelectedItemPosition()).getSchemeName()) || (all_scheme.isChecked())) {
+//                        String blockCode = Block.get(sp_block.getSelectedItemPosition()).getBlockCode();
+//                        String pvCode = Village.get(sp_village.getSelectedItemPosition()).getVillageListPvCode();
+//                        String sequentialID = Scheme.get(sp_scheme.getSelectedItemPosition()).getSchemeSequentialID();
+//
+//                        String highValueProject = null;
+//
+//
+//                        if (high_value_projects.isChecked()) {
+//                            highValueProject = "Y";
+//                        }
+//                        //getWorkListOptional();
+//
+//                        Intent intent = new Intent(this, ProjectListScreen.class);
+//                        //intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+//                        intent.putExtra(AppConstant.BLOCK_CODE, blockCode);
+//                        intent.putExtra(AppConstant.PV_CODE, pvCode);
+//                        intent.putExtra(AppConstant.SCHEME_SEQUENTIAL_ID, sequentialID);
+//                        intent.putExtra(AppConstant.IS_HIGH_VALUE_PROJECT, highValueProject);
+//                        startActivity(intent);
+//                        overridePendingTransition(R.anim.slide_in, R.anim.slide_out);
+//
+//
+//                    } else {
+//                        Utils.showAlert(this, "Select Scheme");
+//                    }
+//                } else {
+//                    Utils.showAlert(this, "Select Village");
+//                }
+//            } else {
+//                Utils.showAlert(this, "Select Block");
+//            }
+//        } else {
+//            Utils.showAlert(this, "Select Financial year");
+//        }
+//    }
+
     public void projectListScreen() {
 
         if (!"Select Financial year".equalsIgnoreCase(FinYearList.get(sp_financialYear.getSelectedItemPosition()).getFinancialYear())) {
             if (!"Select Block".equalsIgnoreCase(Block.get(sp_block.getSelectedItemPosition()).getBlockName()) || (all_block.isChecked())) {
                 if (!"Select Village".equalsIgnoreCase(Village.get(sp_village.getSelectedItemPosition()).getVillageListPvName()) || (all_village.isChecked())) {
                     if (!"Select Scheme".equalsIgnoreCase(Scheme.get(sp_scheme.getSelectedItemPosition()).getSchemeName()) || (all_scheme.isChecked())) {
-                        String blockCode = Block.get(sp_block.getSelectedItemPosition()).getBlockCode();
-                        String pvCode = Village.get(sp_village.getSelectedItemPosition()).getVillageListPvCode();
-                        String sequentialID = Scheme.get(sp_scheme.getSelectedItemPosition()).getSchemeSequentialID();
-
-                        String highValueProject = null;
-
-
-                        if (high_value_projects.isChecked()) {
-                            highValueProject = "Y";
-                        }
                         getWorkListOptional();
-
-                        Intent intent = new Intent(this, ProjectListScreen.class);
-                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                        intent.putExtra(AppConstant.BLOCK_CODE, blockCode);
-                        intent.putExtra(AppConstant.PV_CODE, pvCode);
-                        intent.putExtra(AppConstant.SCHEME_SEQUENTIAL_ID, sequentialID);
-                        intent.putExtra(AppConstant.IS_HIGH_VALUE_PROJECT, highValueProject);
-                        startActivity(intent);
-                        overridePendingTransition(R.anim.slide_in, R.anim.slide_out);
-
-
                     } else {
                         Utils.showAlert(this, "Select Scheme");
                     }
@@ -350,10 +371,34 @@ public class SelectBlockSchemeScreen extends AppCompatActivity implements View.O
 
         Cursor worklist = getRawEvents("SELECT * FROM " + DBHelper.WORK_LIST_OPTIONAL, null);
         if (worklist.getCount() > 0) {
-            projectListScreen();
+           // projectListScreen();
+            goto_next();
         } else {
             Utils.showAlert(this, "Please TurnOn Your Network");
         }
+    }
+    public void goto_next() {
+
+        String blockCode = Block.get(sp_block.getSelectedItemPosition()).getBlockCode();
+        String pvCode = Village.get(sp_village.getSelectedItemPosition()).getVillageListPvCode();
+        String sequentialID = Scheme.get(sp_scheme.getSelectedItemPosition()).getSchemeSequentialID();
+
+        String highValueProject = null;
+
+
+        if (high_value_projects.isChecked()) {
+            highValueProject = "Y";
+        }
+
+        Intent intent = new Intent(this, ProjectListScreen.class);
+        //intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        intent.putExtra(AppConstant.BLOCK_CODE, blockCode);
+        intent.putExtra(AppConstant.PV_CODE, pvCode);
+        intent.putExtra(AppConstant.SCHEME_SEQUENTIAL_ID, sequentialID);
+        intent.putExtra(AppConstant.IS_HIGH_VALUE_PROJECT, highValueProject);
+        startActivity(intent);
+        overridePendingTransition(R.anim.slide_in, R.anim.slide_out);
+
     }
 
     public void loadOfflineDBValues() {
@@ -501,7 +546,7 @@ public class SelectBlockSchemeScreen extends AppCompatActivity implements View.O
                 String responseDecryptedKey = Utils.decrypt(prefManager.getUserPassKey(), key);
                 JSONObject jsonObject = new JSONObject(responseDecryptedKey);
                 if (jsonObject.getString("STATUS").equalsIgnoreCase("OK") && jsonObject.getString("RESPONSE").equalsIgnoreCase("OK")) {
-                    workListOptional(jsonObject.getJSONArray(AppConstant.JSON_DATA));
+                    workListOptionalS(jsonObject.getJSONArray(AppConstant.JSON_DATA));
                 }
                 Log.d("responseWorkList", "" + jsonObject.getJSONArray(AppConstant.JSON_DATA));
 
@@ -513,7 +558,7 @@ public class SelectBlockSchemeScreen extends AppCompatActivity implements View.O
         }
     }
 
-    private void workListOptional(JSONArray jsonArray) {
+    private void workListOptionalS(JSONArray jsonArray) {
         try {
             db.delete(DBHelper.WORK_LIST_OPTIONAL, null, null);
         } catch (Exception e) {
@@ -522,43 +567,54 @@ public class SelectBlockSchemeScreen extends AppCompatActivity implements View.O
         try {
             updatedJsonArray = new JSONArray();
             updatedJsonArray = jsonArray;
-            for (int i = 0; i < jsonArray.length(); i++) {
-                String dcode = jsonArray.getJSONObject(i).getString(AppConstant.DISTRICT_CODE);
-                String SelectedBlockCode = jsonArray.getJSONObject(i).getString(AppConstant.BLOCK_CODE);
-                String schemeID = jsonArray.getJSONObject(i).getString(AppConstant.SCHEME_ID);
-                String workGroupID = jsonArray.getJSONObject(i).getString(AppConstant.WORK_GROUP_ID);
-                String workTypeID = jsonArray.getJSONObject(i).getString(AppConstant.WORK_TYPE_ID);
-                String finYear = jsonArray.getJSONObject(i).getString(AppConstant.FINANCIAL_YEAR);
-                String workID = jsonArray.getJSONObject(i).getString(AppConstant.WORK_ID);
-                String workName = jsonArray.getJSONObject(i).getString(AppConstant.WORK_NAME);
-                String asAmount = jsonArray.getJSONObject(i).getString(AppConstant.AS_AMOUNT);
-                String tsAmount = jsonArray.getJSONObject(i).getString(AppConstant.TS_AMOUNT);
-                String currentStage = jsonArray.getJSONObject(i).getString(AppConstant.CURRENT_STAGE);
-                String isHighValueProject = jsonArray.getJSONObject(i).getString(AppConstant.IS_HIGH_VALUE_PROJECT);
-                String pvCode = jsonArray.getJSONObject(i).getString(AppConstant.PV_CODE);
+            if(jsonArray.length() > 0) {
+                for (int i = 0; i < jsonArray.length(); i++) {
+                    String dcode = jsonArray.getJSONObject(i).getString(AppConstant.DISTRICT_CODE);
+                    String SelectedBlockCode = jsonArray.getJSONObject(i).getString(AppConstant.BLOCK_CODE);
+                    String schemeID = jsonArray.getJSONObject(i).getString(AppConstant.SCHEME_ID);
+                    String workGroupID = jsonArray.getJSONObject(i).getString(AppConstant.WORK_GROUP_ID);
+                    String workTypeID = jsonArray.getJSONObject(i).getString(AppConstant.WORK_TYPE_ID);
+                    String finYear = jsonArray.getJSONObject(i).getString(AppConstant.FINANCIAL_YEAR);
+                    String workID = jsonArray.getJSONObject(i).getString(AppConstant.WORK_ID);
+                    String workName = jsonArray.getJSONObject(i).getString(AppConstant.WORK_NAME);
+                    String asAmount = jsonArray.getJSONObject(i).getString(AppConstant.AS_AMOUNT);
+                    String tsAmount = jsonArray.getJSONObject(i).getString(AppConstant.TS_AMOUNT);
+                    String currentStage = jsonArray.getJSONObject(i).getString(AppConstant.CURRENT_STAGE);
+                    String isHighValueProject = jsonArray.getJSONObject(i).getString(AppConstant.IS_HIGH_VALUE_PROJECT);
+                    String pvCode = jsonArray.getJSONObject(i).getString(AppConstant.PV_CODE);
 
-                ContentValues workListOptional = new ContentValues();
-                workListOptional.put(AppConstant.DISTRICT_CODE, dcode);
-                workListOptional.put(AppConstant.BLOCK_CODE, SelectedBlockCode);
-                workListOptional.put(AppConstant.SCHEME_ID, schemeID);
-                workListOptional.put(AppConstant.WORK_GROUP_ID, workGroupID);
-                workListOptional.put(AppConstant.WORK_TYPE_ID, workTypeID);
-                workListOptional.put(AppConstant.FINANCIAL_YEAR, finYear);
-                workListOptional.put(AppConstant.WORK_ID, workID);
-                workListOptional.put(AppConstant.WORK_NAME, workName);
-                workListOptional.put(AppConstant.AS_AMOUNT, asAmount);
-                workListOptional.put(AppConstant.TS_AMOUNT, tsAmount);
-                workListOptional.put(AppConstant.CURRENT_STAGE, currentStage);
-                workListOptional.put(AppConstant.IS_HIGH_VALUE_PROJECT, isHighValueProject);
-                workListOptional.put(AppConstant.PV_CODE, pvCode);
+                    ContentValues workListOptional = new ContentValues();
+                    workListOptional.put(AppConstant.DISTRICT_CODE, dcode);
+                    workListOptional.put(AppConstant.BLOCK_CODE, SelectedBlockCode);
+                    workListOptional.put(AppConstant.SCHEME_ID, schemeID);
+                    workListOptional.put(AppConstant.WORK_GROUP_ID, workGroupID);
+                    workListOptional.put(AppConstant.WORK_TYPE_ID, workTypeID);
+                    workListOptional.put(AppConstant.FINANCIAL_YEAR, finYear);
+                    workListOptional.put(AppConstant.WORK_ID, workID);
+                    workListOptional.put(AppConstant.WORK_NAME, workName);
+                    workListOptional.put(AppConstant.AS_AMOUNT, asAmount);
+                    workListOptional.put(AppConstant.TS_AMOUNT, tsAmount);
+                    workListOptional.put(AppConstant.CURRENT_STAGE, currentStage);
+                    workListOptional.put(AppConstant.IS_HIGH_VALUE_PROJECT, isHighValueProject);
+                    workListOptional.put(AppConstant.PV_CODE, pvCode);
 
-                LoginScreen.db.insert(DBHelper.WORK_LIST_OPTIONAL, null, workListOptional);
+                    LoginScreen.db.insert(DBHelper.WORK_LIST_OPTIONAL, null, workListOptional);
+                }
             }
+            else {
+                Utils.showAlert(this,"No Record Found for Corrsponding Financial Year");
+            }
+
         } catch (JSONException j) {
+            Utils.showAlert(this,"No Record Found for Corrsponding Financial Year");
+
             j.printStackTrace();
         } catch (ArrayIndexOutOfBoundsException a) {
+            Utils.showAlert(this,"No Record Found for Corrsponding Financial Year");
+
             a.printStackTrace();
         }
+        goto_next();
     }
 
     @Override
