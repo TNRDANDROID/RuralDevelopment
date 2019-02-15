@@ -88,6 +88,7 @@ public class ProjectListAdapter extends RecyclerView.Adapter<ProjectListAdapter.
         String workGroupID = projectListValues.get(position).getWorkGroupID();
         String workTypeID = projectListValues.get(position).getWorkTypeID();
         String stageName = projectListValues.get(position).getWorkStageName();
+        String stageCode = projectListValues.get(position).getWorkStageCode();
         String asAmount = projectListValues.get(position).getAsAmount();
 
         Activity activity = (Activity) context;

@@ -14,6 +14,8 @@ public class DBHelper extends SQLiteOpenHelper {
     public static final String FINANCIAL_YEAR_TABLE_NAME = "FinancialYear";
     public static final String WORK_LIST_DISTRICT_FINYEAR_WISE = "WorkListDistFinYearWise";
     public static final String WORK_STAGE_TABLE = "work_type_stage_link";
+    public static final String INSPECTION = "inspection";
+    public static final String CAPTURED_PHOTO = "captured_photo";
     private Context context;
 
     public DBHelper(Context context) {
@@ -58,6 +60,26 @@ public class DBHelper extends SQLiteOpenHelper {
                 "ts_value  varchar(32)," +
                 "current_stage_of_work  varchar(32)," +
                 "is_high_value varchar(4))");
+
+        db.execSQL("CREATE TABLE "+ INSPECTION  + "("
+                + "inspection_id INTEGER PRIMARY KEY AUTOINCREMENT," +
+                "work_id TEXT," +
+                "stage_of_work_on_inspection TEXT," +
+                "date_of_inspection TEXT," +
+                "inspected_by TEXT," +
+                "observation TEXT," +
+                "inspection_remark TEXT," +
+                "created_date TEXT," +
+                "created_ipaddress TEXT," +
+                "created_username TEXT)");
+
+        db.execSQL("CREATE TABLE "+ CAPTURED_PHOTO + "("
+                + "inspection_id TEXT," +
+                "work_id TEXT," +
+                "latitude TEXT," +
+                "longitude TEXT," +
+                "image blob,"+
+                "description TEXT)");
     }
 
     @Override
@@ -67,7 +89,10 @@ public class DBHelper extends SQLiteOpenHelper {
             db.execSQL("DROP TABLE IF EXISTS " + BLOCK_TABLE_NAME);
             db.execSQL("DROP TABLE IF EXISTS " + SCHEME_TABLE_NAME);
             db.execSQL("DROP TABLE IF EXISTS " + FINANCIAL_YEAR_TABLE_NAME);
+            db.execSQL("DROP TABLE IF EXISTS " + WORK_STAGE_TABLE);
             db.execSQL("DROP TABLE IF EXISTS " + WORK_LIST_DISTRICT_FINYEAR_WISE);
+            db.execSQL("DROP TABLE IF EXISTS " + INSPECTION);
+            db.execSQL("DROP TABLE IF EXISTS " + CAPTURED_PHOTO);
             onCreate(db);
         }
     }

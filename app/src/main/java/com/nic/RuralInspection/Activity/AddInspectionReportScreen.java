@@ -3,6 +3,7 @@ package com.nic.RuralInspection.Activity;
 import android.Manifest;
 import android.app.Activity;
 import android.app.Dialog;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -59,7 +60,9 @@ import com.nic.RuralInspection.session.PrefManager;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import static android.Manifest.permission.ACCESS_FINE_LOCATION;
@@ -112,6 +115,9 @@ public class AddInspectionReportScreen extends AppCompatActivity implements View
     public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
     static ArrayList<String> latitude = new ArrayList<String>();
     static ArrayList<String> longitude = new ArrayList<String>();
+    String offlatTextValue,offlanTextValue;
+    String work_id;
+    EditText remarkTv;
 
 
     @Override
@@ -138,6 +144,7 @@ public class AddInspectionReportScreen extends AppCompatActivity implements View
         levelTv = (MyCustomTextView) findViewById(R.id.level_tv);
         sp_observation = (Spinner) findViewById(R.id.observation);
         sp_stage = (Spinner) findViewById(R.id.stageSelect);
+        remarkTv = (EditText) findViewById(R.id.remark) ;
 
         back_img = (ImageView) findViewById(R.id.backimg);
         back_img.setOnClickListener(this);
@@ -199,12 +206,12 @@ public class AddInspectionReportScreen extends AppCompatActivity implements View
                     String workTypeId = stages.getString(stages.getColumnIndexOrThrow(AppConstant.WORK_TYPE_ID));
                     String workStageOrder = stages.getString(stages.getColumnIndexOrThrow(AppConstant.WORK_STAGE_ORDER));
                     String workStageCode = stages.getString(stages.getColumnIndexOrThrow(AppConstant.WORK_STAGE_CODE));
-                    String workstageNmae = stages.getString(stages.getColumnIndexOrThrow(AppConstant.WORK_SATGE_NAME));
+                    String workstageName = stages.getString(stages.getColumnIndexOrThrow(AppConstant.WORK_SATGE_NAME));
                     stagelistval.setWorkGroupID(workGroupID);
                     stagelistval.setWorkTypeID(workTypeId);
                     stagelistval.setWorkStageOrder(workStageOrder);
                     stagelistval.setWorkStageCode(workStageCode);
-                    stagelistval.setWorkStageName(workstageNmae);
+                    stagelistval.setWorkStageName(workstageName);
                     stageListValues.add(stagelistval);
                 } while (stages.moveToNext());
             }
@@ -224,6 +231,32 @@ public class AddInspectionReportScreen extends AppCompatActivity implements View
     }
 
     public void imageWithDescription(final MyCustomTextView action_tv, final String type, final ScrollView scrollView) {
+
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+
+        work_id = getIntent().getStringExtra(AppConstant.WORK_ID);
+        String stage_of_work_on_inspection = getIntent().getStringExtra(AppConstant.WORK_SATGE_NAME);
+        String date_of_inspection = sdf.format(new Date());
+        String inspected_by = "inspected_by";
+        String observation = sp_observation.getSelectedItem().toString();
+        String inspection_remark = remarkTv.getText().toString();
+        String created_date = date_of_inspection;
+        String created_ipaddress = "123214124";
+        String created_username = "test";
+
+        ContentValues inspectionValue = new ContentValues();
+        inspectionValue.put("work_id",work_id);
+        inspectionValue.put("stage_of_work_on_inspection",stage_of_work_on_inspection);
+        inspectionValue.put("date_of_inspection",date_of_inspection);
+        inspectionValue.put("inspected_by",inspected_by);
+        inspectionValue.put("observation",observation);
+        inspectionValue.put("inspection_remark",inspection_remark);
+        inspectionValue.put("created_date",created_date);
+        inspectionValue.put("created_ipaddress",created_ipaddress);
+        inspectionValue.put("created_username",created_username);
+
+
+        LoginScreen.db.insert(DBHelper.INSPECTION,null,inspectionValue);
 
 
         final Dialog dialog = new Dialog(this,
@@ -248,8 +281,12 @@ public class AddInspectionReportScreen extends AppCompatActivity implements View
         done.setVisibility(View.VISIBLE);
         done.setTypeface(FontCache.getInstance(this).getFont(FontCache.Font.HEAVY));
 
-
         done.setOnClickListener(new View.OnClickListener() {
+
+            String inspectionID_sql = "SELECT inspection_id FROM "+DBHelper.INSPECTION +" order by inspection_id DESC limit 1";
+            Cursor inpection_Cursor = getRawEvents(inspectionID_sql,null);
+            int inspectionID = inpection_Cursor.getInt('0');
+
             @Override
             public void onClick(View v) {
                 int childCount = mobileNumberLayout.getChildCount();
@@ -257,15 +294,31 @@ public class AddInspectionReportScreen extends AppCompatActivity implements View
                     View vv = mobileNumberLayout.getChildAt(i);
                     EditText myEditTextView = (EditText) vv.findViewById(R.id.description);
 
-// ImageView imageView = (ImageView) findViewById(R.id.image_view);
-// Bitmap bitmap = ((BitmapDrawable)imageView.getDrawable()).getBitmap();
-// ByteArrayOutputStream baos = new ByteArrayOutputStream();
-// bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
-// byte[] imageInByte = baos.toByteArray();
+                    ImageView imageView = (ImageView)vv. findViewById(R.id.image_view);
+                    Bitmap bitmap = ((BitmapDrawable)imageView.getDrawable()).getBitmap();
+                    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                    bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+                    byte[] imageInByte = baos.toByteArray();
 
 
-                    String str = myEditTextView.getText().toString();
-                    Toast.makeText(getApplicationContext(), str, Toast.LENGTH_LONG).show();
+                    String description = myEditTextView.getText().toString();
+
+                    if (MyLocationListener.latitude > 0) {
+                        offlatTextValue = "" + MyLocationListener.latitude;
+                        offlanTextValue = "" + MyLocationListener.longitude;
+                    }
+
+                    // Toast.makeText(getApplicationContext(),str,Toast.LENGTH_LONG).show();
+                    ContentValues imageValue = new ContentValues();
+
+                    imageValue.put(AppConstant.INSPECTION_ID,inspectionID);
+                    imageValue.put(AppConstant.WORK_ID,work_id);
+                    imageValue.put(AppConstant.LATITUDE,offlatTextValue);
+                    imageValue.put(AppConstant.LONGITUDE,offlanTextValue);
+                    imageValue.put(AppConstant.IMAGE,imageInByte);
+                    imageValue.put(AppConstant.DESCRIPTION,description);
+
+                    LoginScreen.db.insert(DBHelper.CAPTURED_PHOTO,null,imageValue);
                 }
                 dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
                 dialog.dismiss();

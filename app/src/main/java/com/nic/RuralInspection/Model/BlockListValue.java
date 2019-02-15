@@ -1,5 +1,9 @@
 package com.nic.RuralInspection.Model;
 
+import android.graphics.Bitmap;
+
+import java.sql.Blob;
+
 /**
  * Created by AchanthiSundar on 01-11-2017.
  */
@@ -26,6 +30,11 @@ public class BlockListValue {
     private String workStageName;
     private String projectID;
     private String observationName;
+    private String description;
+    private String latitude;
+    private String longitude;
+    private Bitmap image;
+
 
 //    public BlockListValue(String bcode, String scheme_id, String work_id, String as_value, String is_high_value) {
 //        this.blockCode = bcode;
@@ -216,5 +225,35 @@ public class BlockListValue {
         return observationName;
     }
 
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
+    public String getDescription() {
+        return description;
+    }
+
+    public void setLatitude(String latitude) {
+        this.latitude = latitude;
+    }
+
+    public String getLatitude() {
+        return latitude;
+    }
+
+    public void setLongitude(String longitude) {
+        this.longitude = longitude;
+    }
+
+    public String getLongitude() {
+        return longitude;
+    }
+
+    public void setImage(Bitmap image) {
+        this.image = image;
+    }
+
+    public Bitmap getImage() {
+        return image;
+    }
 }
