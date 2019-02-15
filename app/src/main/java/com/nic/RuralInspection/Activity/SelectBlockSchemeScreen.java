@@ -547,6 +547,9 @@ public class SelectBlockSchemeScreen extends AppCompatActivity implements View.O
                 JSONObject jsonObject = new JSONObject(responseDecryptedKey);
                 if (jsonObject.getString("STATUS").equalsIgnoreCase("OK") && jsonObject.getString("RESPONSE").equalsIgnoreCase("OK")) {
                     workListOptionalS(jsonObject.getJSONArray(AppConstant.JSON_DATA));
+                }else
+                if (jsonObject.getString("STATUS").equalsIgnoreCase("OK") && jsonObject.getString("RESPONSE").equalsIgnoreCase("NO_RECORD")) {
+                    Utils.showAlert(this,"No Record Found");
                 }
                 Log.d("responseWorkList", "" + jsonObject.getJSONArray(AppConstant.JSON_DATA));
 
@@ -606,12 +609,8 @@ public class SelectBlockSchemeScreen extends AppCompatActivity implements View.O
             }
 
         } catch (JSONException j) {
-            Utils.showAlert(this,"No Record Found for Corrsponding Financial Year");
-
             j.printStackTrace();
         } catch (ArrayIndexOutOfBoundsException a) {
-            Utils.showAlert(this,"No Record Found for Corrsponding Financial Year");
-
             a.printStackTrace();
         }
         goto_next();
