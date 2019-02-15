@@ -1,5 +1,7 @@
 package com.nic.RuralInspection.Model;
 
+import android.graphics.Bitmap;
+
 /**
  * Created by AchanthiSundar on 01-11-2017.
  */
@@ -8,6 +10,92 @@ public class BlockListValue {
 
     private String distictCode;
     private String blockCode;
+    private String VillageListDistrictCode;
+    private String VillageListBlockCode;
+    private String Description;
+    private String Latitude;
+
+    public String getLatitude() {
+        return Latitude;
+    }
+
+    public void setLatitude(String latitude) {
+        Latitude = latitude;
+    }
+
+    public String getLongitude() {
+        return Longitude;
+    }
+
+    public void setLongitude(String longitude) {
+        Longitude = longitude;
+    }
+
+    private String Longitude;
+
+    public String getDescription() {
+        return Description;
+    }
+
+    public void setDescription(String description) {
+        Description = description;
+    }
+
+    public Bitmap getImage() {
+        return Image;
+    }
+
+    public void setImage(Bitmap image) {
+        Image = image;
+    }
+
+    private Bitmap Image ;
+
+    public String getVillageListDistrictCode() {
+        return VillageListDistrictCode;
+    }
+
+    public void setVillageListDistrictCode(String villageListDistrictCode) {
+        VillageListDistrictCode = villageListDistrictCode;
+    }
+
+    public String getVillageListBlockCode() {
+        return VillageListBlockCode;
+    }
+
+    public void setVillageListBlockCode(String villageListBlockCode) {
+        VillageListBlockCode = villageListBlockCode;
+    }
+
+    public String getVillageListPvCode() {
+        return VillageListPvCode;
+    }
+
+    public void setVillageListPvCode(String villageListPvCode) {
+        VillageListPvCode = villageListPvCode;
+    }
+
+    public String getVillageListPvName() {
+        return VillageListPvName;
+    }
+
+    public void setVillageListPvName(String villageListPvName) {
+        VillageListPvName = villageListPvName;
+    }
+
+    private String VillageListPvCode;
+    private String VillageListPvName;
+
+
+    public String getPvCode() {
+        return pvCode;
+    }
+
+    public void setPvCode(String pvCode) {
+        this.pvCode = pvCode;
+    }
+
+    private String pvCode;
     private String blockName;
     private String schemeName;
     private String projectName;
