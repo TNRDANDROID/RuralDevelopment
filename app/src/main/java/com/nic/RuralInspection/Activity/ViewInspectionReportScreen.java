@@ -19,6 +19,7 @@ import android.widget.ImageView;
 import android.widget.ScrollView;
 
 import com.nic.RuralInspection.Adapter.ImageDescriptionAdapter;
+import com.nic.RuralInspection.Adapter.InspectionListAdapter;
 import com.nic.RuralInspection.Adapter.ProjectListAdapter;
 import com.nic.RuralInspection.DataBase.DBHelper;
 import com.nic.RuralInspection.Model.BlockListValue;
@@ -71,7 +72,8 @@ public class ViewInspectionReportScreen extends AppCompatActivity implements Vie
     private MyCustomTextView district_tv,scheme_name_tv,block_name_tv,fin_year_tv;
     private MyCustomTextView projectName, amountTv, levelTv;
     private ImageDescriptionAdapter imageAdapter;
-    private RecyclerView recyclerView;
+    private InspectionListAdapter inspectionListAdapter;
+    private RecyclerView imageRecyclerView,inspectionListRecyclerView;
     PrefManager prefManager;
     private ArrayList<BlockListValue> imagelistValues = new ArrayList<>();
 
@@ -98,9 +100,9 @@ public class ViewInspectionReportScreen extends AppCompatActivity implements Vie
         levelTv = (MyCustomTextView) findViewById(R.id.level_tv);
 
         scrollView = (ScrollView) findViewById(R.id.scroll_view);
-        action_tv = (MyCustomTextView) findViewById(R.id.action_tv);
+//        action_tv = (MyCustomTextView) findViewById(R.id.action_tv);
         back_img = (ImageView) findViewById(R.id.backimg);
-        recyclerView = (RecyclerView) findViewById(R.id.image_list_with_description);
+        inspectionListRecyclerView = (RecyclerView) findViewById(R.id.image_list_with_description);
 
         district_tv.setText(prefManager.getDistrictName());
         scheme_name_tv.setText(prefManager.getSchemeName());
@@ -112,16 +114,18 @@ public class ViewInspectionReportScreen extends AppCompatActivity implements Vie
         levelTv.setText(getIntent().getStringExtra(AppConstant.WORK_SATGE_NAME));
 
         back_img.setOnClickListener(this);
-        action_tv.setOnClickListener(this);
+//        action_tv.setOnClickListener(this);
         imageAdapter = new ImageDescriptionAdapter(this,imagelistValues );
+        inspectionListAdapter= new InspectionListAdapter(this  );
 
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
-        recyclerView.setLayoutManager(mLayoutManager);
-        recyclerView.setItemAnimator(new DefaultItemAnimator());
-        recyclerView.setHasFixedSize(true);
-        recyclerView.setNestedScrollingEnabled(false);
+        inspectionListRecyclerView.setLayoutManager(mLayoutManager);
+        inspectionListRecyclerView.setItemAnimator(new DefaultItemAnimator());
+        inspectionListRecyclerView.setHasFixedSize(true);
+        inspectionListRecyclerView.setNestedScrollingEnabled(false);
         retrievedata();
-        recyclerView.setAdapter(imageAdapter);
+        inspectionListRecyclerView.setAdapter(inspectionListAdapter);
+
     }
 
     private void retrievedata() {
