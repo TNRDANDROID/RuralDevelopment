@@ -107,6 +107,7 @@
                     android:textColor="@color/account_status_green_color"
                     android:textSize="@dimen/_12sdp"
                     android:textStyle="italic" />
+
                 <com.nic.RuralInspection.Support.MyCustomTextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -123,8 +124,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"
-                android:layout_marginTop="@dimen/_20sdp"
                 android:layout_below="@+id/header"
+                android:layout_marginTop="@dimen/_20sdp"
                 android:fadeScrollbars="false"
                 android:scrollbarSize="4dp"
                 android:scrollbars="vertical" />
@@ -133,11 +134,7 @@
                 android:id="@+id/not_found_tv"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_alignParentTop="true"
-                android:layout_centerInParent="true"
-                android:layout_gravity="center|top"
-                android:layout_marginTop="@dimen/_20sdp"
-                android:gravity="center"
+                android:layout_alignParentBottom="true"
                 android:text="No Projects Found!"
                 android:textAlignment="center"
                 android:textColor="@android:color/black"

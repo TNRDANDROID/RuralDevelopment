@@ -38,9 +38,11 @@ public class PrefManager {
     private static final String KEY_DISTRICT_NAME = "District_Name";
     private static final String KEY_BLOCK_NAME = "Block_Name";
     private static final String KEY_PV_NAME = "Pv_Name";
+    private static final String KEY_VILLAGE_LIST_PV_NAME = "Village_List_Pv_Name";
     private static final String KEY_LEVELS = "Levels";
     private static final String SERVICE_AUTH_KEY = "service_auth_key";
     private static final String KEY_SPINNER_SELECTED_BLOCKCODE = "spinner_selected_block_code";
+    private static final String KEY_SPINNER_SELECTED_PVCODE = "spinner_selected_pv_code";
     private static final String KEY_SPINNER_SELECTED_SCHEME_SEQ_ID = "spinner_selected_scheme_seq_Id";
     private static final String KEY_SPINNER_SELECTED_FINYEAR = "spinner_selected_finyear";
     private static final String KEY_SCHEME_NAME = "Scheme_Name";
@@ -179,6 +181,14 @@ public class PrefManager {
         return pref.getString(KEY_PV_NAME, null);
     }
 
+    public void setVillageListPvName(String key) {
+        editor.putString(KEY_VILLAGE_LIST_PV_NAME,  key);
+        editor.commit();
+    }
+
+    public String getVillageListPvName() {
+        return pref.getString(KEY_VILLAGE_LIST_PV_NAME, null);
+    }
 
 
 
@@ -200,6 +210,15 @@ public class PrefManager {
 
     public String   getKeySpinnerSelectedBlockcode() {
         return pref.getString(KEY_SPINNER_SELECTED_BLOCKCODE, null);
+    }
+
+    public void setKeySpinnerSelectedPvcode(String userName) {
+        editor.putString(KEY_SPINNER_SELECTED_PVCODE, userName);
+        editor.commit();
+    }
+
+    public String   getKeySpinnerSelectedPVcode() {
+        return pref.getString(KEY_SPINNER_SELECTED_PVCODE, null);
     }
 
     public void setKeySpinnerSelectedSchemeSeqId(String userName) {

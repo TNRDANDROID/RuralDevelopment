@@ -27,6 +27,7 @@ public class AppConstant {
     public static String KEY_SCHEME_LIST_ALL = "scheme_list_all";
     public static String KEY_SCHEME_LIST_DISTRICT_WISE = "scheme_list_district_wise";
     public static String KEY_SCHEME_FINYEAR_LIST = "scheme_finyear_list";
+    public static String KEY_WORK_LIST_OPTIONAL = "work_list_optional";
     public static String USER_LOGIN_KEY = "user_login_key";
     public static String KEY_USER_NAME = "user_name";
     public static String KEY_USER_PASSWORD = "user_pwd";

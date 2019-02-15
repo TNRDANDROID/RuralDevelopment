@@ -49,7 +49,7 @@ public class ProjectListScreen extends AppCompatActivity implements View.OnClick
     private ImageView back_img;
     private NestedScrollView scrollView;
     private SearchView searchView;
-    private MyCustomTextView district_tv,scheme_name_tv,block_name_tv,fin_year_tv,list_count,not_found_tv;
+    private MyCustomTextView district_tv, scheme_name_tv, block_name_tv, fin_year_tv, list_count, not_found_tv;
     PrefManager prefManager;
 
 
@@ -60,7 +60,7 @@ public class ProjectListScreen extends AppCompatActivity implements View.OnClick
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         intializeUI();
-      //  recycle();
+        //  recycle();
 
     }
 
@@ -83,7 +83,7 @@ public class ProjectListScreen extends AppCompatActivity implements View.OnClick
         block_name_tv.setText(prefManager.getBlockName());
         fin_year_tv.setText(prefManager.getFinancialyearName());
 
-        mAdapter = new ProjectListAdapter(this, projectListValues,this);
+        mAdapter = new ProjectListAdapter(this, projectListValues, this);
 
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
         recyclerView.setLayoutManager(mLayoutManager);
@@ -99,54 +99,61 @@ public class ProjectListScreen extends AppCompatActivity implements View.OnClick
     private void retrieve() {
         projectListValues.clear();
         String selectedBlock = getIntent().getStringExtra(AppConstant.BLOCK_CODE);
+        String selectedVillage = getIntent().getStringExtra(AppConstant.PV_CODE);
         String selectedScheme = getIntent().getStringExtra(AppConstant.SCHEME_SEQUENTIAL_ID);
         String high_value = getIntent().getStringExtra(AppConstant.IS_HIGH_VALUE_PROJECT);
 
         String condition = "";
 
-        if(selectedBlock != null || selectedScheme != null || high_value != null) {
+        if (selectedBlock != null || selectedVillage != null || selectedScheme != null || high_value != null) {
             condition += " where";
 
-            if(high_value != null) {
-                condition += " a.is_high_value = '"+high_value+"'";
+            if (high_value != null) {
+                condition += " a.is_high_value = '" + high_value + "'";
             }
-            if(selectedBlock != null) {
+            if (selectedBlock != null) {
                 if (high_value != null) {
-                    condition +=" and" ;
+                    condition += " and";
                 }
-                condition += " a.bcode = "+selectedBlock;
+                condition += " a.bcode = " + selectedBlock;
+
+                if (selectedVillage != null) {
+                    condition += " and a.pvcode = " + selectedVillage;
+                }
 
             }
-            if(selectedScheme != null){
+            if (selectedScheme != null) {
                 if (high_value != null || selectedBlock != null) {
                     condition += " and";
                 }
-                condition += " a.scheme_id = "+selectedScheme;
+                condition += " a.scheme_id = " + selectedScheme;
             }
 
         }
 
-        String worklist_sql = "select a.bcode as bcode,a.scheme_id as scheme_id,a.work_group_id as work_group_id,a.work_type_id as work_type_id,a.work_id as work_id,a.work_name as work_name,a.as_value as as_value,a.ts_value as ts_value,a.is_high_value as is_high_value,b.work_stage_code as work_stage_code,b.work_stage_order as work_stage_order,b.work_stage_name as  work_stage_name from (select * from "+DBHelper.WORK_LIST_DISTRICT_FINYEAR_WISE+" WHERE dcode = "+prefManager.getDistrictCode()+" AND fin_year = '"+prefManager.getFinancialyearName()+"')a left join (select * from "+DBHelper.WORK_STAGE_TABLE+")b on a.work_group_id = b.work_group_id and a.work_type_id = b.work_type_id and a.current_stage_of_work=b.work_stage_code "+ condition+"  order by b.work_stage_order ";
-        Log.d("sql",worklist_sql);
-        Cursor worklist = getRawEvents(worklist_sql,null);
+        String worklist_sql = "select a.bcode as bcode,a.pvcode as pvcode,a.scheme_id as scheme_id,a.work_group_id as work_group_id,a.work_type_id as work_type_id,a.work_id as work_id,a.work_name as work_name,a.as_value as as_value,a.ts_value as ts_value,a.is_high_value as is_high_value,b.work_stage_code as work_stage_code,b.work_stage_order as work_stage_order,b.work_stage_name as  work_stage_name from (select * from " + DBHelper.WORK_LIST_OPTIONAL + " WHERE dcode = " + prefManager.getDistrictCode() + " AND fin_year = '" + prefManager.getFinancialyearName() + "')a left join (select * from " + DBHelper.WORK_STAGE_TABLE + ")b on a.work_group_id = b.work_group_id and a.work_type_id = b.work_type_id and a.current_stage_of_work=b.work_stage_code " + condition + "  order by b.work_stage_order ";
+        Log.d("sql", worklist_sql);
+        Cursor worklist = getRawEvents(worklist_sql, null);
 
-        if(worklist.getCount() > 0) {
-            if (worklist.moveToFirst()){
+        if (worklist.getCount() > 0) {
+            if (worklist.moveToFirst()) {
                 do {
-                    String bcode =  worklist.getString(worklist.getColumnIndexOrThrow(AppConstant.BLOCK_CODE));
-                    String scheme_id =  worklist.getString(worklist.getColumnIndexOrThrow(AppConstant.SCHEME_ID));
-                    String work_group_id =  worklist.getString(worklist.getColumnIndexOrThrow(AppConstant.WORK_GROUP_ID));
-                    String work_type_id =  worklist.getString(worklist.getColumnIndexOrThrow(AppConstant.WORK_TYPE_ID));
-                    String work_id =  worklist.getString(worklist.getColumnIndexOrThrow(AppConstant.WORK_ID));
-                    String work_name =  worklist.getString(worklist.getColumnIndexOrThrow(AppConstant.WORK_NAME));
-                    String as_value =  worklist.getString(worklist.getColumnIndexOrThrow(AppConstant.AS_AMOUNT));
-                    String is_high_value =  worklist.getString(worklist.getColumnIndexOrThrow(AppConstant.IS_HIGH_VALUE_PROJECT));
-                    String work_stage_code =  worklist.getString(worklist.getColumnIndexOrThrow(AppConstant.WORK_STAGE_CODE));
-                    String work_satge_order =  worklist.getString(worklist.getColumnIndexOrThrow(AppConstant.WORK_STAGE_ORDER));
-                    String work_stage_name =  worklist.getString(worklist.getColumnIndexOrThrow(AppConstant.WORK_SATGE_NAME));
+                    String bcode = worklist.getString(worklist.getColumnIndexOrThrow(AppConstant.BLOCK_CODE));
+                    String pvcode = worklist.getString(worklist.getColumnIndexOrThrow(AppConstant.PV_CODE));
+                    String scheme_id = worklist.getString(worklist.getColumnIndexOrThrow(AppConstant.SCHEME_ID));
+                    String work_group_id = worklist.getString(worklist.getColumnIndexOrThrow(AppConstant.WORK_GROUP_ID));
+                    String work_type_id = worklist.getString(worklist.getColumnIndexOrThrow(AppConstant.WORK_TYPE_ID));
+                    String work_id = worklist.getString(worklist.getColumnIndexOrThrow(AppConstant.WORK_ID));
+                    String work_name = worklist.getString(worklist.getColumnIndexOrThrow(AppConstant.WORK_NAME));
+                    String as_value = worklist.getString(worklist.getColumnIndexOrThrow(AppConstant.AS_AMOUNT));
+                    String is_high_value = worklist.getString(worklist.getColumnIndexOrThrow(AppConstant.IS_HIGH_VALUE_PROJECT));
+                    String work_stage_code = worklist.getString(worklist.getColumnIndexOrThrow(AppConstant.WORK_STAGE_CODE));
+                    String work_satge_order = worklist.getString(worklist.getColumnIndexOrThrow(AppConstant.WORK_STAGE_ORDER));
+                    String work_stage_name = worklist.getString(worklist.getColumnIndexOrThrow(AppConstant.WORK_SATGE_NAME));
 
                     BlockListValue workListValue = new BlockListValue();
                     workListValue.setBlockCode(bcode);
+                    workListValue.setPvCode(pvcode);
                     workListValue.setSchemeID(scheme_id);
                     workListValue.setWorkGroupID(work_group_id);
                     workListValue.setWorkTypeID(work_type_id);
@@ -159,19 +166,16 @@ public class ProjectListScreen extends AppCompatActivity implements View.OnClick
                     workListValue.setWorkStageName(work_stage_name);
                     projectListValues.add(workListValue);
 
-                } while(worklist.moveToNext());
+                } while (worklist.moveToNext());
             }
         }
 
-        if(!(projectListValues.size()<1))
-        {
+        if (!(projectListValues.size() < 1)) {
             recyclerView.setAdapter(mAdapter);
-            Log.d("size",String.valueOf(projectListValues.size()));
+            Log.d("size", String.valueOf(projectListValues.size()));
             list_count.setText(String.valueOf(projectListValues.size()));
 
-        }
-        else
-        {
+        } else {
             list_count.setText("0");
             not_found_tv.setVisibility(View.VISIBLE);
         }
@@ -195,14 +199,14 @@ public class ProjectListScreen extends AppCompatActivity implements View.OnClick
             @Override
             public boolean onQueryTextSubmit(String query) {
                 // filter recycler view when query submitted
-               mAdapter.getFilter().filter(query);
+                mAdapter.getFilter().filter(query);
                 return false;
             }
 
             @Override
             public boolean onQueryTextChange(String query) {
                 // filter recycler view when text is changed
-               mAdapter.getFilter().filter(query);
+                mAdapter.getFilter().filter(query);
                 return false;
             }
         });
@@ -287,7 +291,7 @@ public class ProjectListScreen extends AppCompatActivity implements View.OnClick
 //    }
 
     @Override
-    public void addInspectionOnclick(View v,int position) {
+    public void addInspectionOnclick(View v, int position) {
         Log.d("pos", String.valueOf(position));
     }
 
@@ -299,5 +303,9 @@ public class ProjectListScreen extends AppCompatActivity implements View.OnClick
     private Cursor getRawEventWhere(String sql, String[] string) {
         Cursor cursor = LoginScreen.db.rawQuery(sql, string);
         return cursor;
+    }
+
+    public int getProjectlistSize() {
+        return projectListValues.size();
     }
 }

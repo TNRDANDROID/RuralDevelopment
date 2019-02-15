@@ -1129,9 +1129,11 @@ public class Utils {
     }
 
 
-    public static JSONObject villageListDistrictWiseJsonParams() throws JSONException {
+    public static JSONObject villageListDistrictWiseJsonParams(Activity activity) throws JSONException {
+        prefManager = new PrefManager(activity);
         JSONObject dataSet = new JSONObject();
         dataSet.put(AppConstant.KEY_SERVICE_ID, AppConstant.KEY_VILLAGE_LIST_DISTRICT_WISE);
+        dataSet.put(AppConstant.DISTRICT_CODE, prefManager.getDistrictCode());
         Log.d("villageListDistrictWise", "" + dataSet);
         return dataSet;
     }
@@ -1140,14 +1142,28 @@ public class Utils {
     public static JSONObject villageListDistrictBlockWiseJsonParams() throws JSONException {
         JSONObject dataSet = new JSONObject();
         dataSet.put(AppConstant.KEY_SERVICE_ID, AppConstant.KEY_VILLAGE_LIST_DISTRICT_BLOCK_WISE);
+        dataSet.put(AppConstant.DISTRICT_CODE, prefManager.getDistrictCode());
+        dataSet.put(AppConstant.BLOCK_CODE, prefManager.getKeySpinnerSelectedBlockcode());
         Log.d("villageListDistBlock", "" + dataSet);
         return dataSet;
     }
 
 
-    public static JSONObject habitationListDistrictWiseJsonParams() throws JSONException {
+    public static JSONObject workListOptional(Activity activity) throws JSONException {
+        prefManager = new PrefManager(activity);
         JSONObject dataSet = new JSONObject();
-        dataSet.put(AppConstant.KEY_SERVICE_ID, AppConstant.KEY_HABITATION_LIST_DISTRICT_WISE);
+        dataSet.put(AppConstant.KEY_SERVICE_ID, AppConstant.KEY_WORK_LIST_OPTIONAL);
+        dataSet.put(AppConstant.DISTRICT_CODE, prefManager.getDistrictCode());
+        dataSet.put(AppConstant.FINANCIAL_YEAR, prefManager.getFinancialyearName());
+        if(!prefManager.getBlockName().equalsIgnoreCase("All")){
+            dataSet.put(AppConstant.BLOCK_CODE, prefManager.getKeySpinnerSelectedBlockcode());
+        }
+        if(!prefManager.getVillageListPvName().equalsIgnoreCase("All")){
+            dataSet.put(AppConstant.PV_CODE, prefManager.getKeySpinnerSelectedPVcode());
+        }
+        if(!prefManager.getSchemeName().equalsIgnoreCase("All")){
+            dataSet.put(AppConstant.SCHEME_ID, prefManager.getKeySpinnerSelectedSchemeSeqId());
+        }
         Log.d("habitationListDist", "" + dataSet);
         return dataSet;
     }

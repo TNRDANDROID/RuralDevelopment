@@ -80,6 +80,7 @@ public class Dashboard extends AppCompatActivity implements Api.ServerResponseLi
 //            block_layout.setVisibility(View.GONE);
         }
         getSchemeList();
+        getVillageList();
         getFinYearList();
         getStageList();
     }
@@ -88,6 +89,14 @@ public class Dashboard extends AppCompatActivity implements Api.ServerResponseLi
     public void getBlockList() {
         try {
             new ApiService(this).makeJSONObjectRequest("BlockList", Api.Method.POST, UrlGenerator.getServicesListUrl(), blockListJsonParams(), "not cache", this);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void getVillageList() {
+        try {
+            new ApiService(this).makeJSONObjectRequest("VillageList", Api.Method.POST, UrlGenerator.getServicesListUrl(), villageListJsonParams(), "not cache", this);
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -123,6 +132,15 @@ public class Dashboard extends AppCompatActivity implements Api.ServerResponseLi
         dataSet.put(AppConstant.KEY_USER_NAME, prefManager.getUserName());
         dataSet.put(AppConstant.DATA_CONTENT, authKey);
         Log.d("blockListDistrictWise", "" + authKey);
+        return dataSet;
+    }
+
+    public JSONObject villageListJsonParams() throws JSONException {
+        String authKey = Utils.encrypt(prefManager.getUserPassKey(), getResources().getString(R.string.init_vector), Utils.villageListDistrictWiseJsonParams(this).toString());
+        JSONObject dataSet = new JSONObject();
+        dataSet.put(AppConstant.KEY_USER_NAME, prefManager.getUserName());
+        dataSet.put(AppConstant.DATA_CONTENT, authKey);
+        Log.d("villageListDistrictWise", "" + authKey);
         return dataSet;
     }
 
@@ -260,6 +278,16 @@ public class Dashboard extends AppCompatActivity implements Api.ServerResponseLi
 
             }
 
+            if ("VillageList".equals(urlType) && responseObj != null) {
+                String key = responseObj.getString(AppConstant.ENCODE_DATA);
+                String responseDecryptedBlockKey = Utils.decrypt(prefManager.getUserPassKey(), key);
+                JSONObject jsonObject = new JSONObject(responseDecryptedBlockKey);
+                if (jsonObject.getString("STATUS").equalsIgnoreCase("OK") && jsonObject.getString("RESPONSE").equalsIgnoreCase("OK")) {
+                    loadVillageList(jsonObject.getJSONArray(AppConstant.JSON_DATA));
+                }
+                Log.d("VillageList", "" + responseDecryptedBlockKey);
+            }
+
             if ("SchemeList".equals(urlType) && responseObj != null) {
                 String key = responseObj.getString(AppConstant.ENCODE_DATA);
                 String responseDecryptedSchemeKey = Utils.decrypt(prefManager.getUserPassKey(), key);
@@ -293,6 +321,7 @@ public class Dashboard extends AppCompatActivity implements Api.ServerResponseLi
     }
 
     private void loadBlockList(JSONArray jsonArray) {
+       progressHUD = ProgressHUD.show(this , "Loading...", true, false, null);
         try {
             updatedJsonArray = new JSONArray();
             updatedJsonArray = jsonArray;
@@ -315,9 +344,48 @@ public class Dashboard extends AppCompatActivity implements Api.ServerResponseLi
         } catch (ArrayIndexOutOfBoundsException a) {
             a.printStackTrace();
         }
+        if(progressHUD != null){
+            progressHUD.cancel();
+        }
+    }
+
+
+    private void loadVillageList(JSONArray jsonArray) {
+       progressHUD = ProgressHUD.show(this , "Loading...", true, false, null);
+        try {
+            updatedJsonArray = new JSONArray();
+            updatedJsonArray = jsonArray;
+            for (int i = 0; i < jsonArray.length(); i++) {
+                String districtCode = jsonArray.getJSONObject(i).getString(AppConstant.DISTRICT_CODE);
+                String blockCode = jsonArray.getJSONObject(i).getString(AppConstant.BLOCK_CODE);
+                String pvcode = jsonArray.getJSONObject(i).getString(AppConstant.PV_CODE);
+                String pvname = jsonArray.getJSONObject(i).getString(AppConstant.PV_NAME);
+
+                ContentValues villageListValues = new ContentValues();
+                villageListValues.put(AppConstant.DISTRICT_CODE, districtCode);
+                villageListValues.put(AppConstant.BLOCK_CODE, blockCode);
+                villageListValues.put(AppConstant.PV_CODE, pvcode);
+                villageListValues.put(AppConstant.PV_NAME, pvname);
+
+
+                LoginScreen.db.insert(DBHelper.VILLAGE_TABLE_NAME, null, villageListValues);
+                // Log.d("LocalDBblockList", "" + blockListValues);
+
+            }
+
+        } catch (JSONException j) {
+            j.printStackTrace();
+        } catch (ArrayIndexOutOfBoundsException a) {
+            a.printStackTrace();
+        }
+        if(progressHUD != null){
+            progressHUD.cancel();
+        }
     }
 
     private void loadSchemeList(JSONArray jsonArray) {
+       progressHUD = ProgressHUD.show(this , "Loading...", true, false, null);
+
         try {
             updatedJsonArray = new JSONArray();
             updatedJsonArray = jsonArray;
@@ -340,9 +408,13 @@ public class Dashboard extends AppCompatActivity implements Api.ServerResponseLi
         } catch (ArrayIndexOutOfBoundsException a) {
             a.printStackTrace();
         }
+        if(progressHUD != null){
+            progressHUD.cancel();
+        }
     }
 
     private void loadFinYearList(JSONArray jsonArray) {
+       progressHUD = ProgressHUD.show(this , "Loading...", true, false, null);
         try {
             updatedJsonArray = new JSONArray();
             updatedJsonArray = jsonArray;
@@ -364,10 +436,16 @@ public class Dashboard extends AppCompatActivity implements Api.ServerResponseLi
         } catch (ArrayIndexOutOfBoundsException a) {
             a.printStackTrace();
         }
+        if(progressHUD != null){
+            progressHUD.cancel();
+        }
     }
 
     private void loadStageList(JSONArray jsonArray) {
+       progressHUD = ProgressHUD.show(this , "Loading...", true, false, null);
+
         try {
+         //  progressHUD = ProgressHUD.show(this.context, "Loading...", true, false, null);
             updatedJsonArray = new JSONArray();
             updatedJsonArray = jsonArray;
 
@@ -394,6 +472,9 @@ public class Dashboard extends AppCompatActivity implements Api.ServerResponseLi
             j.printStackTrace();
         } catch (ArrayIndexOutOfBoundsException a) {
             a.printStackTrace();
+        }
+        if(progressHUD != null){
+            progressHUD.cancel();
         }
     }
 

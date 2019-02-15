@@ -8,7 +8,13 @@ public class BlockListValue {
 
     private String distictCode;
     private String blockCode;
+    private String pvCode;
+    private String villageListDistrictCode;
+    private String villageListBlockCode;
+    private String villageListPvCode;
+    private String villageListPvName;
     private String blockName;
+    private String villageName;
     private String schemeName;
     private String projectName;
     private String schemeSequentialID;
@@ -110,6 +116,14 @@ public class BlockListValue {
 
     public void setBlockName(String blockName) {
         this.blockName = blockName;
+    }
+
+    public String getVillageName() {
+        return villageName;
+    }
+
+    public void setVillageName(String villageName) {
+        this.villageName = villageName;
     }
 
     public String getSelectedBlockCode() {
@@ -216,5 +230,43 @@ public class BlockListValue {
         return observationName;
     }
 
+    public String getVillageListBlockCode() {
+        return villageListBlockCode;
+    }
 
+    public void setVillageListBlockCode(String villageListBlockCode) {
+        this.villageListBlockCode = villageListBlockCode;
+    }
+
+    public String getVillageListPvCode() {
+        return villageListPvCode;
+    }
+
+    public void setVillageListPvCode(String villageListPvCode) {
+        this.villageListPvCode = villageListPvCode;
+    }
+
+    public String getVillageListPvName() {
+        return villageListPvName;
+    }
+
+    public void setVillageListPvName(String villageListPvName) {
+        this.villageListPvName = villageListPvName;
+    }
+
+    public String getVillageListDistrictCode() {
+        return villageListDistrictCode;
+    }
+
+    public void setVillageListDistrictCode(String villageListDistrictCode) {
+        this.villageListDistrictCode = villageListDistrictCode;
+    }
+
+    public String getPvCode() {
+        return pvCode;
+    }
+
+    public void setPvCode(String pvCode) {
+        this.pvCode = pvCode;
+    }
 }

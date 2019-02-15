@@ -54,6 +54,8 @@ public class CommonAdapter extends BaseAdapter {
         BlockListValue BlockListValue = BlockList.get(position);
         if(type.equalsIgnoreCase("BlockList")) {
             tv_type.setText(BlockListValue.getBlockName());
+        }else if(type.equalsIgnoreCase("VillageList")){
+            tv_type.setText(BlockListValue.getVillageListPvName());
         }else if(type.equalsIgnoreCase("SchemeList")){
             tv_type.setText(BlockListValue.getSchemeName());
         }else if(type.equalsIgnoreCase("FinYearList")){

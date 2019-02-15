@@ -144,10 +144,11 @@ public class LoginScreen extends AppCompatActivity implements View.OnClickListen
 
             try{
                 db.delete(DBHelper.BLOCK_TABLE_NAME,null,null);
+                db.delete(DBHelper.VILLAGE_TABLE_NAME,null,null);
                 db.delete(DBHelper.SCHEME_TABLE_NAME,null,null);
                 db.delete(DBHelper.FINANCIAL_YEAR_TABLE_NAME,null ,null);
                 db.delete(DBHelper.WORK_STAGE_TABLE,null ,null);
-                db.delete(DBHelper.WORK_LIST_DISTRICT_FINYEAR_WISE,null,null);
+                db.delete(DBHelper.WORK_LIST_OPTIONAL,null,null);
 
             }
             catch (Exception e) {
