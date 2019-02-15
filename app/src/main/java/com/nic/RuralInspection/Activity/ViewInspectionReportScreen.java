@@ -3,6 +3,9 @@ package com.nic.RuralInspection.Activity;
 
 import android.app.Activity;
 import android.content.Context;
+import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -10,19 +13,25 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.ScrollView;
 
 import com.nic.RuralInspection.Adapter.ImageDescriptionAdapter;
 import com.nic.RuralInspection.Adapter.ProjectListAdapter;
+import com.nic.RuralInspection.DataBase.DBHelper;
+import com.nic.RuralInspection.Model.BlockListValue;
 import com.nic.RuralInspection.R;
 import com.nic.RuralInspection.Support.MyCustomTextView;
 import com.nic.RuralInspection.constant.AppConstant;
 import com.nic.RuralInspection.session.PrefManager;
 
+import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.nic.RuralInspection.Activity.LoginScreen.db;
 
 /**
  * Created by AchanthiSundar on 08-01-2019.
@@ -64,6 +73,7 @@ public class ViewInspectionReportScreen extends AppCompatActivity implements Vie
     private ImageDescriptionAdapter imageAdapter;
     private RecyclerView recyclerView;
     PrefManager prefManager;
+    private ArrayList<BlockListValue> imagelistValues = new ArrayList<>();
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -72,7 +82,7 @@ public class ViewInspectionReportScreen extends AppCompatActivity implements Vie
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-       intializeUI();
+        intializeUI();
     }
 
     public void intializeUI() {
@@ -103,14 +113,53 @@ public class ViewInspectionReportScreen extends AppCompatActivity implements Vie
 
         back_img.setOnClickListener(this);
         action_tv.setOnClickListener(this);
-        imageAdapter = new ImageDescriptionAdapter(this );
+        imageAdapter = new ImageDescriptionAdapter(this,imagelistValues );
 
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
         recyclerView.setLayoutManager(mLayoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setHasFixedSize(true);
         recyclerView.setNestedScrollingEnabled(false);
+        retrievedata();
         recyclerView.setAdapter(imageAdapter);
+    }
+
+    private void retrievedata() {
+        imagelistValues.clear();
+        String workId = getIntent().getStringExtra(AppConstant.WORK_ID);
+
+        String image_sql = "SELECT * FROM "+DBHelper.CAPTURED_PHOTO+ " WHERE work_id = "+workId;
+        Log.d("image_sql",image_sql);
+        Cursor imageList = getRawEvents(image_sql,null);
+
+        if(imageList.getCount() > 0) {
+            if (imageList.moveToFirst()){
+                do {
+                    String work_id =  imageList.getString(imageList.getColumnIndexOrThrow(AppConstant.WORK_ID));
+                    String latitude =  imageList.getString(imageList.getColumnIndexOrThrow(AppConstant.LATITUDE));
+                    String longitude =  imageList.getString(imageList.getColumnIndexOrThrow(AppConstant.LONGITUDE));
+                    String description =  imageList.getString(imageList.getColumnIndexOrThrow(AppConstant.DESCRIPTION));
+
+                    byte[] photo=imageList.getBlob(imageList.getColumnIndexOrThrow(AppConstant.IMAGE));
+                    ByteArrayInputStream imageStream = new ByteArrayInputStream(photo);
+                    Bitmap image= BitmapFactory.decodeStream(imageStream);
+
+                    //  byte[] image =  imageList.getBlob(imageList.getColumnIndexOrThrow(AppConstant.IMAGE));
+
+
+                    BlockListValue imageValue = new BlockListValue();
+
+                    imageValue.setWorkID(work_id);
+                    imageValue.setLatitude(latitude);
+                    imageValue.setLongitude(longitude);
+                    imageValue.setDescription(description);
+                    imageValue.setImage(image);
+
+                    imagelistValues.add(imageValue);
+
+                } while(imageList.moveToNext());
+            }
+        }
     }
 
     @Override
@@ -150,6 +199,11 @@ public class ViewInspectionReportScreen extends AppCompatActivity implements Vie
         finish();
         overridePendingTransition(R.anim.slide_enter, R.anim.slide_exit);
 
+    }
+
+    public Cursor getRawEvents(String sql, String string) {
+        Cursor cursor = db.rawQuery(sql, null);
+        return cursor;
     }
 
 

@@ -68,4 +68,10 @@ public class AppConstant {
     public static String STAGE_LIST = "work_type_stage_link";
     public static String CURRENT_STAGE = "current_stage_of_work";
 
+    public static String DESCRIPTION = "description";
+    public static String IMAGE = "image";
+    public static String LATITUDE = "latitude";
+    public static String LONGITUDE = "longitude";
+    public static String INSPECTION_ID = "inspection_id";
+
 }
