@@ -149,6 +149,9 @@ public class LoginScreen extends AppCompatActivity implements View.OnClickListen
                 db.delete(DBHelper.FINANCIAL_YEAR_TABLE_NAME,null ,null);
                 db.delete(DBHelper.WORK_STAGE_TABLE,null ,null);
                 db.delete(DBHelper.WORK_LIST_OPTIONAL,null,null);
+                db.delete(DBHelper.INSPECTION,null,null);
+                db.delete(DBHelper.CAPTURED_PHOTO,null,null);
+
 
             }
             catch (Exception e) {

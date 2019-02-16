@@ -72,7 +72,8 @@ public class Dashboard extends AppCompatActivity implements Api.ServerResponseLi
     }
 
     public void fetchAllResponseFromApi(){
-       // getServiceList();
+        getStageList();
+        // getServiceList();
        // getInspectionServiceList();
         if (prefManager.getLevels().equalsIgnoreCase("D")) {
             getBlockList();
@@ -82,7 +83,6 @@ public class Dashboard extends AppCompatActivity implements Api.ServerResponseLi
         getSchemeList();
         getVillageList();
         getFinYearList();
-        getStageList();
     }
 
 
@@ -336,7 +336,7 @@ public class Dashboard extends AppCompatActivity implements Api.ServerResponseLi
                 blockListValues.put(AppConstant.BLOCK_NAME, blockName);
 
                 LoginScreen.db.insert(DBHelper.BLOCK_TABLE_NAME, null, blockListValues);
-               // Log.d("LocalDBblockList", "" + blockListValues);
+                Log.d("LocalDBblockList", "" + blockListValues);
 
             }
         } catch (JSONException j) {
@@ -464,7 +464,7 @@ public class Dashboard extends AppCompatActivity implements Api.ServerResponseLi
                 WorkStageLocalDbValues.put(AppConstant.WORK_SATGE_NAME, workStageName);
 
                 LoginScreen.db.insert(DBHelper.WORK_STAGE_TABLE, null, WorkStageLocalDbValues);
-                Log.d("LocalDBSchemeList", "" + WorkStageLocalDbValues);
+               // Log.d("LocalDBSchemeList", "" + WorkStageLocalDbValues);
 
             }
 

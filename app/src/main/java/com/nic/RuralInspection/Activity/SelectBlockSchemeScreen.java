@@ -352,7 +352,13 @@ public class SelectBlockSchemeScreen extends AppCompatActivity implements View.O
             if (!"Select Block".equalsIgnoreCase(Block.get(sp_block.getSelectedItemPosition()).getBlockName()) || (all_block.isChecked())) {
                 if (!"Select Village".equalsIgnoreCase(Village.get(sp_village.getSelectedItemPosition()).getVillageListPvName()) || (all_village.isChecked())) {
                     if (!"Select Scheme".equalsIgnoreCase(Scheme.get(sp_scheme.getSelectedItemPosition()).getSchemeName()) || (all_scheme.isChecked())) {
-                        getWorkListOptional();
+                        if(Utils.isOnline()) {
+                            getWorkListOptional();
+                        }
+                        else {
+                            goto_next();
+                        }
+
                     } else {
                         Utils.showAlert(this, "Select Scheme");
                     }
@@ -371,8 +377,8 @@ public class SelectBlockSchemeScreen extends AppCompatActivity implements View.O
 
         Cursor worklist = getRawEvents("SELECT * FROM " + DBHelper.WORK_LIST_OPTIONAL, null);
         if (worklist.getCount() > 0) {
-           // projectListScreen();
-            goto_next();
+           projectListScreen();
+           // goto_next();
         } else {
             Utils.showAlert(this, "Please TurnOn Your Network");
         }
@@ -530,6 +536,23 @@ public class SelectBlockSchemeScreen extends AppCompatActivity implements View.O
 
     @Override
     public void onBackPressed() {
+        if (Utils.isOnline()) {
+            try{
+                db.delete(DBHelper.BLOCK_TABLE_NAME,null,null);
+                db.delete(DBHelper.VILLAGE_TABLE_NAME,null,null);
+                db.delete(DBHelper.SCHEME_TABLE_NAME,null,null);
+                db.delete(DBHelper.FINANCIAL_YEAR_TABLE_NAME,null ,null);
+                db.delete(DBHelper.WORK_STAGE_TABLE,null ,null);
+                db.delete(DBHelper.WORK_LIST_OPTIONAL,null,null);
+                db.delete(DBHelper.INSPECTION,null,null);
+                db.delete(DBHelper.CAPTURED_PHOTO,null,null);
+
+
+            }
+            catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
         super.onBackPressed();
         setResult(Activity.RESULT_CANCELED);
         overridePendingTransition(R.anim.slide_enter, R.anim.slide_exit);

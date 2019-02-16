@@ -14,6 +14,9 @@ public class BlockListValue {
     private String VillageListBlockCode;
     private String Description;
     private String Latitude;
+    private String observation;
+    private String date_of_inspection;
+    private String inspection_remark;
 
     public String getLatitude() {
         return Latitude;
@@ -302,6 +305,30 @@ public class BlockListValue {
 
     public String getObservationName() {
         return observationName;
+    }
+
+    public String getObservation() {
+        return observation;
+    }
+
+    public void setObservation(String observation) {
+        this.observation = observation;
+    }
+
+    public String getDate_of_inspection() {
+        return date_of_inspection;
+    }
+
+    public void setDate_of_inspection(String date_of_inspection) {
+        this.date_of_inspection = date_of_inspection;
+    }
+
+    public String getInspection_remark() {
+        return inspection_remark;
+    }
+
+    public void setInspection_remark(String inspection_remark) {
+        this.inspection_remark = inspection_remark;
     }
 
 

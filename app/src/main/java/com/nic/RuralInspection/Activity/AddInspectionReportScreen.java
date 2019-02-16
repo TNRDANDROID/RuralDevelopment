@@ -24,6 +24,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.Window;
@@ -52,11 +53,16 @@ import com.nic.RuralInspection.Support.MyCustomTextView;
 import com.nic.RuralInspection.Support.MyLocationListener;
 import com.nic.RuralInspection.Utils.CameraUtils;
 import com.nic.RuralInspection.Utils.FontCache;
+import com.nic.RuralInspection.Utils.UrlGenerator;
 import com.nic.RuralInspection.Utils.Utils;
 import com.nic.RuralInspection.api.Api;
+import com.nic.RuralInspection.api.ApiService;
 import com.nic.RuralInspection.api.ServerResponse;
 import com.nic.RuralInspection.constant.AppConstant;
 import com.nic.RuralInspection.session.PrefManager;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -245,15 +251,15 @@ public class AddInspectionReportScreen extends AppCompatActivity implements View
         String created_username = "test";
 
         ContentValues inspectionValue = new ContentValues();
-        inspectionValue.put("work_id",work_id);
-        inspectionValue.put("stage_of_work_on_inspection",stage_of_work_on_inspection);
-        inspectionValue.put("date_of_inspection",date_of_inspection);
-        inspectionValue.put("inspected_by",inspected_by);
-        inspectionValue.put("observation",observation);
-        inspectionValue.put("inspection_remark",inspection_remark);
-        inspectionValue.put("created_date",created_date);
-        inspectionValue.put("created_ipaddress",created_ipaddress);
-        inspectionValue.put("created_username",created_username);
+        inspectionValue.put(AppConstant.WORK_ID,work_id);
+        inspectionValue.put(AppConstant.STAGE_OF_WORK_ON_INSPECTION,stage_of_work_on_inspection);
+        inspectionValue.put(AppConstant.DATE_OF_INSPECTION,date_of_inspection);
+        inspectionValue.put(AppConstant.INSPECTED_BY,inspected_by);
+        inspectionValue.put(AppConstant.OBSERVATION,observation);
+        inspectionValue.put(AppConstant.INSPECTION_REMARK,inspection_remark);
+        inspectionValue.put(AppConstant.CREATED_DATE,created_date);
+        inspectionValue.put(AppConstant.CREATED_IP_ADDRESS,created_ipaddress);
+        inspectionValue.put(AppConstant.CREATED_USER_NAME,created_username);
 
 
         LoginScreen.db.insert(DBHelper.INSPECTION,null,inspectionValue);
@@ -287,11 +293,16 @@ public class AddInspectionReportScreen extends AppCompatActivity implements View
             public void onClick(View v) {
                 int inspectionID = 0;
 
-                Cursor inpection_Cursor = getRawEvents("SELECT inspection_id FROM "+DBHelper.INSPECTION +" order by inspection_id DESC limit 1",null);
-                if(inpection_Cursor.getCount() > 0){
-                   inspectionID = inpection_Cursor.getInt(0);
+                Cursor inpection_Cursor = getRawEvents("SELECT MAX(inspection_id) FROM "+DBHelper.INSPECTION ,null);
+                Log.d("cursor_count", String.valueOf(inpection_Cursor.getCount()));
+                if (inpection_Cursor.getCount() > 0) {
+                    if (inpection_Cursor.moveToFirst()) {
+                        do {
+                            inspectionID = inpection_Cursor.getInt(0);
+                             Log.d("inspectionID", "" + inspectionID);
+                        } while (inpection_Cursor.moveToNext());
+                    }
                 }
-
                 int childCount = mobileNumberLayout.getChildCount();
                 if(childCount > 0) {
                     for (int i = 0; i < childCount; i++) {
@@ -322,12 +333,20 @@ public class AddInspectionReportScreen extends AppCompatActivity implements View
                         imageValue.put(AppConstant.IMAGE,imageInByte);
                         imageValue.put(AppConstant.DESCRIPTION,description);
 
-                        LoginScreen.db.insert(DBHelper.CAPTURED_PHOTO,null,imageValue);
+                        long rowInserted = LoginScreen.db.insert(DBHelper.CAPTURED_PHOTO,null,imageValue);
+
+                        if(rowInserted != -1) {
+                            Toast.makeText(AddInspectionReportScreen.this, "New row added", Toast.LENGTH_SHORT).show();
+                        }
+                        else{
+                            Toast.makeText(AddInspectionReportScreen.this, "Something wrong", Toast.LENGTH_SHORT).show(); }
                     }
                 }
                 dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
                 dialog.dismiss();
                 focusOnView(scrollView, action_tv);
+
+              //  sync_data();
             }
         });
         final String values = action_tv.getText().toString().replace("NA", "");
@@ -349,86 +368,6 @@ public class AddInspectionReportScreen extends AppCompatActivity implements View
                 }
             }
         });
-
-//        done.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                try {
-//                    scrollView.fullScroll(View.FOCUS_DOWN);
-//                    mobileList.clear();
-//                    int childCount = mobileNumberLayout.getChildCount();
-//                    for (int i = 0; i < childCount; i++) {
-//                        View vv = mobileNumberLayout.getChildAt(i);
-//                        MyEditTextView myEditTextView = (MyEditTextView) vv.findViewById(R.id.email_edit_text);
-//
-//                        String emailOrMobile = myEditTextView.getText().toString();
-//
-//                        if ("Email".equalsIgnoreCase(type)) {
-//                            if (emailOrMobile.length() > 0) {
-//                                if (Utils.isEmailValid(emailOrMobile) && !Utils.contains(mobileList, emailOrMobile)) {
-//                                    mobileList.add(emailOrMobile);
-//                                    isValidEmailOrMobile = true;
-//                                } else {
-//                                    isValidEmailOrMobile = false;
-//                                }
-//                            } else {
-//                                isValidEmailOrMobile = false;
-//                            }
-//                        }
-//                    }
-//
-//                    if (mobileList.size() > 0) {
-//                        if (isValidEmailOrMobile) {
-//                            dialog.dismiss();
-//                            mobileNumberTextView.setText(Utils.emailOrNumberValues(mobileList));
-//                        } else {
-//                            if ("Mobile".equalsIgnoreCase(type)) {
-//                                Utils.showAlert(activity, "Mobile Number can't be left blank or Mobile Number already exist!");
-//                            } else {
-//                                Utils.showAlert(activity, "Email field can't be left blank or Email already exist or Invalid Email Adderess!");
-//                            }
-//                        }
-//                    } else {
-//                        if ("Email".equalsIgnoreCase(type)) {
-//                            Utils.showAlert(activity, "Email field can't be left blank or Email already exist!");
-//                        } else {
-//                            Utils.showAlert(activity, "Mobile Number can't be left blank or Mobile Number already exist!");
-//                        }
-//                    }
-//
-//                    /*if (mobileList.size() >= 0) {
-//                        if(isValidEmailOrMobile){
-//                            dialog.dismiss();
-//                            mobileNumberTextView.setText(Utils.emailOrNumberValues(mobileList));
-//                        } else{
-//                            if ("Mobile".equalsIgnoreCase(type)) {
-//                                Utils.showAlert(activity, "Invalid Mobile Number!");
-//                            } else {
-//                                Utils.showAlert(activity, "Invalid Email Address!");
-//                            }
-//                        }
-//                    } else {
-//                        if ("Mobile".equalsIgnoreCase(type)) {
-//                            if(!isValidEmailOrMobile){
-//                                Utils.showAlert(activity, "Invalid Mobile Number!");
-//                            } else{
-//                                Utils.showAlert(activity, "Mobile Number can't be left blank or Mobile Number already exist!");
-//                            }
-//                        } else {
-//                            if(!isValidEmailOrMobile){
-//                                Utils.showAlert(activity, "Invalid Email Address!");
-//                            } else {
-//                                Utils.showAlert(activity, "Email field can't be left blank or Email already exist!");
-//                            }
-//                        }
-//                    }*/
-//                } catch (ArrayIndexOutOfBoundsException a) {
-//                    a.printStackTrace();
-//                }
-//
-//            }
-//        });
-
         if (!values.isEmpty()) {
             if (values.contains(",")) {
                 String[] mobileOrEmail = values.split(",");
@@ -680,16 +619,11 @@ public class AddInspectionReportScreen extends AppCompatActivity implements View
     }
 
     @Override
-    public void OnMyResponse(ServerResponse serverResponse) {
-
-    }
-
-    @Override
     public void OnError(VolleyError volleyError) {
 
     }
 
-    public Cursor getRawEvents(String sql, String string) {
+    public static Cursor getRawEvents(String sql, String string) {
         Cursor cursor = db.rawQuery(sql, null);
         return cursor;
     }
@@ -723,6 +657,67 @@ public class AddInspectionReportScreen extends AppCompatActivity implements View
                 return;
             }
 
+        }
+    }
+    public  void sync_data() {
+        try {
+            new ApiService(this).makeJSONObjectRequest("save_data", Api.Method.POST, UrlGenerator.getServicesListUrl(), dataTobeSavedJsonParams(), "not cache", this);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public JSONObject dataTobeSavedJsonParams() throws JSONException {
+        String authKey = Utils.encrypt(prefManager.getUserPassKey(), getResources().getString(R.string.init_vector),savingJsonParams().toString());
+        JSONObject dataSet = new JSONObject();
+        dataSet.put(AppConstant.KEY_USER_NAME, prefManager.getUserName());
+        dataSet.put(AppConstant.DATA_CONTENT, authKey);
+        Log.d("saving", "" + authKey);
+        return dataSet;
+    }
+
+    public static JSONObject savingJsonParams() throws JSONException {
+
+        Cursor inpection_Cursor = getRawEvents("SELECT * FROM "+DBHelper.INSPECTION ,null);
+        Log.d("cursor_count", String.valueOf(inpection_Cursor.getCount()));
+        JSONObject dataSet = new JSONObject();
+        if (inpection_Cursor.getCount() > 0) {
+            if (inpection_Cursor.moveToFirst()) {
+                do {
+                    dataSet.put(AppConstant.INSPECTION_ID, inpection_Cursor.getString(inpection_Cursor.getColumnIndexOrThrow(AppConstant.INSPECTION_ID)));
+                    dataSet.put(AppConstant.STAGE_OF_WORK_ON_INSPECTION, inpection_Cursor.getString(inpection_Cursor.getColumnIndexOrThrow(AppConstant.STAGE_OF_WORK_ON_INSPECTION)));
+                    dataSet.put(AppConstant.DATE_OF_INSPECTION, inpection_Cursor.getString(inpection_Cursor.getColumnIndexOrThrow(AppConstant.DATE_OF_INSPECTION)));
+                    dataSet.put(AppConstant.INSPECTED_BY, inpection_Cursor.getString(inpection_Cursor.getColumnIndexOrThrow(AppConstant.INSPECTED_BY)));
+                    dataSet.put(AppConstant.OBSERVATION, inpection_Cursor.getString(inpection_Cursor.getColumnIndexOrThrow(AppConstant.OBSERVATION)));
+                    dataSet.put(AppConstant.INSPECTION_REMARK, inpection_Cursor.getString(inpection_Cursor.getColumnIndexOrThrow(AppConstant.INSPECTION_REMARK)));
+                    dataSet.put(AppConstant.CREATED_DATE, inpection_Cursor.getString(inpection_Cursor.getColumnIndexOrThrow(AppConstant.CREATED_DATE)));
+                    dataSet.put(AppConstant.CREATED_IP_ADDRESS, inpection_Cursor.getString(inpection_Cursor.getColumnIndexOrThrow(AppConstant.CREATED_IP_ADDRESS)));
+                    dataSet.put(AppConstant.CREATED_USER_NAME, inpection_Cursor.getString(inpection_Cursor.getColumnIndexOrThrow(AppConstant.CREATED_USER_NAME)));
+                } while (inpection_Cursor.moveToNext());
+            }
+        }
+        return dataSet;
+    }
+    @Override
+    public void OnMyResponse(ServerResponse serverResponse) {
+        try {
+            String urlType = serverResponse.getApi();
+            JSONObject responseObj = serverResponse.getJsonResponse();
+            if (prefManager.getLevels().equalsIgnoreCase("D")) {
+                if ("save_data".equals(urlType) && responseObj != null) {
+                    String key = responseObj.getString(AppConstant.ENCODE_DATA);
+                    String responseDecryptedBlockKey = Utils.decrypt(prefManager.getUserPassKey(), key);
+                    JSONObject jsonObject = new JSONObject(responseDecryptedBlockKey);
+                    if (jsonObject.getString("STATUS").equalsIgnoreCase("OK") && jsonObject.getString("RESPONSE").equalsIgnoreCase("OK")) {
+                       // loadBlockList(jsonObject.getJSONArray(AppConstant.JSON_DATA));
+                        Utils.showAlert(this,"Saved");
+                    }
+                    Log.d("saved_response", "" + responseDecryptedBlockKey);
+                }
+
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
     }
 }

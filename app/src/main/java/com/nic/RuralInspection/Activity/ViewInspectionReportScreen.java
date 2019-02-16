@@ -76,6 +76,7 @@ public class ViewInspectionReportScreen extends AppCompatActivity implements Vie
     private RecyclerView imageRecyclerView,inspectionListRecyclerView;
     PrefManager prefManager;
     private ArrayList<BlockListValue> imagelistValues = new ArrayList<>();
+    private ArrayList<BlockListValue> inspectionlistvalues = new ArrayList<>();
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -115,16 +116,18 @@ public class ViewInspectionReportScreen extends AppCompatActivity implements Vie
 
         back_img.setOnClickListener(this);
 //        action_tv.setOnClickListener(this);
-        imageAdapter = new ImageDescriptionAdapter(this,imagelistValues );
-        inspectionListAdapter= new InspectionListAdapter(this  );
+       // imageAdapter = new ImageDescriptionAdapter(this,imagelistValues );
+
+        inspectionListAdapter= new InspectionListAdapter(this ,inspectionlistvalues );
 
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
         inspectionListRecyclerView.setLayoutManager(mLayoutManager);
         inspectionListRecyclerView.setItemAnimator(new DefaultItemAnimator());
         inspectionListRecyclerView.setHasFixedSize(true);
         inspectionListRecyclerView.setNestedScrollingEnabled(false);
-        retrievedata();
-        inspectionListRecyclerView.setAdapter(inspectionListAdapter);
+       // retrievedata();
+        retrievedata_inspection();
+      //  inspectionListRecyclerView.setAdapter(inspectionListAdapter);
 
     }
 
@@ -164,6 +167,35 @@ public class ViewInspectionReportScreen extends AppCompatActivity implements Vie
                 } while(imageList.moveToNext());
             }
         }
+    }
+
+    private void retrievedata_inspection() {
+        inspectionlistvalues.clear();
+        String workId = getIntent().getStringExtra(AppConstant.WORK_ID);
+
+        String inspection_sql = "select * from (select * from "+DBHelper.INSPECTION+" WHERE work_id="+workId+")a left join (select * from captured_photo)b on a.inspection_id=b.inspection_id and a.work_id=b.work_id group by a.inspection_id";
+        Log.d("image_sql",inspection_sql);
+        Cursor inspectionList = getRawEvents(inspection_sql,null);
+
+        if(inspectionList.getCount() > 0) {
+            if (inspectionList.moveToFirst()){
+                do {
+                    String date_of_inspection =  inspectionList.getString(inspectionList.getColumnIndexOrThrow(AppConstant.DATE_OF_INSPECTION));
+                    String inspection_remark =  inspectionList.getString(inspectionList.getColumnIndexOrThrow(AppConstant.INSPECTION_REMARK));
+                    String observation =  inspectionList.getString(inspectionList.getColumnIndexOrThrow(AppConstant.OBSERVATION));
+
+                    BlockListValue inspectionValue = new BlockListValue();
+
+                    inspectionValue.setDate_of_inspection(date_of_inspection);
+                    inspectionValue.setInspection_remark(inspection_remark);
+                    inspectionValue.setObservation(observation);
+
+                    inspectionlistvalues.add(inspectionValue);
+
+                } while(inspectionList.moveToNext());
+            }
+        }
+        inspectionListRecyclerView.setAdapter(inspectionListAdapter);
     }
 
     @Override

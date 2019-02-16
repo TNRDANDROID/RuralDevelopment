@@ -68,10 +68,24 @@ public class AppConstant {
     public static String STAGE_LIST = "work_type_stage_link";
     public static String CURRENT_STAGE = "current_stage_of_work";
 
+    //CAPTURED PHOTO
     public static String DESCRIPTION = "description";
     public static String IMAGE = "image";
     public static String LATITUDE = "latitude";
     public static String LONGITUDE = "longitude";
     public static String INSPECTION_ID = "inspection_id";
+
+    //INSPECTION TABLE
+
+    public static String STAGE_OF_WORK_ON_INSPECTION = "stage_of_work_on_inspection";
+    public static String DATE_OF_INSPECTION = "date_of_inspection";
+    public static String INSPECTED_BY = "inspected_by";
+    public static String OBSERVATION = "observation";
+    public static String INSPECTION_REMARK = "inspection_remark";
+    public static String CREATED_DATE = "created_date";
+    public static String CREATED_IP_ADDRESS = "created_ipaddress";
+    public static String CREATED_USER_NAME = "created_username";
+
+
 
 }
