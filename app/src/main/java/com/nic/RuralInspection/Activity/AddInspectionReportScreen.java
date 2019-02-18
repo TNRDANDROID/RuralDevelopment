@@ -184,7 +184,16 @@ public class AddInspectionReportScreen extends AppCompatActivity implements View
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.take_photo:
-                imageWithDescription(take_photo, "mobile", scrollView);
+                if (!"Select Observation".equalsIgnoreCase(sp_observation.getSelectedItem().toString())) {
+                    if (!"Select Stage of Work".equalsIgnoreCase(stageListValues.get(sp_stage.getSelectedItemPosition()).getWorkStageName())) {
+                        imageWithDescription(take_photo, "mobile", scrollView);
+                    } else {
+                        Utils.showAlert(this, "Select Stage of Work");
+                    }
+                } else {
+                    Utils.showAlert(this, "Select Observation");
+                }
+
                 break;
             case R.id.backimg:
                 onBackPress();
@@ -201,7 +210,7 @@ public class AddInspectionReportScreen extends AppCompatActivity implements View
         Cursor stages = getRawEvents(sql, null);
 
         BlockListValue stagelist = new BlockListValue();
-        stagelist.setWorkStageName("Select Stage");
+        stagelist.setWorkStageName("Select Stage of Work");
         stageListValues.add(stagelist);
 
         if (stages.getCount() > 0) {
