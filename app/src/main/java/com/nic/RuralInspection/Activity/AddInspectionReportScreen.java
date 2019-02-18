@@ -339,7 +339,8 @@ public class AddInspectionReportScreen extends AppCompatActivity implements View
                         long rowInserted = LoginScreen.db.insert(DBHelper.CAPTURED_PHOTO,null,imageValue);
 
                         if(rowInserted != -1) {
-                            Toast.makeText(AddInspectionReportScreen.this, "New row added", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(AddInspectionReportScreen.this, "New Inspection added", Toast.LENGTH_SHORT).show();
+                            finish();
                         }
                         else{
                             Toast.makeText(AddInspectionReportScreen.this, "Something wrong", Toast.LENGTH_SHORT).show(); }

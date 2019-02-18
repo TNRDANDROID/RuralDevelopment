@@ -5,28 +5,21 @@ import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
-import android.os.Debug;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
-import android.widget.Adapter;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
-import android.widget.SpinnerAdapter;
-import android.widget.Toast;
 
 import com.android.volley.VolleyError;
 import com.nic.RuralInspection.Adapter.CommonAdapter;
-import com.nic.RuralInspection.Adapter.MyAdapter;
 import com.nic.RuralInspection.DataBase.DBHelper;
 import com.nic.RuralInspection.Model.BlockListValue;
 import com.nic.RuralInspection.R;
@@ -44,14 +37,10 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.HashMap;
 import java.util.List;
 
 import static com.nic.RuralInspection.Activity.LoginScreen.db;
 import static com.nic.RuralInspection.DataBase.DBHelper.BLOCK_TABLE_NAME;
-import static com.nic.RuralInspection.DataBase.DBHelper.FINANCIAL_YEAR_TABLE_NAME;
-import static com.nic.RuralInspection.DataBase.DBHelper.SCHEME_TABLE_NAME;
 import static com.nic.RuralInspection.DataBase.DBHelper.VILLAGE_TABLE_NAME;
 
 /**
@@ -139,6 +128,7 @@ public class SelectBlockSchemeScreen extends AppCompatActivity implements View.O
                 if (position == 0) {
                     all_block.setChecked(true);
                     prefManager.setBlockName("All");
+                    loadOfflineVillgeListDBValues();
                 } else {
                     all_block.setChecked(false);
                     pref_Block = Block.get(position).getBlockName();
@@ -174,19 +164,19 @@ public class SelectBlockSchemeScreen extends AppCompatActivity implements View.O
 
             }
         });
-        all_block.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked) {
-                    sp_block.setSelection(0);
-                    all_village.setChecked(true);
-                    sp_block.setEnabled(false);
-                    loadOfflineVillgeListDBValues();
-                } else {
-                    sp_block.setEnabled(true);
-                }
-            }
-        });
+//        all_block.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+//            @Override
+//            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+//                if (isChecked) {
+//                    sp_block.setSelection(0);
+//                    all_village.setChecked(true);
+//                    sp_block.setEnabled(false);
+//                    loadOfflineVillgeListDBValues();
+//                } else {
+//                    sp_block.setEnabled(true);
+//                }
+//            }
+//        });
 
         all_village.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -349,7 +339,8 @@ public class SelectBlockSchemeScreen extends AppCompatActivity implements View.O
     public void projectListScreen() {
 
         if (!"Select Financial year".equalsIgnoreCase(FinYearList.get(sp_financialYear.getSelectedItemPosition()).getFinancialYear())) {
-            if (!"Select Block".equalsIgnoreCase(Block.get(sp_block.getSelectedItemPosition()).getBlockName()) || (all_block.isChecked())) {
+//            if (!"Select Block".equalsIgnoreCase(Block.get(sp_block.getSelectedItemPosition()).getBlockName()) || (all_block.isChecked())) {
+            if (!"Select Block".equalsIgnoreCase(Block.get(sp_block.getSelectedItemPosition()).getBlockName())) {
                 if (!"Select Village".equalsIgnoreCase(Village.get(sp_village.getSelectedItemPosition()).getVillageListPvName()) || (all_village.isChecked())) {
                     if (!"Select Scheme".equalsIgnoreCase(Scheme.get(sp_scheme.getSelectedItemPosition()).getSchemeName()) || (all_scheme.isChecked())) {
                         if(Utils.isOnline()) {
@@ -536,23 +527,6 @@ public class SelectBlockSchemeScreen extends AppCompatActivity implements View.O
 
     @Override
     public void onBackPressed() {
-        if (Utils.isOnline()) {
-            try{
-                db.delete(DBHelper.BLOCK_TABLE_NAME,null,null);
-                db.delete(DBHelper.VILLAGE_TABLE_NAME,null,null);
-                db.delete(DBHelper.SCHEME_TABLE_NAME,null,null);
-                db.delete(DBHelper.FINANCIAL_YEAR_TABLE_NAME,null ,null);
-                db.delete(DBHelper.WORK_STAGE_TABLE,null ,null);
-                db.delete(DBHelper.WORK_LIST_OPTIONAL,null,null);
-                db.delete(DBHelper.INSPECTION,null,null);
-                db.delete(DBHelper.CAPTURED_PHOTO,null,null);
-
-
-            }
-            catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
         super.onBackPressed();
         setResult(Activity.RESULT_CANCELED);
         overridePendingTransition(R.anim.slide_enter, R.anim.slide_exit);
