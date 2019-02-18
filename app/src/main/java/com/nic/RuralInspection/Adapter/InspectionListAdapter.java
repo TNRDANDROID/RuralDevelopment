@@ -44,7 +44,7 @@ public class InspectionListAdapter extends RecyclerView.Adapter<InspectionListAd
 
     @Override
     public int getItemCount() {
-        return 10;
+        return inspectionlistvalues.size();
     }
 
     public class MyViewHolder extends RecyclerView.ViewHolder {

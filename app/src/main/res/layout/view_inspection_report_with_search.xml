@@ -69,11 +69,15 @@
     </android.support.design.widget.AppBarLayout>
 
     </FrameLayout>
-
-    <include
-        layout="@layout/view_inspection_report"
+    <android.support.v4.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginTop="?attr/actionBarSize" />
+        android:layout_height="wrap_content">
+        <include
+            layout="@layout/view_inspection_report"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+    </android.support.v4.widget.NestedScrollView>
+
 
 </FrameLayout>

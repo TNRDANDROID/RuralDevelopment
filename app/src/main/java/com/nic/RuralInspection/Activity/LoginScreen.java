@@ -111,14 +111,15 @@ public class LoginScreen extends AppCompatActivity implements View.OnClickListen
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.btn_sign_in:
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        checkLoginScreen();
-
-                    }
-                }, 500);
-                break;
+                checkLoginScreen();
+//                new Handler().postDelayed(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        checkLoginScreen();
+//
+//                    }
+//                }, 500);
+//                break;
         }
     }
 

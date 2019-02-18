@@ -125,6 +125,7 @@ public class ViewInspectionReportScreen extends AppCompatActivity implements Vie
         inspectionListRecyclerView.setItemAnimator(new DefaultItemAnimator());
         inspectionListRecyclerView.setHasFixedSize(true);
         inspectionListRecyclerView.setNestedScrollingEnabled(false);
+        inspectionListRecyclerView.setNestedScrollingEnabled(false);
        // retrievedata();
         retrievedata_inspection();
       //  inspectionListRecyclerView.setAdapter(inspectionListAdapter);
@@ -195,7 +196,11 @@ public class ViewInspectionReportScreen extends AppCompatActivity implements Vie
                 } while(inspectionList.moveToNext());
             }
         }
-        inspectionListRecyclerView.setAdapter(inspectionListAdapter);
+
+        if (!(inspectionlistvalues.size() < 1)) {
+            inspectionListRecyclerView.setAdapter(inspectionListAdapter);
+            Log.d("size", String.valueOf(inspectionlistvalues.size()));
+        }
     }
 
     @Override
