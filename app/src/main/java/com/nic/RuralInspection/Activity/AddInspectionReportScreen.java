@@ -187,14 +187,14 @@ public class AddInspectionReportScreen extends AppCompatActivity implements View
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.take_photo:
-                if (!"Select Observation".equalsIgnoreCase(sp_observation.getSelectedItem().toString())) {
-                    if (!"Select Stage of Work".equalsIgnoreCase(stageListValues.get(sp_stage.getSelectedItemPosition()).getWorkStageName())) {
+                if (!"Select Stage of Work".equalsIgnoreCase(stageListValues.get(sp_stage.getSelectedItemPosition()).getWorkStageName())) {
+                    if (!"Select Observation".equalsIgnoreCase(sp_observation.getSelectedItem().toString())) {
                         imageWithDescription(take_photo, "mobile", scrollView);
                     } else {
-                        Utils.showAlert(this, "Select Stage of Work");
+                        Utils.showAlert(this, "Select Observation");
                     }
                 } else {
-                    Utils.showAlert(this, "Select Observation");
+                    Utils.showAlert(this, "Select Stage of Work");
                 }
 
                 break;
@@ -322,10 +322,18 @@ public class AddInspectionReportScreen extends AppCompatActivity implements View
                         EditText myEditTextView = (EditText) vv.findViewById(R.id.description);
 
                         ImageView imageView = (ImageView)vv. findViewById(R.id.image_view);
-                        Bitmap bitmap = ((BitmapDrawable)imageView.getDrawable()).getBitmap();
-                        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
-                        byte[] imageInByte = baos.toByteArray();
+                        byte[] imageInByte = new byte[0];
+                        try{
+                            Bitmap bitmap = ((BitmapDrawable)imageView.getDrawable()).getBitmap();
+                            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+                            imageInByte = baos.toByteArray();
+                        }catch (Exception e) {
+                            Utils.showAlert(AddInspectionReportScreen.this,"Atleast Capture one Photo");
+                            break;
+                            //e.printStackTrace();
+                        }
+                        
 
 
                         String description = myEditTextView.getText().toString();
@@ -354,6 +362,8 @@ public class AddInspectionReportScreen extends AppCompatActivity implements View
                         else{
                             Toast.makeText(AddInspectionReportScreen.this, "Something wrong", Toast.LENGTH_SHORT).show(); }
                     }
+                } else {
+                    Utils.showAlert(AddInspectionReportScreen.this,"Atleast Take One photo");
                 }
                 dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
                 dialog.dismiss();
