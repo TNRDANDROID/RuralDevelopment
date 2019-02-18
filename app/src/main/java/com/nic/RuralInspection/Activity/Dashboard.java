@@ -3,6 +3,7 @@ package com.nic.RuralInspection.Activity;
 import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Intent;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -32,6 +33,8 @@ import com.nic.RuralInspection.session.PrefManager;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import static com.nic.RuralInspection.Activity.LoginScreen.db;
 
 /**
  * Created by AchanthiSundar on 28-12-2018.
@@ -66,7 +69,11 @@ public class Dashboard extends AppCompatActivity implements Api.ServerResponseLi
         district_tv.setText(prefManager.getDistrictName());
 
         if (Utils.isOnline()) {
-            fetchAllResponseFromApi();
+            Cursor toCheck = getRawEvents("SELECT * FROM " + DBHelper.FINANCIAL_YEAR_TABLE_NAME, null);
+            toCheck.moveToFirst();
+            if(toCheck.getCount() < 1) {
+                fetchAllResponseFromApi();
+            }
         }
 
     }
@@ -488,5 +495,10 @@ public class Dashboard extends AppCompatActivity implements Api.ServerResponseLi
         super.onBackPressed();
         setResult(Activity.RESULT_CANCELED);
         overridePendingTransition(R.anim.slide_enter, R.anim.slide_exit);
+    }
+
+    public Cursor getRawEvents(String sql, String string) {
+        Cursor cursor = db.rawQuery(sql, null);
+        return cursor;
     }
 }

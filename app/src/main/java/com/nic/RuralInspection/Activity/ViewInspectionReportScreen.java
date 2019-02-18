@@ -124,7 +124,7 @@ public class ViewInspectionReportScreen extends AppCompatActivity implements Vie
         inspectionListRecyclerView.setLayoutManager(mLayoutManager);
         inspectionListRecyclerView.setItemAnimator(new DefaultItemAnimator());
         inspectionListRecyclerView.setHasFixedSize(true);
-        inspectionListRecyclerView.setNestedScrollingEnabled(false);
+        inspectionListRecyclerView.setFocusable(false);
         inspectionListRecyclerView.setNestedScrollingEnabled(false);
        // retrievedata();
         retrievedata_inspection();
