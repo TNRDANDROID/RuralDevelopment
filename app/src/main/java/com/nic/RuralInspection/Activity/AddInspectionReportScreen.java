@@ -72,6 +72,7 @@ import java.util.Date;
 import java.util.List;
 
 import static android.Manifest.permission.ACCESS_FINE_LOCATION;
+import static android.Manifest.permission.CAMERA;
 import static com.nic.RuralInspection.Activity.LoginScreen.db;
 
 /**
@@ -119,6 +120,8 @@ public class AddInspectionReportScreen extends AppCompatActivity implements View
     LocationManager mlocManager = null;
     LocationListener mlocListener;
     public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
+    private static final int PERMISSION_REQUEST_CODE = 200;
+
     static ArrayList<String> latitude = new ArrayList<String>();
     static ArrayList<String> longitude = new ArrayList<String>();
     String offlatTextValue,offlanTextValue;
@@ -465,6 +468,16 @@ public class AddInspectionReportScreen extends AppCompatActivity implements View
                 }
 
                 if (mlocManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                        if (ActivityCompat.checkSelfPermission( AddInspectionReportScreen.this, ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(AddInspectionReportScreen. this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED)
+                            requestPermissions(new String[]{ CAMERA,ACCESS_FINE_LOCATION}, PERMISSION_REQUEST_CODE);
+                    }
+                    else{
+                        if (ActivityCompat.checkSelfPermission( AddInspectionReportScreen.this, ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission( AddInspectionReportScreen.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                            ActivityCompat.requestPermissions( AddInspectionReportScreen.this, new String[]{ACCESS_FINE_LOCATION}, 1);
+
+                        }
+                    }
                     if (MyLocationListener.latitude > 0) {
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                             if (CameraUtils.checkPermissions(AddInspectionReportScreen.this)) {
@@ -472,6 +485,9 @@ public class AddInspectionReportScreen extends AppCompatActivity implements View
                             } else {
                                 requestCameraPermission(MEDIA_TYPE_IMAGE);
                             }
+//                            checkPermissionForCamera();
+                        }else{
+                            captureImage();
                         }
                     } else {
                         Utils.showAlert(AddInspectionReportScreen.this, "Satellite communication not available to get GPS Co-ordination Please Capture Photo in Open Area..");
@@ -510,7 +526,7 @@ public class AddInspectionReportScreen extends AppCompatActivity implements View
     }
 
 
-    private void requestCameraPermission(final int type) {
+    private void    requestCameraPermission(final int type) {
         Dexter.withActivity(this)
                 .withPermissions(Manifest.permission.CAMERA,
                         Manifest.permission.WRITE_EXTERNAL_STORAGE)
