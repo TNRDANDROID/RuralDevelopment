@@ -174,8 +174,9 @@ public class ViewInspectionReportScreen extends AppCompatActivity implements Vie
         inspectionlistvalues.clear();
         String workId = getIntent().getStringExtra(AppConstant.WORK_ID);
 
-        String inspection_sql = "select * from (select * from "+DBHelper.INSPECTION+" WHERE work_id="+workId+")a left join (select * from captured_photo)b on a.inspection_id=b.inspection_id and a.work_id=b.work_id group by a.inspection_id";
-        Log.d("image_sql",inspection_sql);
+       // String inspection_sql = "select * from (select * from "+DBHelper.INSPECTION+" WHERE work_id="+workId+")a left join (select * from captured_photo)b on a.inspection_id=b.inspection_id and a.work_id=b.work_id group by a.inspection_id";
+        String inspection_sql =  "select * from "+DBHelper.INSPECTION+" where work_id="+workId+" inspection_id in (select inspection_id from "+DBHelper.CAPTURED_PHOTO+")";
+        Log.d("inspection_sql",inspection_sql);
         Cursor inspectionList = getRawEvents(inspection_sql,null);
 
         if(inspectionList.getCount() > 0) {

@@ -51,7 +51,7 @@ public class DBHelper extends SQLiteOpenHelper {
         db.execSQL("CREATE TABLE " + WORK_STAGE_TABLE + " ("
                 + "work_group_id  varchar(4)," +
                 "work_type_id  varchar(4)," +
-                "work_stage_order  varchar(4)," +
+                "work_stage_order  INTEGER," +
                 "work_stage_code  varchar(32)," +
                 "work_stage_name varchar(4))");
 
