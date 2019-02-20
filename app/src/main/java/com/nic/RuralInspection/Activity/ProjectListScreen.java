@@ -102,10 +102,8 @@ public class ProjectListScreen extends AppCompatActivity implements View.OnClick
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setHasFixedSize(true);
         recyclerView.setNestedScrollingEnabled(false);
-
-        retrieve();
-
         recyclerView.setFocusable(false);
+        retrieve();
     }
 
     private void retrieve() {
@@ -312,7 +310,7 @@ public class ProjectListScreen extends AppCompatActivity implements View.OnClick
         return cursor;
     }
 
-    private Cursor getRawEventWhere(String sql, String[] string) {
+    private Cursor getRawEventhWere(String sql, String[] string) {
         Cursor cursor = LoginScreen.db.rawQuery(sql, string);
         return cursor;
     }
