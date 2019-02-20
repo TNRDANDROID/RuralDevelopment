@@ -16,6 +16,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ScrollView;
 
 import com.nic.RuralInspection.Adapter.ImageDescriptionAdapter;
@@ -69,11 +70,12 @@ public class ViewInspectionReportScreen extends AppCompatActivity implements Vie
 
     private static String imageStoragePath;
     private ImageView back_img;
-    private MyCustomTextView district_tv,scheme_name_tv,block_name_tv,fin_year_tv;
+    private MyCustomTextView district_tv, scheme_name_tv, block_name_tv, village_name_tv, fin_year_tv;
     private MyCustomTextView projectName, amountTv, levelTv;
+    private LinearLayout village_layout;
     private ImageDescriptionAdapter imageAdapter;
     private InspectionListAdapter inspectionListAdapter;
-    private RecyclerView imageRecyclerView,inspectionListRecyclerView;
+    private RecyclerView imageRecyclerView, inspectionListRecyclerView;
     PrefManager prefManager;
     private ArrayList<BlockListValue> imagelistValues = new ArrayList<>();
     private ArrayList<BlockListValue> inspectionlistvalues = new ArrayList<>();
@@ -90,10 +92,11 @@ public class ViewInspectionReportScreen extends AppCompatActivity implements Vie
 
     public void intializeUI() {
         prefManager = new PrefManager(this);
-
+        village_layout = (LinearLayout) findViewById(R.id.village_layout);
         district_tv = (MyCustomTextView) findViewById(R.id.district_tv);
         scheme_name_tv = (MyCustomTextView) findViewById(R.id.scheme_name_tv);
         block_name_tv = (MyCustomTextView) findViewById(R.id.block_name_tv);
+        village_name_tv = (MyCustomTextView) findViewById(R.id.village_name_tv);
         fin_year_tv = (MyCustomTextView) findViewById(R.id.fin_year_tv);
 
         projectName = (MyCustomTextView) findViewById(R.id.project_title_tv);
@@ -116,9 +119,9 @@ public class ViewInspectionReportScreen extends AppCompatActivity implements Vie
 
         back_img.setOnClickListener(this);
 //        action_tv.setOnClickListener(this);
-       // imageAdapter = new ImageDescriptionAdapter(this,imagelistValues );
+        // imageAdapter = new ImageDescriptionAdapter(this,imagelistValues );
 
-        inspectionListAdapter= new InspectionListAdapter(this ,inspectionlistvalues );
+        inspectionListAdapter = new InspectionListAdapter(this, inspectionlistvalues);
 
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
         inspectionListRecyclerView.setLayoutManager(mLayoutManager);
@@ -126,9 +129,13 @@ public class ViewInspectionReportScreen extends AppCompatActivity implements Vie
         inspectionListRecyclerView.setHasFixedSize(true);
         inspectionListRecyclerView.setFocusable(false);
         inspectionListRecyclerView.setNestedScrollingEnabled(false);
-       // retrievedata();
+        if(prefManager.getLevels().equalsIgnoreCase("B")){
+            village_layout.setVisibility(View.VISIBLE);
+            village_name_tv.setText(prefManager.getVillageListPvName());
+        }
+        // retrievedata();
         retrievedata_inspection();
-      //  inspectionListRecyclerView.setAdapter(inspectionListAdapter);
+        //  inspectionListRecyclerView.setAdapter(inspectionListAdapter);
 
     }
 
@@ -175,7 +182,8 @@ public class ViewInspectionReportScreen extends AppCompatActivity implements Vie
         String workId = getIntent().getStringExtra(AppConstant.WORK_ID);
 
         String inspection_sql = "select * from (select * from "+DBHelper.INSPECTION+" WHERE work_id="+workId+")a left join (select * from captured_photo)b on a.inspection_id=b.inspection_id and a.work_id=b.work_id group by a.inspection_id";
-        Log.d("image_sql",inspection_sql);
+//        String inspection_sql =  "select * from "+DBHelper.INSPECTION+" where work_id="+workId+" inspection_id in (select inspection_id from "+DBHelper.CAPTURED_PHOTO+")";
+        Log.d("inspection_sql",inspection_sql);
         Cursor inspectionList = getRawEvents(inspection_sql,null);
 
         if(inspectionList.getCount() > 0) {

@@ -49,10 +49,22 @@ public class PrefManager {
     private static final String KEY_FINANCIALYEAR_NAME = "FinancialYear_Name";
 
 
+    private static final String IMEI = "imei";
+
+
     public PrefManager(Context context) {
         this._context = context;
         pref = _context.getSharedPreferences(AppConstant.PREF_NAME, PRIVATE_MODE);
         editor = pref.edit();
+    }
+
+    public String getIMEI() {
+        return pref.getString(IMEI,null);
+    }
+
+    public void setImei(String imei) {
+        editor.putString(IMEI,imei);
+        editor.commit();
     }
 
     public void setAppKey(String appKey) {

@@ -1,12 +1,18 @@
 package com.nic.RuralInspection.Activity;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
@@ -42,11 +48,14 @@ import static com.nic.RuralInspection.Activity.LoginScreen.db;
 
 public class Dashboard extends AppCompatActivity implements Api.ServerResponseListener, View.OnClickListener, MyDialog.myOnClickListener {
     private ImageView logout;
-    private LinearLayout uploadInspectionReport,block_user_layout;
+    private LinearLayout uploadInspectionReport,block_user_layout,pending_upload_layout;
     private PrefManager prefManager;
     private ProgressHUD progressHUD;
     private MyCustomTextView district_tv,block_user_tv,upload_inspection_report_tv;
     private JSONArray updatedJsonArray;
+    private static final int PERMISSIONS_REQUEST_READ_PHONE_STATE = 999;
+    TelephonyManager telephonyManager;
+    String imei;
 
 
     @Override
@@ -63,6 +72,7 @@ public class Dashboard extends AppCompatActivity implements Api.ServerResponseLi
         prefManager = new PrefManager(this);
         logout = (ImageView) findViewById(R.id.logout);
         uploadInspectionReport = (LinearLayout) findViewById(R.id.upload_inspection_report);
+        pending_upload_layout = (LinearLayout)findViewById(R.id.pending_upload_layout);
         block_user_layout = (LinearLayout)findViewById(R.id.block_user_layout);
         block_user_tv = (MyCustomTextView)findViewById(R.id.block_user_tv);
         upload_inspection_report_tv = (MyCustomTextView)findViewById(R.id.upload_inspection_report_tv);
@@ -86,6 +96,23 @@ public class Dashboard extends AppCompatActivity implements Api.ServerResponseLi
 
     }
 
+    private void getMobileDetails() {
+        telephonyManager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
+        imei = telephonyManager.getDeviceId();
+        prefManager.setImei(imei);
+        Log.d("imei",imei);
+    }
+
     public void fetchAllResponseFromApi(){
         getStageList();
         // getServiceList();
@@ -98,6 +125,19 @@ public class Dashboard extends AppCompatActivity implements Api.ServerResponseLi
         getSchemeList();
         getVillageList();
         getFinYearList();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (checkSelfPermission(Manifest.permission.READ_PHONE_STATE)
+                    != PackageManager.PERMISSION_GRANTED) {
+                requestPermissions(new String[]{Manifest.permission.READ_PHONE_STATE},
+                        PERMISSIONS_REQUEST_READ_PHONE_STATE);
+
+            } else {
+                getMobileDetails();
+            }
+        }else {
+            getMobileDetails();
+
+        }
     }
 
 

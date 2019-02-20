@@ -13,6 +13,7 @@ import android.graphics.Bitmap;
 import android.graphics.Typeface;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.net.Uri;
@@ -24,6 +25,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Base64;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
@@ -61,6 +63,7 @@ import com.nic.RuralInspection.api.ServerResponse;
 import com.nic.RuralInspection.constant.AppConstant;
 import com.nic.RuralInspection.session.PrefManager;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -91,7 +94,7 @@ public class AddInspectionReportScreen extends AppCompatActivity implements View
 
     final int CAMERA_REQUEST = 1888;
 
-    ImageView imageView;
+    ImageView imageView, image_view_preview;
     private static final int CAMERA_CAPTURE_IMAGE_REQUEST_CODE = 2500;
     private static final int CAMERA_CAPTURE_VIDEO_REQUEST_CODE = 200;
 
@@ -124,9 +127,10 @@ public class AddInspectionReportScreen extends AppCompatActivity implements View
 
     static ArrayList<String> latitude = new ArrayList<String>();
     static ArrayList<String> longitude = new ArrayList<String>();
-    String offlatTextValue,offlanTextValue;
+    String offlatTextValue, offlanTextValue;
     String work_id;
     EditText remarkTv;
+    static JSONObject dataset;
 
 
     @Override
@@ -211,6 +215,7 @@ public class AddInspectionReportScreen extends AppCompatActivity implements View
 
         String sql = "select * from " + DBHelper.WORK_STAGE_TABLE + "  where (work_group_id = " + workGroupId + " and work_type_id = " + workTypeid + ") order by work_stage_order asc";
         Cursor stages = getRawEvents(sql, null);
+        Log.d("work_stage_sql",sql);
 
         BlockListValue stagelist = new BlockListValue();
         stagelist.setWorkStageName("Select Stage of Work");
@@ -249,6 +254,7 @@ public class AddInspectionReportScreen extends AppCompatActivity implements View
     }
 
     public void imageWithDescription(final MyCustomTextView action_tv, final String type, final ScrollView scrollView) {
+        dataset = new JSONObject();
 
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 
@@ -262,19 +268,35 @@ public class AddInspectionReportScreen extends AppCompatActivity implements View
         String created_ipaddress = "123214124";
         String created_username = "test";
 
-        ContentValues inspectionValue = new ContentValues();
-        inspectionValue.put(AppConstant.WORK_ID,work_id);
-        inspectionValue.put(AppConstant.STAGE_OF_WORK_ON_INSPECTION,stage_of_work_on_inspection);
-        inspectionValue.put(AppConstant.DATE_OF_INSPECTION,date_of_inspection);
-        inspectionValue.put(AppConstant.INSPECTED_BY,inspected_by);
-        inspectionValue.put(AppConstant.OBSERVATION,observation);
-        inspectionValue.put(AppConstant.INSPECTION_REMARK,inspection_remark);
-        inspectionValue.put(AppConstant.CREATED_DATE,created_date);
-        inspectionValue.put(AppConstant.CREATED_IP_ADDRESS,created_ipaddress);
-        inspectionValue.put(AppConstant.CREATED_USER_NAME,created_username);
+        if(!Utils.isOnline()) {
+            ContentValues inspectionValue = new ContentValues();
+            inspectionValue.put(AppConstant.WORK_ID,work_id);
+            inspectionValue.put(AppConstant.STAGE_OF_WORK_ON_INSPECTION,stage_of_work_on_inspection);
+            inspectionValue.put(AppConstant.DATE_OF_INSPECTION,date_of_inspection);
+            inspectionValue.put(AppConstant.INSPECTED_BY,inspected_by);
+            inspectionValue.put(AppConstant.OBSERVATION,observation);
+            inspectionValue.put(AppConstant.INSPECTION_REMARK,inspection_remark);
+            inspectionValue.put(AppConstant.CREATED_DATE,created_date);
+            inspectionValue.put(AppConstant.CREATED_IP_ADDRESS,created_ipaddress);
+            inspectionValue.put(AppConstant.CREATED_USER_NAME,created_username);
 
+            LoginScreen.db.insert(DBHelper.INSPECTION,null,inspectionValue);
+        } else {
+            try {
+                dataset.put(AppConstant.WORK_ID,work_id);
+                dataset.put(AppConstant.STAGE_OF_WORK_ON_INSPECTION,stage_of_work_on_inspection);
+                dataset.put(AppConstant.DATE_OF_INSPECTION,date_of_inspection);
+                dataset.put(AppConstant.INSPECTED_BY,inspected_by);
+                dataset.put(AppConstant.OBSERVATION,observation);
+                dataset.put(AppConstant.INSPECTION_REMARK,inspection_remark);
+                dataset.put(AppConstant.CREATED_DATE,created_date);
+                dataset.put(AppConstant.CREATED_IP_ADDRESS,created_ipaddress);
+                dataset.put(AppConstant.CREATED_USER_NAME,created_username);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
 
-        LoginScreen.db.insert(DBHelper.INSPECTION,null,inspectionValue);
+        }
 
 
         final Dialog dialog = new Dialog(this,
@@ -304,6 +326,7 @@ public class AddInspectionReportScreen extends AppCompatActivity implements View
             @Override
             public void onClick(View v) {
                 int inspectionID = 0;
+                JSONArray imageArray = new JSONArray();
 
                 Cursor inpection_Cursor = getRawEvents("SELECT MAX(inspection_id) FROM "+DBHelper.INSPECTION ,null);
                 Log.d("cursor_count", String.valueOf(inpection_Cursor.getCount()));
@@ -318,23 +341,25 @@ public class AddInspectionReportScreen extends AppCompatActivity implements View
                 int childCount = mobileNumberLayout.getChildCount();
                 if(childCount > 0) {
                     for (int i = 0; i < childCount; i++) {
+                        JSONObject imageObject = new JSONObject();
+
                         View vv = mobileNumberLayout.getChildAt(i);
                         EditText myEditTextView = (EditText) vv.findViewById(R.id.description);
 
                         ImageView imageView = (ImageView)vv. findViewById(R.id.image_view);
                         byte[] imageInByte = new byte[0];
+                        String image_str = "";
                         try{
                             Bitmap bitmap = ((BitmapDrawable)imageView.getDrawable()).getBitmap();
                             ByteArrayOutputStream baos = new ByteArrayOutputStream();
                             bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
                             imageInByte = baos.toByteArray();
+                            image_str = Base64.encodeToString(imageInByte,0);
                         }catch (Exception e) {
                             Utils.showAlert(AddInspectionReportScreen.this,"Atleast Capture one Photo");
                             break;
                             //e.printStackTrace();
                         }
-                        
-
 
                         String description = myEditTextView.getText().toString();
 
@@ -344,23 +369,49 @@ public class AddInspectionReportScreen extends AppCompatActivity implements View
                         }
 
                         // Toast.makeText(getApplicationContext(),str,Toast.LENGTH_LONG).show();
-                        ContentValues imageValue = new ContentValues();
 
-                        imageValue.put(AppConstant.INSPECTION_ID,inspectionID);
-                        imageValue.put(AppConstant.WORK_ID,work_id);
-                        imageValue.put(AppConstant.LATITUDE,offlatTextValue);
-                        imageValue.put(AppConstant.LONGITUDE,offlanTextValue);
-                        imageValue.put(AppConstant.IMAGE,imageInByte);
-                        imageValue.put(AppConstant.DESCRIPTION,description);
+                        if (!Utils.isOnline()) {
 
-                        long rowInserted = LoginScreen.db.insert(DBHelper.CAPTURED_PHOTO,null,imageValue);
+                            ContentValues imageValue = new ContentValues();
 
-                        if(rowInserted != -1) {
-                            Toast.makeText(AddInspectionReportScreen.this, "New Inspection added", Toast.LENGTH_SHORT).show();
-                            finish();
+                            imageValue.put(AppConstant.INSPECTION_ID,inspectionID);
+                            imageValue.put(AppConstant.WORK_ID,work_id);
+                            imageValue.put(AppConstant.LATITUDE,offlatTextValue);
+                            imageValue.put(AppConstant.LONGITUDE,offlanTextValue);
+                            imageValue.put(AppConstant.IMAGE,image_str);
+                            imageValue.put(AppConstant.DESCRIPTION,description);
+
+                           long rowInserted = LoginScreen.db.insert(DBHelper.CAPTURED_PHOTO,null,imageValue);
+
+                            if(rowInserted != -1) {
+                                Toast.makeText(AddInspectionReportScreen.this, "New Inspection added", Toast.LENGTH_SHORT).show();
+                                finish();
+                            }
+                            else{
+                                Toast.makeText(AddInspectionReportScreen.this, "Something wrong", Toast.LENGTH_SHORT).show(); }
                         }
-                        else{
-                            Toast.makeText(AddInspectionReportScreen.this, "Something wrong", Toast.LENGTH_SHORT).show(); }
+                        else {
+                            try {
+                                imageObject.put("image_id",i);
+                                imageObject.put(AppConstant.WORK_ID,work_id);
+                                imageObject.put(AppConstant.LATITUDE,offlatTextValue);
+                                imageObject.put(AppConstant.LONGITUDE,offlanTextValue);
+                                imageObject.put(AppConstant.IMAGE,image_str);
+                                imageObject.put(AppConstant.DESCRIPTION,description);
+                                imageArray.put(imageObject);
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+                    try {
+                        dataset.put("image_details",imageArray);
+                        Log.d("post_dataset",dataset.toString());
+                        //   String authKey = Utils.encrypt(prefManager.getUserPassKey(), getResources().getString(R.string.init_vector),dataset.toString());
+                      //  Log.d("auth_post",authKey);
+                        sync_data();
+                    } catch (JSONException e) {
+                        e.printStackTrace();
                     }
                 } else {
                     Utils.showAlert(AddInspectionReportScreen.this,"Atleast Take One photo");
@@ -379,15 +430,11 @@ public class AddInspectionReportScreen extends AppCompatActivity implements View
         btnAddMobile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (viewArrayList.size() < 10) {
+                if (imageView.getDrawable() != null) {
                     dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
                     updateView(AddInspectionReportScreen.this, mobileNumberLayout, "", type);
                 } else {
-                    if ("Mobile".equalsIgnoreCase(type))
-                        Utils.showAlert(AddInspectionReportScreen.this, "You can add upto 5 mobile numbers");
-                    else
-                        Utils.showAlert(AddInspectionReportScreen.this, "You can add upto 5 emails");
-
+                    Utils.showAlert(AddInspectionReportScreen.this, "Capture Image!");
                 }
             }
         });
@@ -424,6 +471,7 @@ public class AddInspectionReportScreen extends AppCompatActivity implements View
         final View hiddenInfo = activity.getLayoutInflater().inflate(R.layout.image_with_description, emailOrMobileLayout, false);
         final ImageView imageView_close = (ImageView) hiddenInfo.findViewById(R.id.imageView_close);
         imageView = (ImageView) hiddenInfo.findViewById(R.id.image_view);
+        image_view_preview = (ImageView) hiddenInfo.findViewById(R.id.image_view_preview);
         final EditText myEditTextView = (EditText) hiddenInfo.findViewById(R.id.description);
 
 
@@ -449,6 +497,7 @@ public class AddInspectionReportScreen extends AppCompatActivity implements View
             @Override
             public void onClick(View v) {
                 try {
+                    imageView.setVisibility(View.VISIBLE);
                     if (viewArrayList.size() != 1) {
                         ((LinearLayout) hiddenInfo.getParent()).removeView(hiddenInfo);
                         viewArrayList.remove(hiddenInfo);
@@ -459,54 +508,17 @@ public class AddInspectionReportScreen extends AppCompatActivity implements View
                 }
             }
         });
+        image_view_preview.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+               getLatLong();
+
+            }
+        });
         imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mlocManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-                mlocListener = new MyLocationListener();
-
-
-                // permission was granted, yay! Do the
-                // location-related task you need to do.
-                if (ContextCompat.checkSelfPermission(AddInspectionReportScreen.this,
-                        ACCESS_FINE_LOCATION)
-                        == PackageManager.PERMISSION_GRANTED) {
-
-                    //Request location updates:
-                    mlocManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, mlocListener);
-
-                }
-
-                if (mlocManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                        if (ActivityCompat.checkSelfPermission( AddInspectionReportScreen.this, ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(AddInspectionReportScreen. this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED)
-                            requestPermissions(new String[]{ CAMERA,ACCESS_FINE_LOCATION}, PERMISSION_REQUEST_CODE);
-                    }
-                    else{
-                        if (ActivityCompat.checkSelfPermission( AddInspectionReportScreen.this, ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission( AddInspectionReportScreen.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                            ActivityCompat.requestPermissions( AddInspectionReportScreen.this, new String[]{ACCESS_FINE_LOCATION}, 1);
-
-                        }
-                    }
-                    if (MyLocationListener.latitude > 0) {
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                            if (CameraUtils.checkPermissions(AddInspectionReportScreen.this)) {
-                                captureImage();
-                            } else {
-                                requestCameraPermission(MEDIA_TYPE_IMAGE);
-                            }
-//                            checkPermissionForCamera();
-                        }else{
-                            captureImage();
-                        }
-                    } else {
-                        Utils.showAlert(AddInspectionReportScreen.this, "Satellite communication not available to get GPS Co-ordination Please Capture Photo in Open Area..");
-                    }
-                } else {
-                    Utils.showAlert(AddInspectionReportScreen.this, "GPS is not turned on...");
-                }
-
-
+                getLatLong();
             }
         });
         emailOrMobileLayout.addView(hiddenInfo);
@@ -517,6 +529,51 @@ public class AddInspectionReportScreen extends AppCompatActivity implements View
         myEditTextView1.requestFocus();
         viewArrayList.add(hiddenInfo);
         return hiddenInfo;
+    }
+
+    private void getLatLong(){
+        mlocManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        mlocListener = new MyLocationListener();
+
+
+        // permission was granted, yay! Do the
+        // location-related task you need to do.
+        if (ContextCompat.checkSelfPermission(AddInspectionReportScreen.this,
+                ACCESS_FINE_LOCATION)
+                == PackageManager.PERMISSION_GRANTED) {
+
+            //Request location updates:
+            mlocManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, mlocListener);
+
+        }
+
+        if (mlocManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                if (ActivityCompat.checkSelfPermission(AddInspectionReportScreen.this, ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(AddInspectionReportScreen.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED)
+                    requestPermissions(new String[]{CAMERA, ACCESS_FINE_LOCATION}, PERMISSION_REQUEST_CODE);
+            } else {
+                if (ActivityCompat.checkSelfPermission(AddInspectionReportScreen.this, ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(AddInspectionReportScreen.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                    ActivityCompat.requestPermissions(AddInspectionReportScreen.this, new String[]{ACCESS_FINE_LOCATION}, 1);
+
+                }
+            }
+            if (MyLocationListener.latitude > 0) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    if (CameraUtils.checkPermissions(AddInspectionReportScreen.this)) {
+                        captureImage();
+                    } else {
+                        requestCameraPermission(MEDIA_TYPE_IMAGE);
+                    }
+//                            checkPermissionForCamera();
+                } else {
+                    captureImage();
+                }
+            } else {
+                Utils.showAlert(AddInspectionReportScreen.this, "Satellite communication not available to get GPS Co-ordination Please Capture Photo in Open Area..");
+            }
+        } else {
+            Utils.showAlert(AddInspectionReportScreen.this, "GPS is not turned on...");
+        }
     }
 
     private void captureImage() {
@@ -536,7 +593,7 @@ public class AddInspectionReportScreen extends AppCompatActivity implements View
     }
 
 
-    private void    requestCameraPermission(final int type) {
+    private void requestCameraPermission(final int type) {
         Dexter.withActivity(this)
                 .withPermissions(Manifest.permission.CAMERA,
                         Manifest.permission.WRITE_EXTERNAL_STORAGE)
@@ -587,7 +644,8 @@ public class AddInspectionReportScreen extends AppCompatActivity implements View
 
 
             Bitmap bitmap = CameraUtils.optimizeBitmap(BITMAP_SAMPLE_SIZE, imageStoragePath);
-
+            image_view_preview.setVisibility(View.GONE);
+            imageView.setVisibility(View.VISIBLE);
             imageView.setImageBitmap(bitmap);
 
         } catch (NullPointerException e) {
@@ -695,7 +753,8 @@ public class AddInspectionReportScreen extends AppCompatActivity implements View
 
         }
     }
-    public  void sync_data() {
+
+    public void sync_data() {
         try {
             new ApiService(this).makeJSONObjectRequest("save_data", Api.Method.POST, UrlGenerator.getServicesListUrl(), dataTobeSavedJsonParams(), "not cache", this);
         } catch (JSONException e) {
@@ -704,7 +763,7 @@ public class AddInspectionReportScreen extends AppCompatActivity implements View
     }
 
     public JSONObject dataTobeSavedJsonParams() throws JSONException {
-        String authKey = Utils.encrypt(prefManager.getUserPassKey(), getResources().getString(R.string.init_vector),savingJsonParams().toString());
+        String authKey = Utils.encrypt(prefManager.getUserPassKey(), getResources().getString(R.string.init_vector),dataset.toString());
         JSONObject dataSet = new JSONObject();
         dataSet.put(AppConstant.KEY_USER_NAME, prefManager.getUserName());
         dataSet.put(AppConstant.DATA_CONTENT, authKey);
@@ -712,28 +771,6 @@ public class AddInspectionReportScreen extends AppCompatActivity implements View
         return dataSet;
     }
 
-    public static JSONObject savingJsonParams() throws JSONException {
-
-        Cursor inpection_Cursor = getRawEvents("SELECT * FROM "+DBHelper.INSPECTION ,null);
-        Log.d("cursor_count", String.valueOf(inpection_Cursor.getCount()));
-        JSONObject dataSet = new JSONObject();
-        if (inpection_Cursor.getCount() > 0) {
-            if (inpection_Cursor.moveToFirst()) {
-                do {
-                    dataSet.put(AppConstant.INSPECTION_ID, inpection_Cursor.getString(inpection_Cursor.getColumnIndexOrThrow(AppConstant.INSPECTION_ID)));
-                    dataSet.put(AppConstant.STAGE_OF_WORK_ON_INSPECTION, inpection_Cursor.getString(inpection_Cursor.getColumnIndexOrThrow(AppConstant.STAGE_OF_WORK_ON_INSPECTION)));
-                    dataSet.put(AppConstant.DATE_OF_INSPECTION, inpection_Cursor.getString(inpection_Cursor.getColumnIndexOrThrow(AppConstant.DATE_OF_INSPECTION)));
-                    dataSet.put(AppConstant.INSPECTED_BY, inpection_Cursor.getString(inpection_Cursor.getColumnIndexOrThrow(AppConstant.INSPECTED_BY)));
-                    dataSet.put(AppConstant.OBSERVATION, inpection_Cursor.getString(inpection_Cursor.getColumnIndexOrThrow(AppConstant.OBSERVATION)));
-                    dataSet.put(AppConstant.INSPECTION_REMARK, inpection_Cursor.getString(inpection_Cursor.getColumnIndexOrThrow(AppConstant.INSPECTION_REMARK)));
-                    dataSet.put(AppConstant.CREATED_DATE, inpection_Cursor.getString(inpection_Cursor.getColumnIndexOrThrow(AppConstant.CREATED_DATE)));
-                    dataSet.put(AppConstant.CREATED_IP_ADDRESS, inpection_Cursor.getString(inpection_Cursor.getColumnIndexOrThrow(AppConstant.CREATED_IP_ADDRESS)));
-                    dataSet.put(AppConstant.CREATED_USER_NAME, inpection_Cursor.getString(inpection_Cursor.getColumnIndexOrThrow(AppConstant.CREATED_USER_NAME)));
-                } while (inpection_Cursor.moveToNext());
-            }
-        }
-        return dataSet;
-    }
     @Override
     public void OnMyResponse(ServerResponse serverResponse) {
         try {
