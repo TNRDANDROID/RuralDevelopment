@@ -20,6 +20,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.SearchView;
 
 import com.android.volley.VolleyError;
@@ -47,9 +48,10 @@ public class ProjectListScreen extends AppCompatActivity implements View.OnClick
     private ArrayList<BlockListValue> projectListValues;
     private ProjectListAdapter mAdapter;
     private ImageView back_img;
+    private LinearLayout village_layout,block_user_layout;
     private NestedScrollView scrollView;
     private SearchView searchView;
-    private MyCustomTextView district_tv, scheme_name_tv, block_name_tv, fin_year_tv, list_count, not_found_tv;
+    private MyCustomTextView district_tv, scheme_name_tv,block_user_tv, block_name_tv, fin_year_tv, list_count, not_found_tv, village_name_tv;
     PrefManager prefManager;
 
 
@@ -66,10 +68,13 @@ public class ProjectListScreen extends AppCompatActivity implements View.OnClick
 
     public void intializeUI() {
         prefManager = new PrefManager(this);
-
+        block_user_layout = (LinearLayout)findViewById(R.id.block_user_layout);
+        block_user_tv = (MyCustomTextView)findViewById(R.id.block_user_tv);
+        village_layout = (LinearLayout) findViewById(R.id.village_layout);
         district_tv = (MyCustomTextView) findViewById(R.id.district_tv);
         scheme_name_tv = (MyCustomTextView) findViewById(R.id.scheme_name_tv);
         block_name_tv = (MyCustomTextView) findViewById(R.id.block_name_tv);
+        village_name_tv = (MyCustomTextView) findViewById(R.id.village_name_tv);
         fin_year_tv = (MyCustomTextView) findViewById(R.id.fin_year_tv);
         recyclerView = (RecyclerView) findViewById(R.id.project_list);
         not_found_tv = (MyCustomTextView) findViewById(R.id.not_found_tv);
@@ -82,6 +87,13 @@ public class ProjectListScreen extends AppCompatActivity implements View.OnClick
         scheme_name_tv.setText(prefManager.getSchemeName());
         block_name_tv.setText(prefManager.getBlockName());
         fin_year_tv.setText(prefManager.getFinancialyearName());
+        if (prefManager.getLevels().equalsIgnoreCase("B")) {
+            block_user_layout.setVisibility(View.VISIBLE);
+            block_user_tv.setText(prefManager.getBlockName());
+            village_layout.setVisibility(View.VISIBLE);
+            village_name_tv.setText(prefManager.getVillageListPvName());
+        }
+
 
         mAdapter = new ProjectListAdapter(this, projectListValues, this);
 

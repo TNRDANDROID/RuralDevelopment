@@ -42,10 +42,10 @@ import static com.nic.RuralInspection.Activity.LoginScreen.db;
 
 public class Dashboard extends AppCompatActivity implements Api.ServerResponseListener, View.OnClickListener, MyDialog.myOnClickListener {
     private ImageView logout;
-    private LinearLayout uploadInspectionReport;
+    private LinearLayout uploadInspectionReport,block_user_layout;
     private PrefManager prefManager;
     private ProgressHUD progressHUD;
-    private MyCustomTextView district_tv;
+    private MyCustomTextView district_tv,block_user_tv,upload_inspection_report_tv;
     private JSONArray updatedJsonArray;
 
 
@@ -63,10 +63,18 @@ public class Dashboard extends AppCompatActivity implements Api.ServerResponseLi
         prefManager = new PrefManager(this);
         logout = (ImageView) findViewById(R.id.logout);
         uploadInspectionReport = (LinearLayout) findViewById(R.id.upload_inspection_report);
+        block_user_layout = (LinearLayout)findViewById(R.id.block_user_layout);
+        block_user_tv = (MyCustomTextView)findViewById(R.id.block_user_tv);
+        upload_inspection_report_tv = (MyCustomTextView)findViewById(R.id.upload_inspection_report_tv);
         district_tv = (MyCustomTextView) findViewById(R.id.district_tv);
         uploadInspectionReport.setOnClickListener(this);
         logout.setOnClickListener(this);
         district_tv.setText(prefManager.getDistrictName());
+        if(prefManager.getLevels().equalsIgnoreCase("B")){
+            block_user_layout.setVisibility(View.VISIBLE);
+            block_user_tv.setText(prefManager.getBlockName());
+            upload_inspection_report_tv.setText(getResources().getString(R.string.action_taken_tv));
+        }
 
         if (Utils.isOnline()) {
             Cursor toCheck = getRawEvents("SELECT * FROM " + DBHelper.FINANCIAL_YEAR_TABLE_NAME, null);

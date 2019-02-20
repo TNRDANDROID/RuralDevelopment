@@ -12,7 +12,7 @@ public class DBHelper extends SQLiteOpenHelper {
     public static final String BLOCK_TABLE_NAME = "BlockList";
     public static final String SCHEME_TABLE_NAME = "SchemeList";
     public static final String FINANCIAL_YEAR_TABLE_NAME = "FinancialYear";
-    public static final String WORK_LIST_OPTIONAL = "WorkListDistFinYearWise";
+    public static final String WORK_LIST_OPTIONAL = "WorkListOptional";
     public static final String WORK_STAGE_TABLE = "work_type_stage_link";
     public static final String VILLAGE_TABLE_NAME = "village_table_name";
     public static final String INSPECTION = "inspection";

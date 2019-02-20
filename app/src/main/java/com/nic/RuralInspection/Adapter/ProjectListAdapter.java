@@ -5,11 +5,14 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.support.v7.widget.RecyclerView;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Filter;
 import android.widget.Filterable;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 
 import com.nic.RuralInspection.Activity.AddInspectionReportScreen;
 import com.nic.RuralInspection.Activity.LoginScreen;
@@ -60,6 +63,9 @@ public class ProjectListAdapter extends RecyclerView.Adapter<ProjectListAdapter.
             levelTv = (MyCustomTextView) itemView.findViewById(R.id.level_tv);
             viewReport = (MyCustomTextView) itemView.findViewById(R.id.view_inspection_report);
             addReport = (MyCustomTextView) itemView.findViewById(R.id.add_inspection_report);
+            if(prefManager.getLevels().equalsIgnoreCase("B")){
+                addReport.setVisibility(View.GONE);
+            }
         }
 
 
@@ -67,10 +73,10 @@ public class ProjectListAdapter extends RecyclerView.Adapter<ProjectListAdapter.
         public void onClick(View v) {
             switch (v.getId()) {
                 case R.id.view_inspection_report:
-                   // viewInspectionReport();
+                    // viewInspectionReport();
                     break;
                 case R.id.add_inspection_report:
-              // addInspectionReport();
+                    // addInspectionReport();
 
             }
 
@@ -78,7 +84,6 @@ public class ProjectListAdapter extends RecyclerView.Adapter<ProjectListAdapter.
         }
 
     }
-
 
 
     public void viewInspectionReport(int position) {
@@ -93,12 +98,12 @@ public class ProjectListAdapter extends RecyclerView.Adapter<ProjectListAdapter.
         Activity activity = (Activity) context;
         Intent intent = new Intent(context, ViewInspectionReportScreen.class);
 
-        intent.putExtra(AppConstant.WORK_ID,workid);
-        intent.putExtra(AppConstant.WORK_NAME,workName);
-        intent.putExtra(AppConstant.WORK_GROUP_ID,workGroupID);
-        intent.putExtra(AppConstant.WORK_TYPE_ID,workTypeID);
-        intent.putExtra(AppConstant.WORK_SATGE_NAME,stageName);
-        intent.putExtra(AppConstant.AS_AMOUNT,asAmount);
+        intent.putExtra(AppConstant.WORK_ID, workid);
+        intent.putExtra(AppConstant.WORK_NAME, workName);
+        intent.putExtra(AppConstant.WORK_GROUP_ID, workGroupID);
+        intent.putExtra(AppConstant.WORK_TYPE_ID, workTypeID);
+        intent.putExtra(AppConstant.WORK_SATGE_NAME, stageName);
+        intent.putExtra(AppConstant.AS_AMOUNT, asAmount);
 
         //intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         activity.startActivity(intent);
@@ -118,19 +123,18 @@ public class ProjectListAdapter extends RecyclerView.Adapter<ProjectListAdapter.
         Activity activity = (Activity) context;
         Intent intent = new Intent(context, AddInspectionReportScreen.class);
 
-        intent.putExtra(AppConstant.WORK_ID,workid);
-        intent.putExtra(AppConstant.WORK_NAME,workName);
-        intent.putExtra(AppConstant.WORK_GROUP_ID,workGroupID);
-        intent.putExtra(AppConstant.WORK_TYPE_ID,workTypeID);
-        intent.putExtra(AppConstant.WORK_SATGE_NAME,stageName);
-        intent.putExtra(AppConstant.WORK_STAGE_CODE,stageCode);
-        intent.putExtra(AppConstant.AS_AMOUNT,asAmount);
+        intent.putExtra(AppConstant.WORK_ID, workid);
+        intent.putExtra(AppConstant.WORK_NAME, workName);
+        intent.putExtra(AppConstant.WORK_GROUP_ID, workGroupID);
+        intent.putExtra(AppConstant.WORK_TYPE_ID, workTypeID);
+        intent.putExtra(AppConstant.WORK_SATGE_NAME, stageName);
+        intent.putExtra(AppConstant.WORK_STAGE_CODE, stageCode);
+        intent.putExtra(AppConstant.AS_AMOUNT, asAmount);
 
         //intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         activity.startActivity(intent);
         activity.overridePendingTransition(R.anim.slide_in, R.anim.slide_out);
     }
-
 
 
     @Override
@@ -139,13 +143,14 @@ public class ProjectListAdapter extends RecyclerView.Adapter<ProjectListAdapter.
         holder.projectName.setText(projectListValues.get(position).getWorkName());
         holder.amountTv.setText(projectListValues.get(position).getAsAmount());
         holder.levelTv.setText(projectListValues.get(position).getWorkStageName());
-
-        holder.addReport.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                addInspectionReport(position);
-            }
-        });
+        if (!prefManager.getLevels().equalsIgnoreCase("B")) {
+            holder.addReport.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    addInspectionReport(position);
+                }
+            });
+        }
 
         holder.viewReport.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -161,7 +166,7 @@ public class ProjectListAdapter extends RecyclerView.Adapter<ProjectListAdapter.
         return projectListValues.size();
     }
 
-    public void  loadDBValues(){
+    public void loadDBValues() {
 
     }
 
@@ -172,7 +177,7 @@ public class ProjectListAdapter extends RecyclerView.Adapter<ProjectListAdapter.
             protected FilterResults performFiltering(CharSequence charSequence) {
                 String charString = charSequence.toString();
                 if (charString.isEmpty()) {
-                    projectListFiltered =   projectListValues;
+                    projectListFiltered = projectListValues;
                 } else {
                     List<BlockListValue> filteredList = new ArrayList<>();
                     for (BlockListValue row : projectListValues) {
@@ -203,9 +208,10 @@ public class ProjectListAdapter extends RecyclerView.Adapter<ProjectListAdapter.
     }
 
     public interface ProjectsAdapterListener {
-       // void setProjectList(BlockListValue projectList);
-        void addInspectionOnclick(View v,int position);
+        // void setProjectList(BlockListValue projectList);
+        void addInspectionOnclick(View v, int position);
     }
+
     public Cursor getRawEvents(String sql, String string) {
         Cursor cursor = LoginScreen.db.rawQuery(sql, null);
         return cursor;

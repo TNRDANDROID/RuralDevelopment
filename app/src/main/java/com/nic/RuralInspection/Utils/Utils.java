@@ -1106,7 +1106,7 @@ public class Utils {
     }
 
 
-    public static JSONObject  blockListDistrictWiseJsonParams(Activity activity) throws JSONException {
+    public static JSONObject blockListDistrictWiseJsonParams(Activity activity) throws JSONException {
         prefManager = new PrefManager(activity);
         JSONObject dataSet = new JSONObject();
         dataSet.put(AppConstant.KEY_SERVICE_ID, AppConstant.KEY_BLOCK_LIST_DISTRICT_WISE);
@@ -1155,13 +1155,18 @@ public class Utils {
         dataSet.put(AppConstant.KEY_SERVICE_ID, AppConstant.KEY_WORK_LIST_OPTIONAL);
         dataSet.put(AppConstant.DISTRICT_CODE, prefManager.getDistrictCode());
         dataSet.put(AppConstant.FINANCIAL_YEAR, prefManager.getFinancialyearName());
-        if(!prefManager.getBlockName().equalsIgnoreCase("All")){
-            dataSet.put(AppConstant.BLOCK_CODE, prefManager.getKeySpinnerSelectedBlockcode());
+        if (prefManager.getLevels().equalsIgnoreCase("B")) {
+            dataSet.put(AppConstant.BLOCK_CODE, prefManager.getBlockCode());
+
+        } else {
+            if (!prefManager.getBlockName().equalsIgnoreCase("All")) {
+                dataSet.put(AppConstant.BLOCK_CODE, prefManager.getKeySpinnerSelectedBlockcode());
+            }
         }
-        if(!prefManager.getVillageListPvName().equalsIgnoreCase("All")){
+        if (!prefManager.getVillageListPvName().equalsIgnoreCase("All")) {
             dataSet.put(AppConstant.PV_CODE, prefManager.getKeySpinnerSelectedPVcode());
         }
-        if(!prefManager.getSchemeName().equalsIgnoreCase("All")){
+        if (!prefManager.getSchemeName().equalsIgnoreCase("All")) {
             dataSet.put(AppConstant.SCHEME_ID, prefManager.getKeySpinnerSelectedSchemeSeqId());
         }
         Log.d("habitationListDist", "" + dataSet);
@@ -1201,7 +1206,7 @@ public class Utils {
         prefManager = new PrefManager(activity);
         JSONObject dataSet = new JSONObject();
         dataSet.put(AppConstant.KEY_SERVICE_ID, AppConstant.KEY_SCHEME_LIST_DISTRICT_WISE);
-        dataSet.put(AppConstant.DISTRICT_CODE,prefManager.getDistrictCode());
+        dataSet.put(AppConstant.DISTRICT_CODE, prefManager.getDistrictCode());
         Log.d("object", "" + dataSet);
         return dataSet;
     }
@@ -1215,7 +1220,7 @@ public class Utils {
 
     public static JSONObject stageListJsonParams() throws JSONException {
         JSONObject dataSet = new JSONObject();
-        dataSet.put(AppConstant.KEY_SERVICE_ID,AppConstant.STAGE_LIST);
+        dataSet.put(AppConstant.KEY_SERVICE_ID, AppConstant.STAGE_LIST);
         Log.d("object", "" + dataSet);
         return dataSet;
     }

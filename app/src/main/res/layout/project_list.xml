@@ -224,30 +224,30 @@
                         android:padding="10dp">
 
                         <com.nic.RuralInspection.Support.MyCustomTextView
-                            android:id="@+id/view_inspection_report"
+                            android:id="@+id/add_inspection_report"
                             android:layout_width="80dp"
                             android:layout_height="30dp"
                             android:layout_alignParentStart="true"
                             android:layout_centerInParent="true"
-                            android:background="@drawable/login_button"
+                            android:background="@drawable/add_button"
                             android:gravity="center"
 
-                            android:text="View"
+                            android:text="Add"
                             android:textAlignment="center"
                             android:textColor="@android:color/white"
                             android:textStyle="bold" />
 
                         <com.nic.RuralInspection.Support.MyCustomTextView
-                            android:id="@+id/add_inspection_report"
+                            android:id="@+id/view_inspection_report"
                             android:layout_width="80dp"
                             android:layout_height="30dp"
                             android:layout_alignParentEnd="true"
 
 
                             android:layout_centerInParent="true"
-                            android:background="@drawable/add_button"
+                            android:background="@drawable/login_button"
                             android:gravity="center"
-                            android:text="Add"
+                            android:text="View"
                             android:textAlignment="center"
                             android:textColor="@android:color/white"
                             android:textStyle="bold" />

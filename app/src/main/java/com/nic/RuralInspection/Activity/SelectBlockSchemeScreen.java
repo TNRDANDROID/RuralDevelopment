@@ -234,7 +234,9 @@ public class SelectBlockSchemeScreen extends AppCompatActivity implements View.O
 
             }
         });
-
+        if (prefManager.getLevels().equalsIgnoreCase("B")) {
+            villageFilterSpinner(prefManager.getBlockCode());
+        }
         loadOfflineDBValues();
     }
 
@@ -277,7 +279,11 @@ public class SelectBlockSchemeScreen extends AppCompatActivity implements View.O
                 break;
             case R.id.btn_save:
                 if (Utils.isOnline()) {
-                    projectListScreen();
+                    if (!prefManager.getLevels().equalsIgnoreCase("B")) {
+                        projectListScreenDistrictUser();
+                    } else {
+                        projectListScreenBlockUser();
+                    }
                 } else {
                     projectListScreen_offline();
                 }
@@ -336,17 +342,16 @@ public class SelectBlockSchemeScreen extends AppCompatActivity implements View.O
 //        }
 //    }
 
-    public void projectListScreen() {
+    public void projectListScreenDistrictUser() {
 
         if (!"Select Financial year".equalsIgnoreCase(FinYearList.get(sp_financialYear.getSelectedItemPosition()).getFinancialYear())) {
 //            if (!"Select Block".equalsIgnoreCase(Block.get(sp_block.getSelectedItemPosition()).getBlockName()) || (all_block.isChecked())) {
             if (!"Select Block".equalsIgnoreCase(Block.get(sp_block.getSelectedItemPosition()).getBlockName())) {
                 if (!"Select Village".equalsIgnoreCase(Village.get(sp_village.getSelectedItemPosition()).getVillageListPvName()) || (all_village.isChecked())) {
                     if (!"Select Scheme".equalsIgnoreCase(Scheme.get(sp_scheme.getSelectedItemPosition()).getSchemeName()) || (all_scheme.isChecked())) {
-                        if(Utils.isOnline()) {
+                        if (Utils.isOnline()) {
                             getWorkListOptional();
-                        }
-                        else {
+                        } else {
                             goto_next();
                         }
 
@@ -364,19 +369,51 @@ public class SelectBlockSchemeScreen extends AppCompatActivity implements View.O
         }
     }
 
+    public void projectListScreenBlockUser() {
+
+        if (!"Select Financial year".equalsIgnoreCase(FinYearList.get(sp_financialYear.getSelectedItemPosition()).getFinancialYear())) {
+//            if (!"Select Block".equalsIgnoreCase(Block.get(sp_block.getSelectedItemPosition()).getBlockName()) || (all_block.isChecked())) {
+            if (!"Select Village".equalsIgnoreCase(Village.get(sp_village.getSelectedItemPosition()).getVillageListPvName()) || (all_village.isChecked())) {
+                if (!"Select Scheme".equalsIgnoreCase(Scheme.get(sp_scheme.getSelectedItemPosition()).getSchemeName()) || (all_scheme.isChecked())) {
+                    if (Utils.isOnline()) {
+                        getWorkListOptional();
+                    } else {
+                        goto_next();
+                    }
+
+                } else {
+                    Utils.showAlert(this, "Select Scheme");
+                }
+            } else {
+                Utils.showAlert(this, "Select Village");
+            }
+        } else {
+            Utils.showAlert(this, "Select Financial year");
+        }
+    }
+
     public void projectListScreen_offline() {
 
         Cursor worklist = getRawEvents("SELECT * FROM " + DBHelper.WORK_LIST_OPTIONAL, null);
         if (worklist.getCount() > 0) {
-           projectListScreen();
-           // goto_next();
+            if (!prefManager.getLevels().equalsIgnoreCase("B")) {
+                projectListScreenDistrictUser();
+            } else {
+                projectListScreenBlockUser();
+            }
+            // goto_next();
         } else {
             Utils.showAlert(this, "Please TurnOn Your Network");
         }
     }
-    public void goto_next() {
 
-        String blockCode = Block.get(sp_block.getSelectedItemPosition()).getBlockCode();
+    public void goto_next() {
+        String blockCode;
+        if (!prefManager.getLevels().equalsIgnoreCase("B")) {
+            blockCode = Block.get(sp_block.getSelectedItemPosition()).getBlockCode();
+        } else {
+            blockCode = prefManager.getBlockCode();
+        }
         String pvCode = Village.get(sp_village.getSelectedItemPosition()).getVillageListPvCode();
         String sequentialID = Scheme.get(sp_scheme.getSelectedItemPosition()).getSchemeSequentialID();
 
@@ -404,8 +441,9 @@ public class SelectBlockSchemeScreen extends AppCompatActivity implements View.O
         } else {
             block_layout.setVisibility(View.GONE);
         }
-
-        loadOfflineVillgeListDBValues();
+        if (!prefManager.getLevels().equalsIgnoreCase("B")) {
+            loadOfflineVillgeListDBValues();
+        }
         loadOfflineSchemeListDBValues();
         loadOfflineFinYearListDBValues();
     }
@@ -544,9 +582,8 @@ public class SelectBlockSchemeScreen extends AppCompatActivity implements View.O
                 JSONObject jsonObject = new JSONObject(responseDecryptedKey);
                 if (jsonObject.getString("STATUS").equalsIgnoreCase("OK") && jsonObject.getString("RESPONSE").equalsIgnoreCase("OK")) {
                     workListOptionalS(jsonObject.getJSONArray(AppConstant.JSON_DATA));
-                }else
-                if (jsonObject.getString("STATUS").equalsIgnoreCase("OK") && jsonObject.getString("RESPONSE").equalsIgnoreCase("NO_RECORD")) {
-                    Utils.showAlert(this,"No Record Found");
+                } else if (jsonObject.getString("STATUS").equalsIgnoreCase("OK") && jsonObject.getString("RESPONSE").equalsIgnoreCase("NO_RECORD")) {
+                    Utils.showAlert(this, "No Record Found");
                 }
                 Log.d("responseWorkList", "" + jsonObject.getJSONArray(AppConstant.JSON_DATA));
 
@@ -567,7 +604,7 @@ public class SelectBlockSchemeScreen extends AppCompatActivity implements View.O
         try {
             updatedJsonArray = new JSONArray();
             updatedJsonArray = jsonArray;
-            if(jsonArray.length() > 0) {
+            if (jsonArray.length() > 0) {
                 for (int i = 0; i < jsonArray.length(); i++) {
                     String dcode = jsonArray.getJSONObject(i).getString(AppConstant.DISTRICT_CODE);
                     String SelectedBlockCode = jsonArray.getJSONObject(i).getString(AppConstant.BLOCK_CODE);
@@ -600,9 +637,8 @@ public class SelectBlockSchemeScreen extends AppCompatActivity implements View.O
 
                     LoginScreen.db.insert(DBHelper.WORK_LIST_OPTIONAL, null, workListOptional);
                 }
-            }
-            else {
-                Utils.showAlert(this,"No Record Found for Corrsponding Financial Year");
+            } else {
+                Utils.showAlert(this, "No Record Found for Corrsponding Financial Year");
             }
 
         } catch (JSONException j) {

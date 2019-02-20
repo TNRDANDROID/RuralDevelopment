@@ -13,5 +13,6 @@
     <string name="font_circular_black">circular-black.ttf</string>
     <string name="font_normal">Avenir-Roman.ttf</string>
     <string name="no_internet">Your internet seems to be offline!</string>
+    <string name="action_taken_tv">Action Taken Against Inspection Report for High Value Project</string>
     <string name="init_vector">2SN22SkJGDyOAXUU</string>
 </resources>
