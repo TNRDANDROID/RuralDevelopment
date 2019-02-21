@@ -40,6 +40,10 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
 import static com.nic.RuralInspection.Activity.LoginScreen.db;
 
 /**
@@ -51,11 +55,12 @@ public class Dashboard extends AppCompatActivity implements Api.ServerResponseLi
     private LinearLayout uploadInspectionReport,block_user_layout,pending_upload_layout;
     private PrefManager prefManager;
     private ProgressHUD progressHUD;
-    private MyCustomTextView district_tv,block_user_tv,upload_inspection_report_tv;
+    private MyCustomTextView district_tv,block_user_tv,upload_inspection_report_tv,count_tv;
     private JSONArray updatedJsonArray;
     private static final int PERMISSIONS_REQUEST_READ_PHONE_STATE = 999;
     TelephonyManager telephonyManager;
     String imei;
+    private List<BlockListValue> pendingUpload = new ArrayList<>();
 
 
     @Override
@@ -76,6 +81,7 @@ public class Dashboard extends AppCompatActivity implements Api.ServerResponseLi
         block_user_layout = (LinearLayout)findViewById(R.id.block_user_layout);
         block_user_tv = (MyCustomTextView)findViewById(R.id.block_user_tv);
         upload_inspection_report_tv = (MyCustomTextView)findViewById(R.id.upload_inspection_report_tv);
+        count_tv = (MyCustomTextView)findViewById(R.id.count_tv);
         district_tv = (MyCustomTextView) findViewById(R.id.district_tv);
         uploadInspectionReport.setOnClickListener(this);
         logout.setOnClickListener(this);
@@ -92,6 +98,19 @@ public class Dashboard extends AppCompatActivity implements Api.ServerResponseLi
             if(toCheck.getCount() < 1) {
                 fetchAllResponseFromApi();
             }
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (checkSelfPermission(Manifest.permission.READ_PHONE_STATE)
+                    != PackageManager.PERMISSION_GRANTED) {
+                requestPermissions(new String[]{Manifest.permission.READ_PHONE_STATE},
+                        PERMISSIONS_REQUEST_READ_PHONE_STATE);
+
+            } else {
+                getMobileDetails();
+            }
+        }else {
+            getMobileDetails();
+
         }
 
     }
@@ -115,6 +134,7 @@ public class Dashboard extends AppCompatActivity implements Api.ServerResponseLi
 
     public void fetchAllResponseFromApi(){
         getStageList();
+        getObservationList();
         // getServiceList();
        // getInspectionServiceList();
         if (prefManager.getLevels().equalsIgnoreCase("D")) {
@@ -125,19 +145,14 @@ public class Dashboard extends AppCompatActivity implements Api.ServerResponseLi
         getSchemeList();
         getVillageList();
         getFinYearList();
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (checkSelfPermission(Manifest.permission.READ_PHONE_STATE)
-                    != PackageManager.PERMISSION_GRANTED) {
-                requestPermissions(new String[]{Manifest.permission.READ_PHONE_STATE},
-                        PERMISSIONS_REQUEST_READ_PHONE_STATE);
+        getPendingCount();
+    }
 
-            } else {
-                getMobileDetails();
-            }
-        }else {
-            getMobileDetails();
-
-        }
+    public void getPendingCount() {
+        String pending = "SELECT * FROM " + DBHelper.INSPECTION ;
+        Cursor pendingList = getRawEvents(pending, null);
+        int count = pendingList.getCount();
+        count_tv.setText(String.valueOf(count));
     }
 
 
@@ -176,6 +191,14 @@ public class Dashboard extends AppCompatActivity implements Api.ServerResponseLi
     public void getStageList() {
         try {
             new ApiService(this).makeJSONObjectRequest("StageList", Api.Method.POST, UrlGenerator.getServicesListUrl(), stageListJsonParams(), "not cache", this);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void getObservationList() {
+        try {
+            new ApiService(this).makeJSONObjectRequest("ObservationList", Api.Method.POST, UrlGenerator.getInspectionServicesListUrl(), ObservationListJsonParams(), "not cache", this);
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -226,6 +249,15 @@ public class Dashboard extends AppCompatActivity implements Api.ServerResponseLi
         return dataSet;
     }
 
+    public JSONObject ObservationListJsonParams() throws JSONException {
+        String authKey = Utils.encrypt(prefManager.getUserPassKey(), getResources().getString(R.string.init_vector), Utils.observationListJsonParams().toString());
+        JSONObject dataSet = new JSONObject();
+        dataSet.put(AppConstant.KEY_USER_NAME, prefManager.getUserName());
+        dataSet.put(AppConstant.DATA_CONTENT, authKey);
+        Log.d("ObservationList", "" + authKey);
+        return dataSet;
+    }
+
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
@@ -235,6 +267,9 @@ public class Dashboard extends AppCompatActivity implements Api.ServerResponseLi
                 break;
             case R.id.upload_inspection_report:
                 selectBlockSchemeScreen();
+                break;
+            case R.id.pending_upload_layout:
+                uploadPending();
                 break;
         }
 
@@ -369,6 +404,15 @@ public class Dashboard extends AppCompatActivity implements Api.ServerResponseLi
                     loadStageList(jsonObject.getJSONArray(AppConstant.JSON_DATA));
                 }
                 Log.d("StageList", "" + responseDecryptedKey);
+            }
+            if ("ObservationList".equals(urlType) && responseObj != null) {
+                String key = responseObj.getString(AppConstant.ENCODE_DATA);
+                String responseDecryptedKey = Utils.decrypt(prefManager.getUserPassKey(), key);
+                JSONObject jsonObject = new JSONObject(responseDecryptedKey);
+                if (jsonObject.getString("STATUS").equalsIgnoreCase("OK") && jsonObject.getString("RESPONSE").equalsIgnoreCase("OK")) {
+                    loadObservationList(jsonObject.getJSONArray(AppConstant.JSON_DATA));
+                }
+                Log.d("ResObservationList", "" + responseDecryptedKey);
             }
         } catch (JSONException e) {
             e.printStackTrace();
@@ -533,6 +577,36 @@ public class Dashboard extends AppCompatActivity implements Api.ServerResponseLi
         }
     }
 
+    private void loadObservationList(JSONArray jsonArray) {
+        progressHUD = ProgressHUD.show(this , "Loading...", true, false, null);
+
+        try {
+            //  progressHUD = ProgressHUD.show(this.context, "Loading...", true, false, null);
+            updatedJsonArray = new JSONArray();
+            updatedJsonArray = jsonArray;
+
+            for (int i = 0; i < jsonArray.length(); i++) {
+                int observation_id = jsonArray.getJSONObject(i).getInt(AppConstant.OBSERVATION_ID);
+                String observation_name = jsonArray.getJSONObject(i).getString(AppConstant.OBSERVATION_NAME);
+
+                ContentValues ObservationLocalDbValues = new ContentValues();
+                ObservationLocalDbValues.put(AppConstant.OBSERVATION_ID, observation_id);
+                ObservationLocalDbValues.put(AppConstant.OBSERVATION_NAME, observation_name);
+
+                LoginScreen.db.insert(DBHelper.OBSERVATION_TABLE, null, ObservationLocalDbValues);
+                // Log.d("LocalDBSchemeList", "" + WorkStageLocalDbValues);
+
+            }
+
+        } catch (JSONException j) {
+            j.printStackTrace();
+        } catch (ArrayIndexOutOfBoundsException a) {
+            a.printStackTrace();
+        }
+        if(progressHUD != null){
+            progressHUD.cancel();
+        }
+    }
     @Override
     public void OnError(VolleyError volleyError) {
 
@@ -549,4 +623,42 @@ public class Dashboard extends AppCompatActivity implements Api.ServerResponseLi
         Cursor cursor = db.rawQuery(sql, null);
         return cursor;
     }
+
+    public void uploadPending() {
+        String pending = "select * from(select * from inspection)a inner join (select * from captured_photo)b  on a.inspection_id = b.inspection_id and a.work_id=b.work_id";
+        Cursor pendingList = getRawEvents(pending, null);
+        if (pendingList.getCount() > 0) {
+            if (pendingList.moveToFirst()) {
+                do {
+                    JSONObject dataset = new JSONObject();
+
+                    String work_id = pendingList.getString(pendingList.getColumnIndexOrThrow(AppConstant.WORK_ID));
+                    String stage_of_work_on_inspection = pendingList.getString(pendingList.getColumnIndexOrThrow(AppConstant.STAGE_OF_WORK_ON_INSPECTION));
+                    String date_of_inspection = pendingList.getString(pendingList.getColumnIndexOrThrow(AppConstant.DATE_OF_INSPECTION));
+                    String inspected_by = pendingList.getString(pendingList.getColumnIndexOrThrow(AppConstant.INSPECTED_BY));
+                    String observation = pendingList.getString(pendingList.getColumnIndexOrThrow(AppConstant.OBSERVATION));
+                    String inspection_remark = pendingList.getString(pendingList.getColumnIndexOrThrow(AppConstant.INSPECTION_REMARK));
+                    String created_date = pendingList.getString(pendingList.getColumnIndexOrThrow(AppConstant.CREATED_DATE));
+                    String created_ipaddress = pendingList.getString(pendingList.getColumnIndexOrThrow(AppConstant.CREATED_IP_ADDRESS));
+                    String created_username = pendingList.getString(pendingList.getColumnIndexOrThrow(AppConstant.CREATED_USER_NAME));
+
+                    try {
+                        dataset.put(AppConstant.WORK_ID,work_id);
+                        dataset.put(AppConstant.STAGE_OF_WORK_ON_INSPECTION,stage_of_work_on_inspection);
+                        dataset.put(AppConstant.DATE_OF_INSPECTION,date_of_inspection);
+                        dataset.put(AppConstant.INSPECTED_BY,inspected_by);
+                        dataset.put(AppConstant.OBSERVATION,observation);
+                        dataset.put(AppConstant.INSPECTION_REMARK,inspection_remark);
+                        dataset.put(AppConstant.CREATED_DATE,created_date);
+                        dataset.put(AppConstant.CREATED_IP_ADDRESS,created_ipaddress);
+                        dataset.put(AppConstant.CREATED_USER_NAME,created_username);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+                } while (pendingList.moveToNext());
+            }
+        }
+    }
+
 }

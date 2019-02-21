@@ -117,6 +117,17 @@ public class BlockListValue {
     private String workStageName;
     private String projectID;
     private String observationName;
+    private int observationID;
+
+    public int getObservationID() {
+        return observationID;
+    }
+
+    public void setObservationID(int observationID) {
+        this.observationID = observationID;
+    }
+
+
 
 //    public BlockListValue(String bcode, String scheme_id, String work_id, String as_value, String is_high_value) {
 //        this.blockCode = bcode;

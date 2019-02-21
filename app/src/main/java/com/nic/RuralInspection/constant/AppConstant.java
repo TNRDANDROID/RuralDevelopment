@@ -67,6 +67,7 @@ public class AppConstant {
 
     public static String STAGE_LIST = "work_type_stage_link";
     public static String CURRENT_STAGE = "current_stage_of_work";
+    public static String KEY_OBSERVATION = "master_high_value_project_observation";
 
     //CAPTURED PHOTO
     public static String DESCRIPTION = "description";
@@ -86,6 +87,14 @@ public class AppConstant {
     public static String CREATED_IP_ADDRESS = "created_ipaddress";
     public static String CREATED_USER_NAME = "created_username";
 
+    //Inspection table
 
+    public static String KEY_INSPECTION_LIST_DISTRICT_WISE = "high_value_project_inspection_block_wise";
+    public static String KEY_INSPECTION_LIST_BLOCK_WISE = "action_high_value_project_inspection_block_wise";
+
+    //Observation Table
+
+    public static String OBSERVATION_ID = "id";
+    public static String OBSERVATION_NAME = "observation";
 
 }

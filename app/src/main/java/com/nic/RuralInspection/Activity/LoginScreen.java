@@ -152,6 +152,7 @@ public class LoginScreen extends AppCompatActivity implements View.OnClickListen
                 db.delete(DBHelper.WORK_LIST_OPTIONAL,null,null);
                 db.delete(DBHelper.INSPECTION,null,null);
                 db.delete(DBHelper.CAPTURED_PHOTO,null,null);
+                db.delete(DBHelper.OBSERVATION_TABLE,null,null);
 
 
             }

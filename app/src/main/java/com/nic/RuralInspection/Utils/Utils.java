@@ -1224,4 +1224,25 @@ public class Utils {
         Log.d("object", "" + dataSet);
         return dataSet;
     }
+
+    public static JSONObject observationListJsonParams() throws JSONException {
+        JSONObject dataSet = new JSONObject();
+        dataSet.put(AppConstant.KEY_SERVICE_ID, AppConstant.KEY_OBSERVATION);
+        Log.d("object", "" + dataSet);
+        return dataSet;
+    }
+
+    public static JSONObject InspectionListblockWise() throws JSONException {
+        JSONObject dataSet = new JSONObject();
+        if (prefManager.getLevels().equalsIgnoreCase("D")) {
+            dataSet.put(AppConstant.KEY_SERVICE_ID, AppConstant.KEY_INSPECTION_LIST_DISTRICT_WISE);
+
+        }else {
+        dataSet.put(AppConstant.KEY_SERVICE_ID, AppConstant.KEY_INSPECTION_LIST_BLOCK_WISE);
+        }
+        dataSet.put(AppConstant.DISTRICT_CODE, prefManager.getDistrictCode());
+        dataSet.put(AppConstant.BLOCK_CODE, prefManager.getKeySpinnerSelectedBlockcode());
+        Log.d("object", "" + dataSet);
+        return dataSet;
+    }
 }

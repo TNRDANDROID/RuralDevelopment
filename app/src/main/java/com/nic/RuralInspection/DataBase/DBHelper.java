@@ -12,6 +12,7 @@ public class DBHelper extends SQLiteOpenHelper {
     public static final String BLOCK_TABLE_NAME = "BlockList";
     public static final String SCHEME_TABLE_NAME = "SchemeList";
     public static final String FINANCIAL_YEAR_TABLE_NAME = "FinancialYear";
+    public static final String OBSERVATION_TABLE = "observation";
     public static final String WORK_LIST_OPTIONAL = "WorkListOptional";
     public static final String WORK_STAGE_TABLE = "work_type_stage_link";
     public static final String VILLAGE_TABLE_NAME = "village_table_name";
@@ -44,6 +45,10 @@ public class DBHelper extends SQLiteOpenHelper {
         db.execSQL("CREATE TABLE " + SCHEME_TABLE_NAME + " ("
                 + "scheme_name varchar(32)," +
                 "scheme_seq_id varchar(4))");
+
+        db.execSQL("CREATE TABLE " + OBSERVATION_TABLE + " ("
+                + "id INTEGER," +
+                "observation TEXT)");
 
         db.execSQL("CREATE TABLE " + FINANCIAL_YEAR_TABLE_NAME + " ("
                 + "fin_year  varchar(32))");
@@ -80,6 +85,7 @@ public class DBHelper extends SQLiteOpenHelper {
                 "inspection_remark TEXT," +
                 "created_date TEXT," +
                 "created_ipaddress TEXT," +
+                "delete_flag TEXT," +
                 "created_username TEXT)");
 
         db.execSQL("CREATE TABLE "+ CAPTURED_PHOTO + "("
@@ -99,6 +105,8 @@ public class DBHelper extends SQLiteOpenHelper {
             db.execSQL("DROP TABLE IF EXISTS " + BLOCK_TABLE_NAME);
             db.execSQL("DROP TABLE IF EXISTS " + VILLAGE_TABLE_NAME);
             db.execSQL("DROP TABLE IF EXISTS " + SCHEME_TABLE_NAME);
+            db.execSQL("DROP TABLE IF EXISTS " + OBSERVATION_TABLE);
+            db.execSQL("DROP TABLE IF EXISTS " + WORK_STAGE_TABLE);
             db.execSQL("DROP TABLE IF EXISTS " + FINANCIAL_YEAR_TABLE_NAME);
             db.execSQL("DROP TABLE IF EXISTS " + WORK_LIST_OPTIONAL);
             db.execSQL("DROP TABLE IF EXISTS " + INSPECTION);
