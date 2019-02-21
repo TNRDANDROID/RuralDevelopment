@@ -2,6 +2,7 @@ package com.nic.RuralInspection.Activity;
 
 import android.app.Activity;
 import android.app.SearchManager;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
@@ -29,10 +30,17 @@ import com.nic.RuralInspection.DataBase.DBHelper;
 import com.nic.RuralInspection.Model.BlockListValue;
 import com.nic.RuralInspection.R;
 import com.nic.RuralInspection.Support.MyCustomTextView;
+import com.nic.RuralInspection.Utils.UrlGenerator;
+import com.nic.RuralInspection.Utils.Utils;
 import com.nic.RuralInspection.api.Api;
+import com.nic.RuralInspection.api.ApiService;
 import com.nic.RuralInspection.api.ServerResponse;
 import com.nic.RuralInspection.constant.AppConstant;
 import com.nic.RuralInspection.session.PrefManager;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -53,6 +61,7 @@ public class ProjectListScreen extends AppCompatActivity implements View.OnClick
     private SearchView searchView;
     private MyCustomTextView district_tv, scheme_name_tv,block_user_tv, block_name_tv, fin_year_tv, list_count, not_found_tv, village_name_tv;
     PrefManager prefManager;
+    private JSONArray updatedJsonArray;
 
 
     @Override
@@ -106,6 +115,25 @@ public class ProjectListScreen extends AppCompatActivity implements View.OnClick
         retrieve();
 
         recyclerView.setFocusable(false);
+
+        getInspectionList_blockwise();
+    }
+
+    public void getInspectionList_blockwise() {
+        try {
+            new ApiService(this).makeJSONObjectRequest("InspectionListBlockWise", Api.Method.POST, UrlGenerator.getInspectionServicesListUrl(), InspectionListBlockwiseJsonParams(), "not cache", this);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public JSONObject InspectionListBlockwiseJsonParams() throws JSONException {
+        String authKey = Utils.encrypt(prefManager.getUserPassKey(), getResources().getString(R.string.init_vector), Utils.InspectionListblockWise().toString());
+        JSONObject dataSet = new JSONObject();
+        dataSet.put(AppConstant.KEY_USER_NAME, prefManager.getUserName());
+        dataSet.put(AppConstant.DATA_CONTENT, authKey);
+        Log.d("InspectionList", "" + authKey);
+        return dataSet;
     }
 
     private void retrieve() {
@@ -289,7 +317,75 @@ public class ProjectListScreen extends AppCompatActivity implements View.OnClick
 
     @Override
     public void OnMyResponse(ServerResponse serverResponse) {
+        try {
 
+            String urlType = serverResponse.getApi();
+            JSONObject responseObj = serverResponse.getJsonResponse();
+            if ("InspectionListBlockWise".equals(urlType) && responseObj != null) {
+                String key = responseObj.getString(AppConstant.ENCODE_DATA);
+                String responseDecryptedKey = Utils.decrypt(prefManager.getUserPassKey(), key);
+                JSONObject jsonObject = new JSONObject(responseDecryptedKey);
+                if (jsonObject.getString("STATUS").equalsIgnoreCase("OK") && jsonObject.getString("RESPONSE").equalsIgnoreCase("OK")) {
+                   // Insert_inspectionList(jsonObject.getJSONArray(AppConstant.JSON_DATA));
+                } else if (jsonObject.getString("STATUS").equalsIgnoreCase("OK") && jsonObject.getString("RESPONSE").equalsIgnoreCase("NO_RECORD")) {
+                   // Utils.showAlert(this, "No Record Found");
+                }
+                Log.d("InspectionListBlockWise", "" + jsonObject.getJSONArray(AppConstant.JSON_DATA));
+
+            }
+
+        } catch (JSONException e) {
+
+            e.printStackTrace();
+        }
+    }
+
+    private void Insert_inspectionList(JSONArray jsonArray) {
+//        try {
+//            db.delete(DBHelper.WORK_LIST_OPTIONAL, null, null);
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+        try {
+            updatedJsonArray = new JSONArray();
+            updatedJsonArray = jsonArray;
+            if (jsonArray.length() > 0) {
+                for (int i = 0; i < jsonArray.length(); i++) {
+                    String inspection_id = jsonArray.getJSONObject(i).getString(AppConstant.INSPECTION_ID);
+                    String work_id = jsonArray.getJSONObject(i).getString(AppConstant.WORK_ID);
+                    String stage_of_work_on_inspection = jsonArray.getJSONObject(i).getString(AppConstant.STAGE_OF_WORK_ON_INSPECTION);
+                    String date_of_inspection = jsonArray.getJSONObject(i).getString(AppConstant.DATE_OF_INSPECTION);
+                    String inspected_by = jsonArray.getJSONObject(i).getString(AppConstant.INSPECTED_BY);
+                    String observation = jsonArray.getJSONObject(i).getString(AppConstant.OBSERVATION);
+                    String inspection_remark = jsonArray.getJSONObject(i).getString(AppConstant.INSPECTION_REMARK);
+                    String created_date = jsonArray.getJSONObject(i).getString(AppConstant.CREATED_DATE);
+                    String created_username = jsonArray.getJSONObject(i).getString(AppConstant.CREATED_USER_NAME);
+                    String created_ipaddress = jsonArray.getJSONObject(i).getString(AppConstant.CREATED_IP_ADDRESS);
+
+                    ContentValues InspectValue = new ContentValues();
+
+                    InspectValue.put(AppConstant.INSPECTION_ID,inspection_id);
+                    InspectValue.put(AppConstant.WORK_ID,work_id);
+                    InspectValue.put(AppConstant.STAGE_OF_WORK_ON_INSPECTION,stage_of_work_on_inspection);
+                    InspectValue.put(AppConstant.DATE_OF_INSPECTION,date_of_inspection);
+                    InspectValue.put(AppConstant.INSPECTED_BY,inspected_by);
+                    InspectValue.put(AppConstant.OBSERVATION,observation);
+                    InspectValue.put(AppConstant.INSPECTION_REMARK,inspection_remark);
+                    InspectValue.put(AppConstant.CREATED_DATE,created_date);
+                    InspectValue.put(AppConstant.CREATED_IP_ADDRESS,created_username);
+                    InspectValue.put(AppConstant.CREATED_USER_NAME,created_ipaddress);
+
+                    LoginScreen.db.insert(DBHelper.INSPECTION, null, InspectValue);
+                }
+            } else {
+                Utils.showAlert(this, "No Record Found for Corrsponding Financial Year");
+            }
+
+        } catch (JSONException j) {
+            j.printStackTrace();
+        } catch (ArrayIndexOutOfBoundsException a) {
+            a.printStackTrace();
+        }
     }
 
     @Override
