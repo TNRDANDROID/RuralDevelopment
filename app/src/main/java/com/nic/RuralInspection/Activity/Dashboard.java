@@ -2,6 +2,7 @@ package com.nic.RuralInspection.Activity;
 
 import android.Manifest;
 import android.app.Activity;
+
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
@@ -9,19 +10,21 @@ import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import com.android.volley.VolleyError;
-import com.nic.RuralInspection.Adapter.CommonAdapter;
 import com.nic.RuralInspection.DataBase.DBHelper;
 import com.nic.RuralInspection.Dialog.MyDialog;
 import com.nic.RuralInspection.Model.BlockListValue;
@@ -41,7 +44,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import static com.nic.RuralInspection.Activity.LoginScreen.db;
@@ -52,15 +54,16 @@ import static com.nic.RuralInspection.Activity.LoginScreen.db;
 
 public class Dashboard extends AppCompatActivity implements Api.ServerResponseListener, View.OnClickListener, MyDialog.myOnClickListener {
     private ImageView logout;
-    private LinearLayout uploadInspectionReport,block_user_layout,pending_upload_layout;
+    private LinearLayout uploadInspectionReport, block_user_layout, pending_upload_layout;
     private PrefManager prefManager;
     private ProgressHUD progressHUD;
-    private MyCustomTextView district_tv,block_user_tv,upload_inspection_report_tv,count_tv;
+    private MyCustomTextView district_tv, block_user_tv, upload_inspection_report_tv, count_tv;
     private JSONArray updatedJsonArray;
     private static final int PERMISSIONS_REQUEST_READ_PHONE_STATE = 999;
     TelephonyManager telephonyManager;
     String imei;
     private List<BlockListValue> pendingUpload = new ArrayList<>();
+    private Fragment mContent;
 
 
     @Override
@@ -77,16 +80,17 @@ public class Dashboard extends AppCompatActivity implements Api.ServerResponseLi
         prefManager = new PrefManager(this);
         logout = (ImageView) findViewById(R.id.logout);
         uploadInspectionReport = (LinearLayout) findViewById(R.id.upload_inspection_report);
-        pending_upload_layout = (LinearLayout)findViewById(R.id.pending_upload_layout);
-        block_user_layout = (LinearLayout)findViewById(R.id.block_user_layout);
-        block_user_tv = (MyCustomTextView)findViewById(R.id.block_user_tv);
-        upload_inspection_report_tv = (MyCustomTextView)findViewById(R.id.upload_inspection_report_tv);
-        count_tv = (MyCustomTextView)findViewById(R.id.count_tv);
+        pending_upload_layout = (LinearLayout) findViewById(R.id.pending_upload_layout);
+        block_user_layout = (LinearLayout) findViewById(R.id.block_user_layout);
+        block_user_tv = (MyCustomTextView) findViewById(R.id.block_user_tv);
+        upload_inspection_report_tv = (MyCustomTextView) findViewById(R.id.upload_inspection_report_tv);
+        count_tv = (MyCustomTextView) findViewById(R.id.count_tv);
         district_tv = (MyCustomTextView) findViewById(R.id.district_tv);
         uploadInspectionReport.setOnClickListener(this);
+        pending_upload_layout.setOnClickListener(this);
         logout.setOnClickListener(this);
         district_tv.setText(prefManager.getDistrictName());
-        if(prefManager.getLevels().equalsIgnoreCase("B")){
+        if (prefManager.getLevels().equalsIgnoreCase("B")) {
             block_user_layout.setVisibility(View.VISIBLE);
             block_user_tv.setText(prefManager.getBlockName());
             upload_inspection_report_tv.setText(getResources().getString(R.string.action_taken_tv));
@@ -95,24 +99,34 @@ public class Dashboard extends AppCompatActivity implements Api.ServerResponseLi
         if (Utils.isOnline()) {
             Cursor toCheck = getRawEvents("SELECT * FROM " + DBHelper.FINANCIAL_YEAR_TABLE_NAME, null);
             toCheck.moveToFirst();
-            if(toCheck.getCount() < 1) {
+            if (toCheck.getCount() < 1) {
                 fetchAllResponseFromApi();
             }
         }
+
+
+    }
+
+    private void getImei() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (checkSelfPermission(Manifest.permission.READ_PHONE_STATE)
                     != PackageManager.PERMISSION_GRANTED) {
                 requestPermissions(new String[]{Manifest.permission.READ_PHONE_STATE},
                         PERMISSIONS_REQUEST_READ_PHONE_STATE);
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        getMobileDetails();
+                    }
+                }, 500);
 
             } else {
                 getMobileDetails();
             }
-        }else {
+        } else {
             getMobileDetails();
 
         }
-
     }
 
     private void getMobileDetails() {
@@ -129,14 +143,14 @@ public class Dashboard extends AppCompatActivity implements Api.ServerResponseLi
         }
         imei = telephonyManager.getDeviceId();
         prefManager.setImei(imei);
-        Log.d("imei",imei);
+        Log.d("imei", imei);
     }
 
-    public void fetchAllResponseFromApi(){
+    public void fetchAllResponseFromApi() {
         getStageList();
         getObservationList();
         // getServiceList();
-       // getInspectionServiceList();
+        // getInspectionServiceList();
         if (prefManager.getLevels().equalsIgnoreCase("D")) {
             getBlockList();
         } else {
@@ -149,7 +163,7 @@ public class Dashboard extends AppCompatActivity implements Api.ServerResponseLi
     }
 
     public void getPendingCount() {
-        String pending = "SELECT * FROM " + DBHelper.INSPECTION ;
+        String pending = "SELECT * FROM " + DBHelper.INSPECTION;
         Cursor pendingList = getRawEvents(pending, null);
         int count = pendingList.getCount();
         count_tv.setText(String.valueOf(count));
@@ -269,12 +283,17 @@ public class Dashboard extends AppCompatActivity implements Api.ServerResponseLi
                 selectBlockSchemeScreen();
                 break;
             case R.id.pending_upload_layout:
-                uploadPending();
+                pendingLyoutScreen();
                 break;
         }
 
     }
 
+    public void pendingLyoutScreen() {
+        Intent intent = new Intent(this, PendinglayoutScreen.class);
+        startActivity(intent);
+        overridePendingTransition(R.anim.slide_in, R.anim.slide_out);
+    }
 
     public void getServiceList() {
         try {
@@ -420,7 +439,7 @@ public class Dashboard extends AppCompatActivity implements Api.ServerResponseLi
     }
 
     private void loadBlockList(JSONArray jsonArray) {
-       progressHUD = ProgressHUD.show(this , "Loading...", true, false, null);
+        progressHUD = ProgressHUD.show(this, "Loading...", true, false, null);
         try {
             updatedJsonArray = new JSONArray();
             updatedJsonArray = jsonArray;
@@ -443,14 +462,14 @@ public class Dashboard extends AppCompatActivity implements Api.ServerResponseLi
         } catch (ArrayIndexOutOfBoundsException a) {
             a.printStackTrace();
         }
-        if(progressHUD != null){
+        if (progressHUD != null) {
             progressHUD.cancel();
         }
     }
 
 
     private void loadVillageList(JSONArray jsonArray) {
-       progressHUD = ProgressHUD.show(this , "Loading...", true, false, null);
+        progressHUD = ProgressHUD.show(this, "Loading...", true, false, null);
         try {
             updatedJsonArray = new JSONArray();
             updatedJsonArray = jsonArray;
@@ -477,13 +496,13 @@ public class Dashboard extends AppCompatActivity implements Api.ServerResponseLi
         } catch (ArrayIndexOutOfBoundsException a) {
             a.printStackTrace();
         }
-        if(progressHUD != null){
+        if (progressHUD != null) {
             progressHUD.cancel();
         }
     }
 
     private void loadSchemeList(JSONArray jsonArray) {
-       progressHUD = ProgressHUD.show(this , "Loading...", true, false, null);
+        progressHUD = ProgressHUD.show(this, "Loading...", true, false, null);
 
         try {
             updatedJsonArray = new JSONArray();
@@ -507,13 +526,13 @@ public class Dashboard extends AppCompatActivity implements Api.ServerResponseLi
         } catch (ArrayIndexOutOfBoundsException a) {
             a.printStackTrace();
         }
-        if(progressHUD != null){
+        if (progressHUD != null) {
             progressHUD.cancel();
         }
     }
 
     private void loadFinYearList(JSONArray jsonArray) {
-       progressHUD = ProgressHUD.show(this , "Loading...", true, false, null);
+        progressHUD = ProgressHUD.show(this, "Loading...", true, false, null);
         try {
             updatedJsonArray = new JSONArray();
             updatedJsonArray = jsonArray;
@@ -535,16 +554,16 @@ public class Dashboard extends AppCompatActivity implements Api.ServerResponseLi
         } catch (ArrayIndexOutOfBoundsException a) {
             a.printStackTrace();
         }
-        if(progressHUD != null){
+        if (progressHUD != null) {
             progressHUD.cancel();
         }
     }
 
     private void loadStageList(JSONArray jsonArray) {
-       progressHUD = ProgressHUD.show(this , "Loading...", true, false, null);
+        progressHUD = ProgressHUD.show(this, "Loading...", true, false, null);
 
         try {
-         //  progressHUD = ProgressHUD.show(this.context, "Loading...", true, false, null);
+            //  progressHUD = ProgressHUD.show(this.context, "Loading...", true, false, null);
             updatedJsonArray = new JSONArray();
             updatedJsonArray = jsonArray;
 
@@ -563,7 +582,7 @@ public class Dashboard extends AppCompatActivity implements Api.ServerResponseLi
                 WorkStageLocalDbValues.put(AppConstant.WORK_SATGE_NAME, workStageName);
 
                 LoginScreen.db.insert(DBHelper.WORK_STAGE_TABLE, null, WorkStageLocalDbValues);
-               // Log.d("LocalDBSchemeList", "" + WorkStageLocalDbValues);
+                // Log.d("LocalDBSchemeList", "" + WorkStageLocalDbValues);
 
             }
 
@@ -572,13 +591,13 @@ public class Dashboard extends AppCompatActivity implements Api.ServerResponseLi
         } catch (ArrayIndexOutOfBoundsException a) {
             a.printStackTrace();
         }
-        if(progressHUD != null){
+        if (progressHUD != null) {
             progressHUD.cancel();
         }
     }
 
     private void loadObservationList(JSONArray jsonArray) {
-        progressHUD = ProgressHUD.show(this , "Loading...", true, false, null);
+        progressHUD = ProgressHUD.show(this, "Loading...", true, false, null);
 
         try {
             //  progressHUD = ProgressHUD.show(this.context, "Loading...", true, false, null);
@@ -598,15 +617,25 @@ public class Dashboard extends AppCompatActivity implements Api.ServerResponseLi
 
             }
 
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    getImei();
+
+                }
+            }, 4000);
+
+
         } catch (JSONException j) {
             j.printStackTrace();
         } catch (ArrayIndexOutOfBoundsException a) {
             a.printStackTrace();
         }
-        if(progressHUD != null){
+        if (progressHUD != null) {
             progressHUD.cancel();
         }
     }
+
     @Override
     public void OnError(VolleyError volleyError) {
 
@@ -643,15 +672,15 @@ public class Dashboard extends AppCompatActivity implements Api.ServerResponseLi
                     String created_username = pendingList.getString(pendingList.getColumnIndexOrThrow(AppConstant.CREATED_USER_NAME));
 
                     try {
-                        dataset.put(AppConstant.WORK_ID,work_id);
-                        dataset.put(AppConstant.STAGE_OF_WORK_ON_INSPECTION,stage_of_work_on_inspection);
-                        dataset.put(AppConstant.DATE_OF_INSPECTION,date_of_inspection);
-                        dataset.put(AppConstant.INSPECTED_BY,inspected_by);
-                        dataset.put(AppConstant.OBSERVATION,observation);
-                        dataset.put(AppConstant.INSPECTION_REMARK,inspection_remark);
-                        dataset.put(AppConstant.CREATED_DATE,created_date);
-                        dataset.put(AppConstant.CREATED_IP_ADDRESS,created_ipaddress);
-                        dataset.put(AppConstant.CREATED_USER_NAME,created_username);
+                        dataset.put(AppConstant.WORK_ID, work_id);
+                        dataset.put(AppConstant.STAGE_OF_WORK_ON_INSPECTION, stage_of_work_on_inspection);
+                        dataset.put(AppConstant.DATE_OF_INSPECTION, date_of_inspection);
+                        dataset.put(AppConstant.INSPECTED_BY, inspected_by);
+                        dataset.put(AppConstant.OBSERVATION, observation);
+                        dataset.put(AppConstant.INSPECTION_REMARK, inspection_remark);
+                        dataset.put(AppConstant.CREATED_DATE, created_date);
+                        dataset.put(AppConstant.CREATED_IP_ADDRESS, created_ipaddress);
+                        dataset.put(AppConstant.CREATED_USER_NAME, created_username);
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }

@@ -91,6 +91,7 @@ public class AppConstant {
 
     public static String KEY_INSPECTION_LIST_DISTRICT_WISE = "high_value_project_inspection_block_wise";
     public static String KEY_INSPECTION_LIST_BLOCK_WISE = "action_high_value_project_inspection_block_wise";
+    public static String KEY_HIGH_VALUE_PROJECT_INSPECTION_SAVE= "high_value_project_inspection_save";
 
     //Observation Table
 

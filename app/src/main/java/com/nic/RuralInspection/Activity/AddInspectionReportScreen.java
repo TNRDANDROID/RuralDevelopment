@@ -300,7 +300,7 @@ public class AddInspectionReportScreen extends AppCompatActivity implements View
             LoginScreen.db.insert(DBHelper.INSPECTION,null,inspectionValue);
         } else {
             try {
-                dataset.put(AppConstant.KEY_SERVICE_ID, "high_value_project_inspection_save");
+                dataset.put(AppConstant.KEY_SERVICE_ID, AppConstant.KEY_HIGH_VALUE_PROJECT_INSPECTION_SAVE);
                 dataset.put(AppConstant.WORK_ID,work_id);
                 dataset.put(AppConstant.STAGE_OF_WORK_ON_INSPECTION,stage_of_work_on_inspection);
                 dataset.put(AppConstant.DATE_OF_INSPECTION,date_of_inspection);
