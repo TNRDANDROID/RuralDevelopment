@@ -22,52 +22,52 @@
             android:orientation="vertical">
 
             <!--<android.support.v7.widget.CardView xmlns:card_view="http://schemas.android.com/apk/res-auto"-->
-                <!--android:id="@+id/district_card"-->
-                <!--android:layout_width="match_parent"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:layout_alignParentTop="true"-->
-                <!--android:layout_centerHorizontal="true"-->
-                <!--android:layout_centerInParent="true"-->
-                <!--android:layout_marginLeft="25dp"-->
-                <!--android:layout_marginRight="25dp"-->
-                <!--android:layout_marginTop="15dp"-->
+            <!--android:id="@+id/district_card"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_alignParentTop="true"-->
+            <!--android:layout_centerHorizontal="true"-->
+            <!--android:layout_centerInParent="true"-->
+            <!--android:layout_marginLeft="25dp"-->
+            <!--android:layout_marginRight="25dp"-->
+            <!--android:layout_marginTop="15dp"-->
 
-                <!--card_view:cardCornerRadius="5dp"-->
-                <!--card_view:cardElevation="5dp">-->
+            <!--card_view:cardCornerRadius="5dp"-->
+            <!--card_view:cardElevation="5dp">-->
 
-                <!--<LinearLayout-->
-                    <!--android:layout_width="wrap_content"-->
-                    <!--android:layout_height="wrap_content"-->
-                    <!--android:layout_gravity="center"-->
-                    <!--android:padding="@dimen/_5sdp">-->
+            <!--<LinearLayout-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_gravity="center"-->
+            <!--android:padding="@dimen/_5sdp">-->
 
-                    <!--<com.nic.RuralInspection.Support.MyCustomTextView-->
-                        <!--android:layout_width="wrap_content"-->
-                        <!--android:layout_height="wrap_content"-->
-                        <!--android:layout_gravity="center_vertical"-->
-                        <!--android:paddingLeft="5dp"-->
-                        <!--android:paddingRight="5dp"-->
-                        <!--android:text="District:"-->
-                        <!--android:textAlignment="center"-->
-                        <!--android:textColor="#FF0000"-->
-                        <!--android:textSize="18sp"-->
-                        <!--android:textStyle="normal"-->
-                        <!--customfontdemo:fontName="@string/font_normal" />-->
+            <!--<com.nic.RuralInspection.Support.MyCustomTextView-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_gravity="center_vertical"-->
+            <!--android:paddingLeft="5dp"-->
+            <!--android:paddingRight="5dp"-->
+            <!--android:text="District:"-->
+            <!--android:textAlignment="center"-->
+            <!--android:textColor="#FF0000"-->
+            <!--android:textSize="18sp"-->
+            <!--android:textStyle="normal"-->
+            <!--customfontdemo:fontName="@string/font_normal" />-->
 
-                    <!--<com.nic.RuralInspection.Support.MyCustomTextView-->
-                        <!--android:id="@+id/district_tv"-->
-                        <!--android:layout_width="wrap_content"-->
-                        <!--android:layout_height="wrap_content"-->
-                        <!--android:layout_gravity="left"-->
-                        <!--android:paddingLeft="5dp"-->
-                        <!--android:paddingRight="5dp"-->
-                        <!--android:text="Thirchy"-->
-                        <!--android:textColor="#FF0000"-->
-                        <!--android:textSize="18sp"-->
-                        <!--android:textStyle="normal"-->
-                        <!--customfontdemo:fontName="@string/font_normal" />-->
+            <!--<com.nic.RuralInspection.Support.MyCustomTextView-->
+            <!--android:id="@+id/district_tv"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_gravity="left"-->
+            <!--android:paddingLeft="5dp"-->
+            <!--android:paddingRight="5dp"-->
+            <!--android:text="Thirchy"-->
+            <!--android:textColor="#FF0000"-->
+            <!--android:textSize="18sp"-->
+            <!--android:textStyle="normal"-->
+            <!--customfontdemo:fontName="@string/font_normal" />-->
 
-                <!--</LinearLayout>-->
+            <!--</LinearLayout>-->
             <!--</android.support.v7.widget.CardView>-->
             <LinearLayout
                 android:id="@+id/district_card"
@@ -482,6 +482,22 @@
                 </LinearLayout>
             </LinearLayout>
 
+            <RelativeLayout
+                android:id="@+id/project_list_header"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/header">
+
+                <com.nic.RuralInspection.Support.MyCustomTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingStart="@dimen/_15sdp"
+                    android:text="Project List (1 Project Found)"
+                    android:textColor="@color/account_status_green_color"
+                    android:textSize="@dimen/_12sdp"
+                    android:textStyle="italic" />
+            </RelativeLayout>
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -710,16 +726,16 @@
 
 
                 <!--<android.support.v7.widget.RecyclerView-->
-                    <!--android:id="@+id/image_list_with_description"-->
-                    <!--android:layout_width="match_parent"-->
-                    <!--android:layout_height="match_parent"-->
+                <!--android:id="@+id/image_list_with_description"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="match_parent"-->
 
-                    <!--android:layout_marginBottom="15dp"-->
-                    <!--android:layout_marginLeft="15dp"-->
-                    <!--android:layout_marginRight="15dp"-->
-                    <!--android:fadeScrollbars="false"-->
-                    <!--android:scrollbarSize="4dp"-->
-                    <!--android:scrollbars="vertical" />-->
+                <!--android:layout_marginBottom="15dp"-->
+                <!--android:layout_marginLeft="15dp"-->
+                <!--android:layout_marginRight="15dp"-->
+                <!--android:fadeScrollbars="false"-->
+                <!--android:scrollbarSize="4dp"-->
+                <!--android:scrollbars="vertical" />-->
 
 
             </LinearLayout>

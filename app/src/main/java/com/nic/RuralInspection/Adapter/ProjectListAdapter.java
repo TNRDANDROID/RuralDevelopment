@@ -94,16 +94,20 @@ public class ProjectListAdapter extends RecyclerView.Adapter<ProjectListAdapter.
         String workTypeID = projectListValues.get(position).getWorkTypeID();
         String stageName = projectListValues.get(position).getWorkStageName();
         String asAmount = projectListValues.get(position).getAsAmount();
+        prefManager.setKeyActionProjectName(workName);
+        prefManager.setKeyActionAmount(asAmount);
+        prefManager.setKeyActionWorkid(workid);
+        prefManager.setKeyActionStageLevel(stageName);
 
         Activity activity = (Activity) context;
         Intent intent = new Intent(context, ViewInspectionReportScreen.class);
 
-        intent.putExtra(AppConstant.WORK_ID, workid);
-        intent.putExtra(AppConstant.WORK_NAME, workName);
+        intent.putExtra(AppConstant.WORK_ID, prefManager.getKeyActionWorkid());
+        intent.putExtra(AppConstant.WORK_NAME, prefManager.getKeyActionProjectName());
         intent.putExtra(AppConstant.WORK_GROUP_ID, workGroupID);
         intent.putExtra(AppConstant.WORK_TYPE_ID, workTypeID);
-        intent.putExtra(AppConstant.WORK_SATGE_NAME, stageName);
-        intent.putExtra(AppConstant.AS_AMOUNT, asAmount);
+        intent.putExtra(AppConstant.WORK_SATGE_NAME, prefManager.getKeyActionStageLevel());
+        intent.putExtra(AppConstant.AS_AMOUNT, prefManager.getKeyActionAmount());
 
         //intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         activity.startActivity(intent);

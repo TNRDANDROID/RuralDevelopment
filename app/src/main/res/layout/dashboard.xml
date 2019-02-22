@@ -230,7 +230,7 @@
                             android:textColor="#FF0000"
                             android:textSize="18sp"
                             android:textStyle="normal"
-                            customfontdemo:fontName="@string/font_normal"  />
+                            customfontdemo:fontName="@string/font_normal" />
 
                         <com.nic.RuralInspection.Support.MyCustomTextView
                             android:id="@+id/block_user_tv"
@@ -243,7 +243,7 @@
                             android:textColor="#FF0000"
                             android:textSize="18sp"
                             android:textStyle="normal"
-                            customfontdemo:fontName="@string/font_normal"  />
+                            customfontdemo:fontName="@string/font_normal" />
 
                     </LinearLayout>
 
@@ -453,6 +453,20 @@
 
             </LinearLayout>
         </android.support.v7.widget.CardView>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/toolbar">
+
+        <FrameLayout
+            android:id="@+id/content"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1">
+
+        </FrameLayout>
     </LinearLayout>
 
     <com.nic.RuralInspection.Support.MyCustomTextView

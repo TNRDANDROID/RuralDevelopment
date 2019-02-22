@@ -70,9 +70,9 @@ public class ViewInspectionReportScreen extends AppCompatActivity implements Vie
 
     private static String imageStoragePath;
     private ImageView back_img;
-    private MyCustomTextView district_tv, scheme_name_tv, block_name_tv, village_name_tv, fin_year_tv;
+    private MyCustomTextView district_tv, scheme_name_tv, block_name_tv,block_user_tv, village_name_tv, fin_year_tv;
     private MyCustomTextView projectName, amountTv, levelTv;
-    private LinearLayout village_layout;
+    private LinearLayout village_layout,block_layout;
     private ImageDescriptionAdapter imageAdapter;
     private InspectionListAdapter inspectionListAdapter;
     private RecyclerView imageRecyclerView, inspectionListRecyclerView;
@@ -93,6 +93,8 @@ public class ViewInspectionReportScreen extends AppCompatActivity implements Vie
     public void intializeUI() {
         prefManager = new PrefManager(this);
         village_layout = (LinearLayout) findViewById(R.id.village_layout);
+        block_layout = (LinearLayout)findViewById(R.id.block_user_layout);
+        block_user_tv = (MyCustomTextView)findViewById(R.id.block_user_tv);
         district_tv = (MyCustomTextView) findViewById(R.id.district_tv);
         scheme_name_tv = (MyCustomTextView) findViewById(R.id.scheme_name_tv);
         block_name_tv = (MyCustomTextView) findViewById(R.id.block_name_tv);
@@ -132,6 +134,8 @@ public class ViewInspectionReportScreen extends AppCompatActivity implements Vie
         if(prefManager.getLevels().equalsIgnoreCase("B")){
             village_layout.setVisibility(View.VISIBLE);
             village_name_tv.setText(prefManager.getVillageListPvName());
+            block_layout.setVisibility(View.VISIBLE);
+            block_user_tv.setText(prefManager.getBlockName());
         }
         // retrievedata();
         retrievedata_inspection();

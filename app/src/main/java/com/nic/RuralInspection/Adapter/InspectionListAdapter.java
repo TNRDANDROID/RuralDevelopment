@@ -1,14 +1,22 @@
 package com.nic.RuralInspection.Adapter;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 
+import com.nic.RuralInspection.Activity.AddInspectionReportScreen;
+import com.nic.RuralInspection.Activity.ViewInspectionInActionScreen;
+import com.nic.RuralInspection.Activity.ViewInspectionReportScreen;
 import com.nic.RuralInspection.Model.BlockListValue;
 import com.nic.RuralInspection.R;
 import com.nic.RuralInspection.Support.MyCustomTextView;
+import com.nic.RuralInspection.constant.AppConstant;
 import com.nic.RuralInspection.session.PrefManager;
 
 import java.util.List;
@@ -22,42 +30,92 @@ public class InspectionListAdapter extends RecyclerView.Adapter<InspectionListAd
     private Context context;
     private List<BlockListValue> inspectionlistvalues;
 
-    public InspectionListAdapter(Context context,List<BlockListValue> inspectionlistvalues) {
+    public InspectionListAdapter(Context context, List<BlockListValue> inspectionlistvalues) {
 
         this.context = context;
         prefManager = new PrefManager(context);
         this.inspectionlistvalues = inspectionlistvalues;
     }
+
     @Override
     public InspectionListAdapter.MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.inspection_list, parent, false);
         return new MyViewHolder(itemView);
     }
 
+
+    public class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+        public MyCustomTextView date_of_inspection, remark, observation;
+        private RelativeLayout add_action_layout;
+        private LinearLayout action_part_visible_layout;
+
+        public MyViewHolder(View itemView) {
+
+            super(itemView);
+            date_of_inspection = (MyCustomTextView) itemView.findViewById(R.id.date_of_inspection);
+            add_action_layout = (RelativeLayout) itemView.findViewById(R.id.add_action_layout);
+            remark = (MyCustomTextView) itemView.findViewById(R.id.remark);
+            observation = (MyCustomTextView) itemView.findViewById(R.id.observation);
+            add_action_layout.setOnClickListener(this);
+            if (prefManager.getLevels().equalsIgnoreCase("B")) {
+                add_action_layout.setVisibility(View.VISIBLE);
+            }
+        }
+
+
+        @Override
+        public void onClick(View v) {
+
+        }
+    }
+
+    public void addActionScreen(int position) {
+        String actionWorkid = prefManager.getKeyActionWorkid();
+        String actionProjectName = prefManager.getKeyActionProjectName();
+        String actionStageLevel = prefManager.getKeyActionStageLevel();
+        String actionAmount = prefManager.getKeyActionAmount();
+        String actionDateOfInspection = inspectionlistvalues.get(position).getDate_of_inspection();
+        String actionRemark = inspectionlistvalues.get(position).getInspection_remark();
+        String actionObservatuion = inspectionlistvalues.get(position).getObservation();
+
+
+        Activity activity = (Activity) context;
+        Intent intent = new Intent(context, ViewInspectionInActionScreen.class);
+
+        intent.putExtra(AppConstant.WORK_ID, actionWorkid);
+        intent.putExtra(AppConstant.WORK_NAME, actionProjectName);
+
+        intent.putExtra(AppConstant.WORK_SATGE_NAME, actionStageLevel);
+        intent.putExtra(AppConstant.AS_AMOUNT, actionAmount);
+
+        intent.putExtra(AppConstant.DATE_OF_INSPECTION, actionDateOfInspection);
+        intent.putExtra(AppConstant.INSPECTION_REMARK, actionRemark);
+        intent.putExtra(AppConstant.OBSERVATION, actionObservatuion);
+
+        //intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        activity.startActivity(intent);
+        activity.overridePendingTransition(R.anim.slide_in, R.anim.slide_out);
+    }
+
     @Override
-    public void onBindViewHolder(InspectionListAdapter.MyViewHolder holder, int position) {
+    public void onBindViewHolder(final InspectionListAdapter.MyViewHolder holder, final int position) {
         holder.date_of_inspection.setText(inspectionlistvalues.get(position).getDate_of_inspection());
         holder.remark.setText(inspectionlistvalues.get(position).getInspection_remark());
         holder.observation.setText(inspectionlistvalues.get(position).getObservation());
+        if (prefManager.getLevels().equalsIgnoreCase("B")) {
+            holder.add_action_layout.setVisibility(View.VISIBLE);
+            holder.add_action_layout.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    addActionScreen(position);
+                }
+            });
+        }
 
     }
 
     @Override
     public int getItemCount() {
         return inspectionlistvalues.size();
-    }
-
-    public class MyViewHolder extends RecyclerView.ViewHolder {
-        public MyCustomTextView date_of_inspection,remark,observation;
-
-        public MyViewHolder(View itemView) {
-
-            super(itemView);
-            date_of_inspection = (MyCustomTextView) itemView.findViewById(R.id.date_of_inspection);
-            remark = (MyCustomTextView) itemView.findViewById(R.id.remark);
-            observation = (MyCustomTextView) itemView.findViewById(R.id.observation);
-        }
-
-
     }
 }

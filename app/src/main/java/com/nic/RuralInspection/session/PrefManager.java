@@ -47,6 +47,10 @@ public class PrefManager {
     private static final String KEY_SPINNER_SELECTED_FINYEAR = "spinner_selected_finyear";
     private static final String KEY_SCHEME_NAME = "Scheme_Name";
     private static final String KEY_FINANCIALYEAR_NAME = "FinancialYear_Name";
+    private static final String KEY_ACTION_PROJECT_NAME = "Action_Project_Name";
+    private static final String KEY_ACTION_WORKID = "Action_WorkId";
+    private static final String KEY_ACTION_AMOUNT= "Action_Amount";
+    private static final String KEY_ACTION_STAGE_LEVEL = "Action_Stage_Level";
 
 
     private static final String IMEI = "imei";
@@ -272,6 +276,37 @@ public class PrefManager {
     }
 
     public String getFinancialyearName() {return pref.getString(KEY_FINANCIALYEAR_NAME,null);}
+
+
+    public void setKeyActionAmount(String key) {
+        editor.putString(KEY_ACTION_AMOUNT,key);
+        editor.commit();
+    }
+
+    public String getKeyActionAmount() {return pref.getString(KEY_ACTION_AMOUNT,null);}
+
+
+    public void setKeyActionProjectName(String key) {
+        editor.putString(KEY_ACTION_PROJECT_NAME,key);
+        editor.commit();
+    }
+
+    public String getKeyActionProjectName() {return pref.getString(KEY_ACTION_PROJECT_NAME,null);}
+
+
+    public void setKeyActionStageLevel(String key) {
+        editor.putString(KEY_ACTION_STAGE_LEVEL,key);
+        editor.commit();
+    }
+
+    public String getKeyActionStageLevel() {return pref.getString(KEY_ACTION_STAGE_LEVEL,null);}
+
+    public void setKeyActionWorkid(String key) {
+        editor.putString(KEY_ACTION_WORKID,key);
+        editor.commit();
+    }
+
+    public String getKeyActionWorkid() {return pref.getString(KEY_ACTION_WORKID,null);}
 
     public void clearSharedPreferences(Context context) {
         pref = _context.getSharedPreferences(AppConstant.PREF_NAME, PRIVATE_MODE);
