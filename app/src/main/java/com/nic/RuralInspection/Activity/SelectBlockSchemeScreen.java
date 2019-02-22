@@ -73,6 +73,9 @@ public class SelectBlockSchemeScreen extends AppCompatActivity implements View.O
         intializeUI();
         if (Utils.isOnline()) {
             db.delete(DBHelper.WORK_LIST_OPTIONAL, null, null);
+            db.delete(DBHelper.INSPECTION, null, null);
+            db.delete(DBHelper.INSPECTION_ACTION, null, null);
+            db.delete(DBHelper.CAPTURED_PHOTO, null, null);
         } else {
             //   Utils.showAlert(this, getResources().getString(R.string.no_internet));
         }
@@ -351,6 +354,9 @@ public class SelectBlockSchemeScreen extends AppCompatActivity implements View.O
                     if (!"Select Scheme".equalsIgnoreCase(Scheme.get(sp_scheme.getSelectedItemPosition()).getSchemeName()) || (all_scheme.isChecked())) {
                         if (Utils.isOnline()) {
                             getWorkListOptional();
+                        //    getInspectionList_blockwise();
+                           getInspectionList_Images_blockwise();
+                            getAction_ForInspection();
                         } else {
                             goto_next();
                         }
@@ -553,6 +559,29 @@ public class SelectBlockSchemeScreen extends AppCompatActivity implements View.O
             e.printStackTrace();
         }
     }
+    public void getInspectionList_blockwise() {
+        try {
+            new ApiService(this).makeJSONObjectRequest("InspectionListBlockWise", Api.Method.POST, UrlGenerator.getInspectionServicesListUrl(), InspectionListBlockwiseJsonParams(), "not cache", this);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void getInspectionList_Images_blockwise() {
+        try {
+            new ApiService(this).makeJSONObjectRequest("InspectionListBlockWise_Images", Api.Method.GET, UrlGenerator.getInspectionServicesListUrl(), InspectionListImageJsonParams(), "not cache", this);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void getAction_ForInspection() {
+        try {
+            new ApiService(this).makeJSONObjectRequest("InspectionListBlockWise_Action", Api.Method.POST, UrlGenerator.getInspectionServicesListUrl(), InspectionListActionJsonParams(), "not cache", this);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
 
     public JSONObject workListOptionalJsonParams() throws JSONException {
         String authKey = Utils.encrypt(prefManager.getUserPassKey(), getResources().getString(R.string.init_vector), Utils.workListOptional(this).toString());
@@ -560,6 +589,32 @@ public class SelectBlockSchemeScreen extends AppCompatActivity implements View.O
         dataSet.put(AppConstant.KEY_USER_NAME, prefManager.getUserName());
         dataSet.put(AppConstant.DATA_CONTENT, authKey);
         Log.d("WorkListOptional", "" + authKey);
+        return dataSet;
+    }
+
+    public JSONObject InspectionListBlockwiseJsonParams() throws JSONException {
+        String authKey = Utils.encrypt(prefManager.getUserPassKey(), getResources().getString(R.string.init_vector), Utils.InspectionListblockWise().toString());
+        JSONObject dataSet = new JSONObject();
+        dataSet.put(AppConstant.KEY_USER_NAME, prefManager.getUserName());
+        dataSet.put(AppConstant.DATA_CONTENT, authKey);
+        Log.d("InspectionList", "" + authKey);
+        return dataSet;
+    }
+    public JSONObject InspectionListImageJsonParams() throws JSONException {
+        String authKey = Utils.encrypt(prefManager.getUserPassKey(), getResources().getString(R.string.init_vector), Utils.InspectionList_Image(this).toString());
+        JSONObject dataSet = new JSONObject();
+        dataSet.put(AppConstant.KEY_USER_NAME, prefManager.getUserName());
+        dataSet.put(AppConstant.DATA_CONTENT, authKey);
+        Log.d("InspectionList_Image", "" + authKey);
+        return dataSet;
+    }
+
+    public JSONObject InspectionListActionJsonParams() throws JSONException {
+        String authKey = Utils.encrypt(prefManager.getUserPassKey(), getResources().getString(R.string.init_vector), Utils.InspectionList_Action(this).toString());
+        JSONObject dataSet = new JSONObject();
+        dataSet.put(AppConstant.KEY_USER_NAME, prefManager.getUserName());
+        dataSet.put(AppConstant.DATA_CONTENT, authKey);
+        Log.d("InspectionList_Action", "" + authKey);
         return dataSet;
     }
 
@@ -586,6 +641,42 @@ public class SelectBlockSchemeScreen extends AppCompatActivity implements View.O
                     Utils.showAlert(this, "No Record Found");
                 }
                 Log.d("responseWorkList", "" + jsonObject.getJSONArray(AppConstant.JSON_DATA));
+
+            }
+            if ("InspectionListBlockWise".equals(urlType) && responseObj != null) {
+                String key = responseObj.getString(AppConstant.ENCODE_DATA);
+                String responseDecryptedKey = Utils.decrypt(prefManager.getUserPassKey(), key);
+                JSONObject jsonObject = new JSONObject(responseDecryptedKey);
+                if (jsonObject.getString("STATUS").equalsIgnoreCase("OK") && jsonObject.getString("RESPONSE").equalsIgnoreCase("OK")) {
+                    // Insert_inspectionList(jsonObject.getJSONArray(AppConstant.JSON_DATA));
+                } else if (jsonObject.getString("STATUS").equalsIgnoreCase("OK") && jsonObject.getString("RESPONSE").equalsIgnoreCase("NO_RECORD")) {
+                    // Utils.showAlert(this, "No Record Found");
+                }
+                Log.d("InspectionListBlockWise", "" + jsonObject.getJSONArray(AppConstant.JSON_DATA));
+
+            }
+            if ("InspectionListBlockWise_Images".equals(urlType) && responseObj != null) {
+                String key = responseObj.getString(AppConstant.ENCODE_DATA);
+                String responseDecryptedKey = Utils.decrypt(prefManager.getUserPassKey(), key);
+                JSONObject jsonObject = new JSONObject(responseDecryptedKey);
+                if (jsonObject.getString("STATUS").equalsIgnoreCase("OK") && jsonObject.getString("RESPONSE").equalsIgnoreCase("OK")) {
+                    // Insert_inspectionList(jsonObject.getJSONArray(AppConstant.JSON_DATA));
+                } else if (jsonObject.getString("STATUS").equalsIgnoreCase("OK") && jsonObject.getString("RESPONSE").equalsIgnoreCase("NO_RECORD")) {
+                    // Utils.showAlert(this, "No Record Found");
+                }
+                Log.d("response_Images", "" + jsonObject.getJSONArray(AppConstant.JSON_DATA));
+
+            }
+            if ("InspectionListBlockWise_Action".equals(urlType) && responseObj != null) {
+                String key = responseObj.getString(AppConstant.ENCODE_DATA);
+                String responseDecryptedKey = Utils.decrypt(prefManager.getUserPassKey(), key);
+                JSONObject jsonObject = new JSONObject(responseDecryptedKey);
+                if (jsonObject.getString("STATUS").equalsIgnoreCase("OK") && jsonObject.getString("RESPONSE").equalsIgnoreCase("OK")) {
+                    // Insert_inspectionList(jsonObject.getJSONArray(AppConstant.JSON_DATA));
+                } else if (jsonObject.getString("STATUS").equalsIgnoreCase("OK") && jsonObject.getString("RESPONSE").equalsIgnoreCase("NO_RECORD")) {
+                    // Utils.showAlert(this, "No Record Found");
+                }
+                Log.d("responseInspect_Action", "" + jsonObject.getJSONArray(AppConstant.JSON_DATA));
 
             }
 

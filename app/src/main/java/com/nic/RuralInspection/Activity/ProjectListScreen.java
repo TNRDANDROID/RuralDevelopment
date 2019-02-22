@@ -115,25 +115,6 @@ public class ProjectListScreen extends AppCompatActivity implements View.OnClick
         retrieve();
 
         recyclerView.setFocusable(false);
-
-        getInspectionList_blockwise();
-    }
-
-    public void getInspectionList_blockwise() {
-        try {
-            new ApiService(this).makeJSONObjectRequest("InspectionListBlockWise", Api.Method.POST, UrlGenerator.getInspectionServicesListUrl(), InspectionListBlockwiseJsonParams(), "not cache", this);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public JSONObject InspectionListBlockwiseJsonParams() throws JSONException {
-        String authKey = Utils.encrypt(prefManager.getUserPassKey(), getResources().getString(R.string.init_vector), Utils.InspectionListblockWise().toString());
-        JSONObject dataSet = new JSONObject();
-        dataSet.put(AppConstant.KEY_USER_NAME, prefManager.getUserName());
-        dataSet.put(AppConstant.DATA_CONTENT, authKey);
-        Log.d("InspectionList", "" + authKey);
-        return dataSet;
     }
 
     private void retrieve() {
@@ -321,18 +302,7 @@ public class ProjectListScreen extends AppCompatActivity implements View.OnClick
 
             String urlType = serverResponse.getApi();
             JSONObject responseObj = serverResponse.getJsonResponse();
-            if ("InspectionListBlockWise".equals(urlType) && responseObj != null) {
-                String key = responseObj.getString(AppConstant.ENCODE_DATA);
-                String responseDecryptedKey = Utils.decrypt(prefManager.getUserPassKey(), key);
-                JSONObject jsonObject = new JSONObject(responseDecryptedKey);
-                if (jsonObject.getString("STATUS").equalsIgnoreCase("OK") && jsonObject.getString("RESPONSE").equalsIgnoreCase("OK")) {
-                   // Insert_inspectionList(jsonObject.getJSONArray(AppConstant.JSON_DATA));
-                } else if (jsonObject.getString("STATUS").equalsIgnoreCase("OK") && jsonObject.getString("RESPONSE").equalsIgnoreCase("NO_RECORD")) {
-                   // Utils.showAlert(this, "No Record Found");
-                }
-                Log.d("InspectionListBlockWise", "" + jsonObject.getJSONArray(AppConstant.JSON_DATA));
 
-            }
 
         } catch (JSONException e) {
 

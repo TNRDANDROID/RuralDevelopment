@@ -18,6 +18,7 @@ public class DBHelper extends SQLiteOpenHelper {
     public static final String VILLAGE_TABLE_NAME = "village_table_name";
     public static final String INSPECTION = "inspection";
     public static final String CAPTURED_PHOTO = "captured_photo";
+    public static final String INSPECTION_ACTION = "inspection_action";
 
     private Context context;
 
@@ -85,7 +86,7 @@ public class DBHelper extends SQLiteOpenHelper {
                 "inspection_remark TEXT," +
                 "created_date TEXT," +
                 "created_ipaddress TEXT," +
-                "delete_flag TEXT," +
+                "delete_flag INTEGER," +
                 "created_username TEXT)");
 
         db.execSQL("CREATE TABLE "+ CAPTURED_PHOTO + "("
@@ -95,6 +96,19 @@ public class DBHelper extends SQLiteOpenHelper {
                 "longitude TEXT," +
                 "image blob,"+
                 "description TEXT)");
+
+        db.execSQL("CREATE TABLE "+ INSPECTION_ACTION  + "("
+                + "id INTEGER," +
+                "work_id INTEGER," +
+                "inspection_id INTEGER," +
+                "date_of_action TEXT," +
+                "action_taken TEXT," +
+                "action_remark TEXT," +
+                "created_date TEXT," +
+                "dist_action TEXT," +
+                "state_action TEXT," +
+                "sub_div_action TEXT)");
+
 
     }
 
@@ -111,6 +125,7 @@ public class DBHelper extends SQLiteOpenHelper {
             db.execSQL("DROP TABLE IF EXISTS " + WORK_LIST_OPTIONAL);
             db.execSQL("DROP TABLE IF EXISTS " + INSPECTION);
             db.execSQL("DROP TABLE IF EXISTS " + CAPTURED_PHOTO);
+            db.execSQL("DROP TABLE IF EXISTS " + INSPECTION_ACTION);
             onCreate(db);
         }
     }
