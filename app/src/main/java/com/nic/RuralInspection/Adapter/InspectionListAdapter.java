@@ -103,11 +103,12 @@ public class InspectionListAdapter extends RecyclerView.Adapter<InspectionListAd
     }
 
     public void imagePreviewScreen(int position){
-        String inspection_id = String.valueOf(inspectionlistvalues.get(position).getInspectionID());
+        //String inspection_id = String.valueOf(inspectionlistvalues.get(position).getInspectionID());
+        String Online_inspect_id = String.valueOf(inspectionlistvalues.get(position).getOnlineInspectID());
 
         Activity activity = (Activity) context;
         Intent intent = new Intent(context, ImagePreviewScreen.class);
-        intent.putExtra(AppConstant.INSPECTION_ID, inspection_id);
+        intent.putExtra(AppConstant.INSPECTION_ID, Online_inspect_id);
         activity.startActivity(intent);
         activity.overridePendingTransition(R.anim.slide_in, R.anim.slide_out);
     }

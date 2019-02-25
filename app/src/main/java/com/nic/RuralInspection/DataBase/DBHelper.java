@@ -78,6 +78,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
         db.execSQL("CREATE TABLE "+ INSPECTION  + "("
                 + "inspection_id INTEGER PRIMARY KEY AUTOINCREMENT," +
+                "id INTEGER," +
                 "work_id TEXT," +
                 "stage_of_work_on_inspection TEXT," +
                 "stage_of_work_on_inspection_name TEXT," +

@@ -146,50 +146,14 @@ public class ViewInspectionReportScreen extends AppCompatActivity implements Vie
 
     }
 
-    private void retrievedata() {
-        imagelistValues.clear();
-        String workId = getIntent().getStringExtra(AppConstant.WORK_ID);
-
-        String image_sql = "SELECT * FROM " + DBHelper.CAPTURED_PHOTO + " WHERE work_id = " + workId;
-        Log.d("image_sql", image_sql);
-        Cursor imageList = getRawEvents(image_sql, null);
-
-        if (imageList.getCount() > 0) {
-            if (imageList.moveToFirst()) {
-                do {
-                    String work_id = imageList.getString(imageList.getColumnIndexOrThrow(AppConstant.WORK_ID));
-                    String latitude = imageList.getString(imageList.getColumnIndexOrThrow(AppConstant.LATITUDE));
-                    String longitude = imageList.getString(imageList.getColumnIndexOrThrow(AppConstant.LONGITUDE));
-                    String description = imageList.getString(imageList.getColumnIndexOrThrow(AppConstant.DESCRIPTION));
-
-                    byte[] photo = imageList.getBlob(imageList.getColumnIndexOrThrow(AppConstant.IMAGE));
-                    ByteArrayInputStream imageStream = new ByteArrayInputStream(photo);
-                    Bitmap image = BitmapFactory.decodeStream(imageStream);
-
-                    //  byte[] image =  imageList.getBlob(imageList.getColumnIndexOrThrow(AppConstant.IMAGE));
-
-
-                    BlockListValue imageValue = new BlockListValue();
-
-                    imageValue.setWorkID(work_id);
-                    imageValue.setLatitude(latitude);
-                    imageValue.setLongitude(longitude);
-                    imageValue.setDescription(description);
-                    imageValue.setImage(image);
-
-                    imagelistValues.add(imageValue);
-
-                } while (imageList.moveToNext());
-            }
-        }
-    }
 
     private void retrievedata_inspection() {
         inspectionlistvalues.clear();
         String workId = getIntent().getStringExtra(AppConstant.WORK_ID);
 
         // String inspection_sql = "select * from (select * from "+DBHelper.INSPECTION+" WHERE work_id="+workId+")a left join (select * from captured_photo)b on a.inspection_id=b.inspection_id and a.work_id=b.work_id group by a.inspection_id";
-        String inspection_sql = "select * from(select * from INSPECTION WHERE inspection_id in (select inspection_id from captured_photo))a left join (select * from observation)b on a.observation = b.id where work_id ="+workId +" and a.delete_flag != 0";
+        String inspection_sql = "select a.inspection_id as inspection_id,a.id as id,a.work_id as work_id,a.date_of_inspection as date_of_inspection,a.inspection_remark as inspection_remark,b.observation as observation from(select * from INSPECTION WHERE id in (select inspection_id from captured_photo))a left join (select * from observation)b on a.observation = b.id where work_id ="+workId ;
+       // String inspection_sql = "select a.inspection_id as inspection_id,a.id as id,a.work_id as work_id,a.date_of_inspection as date_of_inspection,a.inspection_remark as inspection_remark,b.observation as observation from(select * from INSPECTION WHERE id in (select inspection_id from captured_photo))a left join (select * from observation)b on a.observation = b.id left join (select * from inspection_action) c on a.inspection_id = c.inspection_id where a.work_id ="+workId ;
         Log.d("inspection_sql", inspection_sql);
         Cursor inspectionList = getRawEvents(inspection_sql, null);
 
@@ -197,6 +161,7 @@ public class ViewInspectionReportScreen extends AppCompatActivity implements Vie
             if (inspectionList.moveToFirst()) {
                 do {
                     String work_id = inspectionList.getString(inspectionList.getColumnIndexOrThrow(AppConstant.WORK_ID));
+                    String id = inspectionList.getString(inspectionList.getColumnIndexOrThrow("id"));
                     String date_of_inspection = inspectionList.getString(inspectionList.getColumnIndexOrThrow(AppConstant.DATE_OF_INSPECTION));
                     String inspection_remark = inspectionList.getString(inspectionList.getColumnIndexOrThrow(AppConstant.INSPECTION_REMARK));
                     String observation = inspectionList.getString(inspectionList.getColumnIndexOrThrow(AppConstant.OBSERVATION));
@@ -204,11 +169,13 @@ public class ViewInspectionReportScreen extends AppCompatActivity implements Vie
 
                     BlockListValue inspectionValue = new BlockListValue();
                     inspectionValue.setWorkID(work_id);
-                    Log.d("inspectworkId",""+work_id);
+                    Log.d("inspectworkId",""+id);
                     inspectionValue.setDate_of_inspection(date_of_inspection);
                     inspectionValue.setInspection_remark(inspection_remark);
                     inspectionValue.setObservation(observation);
                     inspectionValue.setInspectionID(inspection_id);
+                    inspectionValue.setOnlineInspectID(id);
+
 
                     inspectionlistvalues.add(inspectionValue);
 

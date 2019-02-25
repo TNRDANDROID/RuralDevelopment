@@ -361,7 +361,7 @@ public class AddInspectionReportScreen extends AppCompatActivity implements View
                     }
                 }
                 int childCount = mobileNumberLayout.getChildCount();
-                if(childCount > 0) {
+                if(childCount > 0 && ((BitmapDrawable)imageView.getDrawable()).getBitmap() != null) {
                     for (int i = 0; i < childCount; i++) {
                         JSONArray imageArray = new JSONArray();
 
@@ -815,6 +815,10 @@ public class AddInspectionReportScreen extends AppCompatActivity implements View
                     if (jsonObject.getString("STATUS").equalsIgnoreCase("OK") && jsonObject.getString("RESPONSE").equalsIgnoreCase("OK")) {
                        // loadBlockList(jsonObject.getJSONArray(AppConstant.JSON_DATA));
                         Utils.showAlert(this,"Saved");
+                        ((SelectBlockSchemeScreen)getApplicationContext()).getInspectionList_blockwise();
+                        ((SelectBlockSchemeScreen)getApplicationContext()).getInspectionList_Images_blockwise();
+                        ((SelectBlockSchemeScreen)getApplicationContext()).getAction_ForInspection();
+                        finish();
                     }
                     Log.d("saved_response", "" + responseDecryptedBlockKey);
                 }

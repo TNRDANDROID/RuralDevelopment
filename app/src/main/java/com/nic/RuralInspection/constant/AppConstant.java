@@ -101,4 +101,10 @@ public class AppConstant {
     public static String OBSERVATION_ID = "id";
     public static String OBSERVATION_NAME = "observation";
 
+    //Inspection Action Table
+
+    public static String DISTRICT_ACTION = "dist_action";
+    public static String STATE_ACTION = "state_action";
+    public static String SUB_DIV_ACTION = "sub_div_action";
+
 }

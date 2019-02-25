@@ -48,6 +48,16 @@ public class BlockListValue {
     private String CreatedIpAddress;
     private String CreatedUserName;
 
+    public String getOnlineInspectID() {
+        return OnlineInspectID;
+    }
+
+    public void setOnlineInspectID(String onlineInspectID) {
+        OnlineInspectID = onlineInspectID;
+    }
+
+    private String OnlineInspectID;
+
     public String getCreatedDate() {
         return CreatedDate;
     }
