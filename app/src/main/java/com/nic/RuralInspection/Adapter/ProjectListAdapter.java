@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -94,6 +95,7 @@ public class ProjectListAdapter extends RecyclerView.Adapter<ProjectListAdapter.
         String workTypeID = projectListValues.get(position).getWorkTypeID();
         String stageName = projectListValues.get(position).getWorkStageName();
         String asAmount = projectListValues.get(position).getAsAmount();
+        Log.d("viewworkId",""+workid);
         prefManager.setKeyActionProjectName(workName);
         prefManager.setKeyActionAmount(asAmount);
         prefManager.setKeyActionWorkid(workid);

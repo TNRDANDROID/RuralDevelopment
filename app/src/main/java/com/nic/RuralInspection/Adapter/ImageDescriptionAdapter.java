@@ -24,7 +24,7 @@ public class ImageDescriptionAdapter extends RecyclerView.Adapter<ImageDescripti
     private PrefManager prefManager;
     private List<BlockListValue> imagelistvalues;
 
-    public ImageDescriptionAdapter(Context context,List<BlockListValue> imagelistvalues) {
+    public ImageDescriptionAdapter(Context context, List<BlockListValue> imagelistvalues) {
 
         this.context = context;
         prefManager = new PrefManager(context);
@@ -37,27 +37,27 @@ public class ImageDescriptionAdapter extends RecyclerView.Adapter<ImageDescripti
         return new MyViewHolder(itemView);
     }
 
-    @Override
-    public void onBindViewHolder(MyViewHolder holder, int position) {
-        holder.description.setText(imagelistvalues.get(position).getDescription());
-        holder.imageView.setImageBitmap(imagelistvalues.get(position).getImage());
-    }
-
-    @Override
-    public int getItemCount() {
-       return imagelistvalues.size();
-    }
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
-        private ImageView imageView;
+        private ImageView preview_image_view;
         private MyCustomTextView description;
 
         public MyViewHolder(View itemView) {
             super(itemView);
-            imageView = (ImageView) itemView.findViewById(R.id.image_view);
+            preview_image_view = (ImageView) itemView.findViewById(R.id.preview_image_view);
             description = (MyCustomTextView) itemView.findViewById(R.id.description);
         }
 
+    }
 
+    @Override
+    public void onBindViewHolder(MyViewHolder holder, int position) {
+        holder.description.setText(imagelistvalues.get(position).getDescription());
+        holder.preview_image_view.setImageBitmap(imagelistvalues.get(position).getImage());
+    }
+
+    @Override
+    public int getItemCount() {
+        return imagelistvalues.size();
     }
 }

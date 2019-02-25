@@ -354,8 +354,8 @@ public class SelectBlockSchemeScreen extends AppCompatActivity implements View.O
                     if (!"Select Scheme".equalsIgnoreCase(Scheme.get(sp_scheme.getSelectedItemPosition()).getSchemeName()) || (all_scheme.isChecked())) {
                         if (Utils.isOnline()) {
                             getWorkListOptional();
-                        //    getInspectionList_blockwise();
-                           getInspectionList_Images_blockwise();
+                            getInspectionList_blockwise();
+                            getInspectionList_Images_blockwise();
                             getAction_ForInspection();
                         } else {
                             goto_next();
@@ -559,6 +559,7 @@ public class SelectBlockSchemeScreen extends AppCompatActivity implements View.O
             e.printStackTrace();
         }
     }
+
     public void getInspectionList_blockwise() {
         try {
             new ApiService(this).makeJSONObjectRequest("InspectionListBlockWise", Api.Method.POST, UrlGenerator.getInspectionServicesListUrl(), InspectionListBlockwiseJsonParams(), "not cache", this);
@@ -569,7 +570,7 @@ public class SelectBlockSchemeScreen extends AppCompatActivity implements View.O
 
     public void getInspectionList_Images_blockwise() {
         try {
-            new ApiService(this).makeJSONObjectRequest("InspectionListBlockWise_Images", Api.Method.GET, UrlGenerator.getInspectionServicesListUrl(), InspectionListImageJsonParams(), "not cache", this);
+            new ApiService(this).makeJSONObjectRequest("InspectionListBlockWise_Images", Api.Method.POST, UrlGenerator.getInspectionServicesListUrl(), InspectionListImageJsonParams(), "not cache", this);
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -593,13 +594,14 @@ public class SelectBlockSchemeScreen extends AppCompatActivity implements View.O
     }
 
     public JSONObject InspectionListBlockwiseJsonParams() throws JSONException {
-        String authKey = Utils.encrypt(prefManager.getUserPassKey(), getResources().getString(R.string.init_vector), Utils.InspectionListblockWise().toString());
+        String authKey = Utils.encrypt(prefManager.getUserPassKey(), getResources().getString(R.string.init_vector), Utils.InspectionListblockWise(this).toString());
         JSONObject dataSet = new JSONObject();
         dataSet.put(AppConstant.KEY_USER_NAME, prefManager.getUserName());
         dataSet.put(AppConstant.DATA_CONTENT, authKey);
         Log.d("InspectionList", "" + authKey);
         return dataSet;
     }
+
     public JSONObject InspectionListImageJsonParams() throws JSONException {
         String authKey = Utils.encrypt(prefManager.getUserPassKey(), getResources().getString(R.string.init_vector), Utils.InspectionList_Image(this).toString());
         JSONObject dataSet = new JSONObject();
@@ -648,9 +650,9 @@ public class SelectBlockSchemeScreen extends AppCompatActivity implements View.O
                 String responseDecryptedKey = Utils.decrypt(prefManager.getUserPassKey(), key);
                 JSONObject jsonObject = new JSONObject(responseDecryptedKey);
                 if (jsonObject.getString("STATUS").equalsIgnoreCase("OK") && jsonObject.getString("RESPONSE").equalsIgnoreCase("OK")) {
-                    // Insert_inspectionList(jsonObject.getJSONArray(AppConstant.JSON_DATA));
+                     Insert_inspectionList(jsonObject.getJSONArray(AppConstant.JSON_DATA));
                 } else if (jsonObject.getString("STATUS").equalsIgnoreCase("OK") && jsonObject.getString("RESPONSE").equalsIgnoreCase("NO_RECORD")) {
-                    // Utils.showAlert(this, "No Record Found");
+                     Utils.showAlert(this, "No Record Found");
                 }
                 Log.d("InspectionListBlockWise", "" + jsonObject.getJSONArray(AppConstant.JSON_DATA));
 
@@ -738,6 +740,46 @@ public class SelectBlockSchemeScreen extends AppCompatActivity implements View.O
             a.printStackTrace();
         }
         goto_next();
+    }
+
+
+    private void Insert_inspectionList(JSONArray jsonArray) {
+
+        try {
+            updatedJsonArray = new JSONArray();
+            updatedJsonArray = jsonArray;
+            if (jsonArray.length() > 0) {
+                for (int i = 0; i < jsonArray.length(); i++) {
+                    String workID = jsonArray.getJSONObject(i).getString(AppConstant.WORK_ID);
+                    String stageOfWorkOnInspection = jsonArray.getJSONObject(i).getString(AppConstant.STAGE_OF_WORK_ON_INSPECTION);
+                    String dateOfInspection = jsonArray.getJSONObject(i).getString(AppConstant.DATE_OF_INSPECTION);
+                    String inspectedBy = jsonArray.getJSONObject(i).getString(AppConstant.INSPECTED_BY);
+                    String observation = jsonArray.getJSONObject(i).getString(AppConstant.OBSERVATION);
+                    String inspectionRemark = jsonArray.getJSONObject(i).getString(AppConstant.INSPECTION_REMARK);
+
+
+                    ContentValues getInspectionList = new ContentValues();
+
+                    getInspectionList.put(AppConstant.WORK_ID, workID);
+                    getInspectionList.put(AppConstant.STAGE_OF_WORK_ON_INSPECTION, stageOfWorkOnInspection);
+                    getInspectionList.put(AppConstant.DATE_OF_INSPECTION, dateOfInspection);
+                    getInspectionList.put(AppConstant.INSPECTED_BY, inspectedBy);
+                    getInspectionList.put(AppConstant.OBSERVATION, observation);
+                    getInspectionList.put(AppConstant.INSPECTION_REMARK, inspectionRemark);
+
+
+                    LoginScreen.db.insert(DBHelper.INSPECTION, null, getInspectionList);
+                }
+            } else {
+                Utils.showAlert(this, "No Record Found!");
+            }
+
+        } catch (JSONException j) {
+            j.printStackTrace();
+        } catch (ArrayIndexOutOfBoundsException a) {
+            a.printStackTrace();
+        }
+
     }
 
     @Override
