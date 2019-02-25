@@ -85,7 +85,7 @@ public class BlockListValue {
 
 
 
-    private String inspectionID;
+
 
     public int getObservationID() {
         return observationID;
@@ -309,13 +309,7 @@ public class BlockListValue {
         this.inspection_remark = inspection_remark;
     }
 
-    public String getInspectionID() {
-        return inspectionID;
-    }
 
-    public void setInspectionID(String inspectionID) {
-        this.inspectionID = inspectionID;
-    }
 
     public String getLatitude() {
         return Latitude;

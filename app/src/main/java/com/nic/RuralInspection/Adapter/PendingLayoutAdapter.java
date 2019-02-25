@@ -34,15 +34,15 @@ import static com.nic.RuralInspection.Activity.LoginScreen.db;
  * Created by NIC on 21-02-2019.
  */
 
-public class PendingLayoutAdapter extends RecyclerView.Adapter<PendingLayoutAdapter.MyViewHolder> implements Api.ServerResponseListener {
-    private final Api.ServerResponseListener listener;
+public class PendingLayoutAdapter extends RecyclerView.Adapter<PendingLayoutAdapter.MyViewHolder> {
+
     private Context context;
     private List<BlockListValue> pendingListValues;
     PrefManager prefManager;
     JSONObject dataset = new JSONObject();
 
-    public PendingLayoutAdapter(Context context, List<BlockListValue> pendingListValues,Api.ServerResponseListener listener) {
-        this.listener = listener;
+    public PendingLayoutAdapter(Context context, List<BlockListValue> pendingListValues ) {
+
         this.context = context;
         prefManager = new PrefManager(context);
         this.pendingListValues = pendingListValues;
@@ -165,58 +165,10 @@ public class PendingLayoutAdapter extends RecyclerView.Adapter<PendingLayoutAdap
             end = end > oof.length() ? oof.length() : end;
             Log.v("oof", oof.substring(start, end));
         }
-       // ((PendinglayoutScreen)context).sync_data(dataset);
-        sync_data(this);
+        ((PendinglayoutScreen)context).pending_Sync_Data(dataset);
 
     }
 
-    public void sync_data(PendingLayoutAdapter pendingLayoutAdapter) {
-        try {
-
-            new ApiService(this.context).makeJSONObjectRequest("save_data", Api.Method.POST, UrlGenerator.getInspectionServicesListUrl(),dataTobeSavedJsonParams() , "not cache", this.listener);
-
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-    }
-
-    public JSONObject dataTobeSavedJsonParams() throws JSONException {
-        String authKey = Utils.encrypt(prefManager.getUserPassKey(),this.context.getResources().getString(R.string.init_vector),dataset.toString().replaceAll(" ",""));
-        JSONObject dataSet = new JSONObject();
-        dataSet.put(AppConstant.KEY_USER_NAME, prefManager.getUserName());
-        dataSet.put(AppConstant.DATA_CONTENT, authKey);
-        Log.d("saving", "" + authKey);
-        return dataSet;
-   }
-
-    @Override
-    public void OnMyResponse(ServerResponse serverResponse) {
-        try {
-            String urlType = serverResponse.getApi();
-            JSONObject responseObj = serverResponse.getJsonResponse();
-            if (prefManager.getLevels().equalsIgnoreCase("D")) {
-                if ("save_data".equals(urlType) && responseObj != null) {
-                    String key = responseObj.getString(AppConstant.ENCODE_DATA);
-                    String responseDecryptedBlockKey = Utils.decrypt(prefManager.getUserPassKey(), key);
-                    JSONObject jsonObject = new JSONObject(responseDecryptedBlockKey);
-                    if (jsonObject.getString("STATUS").equalsIgnoreCase("OK") && jsonObject.getString("RESPONSE").equalsIgnoreCase("OK")) {
-                        // loadBlockList(jsonObject.getJSONArray(AppConstant.JSON_DATA));
-                        Utils.showAlert(this.context,"Saved");
-                    }
-                    Log.d("saved_response", "" + responseDecryptedBlockKey);
-                }
-
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-    }
-
-    @Override
-    public void OnError(VolleyError volleyError) {
-
-    }
 
 
     public Cursor getRawEvents(String sql, String string) {

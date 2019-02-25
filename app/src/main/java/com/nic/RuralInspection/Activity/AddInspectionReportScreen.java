@@ -131,6 +131,7 @@ public class AddInspectionReportScreen extends AppCompatActivity implements View
     String work_id;
     EditText remarkTv;
     static JSONObject dataset;
+    private Dashboard dashboard = new Dashboard();
 
 
     @Override
@@ -409,7 +410,7 @@ public class AddInspectionReportScreen extends AppCompatActivity implements View
 
                             if(rowInserted != -1) {
                                 Toast.makeText(AddInspectionReportScreen.this, "New Inspection added", Toast.LENGTH_SHORT).show();
-                                new Dashboard().getPendingCount();
+                                ((Dashboard) getApplicationContext()).getPendingCount();
                                 finish();
                             }
                             else{

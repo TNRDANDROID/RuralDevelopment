@@ -56,7 +56,7 @@ public class PendinglayoutScreen extends AppCompatActivity implements View.OnCli
         back_img = (ImageView) findViewById(R.id.backimg);
         back_img.setOnClickListener(this);
 
-        pendingLayoutAdapter = new PendingLayoutAdapter(this, pendingListValues,this);
+        pendingLayoutAdapter = new PendingLayoutAdapter(this, pendingListValues);
 
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
         pendingLayoutRecyclerView.setLayoutManager(mLayoutManager);
@@ -144,62 +144,54 @@ public class PendinglayoutScreen extends AppCompatActivity implements View.OnCli
 
 
 
-//    public JSONObject sync_data(JSONObject dataset, Api.ServerResponseListener context) {
-//        String authKey = Utils.encrypt(prefManager.getUserPassKey(),getResources().getString(R.string.init_vector),dataset.toString().replaceAll(" ",""));
-//        JSONObject dataSet = new JSONObject();
-//        try {
-//            dataSet.put(AppConstant.KEY_USER_NAME, prefManager.getUserName());
-//            dataSet.put(AppConstant.DATA_CONTENT, authKey);
-//
-//          new ApiService(this).makeJSONObjectRequest("save_data", Api.Method.POST, UrlGenerator.getInspectionServicesListUrl(), dataSet, "not cache", context);
-//
-//        } catch (JSONException e) {
-//            e.printStackTrace();
-//        }
-//
-//    }
+    public JSONObject pending_Sync_Data(JSONObject dataset) {
+        String authKey = Utils.encrypt(prefManager.getUserPassKey(),getResources().getString(R.string.init_vector),dataset.toString().replaceAll(" ",""));
+        JSONObject savedDataSet = new JSONObject();
+        try {
+            savedDataSet.put(AppConstant.KEY_USER_NAME, prefManager.getUserName());
+            savedDataSet.put(AppConstant.DATA_CONTENT, authKey);
 
-//    @Override
-//    public void OnMyResponse(ServerResponse serverResponse) {
-//        try {
-//            String urlType = serverResponse.getApi();
-//            JSONObject responseObj = serverResponse.getJsonResponse();
-//            if (prefManager.getLevels().equalsIgnoreCase("D")) {
-//                if ("save_data".equals(urlType) && responseObj != null) {
-//                    String key = responseObj.getString(AppConstant.ENCODE_DATA);
-//                    String responseDecryptedBlockKey = Utils.decrypt(prefManager.getUserPassKey(), key);
-//                    JSONObject jsonObject = new JSONObject(responseDecryptedBlockKey);
-//                    if (jsonObject.getString("STATUS").equalsIgnoreCase("OK") && jsonObject.getString("RESPONSE").equalsIgnoreCase("OK")) {
-//                        // loadBlockList(jsonObject.getJSONArray(AppConstant.JSON_DATA));
-//                        Utils.showAlert(this,"Saved");
-//                    }
-//                    Log.d("saved_response", "" + responseDecryptedBlockKey);
-//                }
-//
-//            }
-//        } catch (JSONException e) {
-//            e.printStackTrace();
-//        }
-//    }
+          new ApiService(this).makeJSONObjectRequest("pendingSaveData", Api.Method.POST, UrlGenerator.getInspectionServicesListUrl(), savedDataSet, "not cache", this);
 
-//    @Override
-//    public void OnError(VolleyError volleyError) {
-//
-//    }
-
-    public Cursor getRawEvents(String sql, String string) {
-        Cursor cursor = db.rawQuery(sql, null);
-        return cursor;
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+return savedDataSet;
     }
+
 
 
     @Override
     public void OnMyResponse(ServerResponse serverResponse) {
+        try {
+            String urlType = serverResponse.getApi();
+            JSONObject responseObj = serverResponse.getJsonResponse();
 
+                if ("pendingSaveData".equals(urlType) && responseObj != null) {
+                    String key = responseObj.getString(AppConstant.ENCODE_DATA);
+                    String responseDecryptedBlockKey = Utils.decrypt(prefManager.getUserPassKey(), key);
+                    JSONObject jsonObject = new JSONObject(responseDecryptedBlockKey);
+                    if (jsonObject.getString("STATUS").equalsIgnoreCase("OK") && jsonObject.getString("RESPONSE").equalsIgnoreCase("OK")) {
+                        // loadBlockList(jsonObject.getJSONArray(AppConstant.JSON_DATA));
+                        Utils.showAlert(this,"Saved");
+                    }
+                    Log.d("saved_response", "" + responseDecryptedBlockKey);
+                }
+
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
     public void OnError(VolleyError volleyError) {
 
     }
+
+    public Cursor getRawEvents(String sql, String string) {
+        Cursor cursor = db.rawQuery(sql, null);
+        return cursor;
+    }
+
 }

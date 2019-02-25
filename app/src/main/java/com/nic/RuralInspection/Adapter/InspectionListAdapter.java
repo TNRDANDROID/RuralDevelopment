@@ -103,7 +103,7 @@ public class InspectionListAdapter extends RecyclerView.Adapter<InspectionListAd
     }
 
     public void imagePreviewScreen(int position){
-        String inspection_id = inspectionlistvalues.get(position).getInspectionID();
+        int inspection_id = inspectionlistvalues.get(position).getInspectionID();
 
         Activity activity = (Activity) context;
         Intent intent = new Intent(context, ImagePreviewScreen.class);
