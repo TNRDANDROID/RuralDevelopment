@@ -1,6 +1,7 @@
 package com.nic.RuralInspection.Activity;
 
 import android.app.Activity;
+import android.content.Context;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -25,9 +26,16 @@ import com.nic.RuralInspection.api.ServerResponse;
 import com.nic.RuralInspection.constant.AppConstant;
 import com.nic.RuralInspection.session.PrefManager;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedReader;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 
 import static com.nic.RuralInspection.Activity.LoginScreen.db;
@@ -36,23 +44,25 @@ import static com.nic.RuralInspection.Activity.LoginScreen.db;
  * Created by NIC on 22-02-2019.
  */
 
-public class PendinglayoutScreen extends AppCompatActivity implements View.OnClickListener,Api.ServerResponseListener{
-    private PendingLayoutAdapter pendingLayoutAdapter;
+public class PendinglayoutScreen extends AppCompatActivity implements View.OnClickListener, Api.ServerResponseListener {
+    private static PendingLayoutAdapter pendingLayoutAdapter;
     private RecyclerView pendingLayoutRecyclerView;
     private PrefManager prefManager;
     private ImageView back_img;
     private ArrayList<BlockListValue> pendingListValues = new ArrayList<>();
+    private static Context context;
 
     @Override
-    public void onCreate(@Nullable Bundle savedInstanceState ) {
-        super.onCreate(savedInstanceState );
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
         setContentView(R.layout.pending_layout_screen);
         intializeUI();
     }
 
-    public void intializeUI(){
+    public void intializeUI() {
         prefManager = new PrefManager(this);
-        pendingLayoutRecyclerView = (RecyclerView)findViewById(R.id.pending_recycler_view);
+        context = this;
+        pendingLayoutRecyclerView = (RecyclerView) findViewById(R.id.pending_recycler_view);
         back_img = (ImageView) findViewById(R.id.backimg);
         back_img.setOnClickListener(this);
 
@@ -65,7 +75,7 @@ public class PendinglayoutScreen extends AppCompatActivity implements View.OnCli
         pendingLayoutRecyclerView.setNestedScrollingEnabled(false);
         pendingLayoutRecyclerView.setFocusable(false);
         retrievePendingdata();
-      //  pendingLayoutRecyclerView.setAdapter(pendingLayoutAdapter);
+        //  pendingLayoutRecyclerView.setAdapter(pendingLayoutAdapter);
     }
 
     @Override
@@ -79,7 +89,7 @@ public class PendinglayoutScreen extends AppCompatActivity implements View.OnCli
 
     private void retrievePendingdata() {
         pendingListValues.clear();
-      //  String pendingList_sql = "select * from "+ DBHelper.INSPECTION +" where delete_flag = 0";
+        //  String pendingList_sql = "select * from "+ DBHelper.INSPECTION +" where delete_flag = 0";
         String pendingList_sql = "select * from(select * from INSPECTION WHERE inspection_id in (select inspection_id from captured_photo))a left join (select * from observation)b on a.observation = b.id where delete_flag = 0";
         Log.d("sql", pendingList_sql);
         Cursor pendingList = getRawEvents(pendingList_sql, null);
@@ -143,20 +153,13 @@ public class PendinglayoutScreen extends AppCompatActivity implements View.OnCli
     }
 
 
-
-    public JSONObject pending_Sync_Data(JSONObject dataset) {
-        String authKey = Utils.encrypt(prefManager.getUserPassKey(),getResources().getString(R.string.init_vector),dataset.toString().replaceAll(" ",""));
-        JSONObject savedDataSet = new JSONObject();
+    public  void pending_Sync_Data() {
         try {
-            savedDataSet.put(AppConstant.KEY_USER_NAME, prefManager.getUserName());
-            savedDataSet.put(AppConstant.DATA_CONTENT, authKey);
-
-          new ApiService(this).makeJSONObjectRequest("pendingSaveData", Api.Method.POST, UrlGenerator.getInspectionServicesListUrl(), savedDataSet, "not cache", this);
+            new ApiService(this).makeJSONObjectRequest("pendingSaveData", Api.Method.POST, UrlGenerator.getInspectionServicesListUrl(), pendingLayoutAdapter.dataTobeSavedJsonParams(), "not cache",  this);
 
         } catch (JSONException e) {
             e.printStackTrace();
         }
-return savedDataSet;
     }
 
 
@@ -167,16 +170,16 @@ return savedDataSet;
             String urlType = serverResponse.getApi();
             JSONObject responseObj = serverResponse.getJsonResponse();
 
-                if ("pendingSaveData".equals(urlType) && responseObj != null) {
-                    String key = responseObj.getString(AppConstant.ENCODE_DATA);
-                    String responseDecryptedBlockKey = Utils.decrypt(prefManager.getUserPassKey(), key);
-                    JSONObject jsonObject = new JSONObject(responseDecryptedBlockKey);
-                    if (jsonObject.getString("STATUS").equalsIgnoreCase("OK") && jsonObject.getString("RESPONSE").equalsIgnoreCase("OK")) {
-                        // loadBlockList(jsonObject.getJSONArray(AppConstant.JSON_DATA));
-                        Utils.showAlert(this,"Saved");
-                    }
-                    Log.d("saved_response", "" + responseDecryptedBlockKey);
+            if ("pendingSaveData".equals(urlType) && responseObj != null) {
+                String key = responseObj.getString(AppConstant.ENCODE_DATA);
+                String responseDecryptedBlockKey = Utils.decrypt(prefManager.getUserPassKey(), key);
+                JSONObject jsonObject = new JSONObject(responseDecryptedBlockKey);
+                if (jsonObject.getString("STATUS").equalsIgnoreCase("OK") && jsonObject.getString("RESPONSE").equalsIgnoreCase("OK")) {
+                    // loadBlockList(jsonObject.getJSONArray(AppConstant.JSON_DATA));
+                    Utils.showAlert(this, "Saved");
                 }
+                Log.d("saved_response", "" + responseDecryptedBlockKey);
+            }
 
 
         } catch (JSONException e) {
