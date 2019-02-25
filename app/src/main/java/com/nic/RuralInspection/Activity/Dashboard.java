@@ -55,10 +55,10 @@ import static com.nic.RuralInspection.Activity.LoginScreen.db;
 
 public class Dashboard extends AppCompatActivity implements Api.ServerResponseListener, View.OnClickListener, MyDialog.myOnClickListener {
     private ImageView logout;
-    private LinearLayout uploadInspectionReport, block_user_layout, pending_upload_layout;
+    private static LinearLayout uploadInspectionReport, block_user_layout, pending_upload_layout;
     private PrefManager prefManager;
     private ProgressHUD progressHUD;
-    private MyCustomTextView district_tv, block_user_tv, upload_inspection_report_tv, count_tv;
+    private static MyCustomTextView district_tv, block_user_tv, upload_inspection_report_tv, count_tv;
     private JSONArray updatedJsonArray;
     private static final int PERMISSIONS_REQUEST_READ_PHONE_STATE = 999;
     TelephonyManager telephonyManager;
@@ -164,7 +164,7 @@ public class Dashboard extends AppCompatActivity implements Api.ServerResponseLi
         getFinYearList();
     }
 
-    public void getPendingCount() {
+    public static void getPendingCount() {
         String pendingList_sql = "select * from(select * from INSPECTION WHERE inspection_id in (select inspection_id from captured_photo))a left join (select * from observation)b on a.observation = b.id where delete_flag = 0";
         Cursor pendingList = getRawEvents(pendingList_sql, null);
         int count = pendingList.getCount();
@@ -653,7 +653,7 @@ public class Dashboard extends AppCompatActivity implements Api.ServerResponseLi
         overridePendingTransition(R.anim.slide_enter, R.anim.slide_exit);
     }
 
-    public Cursor getRawEvents(String sql, String string) {
+    public static Cursor getRawEvents(String sql, String string) {
         Cursor cursor = db.rawQuery(sql, null);
         return cursor;
     }

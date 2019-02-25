@@ -2,11 +2,13 @@ package com.nic.RuralInspection.Adapter;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.os.AsyncTask;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.android.volley.VolleyError;
 import com.nic.RuralInspection.Activity.PendinglayoutScreen;
@@ -18,6 +20,7 @@ import com.nic.RuralInspection.Utils.UrlGenerator;
 import com.nic.RuralInspection.Utils.Utils;
 import com.nic.RuralInspection.api.Api;
 import com.nic.RuralInspection.api.ApiService;
+import com.nic.RuralInspection.api.PostMethod;
 import com.nic.RuralInspection.api.ServerResponse;
 import com.nic.RuralInspection.constant.AppConstant;
 import com.nic.RuralInspection.session.PrefManager;
@@ -165,8 +168,23 @@ public class PendingLayoutAdapter extends RecyclerView.Adapter<PendingLayoutAdap
             end = end > oof.length() ? oof.length() : end;
             Log.v("oof", oof.substring(start, end));
         }
-        ((PendinglayoutScreen)context).pending_Sync_Data(dataset);
+        ((PendinglayoutScreen)context).pending_Sync_Data( );
 
+    }
+
+
+
+
+
+
+
+    public JSONObject dataTobeSavedJsonParams() throws JSONException {
+        String authKey = Utils.encrypt(prefManager.getUserPassKey(), context.getResources().getString(R.string.init_vector),dataset.toString().replaceAll(" ",""));
+        JSONObject dataSet = new JSONObject();
+        dataSet.put(AppConstant.KEY_USER_NAME, prefManager.getUserName());
+        dataSet.put(AppConstant.DATA_CONTENT, authKey);
+        Log.d("saving", "" + authKey);
+        return dataSet;
     }
 
 
