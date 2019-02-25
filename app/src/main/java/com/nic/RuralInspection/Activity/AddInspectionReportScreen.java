@@ -410,7 +410,7 @@ public class AddInspectionReportScreen extends AppCompatActivity implements View
 
                             if(rowInserted != -1) {
                                 Toast.makeText(AddInspectionReportScreen.this, "New Inspection added", Toast.LENGTH_SHORT).show();
-                                ((Dashboard) getApplicationContext()).getPendingCount();
+                               // ((Dashboard) getApplicationContext()).getPendingCount();
                                 finish();
                             }
                             else{

@@ -13,6 +13,7 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
@@ -70,15 +71,17 @@ public class ViewInspectionReportScreen extends AppCompatActivity implements Vie
 
     private static String imageStoragePath;
     private ImageView back_img;
-    private MyCustomTextView district_tv, scheme_name_tv, block_name_tv,block_user_tv, village_name_tv, fin_year_tv;
+    private MyCustomTextView district_tv, scheme_name_tv, block_name_tv, block_user_tv, village_name_tv, fin_year_tv;
     private MyCustomTextView projectName, amountTv, levelTv;
-    private LinearLayout village_layout,block_layout;
+    private LinearLayout village_layout, block_layout;
     private ImageDescriptionAdapter imageAdapter;
     private InspectionListAdapter inspectionListAdapter;
     private RecyclerView imageRecyclerView, inspectionListRecyclerView;
     PrefManager prefManager;
     private ArrayList<BlockListValue> imagelistValues = new ArrayList<>();
     private ArrayList<BlockListValue> inspectionlistvalues = new ArrayList<>();
+
+
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -93,8 +96,8 @@ public class ViewInspectionReportScreen extends AppCompatActivity implements Vie
     public void intializeUI() {
         prefManager = new PrefManager(this);
         village_layout = (LinearLayout) findViewById(R.id.village_layout);
-        block_layout = (LinearLayout)findViewById(R.id.block_user_layout);
-        block_user_tv = (MyCustomTextView)findViewById(R.id.block_user_tv);
+        block_layout = (LinearLayout) findViewById(R.id.block_user_layout);
+        block_user_tv = (MyCustomTextView) findViewById(R.id.block_user_tv);
         district_tv = (MyCustomTextView) findViewById(R.id.district_tv);
         scheme_name_tv = (MyCustomTextView) findViewById(R.id.scheme_name_tv);
         block_name_tv = (MyCustomTextView) findViewById(R.id.block_name_tv);
@@ -131,7 +134,7 @@ public class ViewInspectionReportScreen extends AppCompatActivity implements Vie
         inspectionListRecyclerView.setHasFixedSize(true);
         inspectionListRecyclerView.setFocusable(false);
         inspectionListRecyclerView.setNestedScrollingEnabled(false);
-        if(prefManager.getLevels().equalsIgnoreCase("B")){
+        if (prefManager.getLevels().equalsIgnoreCase("B")) {
             village_layout.setVisibility(View.VISIBLE);
             village_name_tv.setText(prefManager.getVillageListPvName());
             block_layout.setVisibility(View.VISIBLE);
@@ -147,21 +150,21 @@ public class ViewInspectionReportScreen extends AppCompatActivity implements Vie
         imagelistValues.clear();
         String workId = getIntent().getStringExtra(AppConstant.WORK_ID);
 
-        String image_sql = "SELECT * FROM "+DBHelper.CAPTURED_PHOTO+ " WHERE work_id = "+workId;
-        Log.d("image_sql",image_sql);
-        Cursor imageList = getRawEvents(image_sql,null);
+        String image_sql = "SELECT * FROM " + DBHelper.CAPTURED_PHOTO + " WHERE work_id = " + workId;
+        Log.d("image_sql", image_sql);
+        Cursor imageList = getRawEvents(image_sql, null);
 
-        if(imageList.getCount() > 0) {
-            if (imageList.moveToFirst()){
+        if (imageList.getCount() > 0) {
+            if (imageList.moveToFirst()) {
                 do {
-                    String work_id =  imageList.getString(imageList.getColumnIndexOrThrow(AppConstant.WORK_ID));
-                    String latitude =  imageList.getString(imageList.getColumnIndexOrThrow(AppConstant.LATITUDE));
-                    String longitude =  imageList.getString(imageList.getColumnIndexOrThrow(AppConstant.LONGITUDE));
-                    String description =  imageList.getString(imageList.getColumnIndexOrThrow(AppConstant.DESCRIPTION));
+                    String work_id = imageList.getString(imageList.getColumnIndexOrThrow(AppConstant.WORK_ID));
+                    String latitude = imageList.getString(imageList.getColumnIndexOrThrow(AppConstant.LATITUDE));
+                    String longitude = imageList.getString(imageList.getColumnIndexOrThrow(AppConstant.LONGITUDE));
+                    String description = imageList.getString(imageList.getColumnIndexOrThrow(AppConstant.DESCRIPTION));
 
-                    byte[] photo=imageList.getBlob(imageList.getColumnIndexOrThrow(AppConstant.IMAGE));
+                    byte[] photo = imageList.getBlob(imageList.getColumnIndexOrThrow(AppConstant.IMAGE));
                     ByteArrayInputStream imageStream = new ByteArrayInputStream(photo);
-                    Bitmap image= BitmapFactory.decodeStream(imageStream);
+                    Bitmap image = BitmapFactory.decodeStream(imageStream);
 
                     //  byte[] image =  imageList.getBlob(imageList.getColumnIndexOrThrow(AppConstant.IMAGE));
 
@@ -176,7 +179,7 @@ public class ViewInspectionReportScreen extends AppCompatActivity implements Vie
 
                     imagelistValues.add(imageValue);
 
-                } while(imageList.moveToNext());
+                } while (imageList.moveToNext());
             }
         }
     }
@@ -185,31 +188,36 @@ public class ViewInspectionReportScreen extends AppCompatActivity implements Vie
         inspectionlistvalues.clear();
         String workId = getIntent().getStringExtra(AppConstant.WORK_ID);
 
-       // String inspection_sql = "select * from (select * from "+DBHelper.INSPECTION+" WHERE work_id="+workId+")a left join (select * from captured_photo)b on a.inspection_id=b.inspection_id and a.work_id=b.work_id group by a.inspection_id";
-        String inspection_sql =  "select * from(select * from INSPECTION WHERE inspection_id in (select inspection_id from captured_photo))a left join (select * from observation)b on a.observation = b.id";
-        Log.d("inspection_sql",inspection_sql);
-        Cursor inspectionList = getRawEvents(inspection_sql,null);
+        // String inspection_sql = "select * from (select * from "+DBHelper.INSPECTION+" WHERE work_id="+workId+")a left join (select * from captured_photo)b on a.inspection_id=b.inspection_id and a.work_id=b.work_id group by a.inspection_id";
+        String inspection_sql = "select * from(select * from INSPECTION WHERE inspection_id in (select inspection_id from captured_photo))a left join (select * from observation)b on a.observation = b.id where work_id ="+workId +" and a.delete_flag != 0";
+        Log.d("inspection_sql", inspection_sql);
+        Cursor inspectionList = getRawEvents(inspection_sql, null);
 
-        if(inspectionList.getCount() > 0) {
-            if (inspectionList.moveToFirst()){
+        if (inspectionList.getCount() > 0) {
+            if (inspectionList.moveToFirst()) {
                 do {
-                    String date_of_inspection =  inspectionList.getString(inspectionList.getColumnIndexOrThrow(AppConstant.DATE_OF_INSPECTION));
-                    String inspection_remark =  inspectionList.getString(inspectionList.getColumnIndexOrThrow(AppConstant.INSPECTION_REMARK));
-                    String observation =  inspectionList.getString(inspectionList.getColumnIndexOrThrow(AppConstant.OBSERVATION));
+                    String work_id = inspectionList.getString(inspectionList.getColumnIndexOrThrow(AppConstant.WORK_ID));
+                    String date_of_inspection = inspectionList.getString(inspectionList.getColumnIndexOrThrow(AppConstant.DATE_OF_INSPECTION));
+                    String inspection_remark = inspectionList.getString(inspectionList.getColumnIndexOrThrow(AppConstant.INSPECTION_REMARK));
+                    String observation = inspectionList.getString(inspectionList.getColumnIndexOrThrow(AppConstant.OBSERVATION));
+                    int inspection_id = inspectionList.getInt(inspectionList.getColumnIndexOrThrow(AppConstant.INSPECTION_ID));
 
                     BlockListValue inspectionValue = new BlockListValue();
-
+                    inspectionValue.setWorkID(work_id);
+                    Log.d("inspectworkId",""+work_id);
                     inspectionValue.setDate_of_inspection(date_of_inspection);
                     inspectionValue.setInspection_remark(inspection_remark);
                     inspectionValue.setObservation(observation);
+                    inspectionValue.setInspectionID(inspection_id);
 
                     inspectionlistvalues.add(inspectionValue);
 
-                } while(inspectionList.moveToNext());
+                } while (inspectionList.moveToNext());
             }
         }
 
-        if (!(inspectionlistvalues.size() < 1)) {
+       // if ((!(inspectionlistvalues.size() < 1)) && (inspectionValue.getWorkID().equalsIgnoreCase(prefManager.getKeyActionWorkid()))) {
+        if ((!(inspectionlistvalues.size() < 1))){
             inspectionListRecyclerView.setAdapter(inspectionListAdapter);
             Log.d("size", String.valueOf(inspectionlistvalues.size()));
         }

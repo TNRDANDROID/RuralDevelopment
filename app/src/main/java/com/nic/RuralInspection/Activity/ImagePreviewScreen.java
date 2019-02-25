@@ -28,6 +28,7 @@ import com.nic.RuralInspection.DataBase.DBHelper;
 import com.nic.RuralInspection.Model.BlockListValue;
 import com.nic.RuralInspection.R;
 import com.nic.RuralInspection.Support.MyCustomTextView;
+import com.nic.RuralInspection.api.ServerResponse;
 import com.nic.RuralInspection.constant.AppConstant;
 import com.nic.RuralInspection.session.PrefManager;
 
@@ -78,8 +79,8 @@ public class ImagePreviewScreen extends AppCompatActivity implements View.OnClic
 
     public void retriveImageWithDescription() {
         imagelistvalues.clear();
-        String id = getIntent().getStringExtra(AppConstant.INSPECTION_ID);
-        int inspectionId = Integer.parseInt(id);
+      String inspectionId = getIntent().getStringExtra(AppConstant.INSPECTION_ID);
+
 
 
         String image_sql = "SELECT * FROM " + DBHelper.CAPTURED_PHOTO + " WHERE inspection_id = " + inspectionId;
