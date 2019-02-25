@@ -2,7 +2,6 @@ package com.nic.RuralInspection.Activity;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.os.PersistableBundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -15,8 +14,6 @@ import android.widget.LinearLayout;
 import android.widget.ScrollView;
 
 import com.nic.RuralInspection.Adapter.AddActionAdapter;
-import com.nic.RuralInspection.Adapter.ImageDescriptionAdapter;
-import com.nic.RuralInspection.Adapter.InspectionListAdapter;
 import com.nic.RuralInspection.Model.BlockListValue;
 import com.nic.RuralInspection.R;
 import com.nic.RuralInspection.Support.MyCustomTextView;
@@ -64,7 +61,6 @@ public class ViewInspectionInActionScreen extends AppCompatActivity implements V
     private MyCustomTextView district_tv, scheme_name_tv, block_name_tv,block_user_tv, village_name_tv, fin_year_tv;
     private MyCustomTextView projectName, amountTv, levelTv;
     private LinearLayout village_layout,block_layout;
-    private ImageDescriptionAdapter imageAdapter;
     private AddActionAdapter addActionAdapter;
     private RecyclerView imageRecyclerView, inspectionListRecyclerView;
     PrefManager prefManager;

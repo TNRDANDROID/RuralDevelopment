@@ -979,7 +979,7 @@ public class Utils {
         final String MD5 = "MD5";
         try {
             // Create MD5 Hash
-            MessageDigest digest = java.security.MessageDigest
+            MessageDigest digest = MessageDigest
                     .getInstance(MD5);
             digest.update(s.getBytes());
             byte messageDigest[] = digest.digest();
@@ -1232,7 +1232,8 @@ public class Utils {
         return dataSet;
     }
 
-    public static JSONObject InspectionListblockWise() throws JSONException {
+    public static JSONObject InspectionListblockWise(Activity activity) throws JSONException {
+        prefManager = new PrefManager(activity);
         JSONObject dataSet = new JSONObject();
         if (prefManager.getLevels().equalsIgnoreCase("D")) {
             dataSet.put(AppConstant.KEY_SERVICE_ID, AppConstant.KEY_INSPECTION_LIST_DISTRICT_WISE);
