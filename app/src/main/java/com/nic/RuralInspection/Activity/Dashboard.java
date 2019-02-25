@@ -95,7 +95,7 @@ public class Dashboard extends AppCompatActivity implements Api.ServerResponseLi
             block_user_tv.setText(prefManager.getBlockName());
             upload_inspection_report_tv.setText(getResources().getString(R.string.action_taken_tv));
         }
-
+        getPendingCount();
         if (Utils.isOnline()) {
             Cursor toCheck = getRawEvents("SELECT * FROM " + DBHelper.FINANCIAL_YEAR_TABLE_NAME, null);
             toCheck.moveToFirst();
@@ -159,14 +159,16 @@ public class Dashboard extends AppCompatActivity implements Api.ServerResponseLi
         getSchemeList();
         getVillageList();
         getFinYearList();
-        getPendingCount();
     }
 
     public void getPendingCount() {
-        String pending = "SELECT * FROM " + DBHelper.INSPECTION;
-        Cursor pendingList = getRawEvents(pending, null);
+        String pendingList_sql = "select * from(select * from INSPECTION WHERE inspection_id in (select inspection_id from captured_photo))a left join (select * from observation)b on a.observation = b.id where delete_flag = 0";
+        Cursor pendingList = getRawEvents(pendingList_sql, null);
         int count = pendingList.getCount();
+        if(count > 0) {
+        pending_upload_layout.setVisibility(View.VISIBLE);
         count_tv.setText(String.valueOf(count));
+        }
     }
 
 
@@ -651,43 +653,6 @@ public class Dashboard extends AppCompatActivity implements Api.ServerResponseLi
     public Cursor getRawEvents(String sql, String string) {
         Cursor cursor = db.rawQuery(sql, null);
         return cursor;
-    }
-
-    public void uploadPending() {
-        String pending = "select * from(select * from inspection)a inner join (select * from captured_photo)b  on a.inspection_id = b.inspection_id and a.work_id=b.work_id";
-        Cursor pendingList = getRawEvents(pending, null);
-        if (pendingList.getCount() > 0) {
-            if (pendingList.moveToFirst()) {
-                do {
-                    JSONObject dataset = new JSONObject();
-
-                    String work_id = pendingList.getString(pendingList.getColumnIndexOrThrow(AppConstant.WORK_ID));
-                    String stage_of_work_on_inspection = pendingList.getString(pendingList.getColumnIndexOrThrow(AppConstant.STAGE_OF_WORK_ON_INSPECTION));
-                    String date_of_inspection = pendingList.getString(pendingList.getColumnIndexOrThrow(AppConstant.DATE_OF_INSPECTION));
-                    String inspected_by = pendingList.getString(pendingList.getColumnIndexOrThrow(AppConstant.INSPECTED_BY));
-                    String observation = pendingList.getString(pendingList.getColumnIndexOrThrow(AppConstant.OBSERVATION));
-                    String inspection_remark = pendingList.getString(pendingList.getColumnIndexOrThrow(AppConstant.INSPECTION_REMARK));
-                    String created_date = pendingList.getString(pendingList.getColumnIndexOrThrow(AppConstant.CREATED_DATE));
-                    String created_ipaddress = pendingList.getString(pendingList.getColumnIndexOrThrow(AppConstant.CREATED_IP_ADDRESS));
-                    String created_username = pendingList.getString(pendingList.getColumnIndexOrThrow(AppConstant.CREATED_USER_NAME));
-
-                    try {
-                        dataset.put(AppConstant.WORK_ID, work_id);
-                        dataset.put(AppConstant.STAGE_OF_WORK_ON_INSPECTION, stage_of_work_on_inspection);
-                        dataset.put(AppConstant.DATE_OF_INSPECTION, date_of_inspection);
-                        dataset.put(AppConstant.INSPECTED_BY, inspected_by);
-                        dataset.put(AppConstant.OBSERVATION, observation);
-                        dataset.put(AppConstant.INSPECTION_REMARK, inspection_remark);
-                        dataset.put(AppConstant.CREATED_DATE, created_date);
-                        dataset.put(AppConstant.CREATED_IP_ADDRESS, created_ipaddress);
-                        dataset.put(AppConstant.CREATED_USER_NAME, created_username);
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-
-                } while (pendingList.moveToNext());
-            }
-        }
     }
 
 }

@@ -79,6 +79,7 @@ public class AppConstant {
     //INSPECTION TABLE
 
     public static String STAGE_OF_WORK_ON_INSPECTION = "stage_of_work_on_inspection";
+    public static String STAGE_OF_WORK_ON_INSPECTION_NAME = "stage_of_work_on_inspection_name";
     public static String DATE_OF_INSPECTION = "date_of_inspection";
     public static String INSPECTED_BY = "inspected_by";
     public static String OBSERVATION = "observation";
@@ -91,6 +92,9 @@ public class AppConstant {
 
     public static String KEY_INSPECTION_LIST_DISTRICT_WISE = "high_value_project_inspection_block_wise";
     public static String KEY_INSPECTION_LIST_BLOCK_WISE = "action_high_value_project_inspection_block_wise";
+    public static String KEY_HIGH_VALUE_PROJECT_INSPECTION_SAVE= "high_value_project_inspection_save";
+    public static String KEY_INSPECTION_LIST_DISTRICT_WISE_IMAGE = "high_value_project_inspection_images_block_wise";
+    public static String KEY_INSPECTION_LIST_DISTRICT_WISE_ACTION = "high_value_project_action_block_wise";
 
     //Observation Table
 

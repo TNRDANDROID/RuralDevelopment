@@ -277,6 +277,7 @@ public class AddInspectionReportScreen extends AppCompatActivity implements View
 
         work_id = getIntent().getStringExtra(AppConstant.WORK_ID);
         String stage_of_work_on_inspection = stageListValues.get(sp_stage.getSelectedItemPosition()).getWorkStageCode();
+        String stage_of_work_on_inspection_name = stageListValues.get(sp_stage.getSelectedItemPosition()).getWorkStageName();
         String date_of_inspection = sdf.format(new Date());
         String inspected_by = "inspected_by";
         int observation = observationList.get(sp_observation.getSelectedItemPosition()).getObservationID();
@@ -289,6 +290,7 @@ public class AddInspectionReportScreen extends AppCompatActivity implements View
             ContentValues inspectionValue = new ContentValues();
             inspectionValue.put(AppConstant.WORK_ID,work_id);
             inspectionValue.put(AppConstant.STAGE_OF_WORK_ON_INSPECTION,stage_of_work_on_inspection);
+            inspectionValue.put(AppConstant.STAGE_OF_WORK_ON_INSPECTION_NAME,stage_of_work_on_inspection_name);
             inspectionValue.put(AppConstant.DATE_OF_INSPECTION,date_of_inspection);
           //  inspectionValue.put(AppConstant.INSPECTED_BY,inspected_by);
             inspectionValue.put(AppConstant.OBSERVATION,observation);
@@ -296,6 +298,7 @@ public class AddInspectionReportScreen extends AppCompatActivity implements View
             inspectionValue.put(AppConstant.CREATED_DATE,created_date);
             inspectionValue.put(AppConstant.CREATED_IP_ADDRESS,prefManager.getIMEI());
             inspectionValue.put(AppConstant.CREATED_USER_NAME,prefManager.getUserName());
+            inspectionValue.put("delete_flag",0);
 
             LoginScreen.db.insert(DBHelper.INSPECTION,null,inspectionValue);
         } else {
@@ -406,6 +409,7 @@ public class AddInspectionReportScreen extends AppCompatActivity implements View
 
                             if(rowInserted != -1) {
                                 Toast.makeText(AddInspectionReportScreen.this, "New Inspection added", Toast.LENGTH_SHORT).show();
+                                new Dashboard().getPendingCount();
                                 finish();
                             }
                             else{

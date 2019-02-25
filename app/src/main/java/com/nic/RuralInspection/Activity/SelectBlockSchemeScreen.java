@@ -354,8 +354,8 @@ public class SelectBlockSchemeScreen extends AppCompatActivity implements View.O
                     if (!"Select Scheme".equalsIgnoreCase(Scheme.get(sp_scheme.getSelectedItemPosition()).getSchemeName()) || (all_scheme.isChecked())) {
                         if (Utils.isOnline()) {
                             getWorkListOptional();
-                        //    getInspectionList_blockwise();
-                           getInspectionList_Images_blockwise();
+                            getInspectionList_blockwise();
+                            getInspectionList_Images_blockwise();
                             getAction_ForInspection();
                         } else {
                             goto_next();
@@ -663,6 +663,7 @@ public class SelectBlockSchemeScreen extends AppCompatActivity implements View.O
                     // Insert_inspectionList(jsonObject.getJSONArray(AppConstant.JSON_DATA));
                 } else if (jsonObject.getString("STATUS").equalsIgnoreCase("OK") && jsonObject.getString("RESPONSE").equalsIgnoreCase("NO_RECORD")) {
                     // Utils.showAlert(this, "No Record Found");
+                    Log.d("responseInspect_Action",jsonObject.getString("MESSAGE"));
                 }
                 Log.d("response_Images", "" + jsonObject.getJSONArray(AppConstant.JSON_DATA));
 
@@ -675,6 +676,7 @@ public class SelectBlockSchemeScreen extends AppCompatActivity implements View.O
                     // Insert_inspectionList(jsonObject.getJSONArray(AppConstant.JSON_DATA));
                 } else if (jsonObject.getString("STATUS").equalsIgnoreCase("OK") && jsonObject.getString("RESPONSE").equalsIgnoreCase("NO_RECORD")) {
                     // Utils.showAlert(this, "No Record Found");
+                    Log.d("responseInspect_Action",jsonObject.getString("MESSAGE"));
                 }
                 Log.d("responseInspect_Action", "" + jsonObject.getJSONArray(AppConstant.JSON_DATA));
 

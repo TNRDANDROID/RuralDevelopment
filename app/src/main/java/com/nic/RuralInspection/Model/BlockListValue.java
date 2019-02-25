@@ -118,6 +118,46 @@ public class BlockListValue {
     private String projectID;
     private String observationName;
     private int observationID;
+    private int inspectionID;
+    private String CreatedDate;
+    private String CreatedIpAddress;
+    private String CreatedUserName;
+
+    public String getCreatedDate() {
+        return CreatedDate;
+    }
+
+    public void setCreatedDate(String createdDate) {
+        CreatedDate = createdDate;
+    }
+
+    public String getCreatedIpAddress() {
+        return CreatedIpAddress;
+    }
+
+    public void setCreatedIpAddress(String createdIpAddress) {
+        CreatedIpAddress = createdIpAddress;
+    }
+
+    public String getCreatedUserName() {
+        return CreatedUserName;
+    }
+
+    public void setCreatedUserName(String createdUserName) {
+        CreatedUserName = createdUserName;
+    }
+
+
+
+    public int getInspectionID() {
+        return inspectionID;
+    }
+
+    public void setInspectionID(int inspectionID) {
+        this.inspectionID = inspectionID;
+    }
+
+
 
     public int getObservationID() {
         return observationID;
