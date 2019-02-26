@@ -123,7 +123,7 @@ public class ViewInspectionInActionScreen extends AppCompatActivity implements V
             block_user_tv.setText(prefManager.getBlockName());
         }
 
-       // inspectionListRecyclerView.setAdapter(addActionAdapter);
+        inspectionListRecyclerView.setAdapter(addActionAdapter);
 
     }
     @Override

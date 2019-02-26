@@ -13,6 +13,7 @@ import android.widget.Toast;
 import com.android.volley.VolleyError;
 import com.nic.RuralInspection.Activity.PendinglayoutScreen;
 import com.nic.RuralInspection.DataBase.DBHelper;
+import com.nic.RuralInspection.Fragment.PendingLayoutFragment;
 import com.nic.RuralInspection.Model.BlockListValue;
 import com.nic.RuralInspection.R;
 import com.nic.RuralInspection.Support.MyCustomTextView;
@@ -39,22 +40,24 @@ import static com.nic.RuralInspection.Activity.LoginScreen.db;
 
 public class PendingLayoutAdapter extends RecyclerView.Adapter<PendingLayoutAdapter.MyViewHolder> {
 
-    private Context context;
+    private static Context context;
     private List<BlockListValue> pendingListValues;
-    PrefManager prefManager;
-    JSONObject dataset = new JSONObject();
+    static PrefManager prefManager;
+    static JSONObject dataset = new JSONObject();
+    private PendingLayoutFragment pendingLayoutFragment;
 
-    public PendingLayoutAdapter(Context context, List<BlockListValue> pendingListValues ) {
+    public PendingLayoutAdapter(Context context, List<BlockListValue> pendingListValues, PendingLayoutFragment pendingLayoutFragment) {
 
         this.context = context;
         prefManager = new PrefManager(context);
         this.pendingListValues = pendingListValues;
+        this.pendingLayoutFragment = pendingLayoutFragment;
     }
 
     @Override
     public PendingLayoutAdapter.MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.pending_layout, parent, false);
-        return new  MyViewHolder(itemView);
+        return new MyViewHolder(itemView);
 
 
     }
@@ -83,7 +86,7 @@ public class PendingLayoutAdapter extends RecyclerView.Adapter<PendingLayoutAdap
     }
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
-        private MyCustomTextView pend_work_id, pend_stage, pend_inspected_date, pend_observation,add_inspection_report;
+        private MyCustomTextView pend_work_id, pend_stage, pend_inspected_date, pend_observation, add_inspection_report;
 
         public MyViewHolder(View itemView) {
             super(itemView);
@@ -94,6 +97,7 @@ public class PendingLayoutAdapter extends RecyclerView.Adapter<PendingLayoutAdap
             add_inspection_report = (MyCustomTextView) itemView.findViewById(R.id.add_inspection_report);
         }
     }
+
     public void UploadPending(int position) {
 
         String work_id = pendingListValues.get(position).getWorkID();
@@ -111,26 +115,26 @@ public class PendingLayoutAdapter extends RecyclerView.Adapter<PendingLayoutAdap
 
         try {
             dataset.put(AppConstant.KEY_SERVICE_ID, AppConstant.KEY_HIGH_VALUE_PROJECT_INSPECTION_SAVE);
-            dataset.put(AppConstant.WORK_ID,work_id);
-            dataset.put(AppConstant.STAGE_OF_WORK_ON_INSPECTION,stage_of_work_on_inspection);
-            dataset.put(AppConstant.DATE_OF_INSPECTION,date_of_inspection);
-            dataset.put(AppConstant.OBSERVATION,Observation);
-            dataset.put(AppConstant.INSPECTION_REMARK,inspection_remark);
-            dataset.put(AppConstant.CREATED_DATE,created_date);
-            dataset.put(AppConstant.CREATED_IP_ADDRESS,created_ipaddress);
-            dataset.put(AppConstant.CREATED_USER_NAME,created_username);
+            dataset.put(AppConstant.WORK_ID, work_id);
+            dataset.put(AppConstant.STAGE_OF_WORK_ON_INSPECTION, stage_of_work_on_inspection);
+            dataset.put(AppConstant.DATE_OF_INSPECTION, date_of_inspection);
+            dataset.put(AppConstant.OBSERVATION, observation);
+            dataset.put(AppConstant.INSPECTION_REMARK, inspection_remark);
+            dataset.put(AppConstant.CREATED_DATE, created_date);
+            dataset.put(AppConstant.CREATED_IP_ADDRESS, created_ipaddress);
+            dataset.put(AppConstant.CREATED_USER_NAME, created_username);
         } catch (JSONException e) {
             e.printStackTrace();
         }
 
         JSONArray imageJson = new JSONArray();
 
-        String image_sql = "Select * from "+DBHelper.CAPTURED_PHOTO+" where inspection_id ="+inspection_id+ " and work_id ="+work_id;
+        String image_sql = "Select * from " + DBHelper.CAPTURED_PHOTO + " where inspection_id =" + inspection_id + " and work_id =" + work_id;
         Log.d("sql", image_sql);
         Cursor image = getRawEvents(image_sql, null);
 
         if (image.getCount() > 0) {
-            int i= 0;
+            int i = 0;
             if (image.moveToFirst()) {
                 do {
                     String image_work_id = image.getString(image.getColumnIndexOrThrow(AppConstant.WORK_ID));
@@ -156,37 +160,31 @@ public class PendingLayoutAdapter extends RecyclerView.Adapter<PendingLayoutAdap
         }
 
         try {
-            dataset.put("image_details",imageJson);
+            dataset.put("image_details", imageJson);
         } catch (JSONException e) {
             e.printStackTrace();
         }
         String oof = dataset.toString();
         int maxLogSize = 1000;
-        for(int i = 0; i <= oof.length() / maxLogSize; i++) {
+        for (int i = 0; i <= oof.length() / maxLogSize; i++) {
             int start = i * maxLogSize;
-            int end = (i+1) * maxLogSize;
+            int end = (i + 1) * maxLogSize;
             end = end > oof.length() ? oof.length() : end;
             Log.v("oof", oof.substring(start, end));
         }
-        ((PendinglayoutScreen)context).pending_Sync_Data( );
+        pendingLayoutFragment.pending_Sync_Data(dataset);
 
     }
 
 
-
-
-
-
-
-    public JSONObject dataTobeSavedJsonParams() throws JSONException {
-        String authKey = Utils.encrypt(prefManager.getUserPassKey(), context.getResources().getString(R.string.init_vector),dataset.toString().replaceAll(" ",""));
+    public static JSONObject dataTobeSavedJsonParams() throws JSONException {
+        String authKey = Utils.encrypt(prefManager.getUserPassKey(), context.getResources().getString(R.string.init_vector), dataset.toString().replaceAll(" ", ""));
         JSONObject dataSet = new JSONObject();
         dataSet.put(AppConstant.KEY_USER_NAME, prefManager.getUserName());
         dataSet.put(AppConstant.DATA_CONTENT, authKey);
         Log.d("saving", "" + authKey);
         return dataSet;
     }
-
 
 
     public Cursor getRawEvents(String sql, String string) {

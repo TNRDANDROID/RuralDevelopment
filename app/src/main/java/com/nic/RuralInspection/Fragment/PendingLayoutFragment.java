@@ -1,24 +1,22 @@
-package com.nic.RuralInspection.Activity;
+package com.nic.RuralInspection.Fragment;
 
-import android.app.Activity;
 import android.content.Context;
 import android.database.Cursor;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.LinearLayoutManager;
+import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.ImageView;
+import android.view.ViewGroup;
+import android.widget.LinearLayout;
 
 import com.android.volley.VolleyError;
 import com.nic.RuralInspection.Adapter.PendingLayoutAdapter;
-import com.nic.RuralInspection.Adapter.ProjectListAdapter;
-import com.nic.RuralInspection.DataBase.DBHelper;
 import com.nic.RuralInspection.Model.BlockListValue;
 import com.nic.RuralInspection.R;
+import com.nic.RuralInspection.Support.MyCustomLayoutManager;
+import com.nic.RuralInspection.Support.MyCustomTextView;
 import com.nic.RuralInspection.Utils.UrlGenerator;
 import com.nic.RuralInspection.Utils.Utils;
 import com.nic.RuralInspection.api.Api;
@@ -31,67 +29,54 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedReader;
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.ArrayList;
+import java.util.List;
 
 import static com.nic.RuralInspection.Activity.LoginScreen.db;
 
-/**
- * Created by NIC on 22-02-2019.
- */
+public class PendingLayoutFragment extends Fragment implements View.OnClickListener,Api.ServerResponseListener {
 
-public class PendinglayoutScreen extends AppCompatActivity implements View.OnClickListener, Api.ServerResponseListener {
-    private static PendingLayoutAdapter pendingLayoutAdapter;
-    private RecyclerView pendingLayoutRecyclerView;
     private PrefManager prefManager;
-    private ImageView back_img;
+    private String cacheValue = "cache";
+    private RecyclerView pending_recycler_view;
     private ArrayList<BlockListValue> pendingListValues = new ArrayList<>();
-    private static Context context;
 
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.pending_layout_screen);
-        intializeUI();
-    }
+    private JSONArray updatedJsonArray;
+    private Context context;
+    private static PendingLayoutAdapter pendingLayoutAdapter;
 
-    public void intializeUI() {
-        prefManager = new PrefManager(this);
-        context = this;
-        pendingLayoutRecyclerView = (RecyclerView) findViewById(R.id.pending_recycler_view);
-        back_img = (ImageView) findViewById(R.id.backimg);
-        back_img.setOnClickListener(this);
 
-//        pendingLayoutAdapter = new PendingLayoutAdapter(this, pendingListValues);
-//
-//        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
-//        pendingLayoutRecyclerView.setLayoutManager(mLayoutManager);
-//        pendingLayoutRecyclerView.setItemAnimator(new DefaultItemAnimator());
-//        pendingLayoutRecyclerView.setHasFixedSize(true);
-//        pendingLayoutRecyclerView.setNestedScrollingEnabled(false);
-//        pendingLayoutRecyclerView.setFocusable(false);
-//        retrievePendingdata();
-        //  pendingLayoutRecyclerView.setAdapter(pendingLayoutAdapter);
+    public PendingLayoutFragment() {
+        // Required empty public constructor
     }
 
     @Override
-    public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.backimg:
-                onBackPress();
-                break;
-        }
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        // Inflate the layout for this fragment
+        View view = inflater.inflate(R.layout.pending_layout_screen, container, false);
+        initializeUI(view);
+        return view;
     }
 
+    public void initializeUI(View view) {
+
+        prefManager = new PrefManager(getActivity());
+
+        pending_recycler_view = (RecyclerView) view.findViewById(R.id.pending_recycler_view);
+        MyCustomLayoutManager mLayoutManager = new MyCustomLayoutManager(getActivity());
+        pending_recycler_view.setLayoutManager(mLayoutManager);
+        pendingLayoutAdapter = new PendingLayoutAdapter(getActivity(), pendingListValues,this );
+        pending_recycler_view.setAdapter(pendingLayoutAdapter);
+        pending_recycler_view.setNestedScrollingEnabled(false);
+        retrievePendingdata();
+
+
+    }
     private void retrievePendingdata() {
         pendingListValues.clear();
         //  String pendingList_sql = "select * from "+ DBHelper.INSPECTION +" where delete_flag = 0";
-        String pendingList_sql = "select * from(select * from "+DBHelper.INSPECTION_PENDING +" WHERE inspection_id in (select inspection_id from "+DBHelper.CAPTURED_PHOTO+"))a left join (select * from observation)b on a.observation = b.id where delete_flag = 0";
+        String pendingList_sql = "select * from(select * from INSPECTION WHERE inspection_id in (select inspection_id from captured_photo))a left join (select * from observation)b on a.observation = b.id where delete_flag = 0";
         Log.d("sql", pendingList_sql);
         Cursor pendingList = getRawEvents(pendingList_sql, null);
 
@@ -131,7 +116,7 @@ public class PendinglayoutScreen extends AppCompatActivity implements View.OnCli
         }
 
         if (!(pendingListValues.size() < 1)) {
-            pendingLayoutRecyclerView.setAdapter(pendingLayoutAdapter);
+            pending_recycler_view.setAdapter(pendingLayoutAdapter);
 
         } else {
             //list_count.setText("0");
@@ -139,22 +124,19 @@ public class PendinglayoutScreen extends AppCompatActivity implements View.OnCli
         }
 
     }
-
     @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-        finish();
-        overridePendingTransition(R.anim.slide_enter, R.anim.slide_exit);
+    public void onClick(View v) {
+
     }
 
-    public void onBackPress() {
-        super.onBackPressed();
-        setResult(Activity.RESULT_CANCELED);
-        overridePendingTransition(R.anim.slide_enter, R.anim.slide_exit);
-    }
-
-
-
+//    public void pending_Sync_Data() {
+//        try {
+//            new ApiService(getActivity()).makeJSONObjectRequest("pendingSaveData", Api.Method.POST, UrlGenerator.getInspectionServicesListUrl(), pendingLayoutAdapter.dataTobeSavedJsonParams(), "not cache",  this);
+//
+//        } catch (JSONException e) {
+//            e.printStackTrace();
+//        }
+//    }
     public JSONObject pending_Sync_Data(JSONObject dataset) {
         String authKey = Utils.encrypt(prefManager.getUserPassKey(),getResources().getString(R.string.init_vector),dataset.toString().replaceAll(" ",""));
         JSONObject savedDataSet = new JSONObject();
@@ -162,14 +144,13 @@ public class PendinglayoutScreen extends AppCompatActivity implements View.OnCli
             savedDataSet.put(AppConstant.KEY_USER_NAME, prefManager.getUserName());
             savedDataSet.put(AppConstant.DATA_CONTENT, authKey);
 
-          new ApiService(this).makeJSONObjectRequest("pendingSaveData", Api.Method.POST, UrlGenerator.getInspectionServicesListUrl(), savedDataSet, "not cache", this);
+            new ApiService(getActivity()).makeJSONObjectRequest("pendingSaveData", Api.Method.POST, UrlGenerator.getInspectionServicesListUrl(), savedDataSet, "not cache", this);
 
         } catch (JSONException e) {
             e.printStackTrace();
         }
-return savedDataSet;
+        return savedDataSet;
     }
-
 
 
     @Override
@@ -184,7 +165,7 @@ return savedDataSet;
                 JSONObject jsonObject = new JSONObject(responseDecryptedBlockKey);
                 if (jsonObject.getString("STATUS").equalsIgnoreCase("OK") && jsonObject.getString("RESPONSE").equalsIgnoreCase("OK")) {
                     // loadBlockList(jsonObject.getJSONArray(AppConstant.JSON_DATA));
-                    Utils.showAlert(this, "Saved");
+                    Utils.showAlert(getActivity(), "Saved");
                 }
                 Log.d("saved_response", "" + responseDecryptedBlockKey);
             }
@@ -195,14 +176,13 @@ return savedDataSet;
         }
     }
 
-    @Override
-    public void OnError(VolleyError volleyError) {
-
-    }
-
     public Cursor getRawEvents(String sql, String string) {
         Cursor cursor = db.rawQuery(sql, null);
         return cursor;
     }
 
+    @Override
+    public void OnError(VolleyError volleyError) {
+
+    }
 }

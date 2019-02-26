@@ -28,6 +28,7 @@ import android.widget.LinearLayout;
 import com.android.volley.VolleyError;
 import com.nic.RuralInspection.DataBase.DBHelper;
 import com.nic.RuralInspection.Dialog.MyDialog;
+import com.nic.RuralInspection.Fragment.PendingLayoutFragment;
 import com.nic.RuralInspection.Model.BlockListValue;
 import com.nic.RuralInspection.R;
 import com.nic.RuralInspection.Support.MyCustomTextView;
@@ -72,7 +73,10 @@ public class Dashboard extends AppCompatActivity implements Api.ServerResponseLi
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
-        setContentView(R.layout.dashboard);
+        setContentView(R.layout.frame_layout_dashboard);
+        if(mContent == null){
+            mContent = new PendingLayoutFragment();
+        }
         intializeUI();
 //        else {
 //            Utils.showAlert(this, getResources().getString(R.string.no_internet));
@@ -165,7 +169,7 @@ public class Dashboard extends AppCompatActivity implements Api.ServerResponseLi
     }
 
     public static void getPendingCount() {
-        String pendingList_sql = "select * from(select * from INSPECTION WHERE inspection_id in (select inspection_id from captured_photo))a left join (select * from observation)b on a.observation = b.id where delete_flag = 0";
+        String pendingList_sql = "select * from(select * from "+DBHelper.INSPECTION_PENDING+" WHERE inspection_id in (select inspection_id from captured_photo))a left join (select * from observation)b on a.observation = b.id where delete_flag = 0";
         Cursor pendingList = getRawEvents(pendingList_sql, null);
         int count = pendingList.getCount();
         if(count > 0) {
@@ -288,9 +292,21 @@ public class Dashboard extends AppCompatActivity implements Api.ServerResponseLi
                 selectBlockSchemeScreen();
                 break;
             case R.id.pending_upload_layout:
-                pendingLyoutScreen();
+//                pendingLyoutScreen();
+                openPendingLayoutFragment();
                 break;
         }
+
+    }
+
+    public void openPendingLayoutFragment( ) {
+
+        mContent= new PendingLayoutFragment();
+
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.content,mContent ).addToBackStack("editquestion");
+        overridePendingTransition(R.anim.slide_in, R.anim.slide_out);
+        transaction.commit();
 
     }
 

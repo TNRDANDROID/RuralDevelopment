@@ -12,6 +12,7 @@ import android.widget.RelativeLayout;
 
 import com.hanks.htextview.rainbow.RainbowTextView;
 import com.nic.RuralInspection.Activity.AddInspectionReportScreen;
+import com.nic.RuralInspection.Activity.ImagePreviewActionScreen;
 import com.nic.RuralInspection.Activity.ImagePreviewScreen;
 import com.nic.RuralInspection.Activity.ViewInspectionInActionScreen;
 import com.nic.RuralInspection.Model.BlockListValue;
@@ -46,7 +47,7 @@ public class InspectionListAdapter extends RecyclerView.Adapter<InspectionListAd
 
 
     public class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        public MyCustomTextView date_of_inspection, remark, observation,view_image;
+        public MyCustomTextView date_of_inspection, remark, observation, view_image,action_result_tv;
         public RainbowTextView rainbowTextView;
         private RelativeLayout add_action_layout;
         private LinearLayout action_part_visible_layout;
@@ -55,11 +56,12 @@ public class InspectionListAdapter extends RecyclerView.Adapter<InspectionListAd
 
             super(itemView);
             date_of_inspection = (MyCustomTextView) itemView.findViewById(R.id.date_of_inspection);
-            rainbowTextView = (RainbowTextView)itemView.findViewById(R.id.view_image);
+            rainbowTextView = (RainbowTextView) itemView.findViewById(R.id.view_image);
 //            view_image = (MyCustomTextView) itemView.findViewById(R.id.view_image);
             add_action_layout = (RelativeLayout) itemView.findViewById(R.id.add_action_layout);
             remark = (MyCustomTextView) itemView.findViewById(R.id.remark);
             observation = (MyCustomTextView) itemView.findViewById(R.id.observation);
+            action_result_tv = (MyCustomTextView) itemView.findViewById(R.id.action_result_tv);
             add_action_layout.setOnClickListener(this);
             rainbowTextView.animateText(context.getString(R.string.view_image));
             if (prefManager.getLevels().equalsIgnoreCase("B")) {
@@ -102,7 +104,7 @@ public class InspectionListAdapter extends RecyclerView.Adapter<InspectionListAd
         activity.overridePendingTransition(R.anim.slide_in, R.anim.slide_out);
     }
 
-    public void imagePreviewScreen(int position){
+    public void imagePreviewScreen(int position) {
         //String inspection_id = String.valueOf(inspectionlistvalues.get(position).getInspectionID());
         String Online_inspect_id = String.valueOf(inspectionlistvalues.get(position).getOnlineInspectID());
 
@@ -113,26 +115,42 @@ public class InspectionListAdapter extends RecyclerView.Adapter<InspectionListAd
         activity.overridePendingTransition(R.anim.slide_in, R.anim.slide_out);
     }
 
+    public void imageGridViewScreen(int position) {
+        //String inspection_id = String.valueOf(inspectionlistvalues.get(position).getInspectionID());
+        String Online_inspect_id = String.valueOf(inspectionlistvalues.get(position).getOnlineInspectID());
+
+        Activity activity = (Activity) context;
+        Intent intent = new Intent(context, ImagePreviewActionScreen.class);
+        intent.putExtra(AppConstant.INSPECTION_ID, Online_inspect_id);
+        activity.startActivity(intent);
+        activity.overridePendingTransition(R.anim.slide_in, R.anim.slide_out);
+    }
+
     @Override
     public void onBindViewHolder(final MyViewHolder holder, final int position) {
         holder.date_of_inspection.setText(inspectionlistvalues.get(position).getDate_of_inspection());
         holder.remark.setText(inspectionlistvalues.get(position).getInspection_remark());
         holder.observation.setText(inspectionlistvalues.get(position).getObservation());
-        holder.rainbowTextView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                imagePreviewScreen(position);
-            }
-        });
-        if (prefManager.getLevels().equalsIgnoreCase("B")) {
-            holder.add_action_layout.setVisibility(View.VISIBLE);
-            holder.add_action_layout.setOnClickListener(new View.OnClickListener() {
+        holder.action_result_tv.setText(inspectionlistvalues.get(position).getActionresult());
+            holder.rainbowTextView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    addActionScreen(position);
+                    if (!prefManager.getLevels().equalsIgnoreCase("B")) {
+                        imagePreviewScreen(position);
+                    } else {
+                        imageGridViewScreen(position);
+                    }
                 }
             });
-        }
+
+        holder.add_action_layout.setVisibility(View.VISIBLE);
+        holder.add_action_layout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                addActionScreen(position);
+            }
+        });
+
 
     }
 

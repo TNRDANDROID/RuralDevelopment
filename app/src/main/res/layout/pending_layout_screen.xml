@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#BCBCBC"
-    tools:context="com.nic.RuralInspection.Activity.PendinglayoutScreen">
+    tools:context="com.nic.RuralInspection.Fragment.PendingLayoutFragment">
 
     <include
         android:id="@+id/toolbar"
