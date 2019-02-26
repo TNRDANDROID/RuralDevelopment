@@ -96,9 +96,9 @@ public class ImagePreviewScreen extends AppCompatActivity implements View.OnClic
                     String description = imageListPreview.getString(imageListPreview.getColumnIndexOrThrow(AppConstant.DESCRIPTION));
 
                     byte[] photo = imageListPreview.getBlob(imageListPreview.getColumnIndexOrThrow(AppConstant.IMAGE));
-                    byte[] ss=Arrays.copyOfRange( photo, 23,photo.length);
-                    Log.d("byte",ss.toString());
-                    byte[] decodedString = Base64.decode(ss, Base64.DEFAULT);
+                  //  byte[] ss=Arrays.copyOfRange( photo, 23,photo.length);
+                 //   Log.d("byte",ss.toString());
+                    byte[] decodedString = Base64.decode(photo, Base64.DEFAULT);
                     Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
 
                     //  byte[] image =  imageListPreview.getBlob(imageListPreview.getColumnIndexOrThrow(AppConstant.IMAGE));

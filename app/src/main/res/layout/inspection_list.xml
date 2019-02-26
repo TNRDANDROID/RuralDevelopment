@@ -373,6 +373,7 @@
                                 android:orientation="vertical">
 
                                 <com.nic.RuralInspection.Support.MyCustomTextView
+                                    android:id="@+id/action_result_tv"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
                                     android:padding="10dp"
@@ -389,7 +390,8 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
 
-                            android:orientation="horizontal">
+                            android:orientation="horizontal"
+                            android:visibility="gone">
 
                             <LinearLayout
                                 android:layout_width="0dp"
@@ -463,7 +465,8 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
 
-                            android:orientation="horizontal">
+                            android:orientation="horizontal"
+                            android:visibility="gone">
 
                             <LinearLayout
                                 android:layout_width="0dp"

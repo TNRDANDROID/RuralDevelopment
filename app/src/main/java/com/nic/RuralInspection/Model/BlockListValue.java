@@ -47,6 +47,17 @@ public class BlockListValue {
     private String CreatedDate;
     private String CreatedIpAddress;
     private String CreatedUserName;
+    private String Actionresult;
+
+    public String getActionresult() {
+        return Actionresult;
+    }
+
+    public void setActionresult(String actionresult) {
+        Actionresult = actionresult;
+    }
+
+
 
     public String getOnlineInspectID() {
         return OnlineInspectID;

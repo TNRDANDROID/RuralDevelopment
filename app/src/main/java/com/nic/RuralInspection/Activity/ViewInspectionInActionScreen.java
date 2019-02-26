@@ -106,26 +106,24 @@ public class ViewInspectionInActionScreen extends AppCompatActivity implements V
         levelTv.setText(getIntent().getStringExtra(AppConstant.WORK_SATGE_NAME));
 
         back_img.setOnClickListener(this);
-//        action_tv.setOnClickListener(this);
-        // imageAdapter = new ImageDescriptionAdapter(this,imagelistValues );
 
-        addActionAdapter = new AddActionAdapter(this, actionlistvalues);
+//        addActionAdapter = new AddActionAdapter(this, actionlistvalues);
+//
+//        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
+//        inspectionListRecyclerView.setLayoutManager(mLayoutManager);
+//        inspectionListRecyclerView.setItemAnimator(new DefaultItemAnimator());
+//        inspectionListRecyclerView.setHasFixedSize(true);
+//        inspectionListRecyclerView.setFocusable(false);
+//        inspectionListRecyclerView.setNestedScrollingEnabled(false);
 
-        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
-        inspectionListRecyclerView.setLayoutManager(mLayoutManager);
-        inspectionListRecyclerView.setItemAnimator(new DefaultItemAnimator());
-        inspectionListRecyclerView.setHasFixedSize(true);
-        inspectionListRecyclerView.setFocusable(false);
-        inspectionListRecyclerView.setNestedScrollingEnabled(false);
         if(prefManager.getLevels().equalsIgnoreCase("B")){
             village_layout.setVisibility(View.VISIBLE);
             village_name_tv.setText(prefManager.getVillageListPvName());
             block_layout.setVisibility(View.VISIBLE);
             block_user_tv.setText(prefManager.getBlockName());
         }
-        // retrievedata();
-//        retrievedata_inspection();
-        //  inspectionListRecyclerView.setAdapter(inspectionListAdapter);
+
+       // inspectionListRecyclerView.setAdapter(addActionAdapter);
 
     }
     @Override

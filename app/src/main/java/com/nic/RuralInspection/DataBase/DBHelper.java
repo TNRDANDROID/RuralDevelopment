@@ -17,6 +17,7 @@ public class DBHelper extends SQLiteOpenHelper {
     public static final String WORK_STAGE_TABLE = "work_type_stage_link";
     public static final String VILLAGE_TABLE_NAME = "village_table_name";
     public static final String INSPECTION = "inspection";
+    public static final String INSPECTION_PENDING = "inspection_pending";
     public static final String CAPTURED_PHOTO = "captured_photo";
     public static final String INSPECTION_ACTION = "inspection_action";
 
@@ -77,6 +78,21 @@ public class DBHelper extends SQLiteOpenHelper {
                 "is_high_value varchar(4))");
 
         db.execSQL("CREATE TABLE "+ INSPECTION  + "("
+                + "inspection_id INTEGER PRIMARY KEY AUTOINCREMENT," +
+                "id INTEGER," +
+                "work_id TEXT," +
+                "stage_of_work_on_inspection TEXT," +
+                "stage_of_work_on_inspection_name TEXT," +
+                "date_of_inspection TEXT," +
+                "inspected_by TEXT," +
+                "observation TEXT," +
+                "inspection_remark TEXT," +
+                "created_date TEXT," +
+                "created_ipaddress TEXT," +
+                "delete_flag INTEGER," +
+                "created_username TEXT)");
+
+        db.execSQL("CREATE TABLE "+ INSPECTION_PENDING  + "("
                 + "inspection_id INTEGER PRIMARY KEY AUTOINCREMENT," +
                 "id INTEGER," +
                 "work_id TEXT," +

@@ -2,6 +2,7 @@ package com.nic.RuralInspection.Activity;
 
 import android.app.Activity;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -136,6 +137,7 @@ public class SelectBlockSchemeScreen extends AppCompatActivity implements View.O
                     all_block.setChecked(false);
                     pref_Block = Block.get(position).getBlockName();
                     prefManager.setBlockName(pref_Block);
+                    prefManager.setBlockCode(Block.get(position).getBlockCode());
                     prefManager.setKeySpinnerSelectedBlockcode(Block.get(position).getBlockCode());
                     villageFilterSpinner(Block.get(position).getBlockCode());
 
@@ -383,6 +385,9 @@ public class SelectBlockSchemeScreen extends AppCompatActivity implements View.O
                 if (!"Select Scheme".equalsIgnoreCase(Scheme.get(sp_scheme.getSelectedItemPosition()).getSchemeName()) || (all_scheme.isChecked())) {
                     if (Utils.isOnline()) {
                         getWorkListOptional();
+                        getInspectionList_blockwise();
+                        getInspectionList_Images_blockwise();
+                        getAction_ForInspection();
                     } else {
                         goto_next();
                     }
@@ -562,7 +567,7 @@ public class SelectBlockSchemeScreen extends AppCompatActivity implements View.O
 
     public void getInspectionList_blockwise() {
         try {
-            new ApiService(this).makeJSONObjectRequest("InspectionListBlockWise", Api.Method.POST, UrlGenerator.getInspectionServicesListUrl(), InspectionListBlockwiseJsonParams(), "not cache", this);
+            new ApiService(this ).makeJSONObjectRequest("InspectionListBlockWise", Api.Method.POST, UrlGenerator.getInspectionServicesListUrl(), InspectionListBlockwiseJsonParams(), "not cache", this);
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -640,7 +645,7 @@ public class SelectBlockSchemeScreen extends AppCompatActivity implements View.O
                 if (jsonObject.getString("STATUS").equalsIgnoreCase("OK") && jsonObject.getString("RESPONSE").equalsIgnoreCase("OK")) {
                     workListOptionalS(jsonObject.getJSONArray(AppConstant.JSON_DATA));
                 } else if (jsonObject.getString("STATUS").equalsIgnoreCase("OK") && jsonObject.getString("RESPONSE").equalsIgnoreCase("NO_RECORD")) {
-                    Utils.showAlert(this, "No Record Found");
+                 Utils.showAlert(this, "No Record Found");
                 }
                 Log.d("responseWorkList", "" + jsonObject.getJSONArray(AppConstant.JSON_DATA));
 
@@ -652,7 +657,7 @@ public class SelectBlockSchemeScreen extends AppCompatActivity implements View.O
                 if (jsonObject.getString("STATUS").equalsIgnoreCase("OK") && jsonObject.getString("RESPONSE").equalsIgnoreCase("OK")) {
                      Insert_inspectionList(jsonObject.getJSONArray(AppConstant.JSON_DATA));
                 } else if (jsonObject.getString("STATUS").equalsIgnoreCase("OK") && jsonObject.getString("RESPONSE").equalsIgnoreCase("NO_RECORD")) {
-                     Utils.showAlert(this, "No Record Found");
+                    // Utils.showAlert(this, "No Record Found");
                 }
                 Log.d("InspectionListBlockWise", "" + jsonObject.getJSONArray(AppConstant.JSON_DATA));
 
@@ -747,7 +752,8 @@ public class SelectBlockSchemeScreen extends AppCompatActivity implements View.O
 
     private void Insert_inspectionList(JSONArray jsonArray) {
         try {
-            db.delete(DBHelper.INSPECTION, null, null);
+      //db.rawQuery("DELETE FROM "+DBHelper.INSPECTION+" WHERE delete_flag =1",null);
+     db.delete(DBHelper.INSPECTION,null,null);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -774,6 +780,7 @@ public class SelectBlockSchemeScreen extends AppCompatActivity implements View.O
                     getInspectionList.put(AppConstant.INSPECTED_BY, inspectedBy);
                     getInspectionList.put(AppConstant.OBSERVATION, observation);
                     getInspectionList.put(AppConstant.INSPECTION_REMARK, inspectionRemark);
+                    getInspectionList.put("delete_flag", 1);
 
 
                     LoginScreen.db.insert(DBHelper.INSPECTION, null, getInspectionList);
