@@ -48,6 +48,10 @@ public class BlockListValue {
     private String CreatedIpAddress;
     private String CreatedUserName;
     private String Actionresult;
+    public boolean setItemSelected;
+    private String OnlineInspectID;
+
+
 
     public String getActionresult() {
         return Actionresult;
@@ -67,7 +71,6 @@ public class BlockListValue {
         OnlineInspectID = onlineInspectID;
     }
 
-    private String OnlineInspectID;
 
     public String getCreatedDate() {
         return CreatedDate;
@@ -412,6 +415,14 @@ public class BlockListValue {
 
     public void setPvCode(String pvCode) {
         this.pvCode = pvCode;
+    }
+
+    public boolean isSetItemSelected() {
+        return setItemSelected;
+    }
+
+    public void setSetItemSelected(boolean setItemSelected) {
+        this.setItemSelected = setItemSelected;
     }
 
 }

@@ -363,7 +363,7 @@ public class AddInspectionReportScreen extends AppCompatActivity implements View
                     }
                 }
                 int childCount = mobileNumberLayout.getChildCount();
-                if(childCount > 0 && ((BitmapDrawable)imageView.getDrawable()).getBitmap() != null) {
+                if(childCount > 0 ) {
                     for (int i = 0; i < childCount; i++) {
                         JSONArray imageArray = new JSONArray();
 
@@ -610,7 +610,7 @@ public class AddInspectionReportScreen extends AppCompatActivity implements View
     }
 
     private void captureImage() {
-        Intent intent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
 
         File file = CameraUtils.getOutputMediaFile(MEDIA_TYPE_IMAGE);
         if (file != null) {
@@ -867,10 +867,10 @@ public class AddInspectionReportScreen extends AppCompatActivity implements View
                     JSONObject jsonObject = new JSONObject(responseDecryptedBlockKey);
                     if (jsonObject.getString("STATUS").equalsIgnoreCase("OK") && jsonObject.getString("RESPONSE").equalsIgnoreCase("OK")) {
                        // loadBlockList(jsonObject.getJSONArray(AppConstant.JSON_DATA));
-                        Utils.showAlert(this,"Saved");
                         getInspectionList_blockwise();
                         getInspectionList_Images_blockwise();
                         getAction_ForInspection();
+                        Utils.showAlert(this,"Saved");
                         finish();
                     }
                     Log.d("saved_response", "" + responseDecryptedBlockKey);

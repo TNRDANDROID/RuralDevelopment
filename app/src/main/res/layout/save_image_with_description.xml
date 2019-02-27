@@ -44,7 +44,6 @@
                         android:scaleType="fitXY"
                         />
 
-
                     <!--<LinearLayout-->
                         <!--android:layout_width="wrap_content"-->
                         <!--android:layout_height="wrap_content"-->
@@ -52,7 +51,7 @@
                         <!--android:orientation="horizontal">-->
 
 
-                        <!--<com.nic.RuralInspection.Support.MyCustomTextView-->
+                    <!--<com.nic.RuralInspection.Support.MyCustomTextView-->
 
                             <!--android:layout_width="match_parent"-->
                             <!--android:layout_height="wrap_content"-->
@@ -67,11 +66,11 @@
                     <!--</LinearLayout>-->
 
                     <!--<View-->
-                        <!--android:layout_width="match_parent"-->
-                        <!--android:layout_height="0.5dp"-->
-                        <!--android:layout_gravity="bottom"-->
-                        <!--android:layout_marginLeft="15dp"-->
-                        <!--android:background="@color/dashboard_line_dark" />-->
+                    <!--android:layout_width="match_parent"-->
+                    <!--android:layout_height="0.5dp"-->
+                    <!--android:layout_gravity="bottom"-->
+                    <!--android:layout_marginLeft="15dp"-->
+                    <!--android:background="@color/dashboard_line_dark" />-->
 
 
 
@@ -92,7 +91,6 @@
                             android:layout_marginLeft="10dip"
                             android:textSize="15sp"
                             android:layout_marginRight="10dip"
-                            android:textColor="@android:color/black"
                             android:background="@drawable/gray_background"
                             customfontdemo:fontName="@string/font_circular_book" />
                     </LinearLayout>

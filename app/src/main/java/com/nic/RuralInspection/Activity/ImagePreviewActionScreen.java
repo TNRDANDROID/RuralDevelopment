@@ -20,10 +20,10 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.GridView;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
-import com.nic.RuralInspection.Adapter.ImageDescriptionAdapter;
-import com.nic.RuralInspection.Adapter.ImagePreviewActionAdapter;
+import com.nic.RuralInspection.Adapter.ImagePreviewAdapter;
 import com.nic.RuralInspection.DataBase.DBHelper;
 import com.nic.RuralInspection.Model.BlockListValue;
 import com.nic.RuralInspection.R;
@@ -39,10 +39,11 @@ import static com.nic.RuralInspection.Activity.LoginScreen.db;
 public class ImagePreviewActionScreen extends AppCompatActivity implements View.OnClickListener {
 
     private PrefManager prefManager;
-    private ImagePreviewActionAdapter imagePreviewActionAdapter;
-    private List<BlockListValue> imagelistvalues;
-    private GridView gridView;
-//    private ImageView back_img;
+    private ImagePreviewAdapter imagePreviewAdapter;
+    private List<BlockListValue> imagePreviewlistvalues;
+    private ImageView back_img;
+    private RecyclerView image_preview_recyclerview;
+    private RelativeLayout add_action_layout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,19 +56,25 @@ intializeUI();
 
     public void intializeUI() {
         prefManager = new PrefManager(this);
-        imagelistvalues = new ArrayList<>();
-        imagePreviewActionAdapter = new ImagePreviewActionAdapter(this, imagelistvalues);
-        gridView=(GridView)findViewById(R.id.grid);
+        imagePreviewlistvalues = new ArrayList<>();
+        imagePreviewAdapter = new ImagePreviewAdapter(this, imagePreviewlistvalues);
+        image_preview_recyclerview = (RecyclerView) findViewById(R.id.image_preview_action_recyclerview);
+        back_img = (ImageView) findViewById(R.id.backimg);
+        back_img.setOnClickListener(this);
 
-//        back_img = (ImageView) findViewById(R.id.backimg);
-//        back_img.setOnClickListener(this);
 
-        gridView.setAdapter(imagePreviewActionAdapter);
+        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
+        image_preview_recyclerview.setLayoutManager(mLayoutManager);
+        image_preview_recyclerview.setItemAnimator(new DefaultItemAnimator());
+        image_preview_recyclerview.setHasFixedSize(true);
+        image_preview_recyclerview.setNestedScrollingEnabled(false);
+        image_preview_recyclerview.setFocusable(false);
+        image_preview_recyclerview.setAdapter(imagePreviewAdapter);
         retriveImageWithDescription();
     }
 
     public void retriveImageWithDescription() {
-        imagelistvalues.clear();
+        imagePreviewlistvalues.clear();
         String id = getIntent().getStringExtra(AppConstant.INSPECTION_ID);
         int inspectionId = Integer.parseInt(id);
 
@@ -99,7 +106,7 @@ intializeUI();
                     imageValue.setDescription(description);
                     imageValue.setImage(decodedByte);
 
-                    imagelistvalues.add(imageValue);
+                    imagePreviewlistvalues.add(imageValue);
 
                 } while (imageListPreview.moveToNext());
             }
@@ -109,11 +116,11 @@ intializeUI();
 
     @Override
     public void onClick(View v) {
-//        switch (v.getId()) {
-//            case R.id.backimg:
-//                onBackPress();
-//                break;
-//        }
+        switch (v.getId()) {
+            case R.id.backimg:
+                onBackPress();
+                break;
+        }
     }
 
     @Override

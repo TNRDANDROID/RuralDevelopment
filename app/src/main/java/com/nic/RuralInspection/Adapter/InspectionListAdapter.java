@@ -47,7 +47,7 @@ public class InspectionListAdapter extends RecyclerView.Adapter<InspectionListAd
 
 
     public class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        public MyCustomTextView date_of_inspection, remark, observation, view_image,action_result_tv;
+        public MyCustomTextView date_of_inspection, remark, observation, view_image, action_result_tv;
         public RainbowTextView rainbowTextView;
         private RelativeLayout add_action_layout;
         private LinearLayout action_part_visible_layout;
@@ -63,9 +63,10 @@ public class InspectionListAdapter extends RecyclerView.Adapter<InspectionListAd
             observation = (MyCustomTextView) itemView.findViewById(R.id.observation);
             action_result_tv = (MyCustomTextView) itemView.findViewById(R.id.action_result_tv);
             add_action_layout.setOnClickListener(this);
-            rainbowTextView.animateText(context.getString(R.string.view_image));
             if (prefManager.getLevels().equalsIgnoreCase("B")) {
-                add_action_layout.setVisibility(View.VISIBLE);
+                rainbowTextView.animateText(context.getString(R.string.take_action));
+            } else {
+                rainbowTextView.animateText(context.getString(R.string.view_image));
             }
         }
 
@@ -77,10 +78,10 @@ public class InspectionListAdapter extends RecyclerView.Adapter<InspectionListAd
     }
 
     public void addActionScreen(int position) {
-        String actionWorkid = prefManager.getKeyActionWorkid();
-        String actionProjectName = prefManager.getKeyActionProjectName();
-        String actionStageLevel = prefManager.getKeyActionStageLevel();
-        String actionAmount = prefManager.getKeyActionAmount();
+        String actionWorkid = inspectionlistvalues.get(position).getWorkID();
+        String actionProjectName = inspectionlistvalues.get(position).getProjectName();
+        String actionStageLevel = inspectionlistvalues.get(position).getWorkStageName();
+        String actionAmount = inspectionlistvalues.get(position).getAsAmount();
         String actionDateOfInspection = inspectionlistvalues.get(position).getDate_of_inspection();
         String actionRemark = inspectionlistvalues.get(position).getInspection_remark();
         String actionObservatuion = inspectionlistvalues.get(position).getObservation();
@@ -115,7 +116,7 @@ public class InspectionListAdapter extends RecyclerView.Adapter<InspectionListAd
         activity.overridePendingTransition(R.anim.slide_in, R.anim.slide_out);
     }
 
-    public void imageGridViewScreen(int position) {
+    public void imagePreviewActionScreen(int position) {
         //String inspection_id = String.valueOf(inspectionlistvalues.get(position).getInspectionID());
         String Online_inspect_id = String.valueOf(inspectionlistvalues.get(position).getOnlineInspectID());
 
@@ -132,18 +133,17 @@ public class InspectionListAdapter extends RecyclerView.Adapter<InspectionListAd
         holder.remark.setText(inspectionlistvalues.get(position).getInspection_remark());
         holder.observation.setText(inspectionlistvalues.get(position).getObservation());
         holder.action_result_tv.setText(inspectionlistvalues.get(position).getActionresult());
-            holder.rainbowTextView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (!prefManager.getLevels().equalsIgnoreCase("B")) {
-                        imagePreviewScreen(position);
-                    } else {
-                        imageGridViewScreen(position);
-                    }
+        holder.rainbowTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (!prefManager.getLevels().equalsIgnoreCase("B")) {
+                    imagePreviewScreen(position);
+                } else {
+                    imagePreviewActionScreen(position);
                 }
-            });
+            }
+        });
 
-        holder.add_action_layout.setVisibility(View.VISIBLE);
         holder.add_action_layout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
