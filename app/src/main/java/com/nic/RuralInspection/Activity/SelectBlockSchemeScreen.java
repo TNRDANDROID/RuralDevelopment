@@ -72,14 +72,14 @@ public class SelectBlockSchemeScreen extends AppCompatActivity implements View.O
         super.onCreate(savedInstanceState);
         setContentView(R.layout.select_block_scheme);
         intializeUI();
-        if (Utils.isOnline()) {
-            db.delete(DBHelper.WORK_LIST_OPTIONAL, null, null);
-            db.delete(DBHelper.INSPECTION, null, null);
-            db.delete(DBHelper.INSPECTION_ACTION, null, null);
-            db.delete(DBHelper.CAPTURED_PHOTO, null, null);
-        } else {
-            //   Utils.showAlert(this, getResources().getString(R.string.no_internet));
-        }
+//        if (Utils.isOnline()) {
+//            db.delete(DBHelper.WORK_LIST_OPTIONAL, null, null);
+//            db.delete(DBHelper.INSPECTION, null, null);
+//            db.delete(DBHelper.INSPECTION_ACTION, null, null);
+//            db.delete(DBHelper.CAPTURED_PHOTO, null, null);
+//        } else {
+//            //   Utils.showAlert(this, getResources().getString(R.string.no_internet));
+//        }
 
 
     }
@@ -812,8 +812,11 @@ public class SelectBlockSchemeScreen extends AppCompatActivity implements View.O
                     String inspection_id = jsonArray.getJSONObject(i).getString(AppConstant.INSPECTION_ID);
                     String image = jsonArray.getJSONObject(i).getString(AppConstant.IMAGE);
                     String image_description = jsonArray.getJSONObject(i).getString("image_description");
+                    String image_id  = jsonArray.getJSONObject(i).getString(AppConstant.IMAGE_ID);
+
 
                     ContentValues Imageist= new ContentValues();
+                    Imageist.put(AppConstant.IMAGE_ID, image_id);
                     Imageist.put(AppConstant.INSPECTION_ID, inspection_id);
                     Imageist.put(AppConstant.IMAGE, image);
                     Imageist.put(AppConstant.DESCRIPTION, image_description);

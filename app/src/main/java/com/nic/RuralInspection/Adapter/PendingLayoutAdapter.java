@@ -102,6 +102,7 @@ public class PendingLayoutAdapter extends RecyclerView.Adapter<PendingLayoutAdap
 
         String work_id = pendingListValues.get(position).getWorkID();
         int inspection_id = pendingListValues.get(position).getInspectionID();
+        prefManager.setKeyDeleteId(String.valueOf(inspection_id));
         String stage_of_work_on_inspection = pendingListValues.get(position).getWorkStageCode();
         String stage_of_work_on_inspection_name = pendingListValues.get(position).getWorkStageName();
         String date_of_inspection = pendingListValues.get(position).getDate_of_inspection();
@@ -172,7 +173,12 @@ public class PendingLayoutAdapter extends RecyclerView.Adapter<PendingLayoutAdap
             end = end > oof.length() ? oof.length() : end;
             Log.v("oof", oof.substring(start, end));
         }
-        pendingLayoutFragment.pending_Sync_Data(dataset);
+        if(Utils.isOnline()) {
+            pendingLayoutFragment.pending_Sync_Data(dataset);
+        }else {
+            Utils.showAlert(context,"Turn On Mobile Data To Upload");
+        }
+
 
     }
 

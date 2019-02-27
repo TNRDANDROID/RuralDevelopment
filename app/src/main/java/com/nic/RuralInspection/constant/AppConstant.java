@@ -75,6 +75,7 @@ public class AppConstant {
     public static String LATITUDE = "latitude";
     public static String LONGITUDE = "longitude";
     public static String INSPECTION_ID = "inspection_id";
+    public static String IMAGE_ID = "id";
 
     //INSPECTION TABLE
 

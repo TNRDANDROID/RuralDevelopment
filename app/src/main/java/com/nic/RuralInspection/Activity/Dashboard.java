@@ -104,6 +104,7 @@ public class Dashboard extends AppCompatActivity implements Api.ServerResponseLi
         }
         getPendingCount();
         if (Utils.isOnline()) {
+            // to avoid insertion of data while back
             Cursor toCheck = getRawEvents("SELECT * FROM " + DBHelper.FINANCIAL_YEAR_TABLE_NAME, null);
             toCheck.moveToFirst();
             if (toCheck.getCount() < 1) {

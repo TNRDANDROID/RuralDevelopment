@@ -108,7 +108,8 @@ public class DBHelper extends SQLiteOpenHelper {
                 "created_username TEXT)");
 
         db.execSQL("CREATE TABLE "+ CAPTURED_PHOTO + "("
-                + "inspection_id INTEGER," +
+                + "id INTEGER," +
+                "inspection_id INTEGER," +
                 "work_id TEXT," +
                 "latitude TEXT," +
                 "longitude TEXT," +

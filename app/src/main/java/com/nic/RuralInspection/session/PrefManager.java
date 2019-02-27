@@ -51,6 +51,7 @@ public class PrefManager {
     private static final String KEY_ACTION_WORKID = "Action_WorkId";
     private static final String KEY_ACTION_AMOUNT= "Action_Amount";
     private static final String KEY_ACTION_STAGE_LEVEL = "Action_Stage_Level";
+    private static final String KEY_DELETE_ID = "deleteId";
 
 
     private static final String IMEI = "imei";
@@ -60,6 +61,15 @@ public class PrefManager {
         this._context = context;
         pref = _context.getSharedPreferences(AppConstant.PREF_NAME, PRIVATE_MODE);
         editor = pref.edit();
+    }
+
+    public String getKeyDeleteId() {
+        return pref.getString(KEY_DELETE_ID,null);
+    }
+
+    public void setKeyDeleteId(String deleteId) {
+        editor.putString(KEY_DELETE_ID,deleteId);
+        editor.commit();
     }
 
     public String getIMEI() {

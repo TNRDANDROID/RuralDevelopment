@@ -1,18 +1,22 @@
 package com.nic.RuralInspection.Fragment;
 
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
 import com.android.volley.VolleyError;
+import com.nic.RuralInspection.Activity.Dashboard;
 import com.nic.RuralInspection.Adapter.PendingLayoutAdapter;
+import com.nic.RuralInspection.DataBase.DBHelper;
 import com.nic.RuralInspection.Model.BlockListValue;
 import com.nic.RuralInspection.R;
 import com.nic.RuralInspection.Support.MyCustomLayoutManager;
@@ -75,8 +79,7 @@ public class PendingLayoutFragment extends Fragment implements View.OnClickListe
     }
     private void retrievePendingdata() {
         pendingListValues.clear();
-        //  String pendingList_sql = "select * from "+ DBHelper.INSPECTION +" where delete_flag = 0";
-        String pendingList_sql = "select * from(select * from INSPECTION WHERE inspection_id in (select inspection_id from captured_photo))a left join (select * from observation)b on a.observation = b.id where delete_flag = 0";
+        String pendingList_sql = "select * from(select * from "+DBHelper.INSPECTION_PENDING +" WHERE inspection_id in (select inspection_id from "+DBHelper.CAPTURED_PHOTO+"))a left join (select * from "+DBHelper.OBSERVATION_TABLE+")b on a.observation = b.id where delete_flag = 0";
         Log.d("sql", pendingList_sql);
         Cursor pendingList = getRawEvents(pendingList_sql, null);
 
@@ -116,13 +119,26 @@ public class PendingLayoutFragment extends Fragment implements View.OnClickListe
         }
 
         if (!(pendingListValues.size() < 1)) {
+            Dashboard.getPendingCount();
             pending_recycler_view.setAdapter(pendingLayoutAdapter);
 
         } else {
-            //list_count.setText("0");
-            //not_found_tv.setVisibility(View.VISIBLE);
+          //  getActivity().finish();
         }
 
+    }
+
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+
+        switch (keyCode) {
+            case KeyEvent.KEYCODE_BACK:
+                String cameback="CameBack";
+                Intent intent = new Intent(getActivity(),Dashboard.class);
+                intent.putExtra("Comingback", cameback);
+                startActivity(intent);
+                return true;
+        }
+        return false;
     }
     @Override
     public void onClick(View v) {
@@ -165,9 +181,12 @@ public class PendingLayoutFragment extends Fragment implements View.OnClickListe
                 JSONObject jsonObject = new JSONObject(responseDecryptedBlockKey);
                 if (jsonObject.getString("STATUS").equalsIgnoreCase("OK") && jsonObject.getString("RESPONSE").equalsIgnoreCase("OK")) {
                     // loadBlockList(jsonObject.getJSONArray(AppConstant.JSON_DATA));
-                    Utils.showAlert(getActivity(), "Saved");
+                  db.delete(DBHelper.INSPECTION_PENDING,"inspection_id=?",new String[] {prefManager.getKeyDeleteId()});
+                    Utils.showAlert(getActivity(), "Uploaded");
                 }
                 Log.d("saved_response", "" + responseDecryptedBlockKey);
+                retrievePendingdata();
+                pendingLayoutAdapter.notifyDataSetChanged();
             }
 
 
