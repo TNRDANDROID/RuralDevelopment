@@ -46,6 +46,7 @@ public class ImagePreviewScreen extends AppCompatActivity implements View.OnClic
     private RecyclerView image_preview_recyclerview;
     private PrefManager prefManager;
     private ImageDescriptionAdapter imageDescriptionAdapter;
+    private MyCustomTextView title_tv;
     private List<BlockListValue> imagelistvalues;
     private ImageView back_img;
 
@@ -63,6 +64,7 @@ public class ImagePreviewScreen extends AppCompatActivity implements View.OnClic
         imagelistvalues = new ArrayList<>();
         imageDescriptionAdapter = new ImageDescriptionAdapter(this, imagelistvalues);
         image_preview_recyclerview = (RecyclerView) findViewById(R.id.image_preview_recyclerview);
+        title_tv = (MyCustomTextView)findViewById(R.id.title_tv);
         back_img = (ImageView) findViewById(R.id.backimg);
         back_img.setOnClickListener(this);
 
@@ -74,6 +76,7 @@ public class ImagePreviewScreen extends AppCompatActivity implements View.OnClic
         image_preview_recyclerview.setNestedScrollingEnabled(false);
         image_preview_recyclerview.setFocusable(false);
         image_preview_recyclerview.setAdapter(imageDescriptionAdapter);
+        title_tv.setText("View Inspected Image");
         retriveImageWithDescription();
     }
 

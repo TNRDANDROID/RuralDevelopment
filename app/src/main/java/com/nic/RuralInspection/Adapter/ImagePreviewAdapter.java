@@ -79,7 +79,7 @@ public class ImagePreviewAdapter extends RecyclerView.Adapter<ImagePreviewAdapte
 //                            checked_value.add(imagePreviewlistvalues.get(i).getName());
                         }
                     }
-                    if(checked_value.size() > 2){
+                    if(imagePreviewlistvalues.size() > 0){
 
                     }
                     //onItemClick.onItemCheck(currentItem);

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
 
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:customfontdemo="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -37,6 +38,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical">
+
 
 
                     <com.nic.RuralInspection.Support.MyCustomTextView
@@ -79,8 +81,8 @@
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
                                     android:padding="5dp"
-                                    android:text="Work ID"
-                                    android:textAlignment="center"
+                                    android:text="Action"
+                                    android:textAlignment="viewEnd"
                                     android:textColor="#FFF"
                                     android:textSize="18sp"
                                     customfontdemo:fontName="@string/font_circular_bold" />
@@ -117,11 +119,11 @@
                                 android:orientation="vertical">
 
                                 <com.nic.RuralInspection.Support.MyCustomTextView
-                                    android:id="@+id/pend_work_id"
+                                    android:id="@+id/date_of_inspection"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
                                     android:padding="10dp"
-                                    android:text="work id"
+                                    android:text=" "
                                     android:textAlignment="inherit"
                                     android:textColor="#FFF"
                                     android:textSize="18sp"
@@ -148,8 +150,8 @@
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
                                     android:padding="5dp"
-                                    android:text="Stage"
-                                    android:textAlignment="center"
+                                    android:text="Action Date"
+                                    android:textAlignment="viewEnd"
                                     android:textColor="#000"
                                     android:textSize="18sp"
                                     customfontdemo:fontName="@string/font_circular_book" />
@@ -183,11 +185,11 @@
                                 android:orientation="vertical">
 
                                 <com.nic.RuralInspection.Support.MyCustomTextView
-                                    android:id="@+id/pend_stage"
+                                    android:id="@+id/remark"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
                                     android:padding="10dp"
-                                    android:text="Stage"
+                                    android:text="Test"
                                     android:textAlignment="inherit"
                                     android:textColor="#000"
                                     android:textSize="18sp"
@@ -220,13 +222,15 @@
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
                                     android:padding="5dp"
-                                    android:text="Inspected Date"
-                                    android:textAlignment="center"
+                                    android:text="Remark"
+                                    android:textAlignment="viewEnd"
                                     android:textColor="#000"
                                     android:textSize="18sp"
                                     customfontdemo:fontName="@string/font_circular_book" />
 
                             </LinearLayout>
+
+
 
 
                             <LinearLayout
@@ -257,7 +261,7 @@
                                 android:orientation="vertical">
 
                                 <com.nic.RuralInspection.Support.MyCustomTextView
-                                    android:id="@+id/pend_inspected_date"
+
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
                                     android:padding="10dp"
@@ -278,10 +282,8 @@
 
 
                         <LinearLayout
-
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:elevation="@dimen/_10sdp"
                             android:orientation="horizontal">
 
                             <LinearLayout
@@ -292,12 +294,86 @@
                                 android:orientation="vertical">
 
                                 <com.nic.RuralInspection.Support.MyCustomTextView
-                                    android:id="@+id/action_tv"
+
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
                                     android:padding="5dp"
-                                    android:text="Observation"
-                                    android:textAlignment="center"
+                                    android:text="Result"
+                                    android:textAlignment="viewEnd"
+                                    android:textColor="#000"
+                                    android:textSize="18sp"
+                                    customfontdemo:fontName="@string/font_circular_book" />
+
+                            </LinearLayout>
+
+
+
+
+                            <LinearLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:gravity="center_horizontal"
+                                android:orientation="vertical">
+
+                                <com.nic.RuralInspection.Support.MyCustomTextView
+
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+
+                                    android:padding="10dp"
+                                    android:text=":"
+                                    android:textColor="#000"
+                                    android:textSize="18sp"
+                                    customfontdemo:fontName="@string/font_circular_book" />
+
+                            </LinearLayout>
+
+
+                            <LinearLayout
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="8"
+                                android:gravity="center"
+                                android:orientation="vertical">
+
+                                <com.nic.RuralInspection.Support.MyCustomTextView
+                                    android:id="@+id/observation"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:padding="10dp"
+                                    android:text="U"
+                                    android:textAlignment="inherit"
+                                    android:textColor="#000"
+                                    android:textSize="18sp"
+                                    customfontdemo:fontName="@string/font_circular_book" />
+                            </LinearLayout>
+                        </LinearLayout>
+
+
+
+
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+
+                            android:orientation="horizontal"
+                            android:visibility="gone">
+
+                            <LinearLayout
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:layout_weight="8"
+                                android:gravity="center"
+                                android:orientation="vertical">
+
+                                <com.nic.RuralInspection.Support.MyCustomTextView
+
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:padding="5dp"
+                                    android:text="Action"
+                                    android:textAlignment="viewEnd"
                                     android:textColor="#000"
                                     android:textSize="18sp"
                                     customfontdemo:fontName="@string/font_circular_book" />
@@ -333,7 +409,6 @@
                                 android:orientation="vertical">
 
                                 <com.nic.RuralInspection.Support.MyCustomTextView
-                                    android:id="@+id/pend_observation"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
                                     android:padding="10dp"
@@ -345,44 +420,86 @@
                             </LinearLayout>
                         </LinearLayout>
 
-
-
-                        <RelativeLayout
+                        <View
                             android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:layout_gravity="center"
-                            android:background="#c834a853"
-                            android:orientation="horizontal">
+                            android:layout_height="0.5dp"
+                            android:layout_gravity="bottom"
+                            android:layout_marginLeft="15dp"
+                            android:visibility="gone"
+                            android:background="@color/dashboard_line_dark" />
 
-                            <com.nic.RuralInspection.Support.MyCustomTextView
-                                android:id="@+id/add_inspection_report"
-                                android:layout_width="90dp"
-                                android:layout_height="40dp"
-                                android:layout_alignParentStart="true"
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+
+                            android:orientation="horizontal"
+                            android:visibility="gone">
+
+                            <LinearLayout
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:layout_weight="8"
                                 android:gravity="center"
-                                android:text="Upload"
-                                android:textAlignment="center"
-                                android:textColor="@android:color/black"
-                                android:textSize="18sp"
-                                android:textStyle="bold" />
+                                android:orientation="vertical">
 
-                            <com.nic.RuralInspection.Support.MyCustomTextView
-                                android:id="@+id/del_inspection_report"
-                                android:layout_width="90dp"
-                                android:layout_height="40dp"
-                                android:layout_alignParentEnd="true"
+                                <com.nic.RuralInspection.Support.MyCustomTextView
+
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:padding="5dp"
+                                    android:text="Action Date"
+                                    android:textAlignment="viewEnd"
+                                    android:textColor="#000"
+                                    android:textSize="18sp"
+                                    customfontdemo:fontName="@string/font_circular_book" />
+
+                            </LinearLayout>
+
+
+                            <LinearLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:gravity="center_horizontal"
+                                android:orientation="vertical">
+
+                                <com.nic.RuralInspection.Support.MyCustomTextView
+
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+
+                                    android:padding="10dp"
+                                    android:text=":"
+                                    android:textColor="#000"
+                                    android:textSize="18sp"
+                                    customfontdemo:fontName="@string/font_circular_book" />
+
+                            </LinearLayout>
+
+
+                            <LinearLayout
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="8"
                                 android:gravity="center"
-                                android:text="Delete"
-                                android:textAlignment="center"
-                                android:textColor="@android:color/black"
-                                android:textSize="18sp"
-                                android:textStyle="bold" />
-                        </RelativeLayout>
+                                android:orientation="vertical">
 
+                                <com.nic.RuralInspection.Support.MyCustomTextView
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:padding="10dp"
+                                    android:text="26-12-2018"
+                                    android:textAlignment="inherit"
+                                    android:textColor="#000"
+                                    android:textSize="18sp"
+                                    customfontdemo:fontName="@string/font_circular_book" />
+                            </LinearLayout>
+                        </LinearLayout>
 
                     </LinearLayout>
                 </LinearLayout>
             </LinearLayout>
+
 
         </LinearLayout>
     </android.support.v7.widget.CardView>

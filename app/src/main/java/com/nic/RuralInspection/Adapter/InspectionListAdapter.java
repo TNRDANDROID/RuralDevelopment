@@ -11,9 +11,9 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
 import com.hanks.htextview.rainbow.RainbowTextView;
-import com.nic.RuralInspection.Activity.AddInspectionReportScreen;
 import com.nic.RuralInspection.Activity.ImagePreviewActionScreen;
 import com.nic.RuralInspection.Activity.ImagePreviewScreen;
+import com.nic.RuralInspection.Activity.ViewActions;
 import com.nic.RuralInspection.Activity.ViewInspectionInActionScreen;
 import com.nic.RuralInspection.Model.BlockListValue;
 import com.nic.RuralInspection.R;
@@ -47,7 +47,7 @@ public class InspectionListAdapter extends RecyclerView.Adapter<InspectionListAd
 
 
     public class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        public MyCustomTextView date_of_inspection, remark, observation, view_image, action_result_tv;
+        public MyCustomTextView date_of_inspection, remark, observation, view_image, action_result_tv,view_action;
         public RainbowTextView rainbowTextView;
         private RelativeLayout add_action_layout;
         private LinearLayout action_part_visible_layout;
@@ -62,7 +62,10 @@ public class InspectionListAdapter extends RecyclerView.Adapter<InspectionListAd
             remark = (MyCustomTextView) itemView.findViewById(R.id.remark);
             observation = (MyCustomTextView) itemView.findViewById(R.id.observation);
             action_result_tv = (MyCustomTextView) itemView.findViewById(R.id.action_result_tv);
+            view_action = (MyCustomTextView) itemView.findViewById(R.id.view_action);
+
             add_action_layout.setOnClickListener(this);
+
             if (prefManager.getLevels().equalsIgnoreCase("B")) {
                 rainbowTextView.animateText(context.getString(R.string.take_action));
             } else {
@@ -79,7 +82,7 @@ public class InspectionListAdapter extends RecyclerView.Adapter<InspectionListAd
 
     public void addActionScreen(int position) {
         String actionWorkid = inspectionlistvalues.get(position).getWorkID();
-        String actionProjectName = inspectionlistvalues.get(position).getProjectName();
+        String actionProjectName = inspectionlistvalues.get(position).getWorkName();
         String actionStageLevel = inspectionlistvalues.get(position).getWorkStageName();
         String actionAmount = inspectionlistvalues.get(position).getAsAmount();
         String actionDateOfInspection = inspectionlistvalues.get(position).getDate_of_inspection();
@@ -132,22 +135,31 @@ public class InspectionListAdapter extends RecyclerView.Adapter<InspectionListAd
         holder.date_of_inspection.setText(inspectionlistvalues.get(position).getDate_of_inspection());
         holder.remark.setText(inspectionlistvalues.get(position).getInspection_remark());
         holder.observation.setText(inspectionlistvalues.get(position).getObservation());
-        holder.action_result_tv.setText(inspectionlistvalues.get(position).getActionresult());
+        holder.action_result_tv.setText(inspectionlistvalues.get(position).getDetail());
+
         holder.rainbowTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (!prefManager.getLevels().equalsIgnoreCase("B")) {
                     imagePreviewScreen(position);
                 } else {
-                    imagePreviewActionScreen(position);
+//                    imagePreviewActionScreen(position);
+                    addActionScreen(position);
+
                 }
+            }
+        });
+
+        holder.view_action.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                viewAction(position);
             }
         });
 
         holder.add_action_layout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                addActionScreen(position);
             }
         });
 
@@ -157,5 +169,17 @@ public class InspectionListAdapter extends RecyclerView.Adapter<InspectionListAd
     @Override
     public int getItemCount() {
         return inspectionlistvalues.size();
+    }
+
+    public void viewAction(int position){
+        String work_id = inspectionlistvalues.get(position).getWorkID();
+        String inspect_id = String.valueOf(inspectionlistvalues.get(position).getOnlineInspectID());
+
+        Activity activity = (Activity) context;
+        Intent intent = new Intent(context, ViewActions.class);
+        intent.putExtra(AppConstant.INSPECTION_ID, inspect_id);
+        intent.putExtra(AppConstant.WORK_ID, work_id);
+        activity.startActivity(intent);
+        activity.overridePendingTransition(R.anim.slide_in, R.anim.slide_out);
     }
 }

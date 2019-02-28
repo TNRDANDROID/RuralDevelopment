@@ -71,7 +71,7 @@ public class ViewInspectionReportScreen extends AppCompatActivity implements Vie
 
     private static String imageStoragePath;
     private ImageView back_img;
-    private MyCustomTextView district_tv, scheme_name_tv, block_name_tv, block_user_tv, village_name_tv, fin_year_tv;
+    private MyCustomTextView district_tv, scheme_name_tv, block_name_tv, block_user_tv, village_name_tv, fin_year_tv, title_tv;
     private MyCustomTextView projectName, amountTv, levelTv;
     private LinearLayout village_layout, block_layout;
     private ImageDescriptionAdapter imageAdapter;
@@ -80,7 +80,6 @@ public class ViewInspectionReportScreen extends AppCompatActivity implements Vie
     PrefManager prefManager;
     private ArrayList<BlockListValue> imagelistValues = new ArrayList<>();
     private ArrayList<BlockListValue> inspectionlistvalues = new ArrayList<>();
-
 
 
     @Override
@@ -107,6 +106,7 @@ public class ViewInspectionReportScreen extends AppCompatActivity implements Vie
         projectName = (MyCustomTextView) findViewById(R.id.project_title_tv);
         amountTv = (MyCustomTextView) findViewById(R.id.amount_tv);
         levelTv = (MyCustomTextView) findViewById(R.id.level_tv);
+        title_tv = (MyCustomTextView) findViewById(R.id.title_tv);
 
         scrollView = (ScrollView) findViewById(R.id.scroll_view);
 //        action_tv = (MyCustomTextView) findViewById(R.id.action_tv);
@@ -141,6 +141,7 @@ public class ViewInspectionReportScreen extends AppCompatActivity implements Vie
             block_layout.setVisibility(View.VISIBLE);
             block_user_tv.setText(prefManager.getBlockName());
         }
+        title_tv.setText("View Inspection");
         // retrievedata();
         retrievedata_inspection();
         //  inspectionListRecyclerView.setAdapter(inspectionListAdapter);
@@ -154,7 +155,7 @@ public class ViewInspectionReportScreen extends AppCompatActivity implements Vie
 
         // String inspection_sql = "select * from (select * from "+DBHelper.INSPECTION+" WHERE work_id="+workId+")a left join (select * from captured_photo)b on a.inspection_id=b.inspection_id and a.work_id=b.work_id group by a.inspection_id";
         //String inspection_sql = "select a.inspection_id as inspection_id,a.id as id,a.work_id as work_id,a.date_of_inspection as date_of_inspection,a.inspection_remark as inspection_remark,b.observation as observation from(select * from INSPECTION WHERE id in (select inspection_id from captured_photo))a left join (select * from observation)b on a.observation = b.id where work_id ="+workId ;
-      String inspection_sql = "select a.inspection_id as inspection_id,a.id as id,a.work_id as work_id,a.date_of_inspection as date_of_inspection,a.inspection_remark as inspection_remark,b.observation as observation,c.dist_action as dist_action,c.state_action as state_action,c.sub_div_action as sub_div_action from(select * from INSPECTION WHERE id in (select inspection_id from captured_photo))a left join (select * from observation)b on a.observation = b.id left join (select * from inspection_action) c on a.inspection_id = c.inspection_id where a.work_id ="+workId ;
+        String inspection_sql = "select a.inspection_id as inspection_id,a.id as id,a.work_id as work_id,a.date_of_inspection as date_of_inspection,a.inspection_remark as inspection_remark,b.observation as observation,c.dist_action as dist_action,c.state_action as state_action,c.sub_div_action as sub_div_action from(select * from INSPECTION WHERE id in (select inspection_id from captured_photo))a left join (select * from observation)b on a.observation = b.id left join (select * from inspection_action) c on a.inspection_id = c.inspection_id where a.work_id =" + workId;
         Log.d("inspection_sql", inspection_sql);
         Cursor inspectionList = getRawEvents(inspection_sql, null);
 
@@ -173,23 +174,21 @@ public class ViewInspectionReportScreen extends AppCompatActivity implements Vie
 
                     BlockListValue inspectionValue = new BlockListValue();
                     inspectionValue.setWorkID(work_id);
-                    Log.d("inspectworkId",""+id);
+                    Log.d("inspectworkId", "" + id);
                     inspectionValue.setDate_of_inspection(date_of_inspection);
                     inspectionValue.setInspection_remark(inspection_remark);
                     inspectionValue.setObservation(observation);
                     inspectionValue.setInspectionID(inspection_id);
                     inspectionValue.setOnlineInspectID(id);
+                    inspectionValue.setDetail("Online");
 
-                    if(dist_action == null && state_action == null && sub_div_action ==null) {
+                    if (dist_action == null && state_action == null && sub_div_action == null) {
                         inspectionValue.setActionresult("NO Action Taken Yet");
-                    } else
-                    if(dist_action == "1" && state_action == "1" && sub_div_action =="1") {
+                    } else if (dist_action == "1" && state_action == "1" && sub_div_action == "1") {
                         inspectionValue.setActionresult("Accepted");
-                    }
-                    else {
+                    } else {
                         inspectionValue.setActionresult("Pending");
                     }
-
 
 
                     inspectionlistvalues.add(inspectionValue);
@@ -197,11 +196,51 @@ public class ViewInspectionReportScreen extends AppCompatActivity implements Vie
                 } while (inspectionList.moveToNext());
             }
         }
-
-       // if ((!(inspectionlistvalues.size() < 1)) && (inspectionValue.getWorkID().equalsIgnoreCase(prefManager.getKeyActionWorkid()))) {
-        if ((!(inspectionlistvalues.size() < 1))){
+        retrievePendingdata();
+        // if ((!(inspectionlistvalues.size() < 1)) && (inspectionValue.getWorkID().equalsIgnoreCase(prefManager.getKeyActionWorkid()))) {
+        if ((!(inspectionlistvalues.size() < 1))) {
             inspectionListRecyclerView.setAdapter(inspectionListAdapter);
             Log.d("size", String.valueOf(inspectionlistvalues.size()));
+        }
+    }
+
+    private void retrievePendingdata() {
+
+        String pendingList_sql = "select * from(select * from " + DBHelper.INSPECTION_PENDING + " WHERE inspection_id in (select inspection_id from " + DBHelper.CAPTURED_PHOTO + "))a left join (select * from " + DBHelper.OBSERVATION_TABLE + ")b on a.observation = b.id where delete_flag = 0";
+        Log.d("sql", pendingList_sql);
+        Cursor pendingList = getRawEvents(pendingList_sql, null);
+
+        if (pendingList.getCount() > 0) {
+            if (pendingList.moveToFirst()) {
+                do {
+                    String work_id = pendingList.getString(pendingList.getColumnIndexOrThrow(AppConstant.WORK_ID));
+                    int inspection_id = pendingList.getInt(pendingList.getColumnIndexOrThrow(AppConstant.INSPECTION_ID));
+                    String stage_of_work_on_inspection = pendingList.getString(pendingList.getColumnIndexOrThrow(AppConstant.STAGE_OF_WORK_ON_INSPECTION));
+                    String stage_of_work_on_inspection_name = pendingList.getString(pendingList.getColumnIndexOrThrow(AppConstant.STAGE_OF_WORK_ON_INSPECTION_NAME));
+                    String date_of_inspection = pendingList.getString(pendingList.getColumnIndexOrThrow(AppConstant.DATE_OF_INSPECTION));
+                    int observation = pendingList.getInt(pendingList.getColumnIndexOrThrow(AppConstant.OBSERVATION_ID));
+                    String inspection_remark = pendingList.getString(pendingList.getColumnIndexOrThrow(AppConstant.INSPECTION_REMARK));
+                    String created_date = pendingList.getString(pendingList.getColumnIndexOrThrow(AppConstant.CREATED_DATE));
+                    String created_ipaddress = pendingList.getString(pendingList.getColumnIndexOrThrow(AppConstant.CREATED_IP_ADDRESS));
+                    String created_username = pendingList.getString(pendingList.getColumnIndexOrThrow(AppConstant.CREATED_USER_NAME));
+                    String Observation = pendingList.getString(pendingList.getColumnIndexOrThrow(AppConstant.OBSERVATION_NAME));
+
+
+                    BlockListValue inspectionValue = new BlockListValue();
+                    inspectionValue.setWorkID(work_id);
+
+                    inspectionValue.setDate_of_inspection(date_of_inspection);
+                    inspectionValue.setInspection_remark(inspection_remark);
+                    inspectionValue.setObservation(Observation);
+                    inspectionValue.setInspectionID(inspection_id);
+                    inspectionValue.setOnlineInspectID(String.valueOf(inspection_id));
+                    inspectionValue.setDetail("Offline");
+
+                    inspectionlistvalues.add(inspectionValue);
+
+
+                } while (pendingList.moveToNext());
+            }
         }
     }
 

@@ -41,7 +41,8 @@ public class ImagePreviewActionScreen extends AppCompatActivity implements View.
     private PrefManager prefManager;
     private ImagePreviewAdapter imagePreviewAdapter;
     private List<BlockListValue> imagePreviewlistvalues;
-    private ImageView back_img;
+    private ImageView home;
+    private Button done;
     private RecyclerView image_preview_recyclerview;
     private RelativeLayout add_action_layout;
 
@@ -49,7 +50,7 @@ public class ImagePreviewActionScreen extends AppCompatActivity implements View.
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.grid_main_layout);
-intializeUI();
+        intializeUI();
 
 
     }
@@ -59,9 +60,8 @@ intializeUI();
         imagePreviewlistvalues = new ArrayList<>();
         imagePreviewAdapter = new ImagePreviewAdapter(this, imagePreviewlistvalues);
         image_preview_recyclerview = (RecyclerView) findViewById(R.id.image_preview_action_recyclerview);
-        back_img = (ImageView) findViewById(R.id.backimg);
-        back_img.setOnClickListener(this);
-
+        home = (ImageView) findViewById(R.id.home);
+        done = (Button) findViewById(R.id.btn_save);
 
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
         image_preview_recyclerview.setLayoutManager(mLayoutManager);
@@ -70,6 +70,10 @@ intializeUI();
         image_preview_recyclerview.setNestedScrollingEnabled(false);
         image_preview_recyclerview.setFocusable(false);
         image_preview_recyclerview.setAdapter(imagePreviewAdapter);
+        done.setText("Take Action");
+        done.setBackgroundResource(R.drawable.login_button);
+        done.setOnClickListener(this);
+        home.setOnClickListener(this);
         retriveImageWithDescription();
     }
 
@@ -117,8 +121,8 @@ intializeUI();
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.backimg:
-                onBackPress();
+            case R.id.btn_save:
+
                 break;
         }
     }
@@ -140,7 +144,6 @@ intializeUI();
         Cursor cursor = db.rawQuery(sql, null);
         return cursor;
     }
-
 
 
 }

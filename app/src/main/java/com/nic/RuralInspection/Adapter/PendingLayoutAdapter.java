@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.android.volley.VolleyError;
+import com.nic.RuralInspection.Activity.Dashboard;
 import com.nic.RuralInspection.Activity.PendinglayoutScreen;
 import com.nic.RuralInspection.DataBase.DBHelper;
 import com.nic.RuralInspection.Fragment.PendingLayoutFragment;
@@ -77,6 +78,13 @@ public class PendingLayoutAdapter extends RecyclerView.Adapter<PendingLayoutAdap
             }
         });
 
+        holder.del_inspection_report.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                deletePending(position);
+            }
+        });
+
 
     }
 
@@ -86,7 +94,7 @@ public class PendingLayoutAdapter extends RecyclerView.Adapter<PendingLayoutAdap
     }
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
-        private MyCustomTextView pend_work_id, pend_stage, pend_inspected_date, pend_observation, add_inspection_report;
+        private MyCustomTextView pend_work_id, pend_stage, pend_inspected_date, pend_observation, add_inspection_report,del_inspection_report;
 
         public MyViewHolder(View itemView) {
             super(itemView);
@@ -95,6 +103,7 @@ public class PendingLayoutAdapter extends RecyclerView.Adapter<PendingLayoutAdap
             pend_inspected_date = (MyCustomTextView) itemView.findViewById(R.id.pend_inspected_date);
             pend_observation = (MyCustomTextView) itemView.findViewById(R.id.pend_observation);
             add_inspection_report = (MyCustomTextView) itemView.findViewById(R.id.add_inspection_report);
+            del_inspection_report = (MyCustomTextView) itemView.findViewById(R.id.del_inspection_report);
         }
     }
 
@@ -180,6 +189,17 @@ public class PendingLayoutAdapter extends RecyclerView.Adapter<PendingLayoutAdap
         }
 
 
+    }
+
+    public void deletePending(int position) {
+        String work_id = pendingListValues.get(position).getWorkID();
+        String inspection_id = String.valueOf(pendingListValues.get(position).getInspectionID());
+
+       int sdsm = db.delete(DBHelper.INSPECTION_PENDING,"inspection_id=? and work_id=?",new String[] {inspection_id,work_id});
+       Log.d("sdsm",String.valueOf(sdsm));
+       Dashboard.getPendingCount();
+        pendingListValues.remove(position);
+      //  pendingLayoutFragment.notify();
     }
 
 

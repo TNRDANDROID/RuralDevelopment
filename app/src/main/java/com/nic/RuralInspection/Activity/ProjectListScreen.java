@@ -59,7 +59,7 @@ public class ProjectListScreen extends AppCompatActivity implements View.OnClick
     private LinearLayout village_layout,block_user_layout;
     private NestedScrollView scrollView;
     private SearchView searchView;
-    private MyCustomTextView district_tv, scheme_name_tv,block_user_tv, block_name_tv, fin_year_tv, list_count, not_found_tv, village_name_tv;
+    private MyCustomTextView district_tv, scheme_name_tv,block_user_tv, block_name_tv, fin_year_tv, list_count, not_found_tv, village_name_tv,title_tv;
     PrefManager prefManager;
     private JSONArray updatedJsonArray;
 
@@ -88,6 +88,7 @@ public class ProjectListScreen extends AppCompatActivity implements View.OnClick
         recyclerView = (RecyclerView) findViewById(R.id.project_list);
         not_found_tv = (MyCustomTextView) findViewById(R.id.not_found_tv);
         list_count = (MyCustomTextView) findViewById(R.id.count_list);
+        title_tv = (MyCustomTextView) findViewById(R.id.title_tv);
         projectListValues = new ArrayList<>();
         back_img = (ImageView) findViewById(R.id.backimg);
         back_img.setOnClickListener(this);
@@ -96,6 +97,7 @@ public class ProjectListScreen extends AppCompatActivity implements View.OnClick
         scheme_name_tv.setText(prefManager.getSchemeName());
         block_name_tv.setText(prefManager.getBlockName());
         fin_year_tv.setText(prefManager.getFinancialyearName());
+        title_tv.setText("Project Lists");
         if (prefManager.getLevels().equalsIgnoreCase("B")) {
             block_user_layout.setVisibility(View.VISIBLE);
             block_user_tv.setText(prefManager.getBlockName());

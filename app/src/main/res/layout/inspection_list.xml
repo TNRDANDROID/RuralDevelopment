@@ -317,10 +317,11 @@
 
 
                         <LinearLayout
+                            android:id="@+id/action_tv"
 
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:background="#0067B8"
+
                             android:elevation="@dimen/_10sdp"
                             android:orientation="horizontal">
 
@@ -329,23 +330,24 @@
                                 android:layout_height="match_parent"
                                 android:layout_weight="8"
                                 android:gravity="center"
-                                android:orientation="vertical">
+                                android:orientation="vertical"
+                                 >
 
                                 <com.nic.RuralInspection.Support.MyCustomTextView
-                                    android:id="@+id/action_tv"
+                                    android:id="@+id/view_action"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
                                     android:padding="5dp"
-                                    android:text="Action"
+                                    android:text="View Actions"
                                     android:textAlignment="viewEnd"
-                                    android:textColor="#FFF"
+                                    android:textColor="@android:color/black"
                                     android:textSize="18sp"
                                     customfontdemo:fontName="@string/font_circular_bold" />
 
                             </LinearLayout>
 
 
-                            <LinearLayout
+                            <!--<LinearLayout
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:gravity="center_horizontal"
@@ -362,7 +364,7 @@
                                     android:textSize="18sp"
                                     customfontdemo:fontName="@string/font_circular_book" />
 
-                            </LinearLayout>
+                            </LinearLayout>-->
 
 
                             <LinearLayout
@@ -377,9 +379,9 @@
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
                                     android:padding="10dp"
-                                    android:text="Accept"
+                                    android:text="Online"
                                     android:textAlignment="inherit"
-                                    android:textColor="#FFF"
+                                    android:textColor="@android:color/black"
                                     android:textSize="18sp"
                                     customfontdemo:fontName="@string/font_circular_bold" />
                             </LinearLayout>

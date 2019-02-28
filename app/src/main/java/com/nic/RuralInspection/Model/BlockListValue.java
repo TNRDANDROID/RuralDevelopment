@@ -50,6 +50,17 @@ public class BlockListValue {
     private String Actionresult;
     public boolean setItemSelected;
     private String OnlineInspectID;
+    private String detail;
+
+    public String getDetail() {
+        return detail;
+    }
+
+    public void setDetail(String detail) {
+        this.detail = detail;
+    }
+
+
 
 
 

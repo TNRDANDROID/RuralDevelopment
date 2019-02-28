@@ -48,6 +48,7 @@ public class PendingLayoutFragment extends Fragment implements View.OnClickListe
     private JSONArray updatedJsonArray;
     private Context context;
     private static PendingLayoutAdapter pendingLayoutAdapter;
+    private MyCustomTextView not_found_tv;
 
 
     public PendingLayoutFragment() {
@@ -68,6 +69,7 @@ public class PendingLayoutFragment extends Fragment implements View.OnClickListe
         prefManager = new PrefManager(getActivity());
 
         pending_recycler_view = (RecyclerView) view.findViewById(R.id.pending_recycler_view);
+        not_found_tv = (MyCustomTextView) view.findViewById(R.id.not_found_tv);
         MyCustomLayoutManager mLayoutManager = new MyCustomLayoutManager(getActivity());
         pending_recycler_view.setLayoutManager(mLayoutManager);
         pendingLayoutAdapter = new PendingLayoutAdapter(getActivity(), pendingListValues,this );
@@ -77,7 +79,7 @@ public class PendingLayoutFragment extends Fragment implements View.OnClickListe
 
 
     }
-    private void retrievePendingdata() {
+    public void retrievePendingdata() {
         pendingListValues.clear();
         String pendingList_sql = "select * from(select * from "+DBHelper.INSPECTION_PENDING +" WHERE inspection_id in (select inspection_id from "+DBHelper.CAPTURED_PHOTO+"))a left join (select * from "+DBHelper.OBSERVATION_TABLE+")b on a.observation = b.id where delete_flag = 0";
         Log.d("sql", pendingList_sql);
@@ -123,7 +125,9 @@ public class PendingLayoutFragment extends Fragment implements View.OnClickListe
             pending_recycler_view.setAdapter(pendingLayoutAdapter);
 
         } else {
-          //  getActivity().finish();
+            //not_found_tv.setVisibility(View.VISIBLE);
+            Dashboard.getPendingCount();
+            getActivity().onBackPressed();
         }
 
     }
@@ -182,11 +186,12 @@ public class PendingLayoutFragment extends Fragment implements View.OnClickListe
                 if (jsonObject.getString("STATUS").equalsIgnoreCase("OK") && jsonObject.getString("RESPONSE").equalsIgnoreCase("OK")) {
                     // loadBlockList(jsonObject.getJSONArray(AppConstant.JSON_DATA));
                   db.delete(DBHelper.INSPECTION_PENDING,"inspection_id=?",new String[] {prefManager.getKeyDeleteId()});
+                    Dashboard.getPendingCount();
+                    retrievePendingdata();
+                    pendingLayoutAdapter.notifyDataSetChanged();
                     Utils.showAlert(getActivity(), "Uploaded");
                 }
                 Log.d("saved_response", "" + responseDecryptedBlockKey);
-                retrievePendingdata();
-                pendingLayoutAdapter.notifyDataSetChanged();
             }
 
 
