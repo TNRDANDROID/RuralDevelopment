@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -47,7 +48,7 @@ public class InspectionListAdapter extends RecyclerView.Adapter<InspectionListAd
 
 
     public class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        public MyCustomTextView date_of_inspection, remark, observation, view_image, action_result_tv,view_action;
+        public MyCustomTextView date_of_inspection, remark, observation, view_image, ins_result_tv_on_ff,view_action;
         public RainbowTextView rainbowTextView;
         private RelativeLayout add_action_layout;
         private LinearLayout action_part_visible_layout;
@@ -61,7 +62,7 @@ public class InspectionListAdapter extends RecyclerView.Adapter<InspectionListAd
             add_action_layout = (RelativeLayout) itemView.findViewById(R.id.add_action_layout);
             remark = (MyCustomTextView) itemView.findViewById(R.id.remark);
             observation = (MyCustomTextView) itemView.findViewById(R.id.observation);
-            action_result_tv = (MyCustomTextView) itemView.findViewById(R.id.action_result_tv);
+            ins_result_tv_on_ff = (MyCustomTextView) itemView.findViewById(R.id.ins_result_tv_on_ff);
             view_action = (MyCustomTextView) itemView.findViewById(R.id.view_action);
 
             add_action_layout.setOnClickListener(this);
@@ -88,12 +89,14 @@ public class InspectionListAdapter extends RecyclerView.Adapter<InspectionListAd
         String actionDateOfInspection = inspectionlistvalues.get(position).getDate_of_inspection();
         String actionRemark = inspectionlistvalues.get(position).getInspection_remark();
         String actionObservatuion = inspectionlistvalues.get(position).getObservation();
+        String inspection_id = inspectionlistvalues.get(position).getOnlineInspectID();
 
 
         Activity activity = (Activity) context;
         Intent intent = new Intent(context, ViewInspectionInActionScreen.class);
 
         intent.putExtra(AppConstant.WORK_ID, actionWorkid);
+        intent.putExtra(AppConstant.INSPECTION_ID, inspection_id);
         intent.putExtra(AppConstant.WORK_NAME, actionProjectName);
 
         intent.putExtra(AppConstant.WORK_SATGE_NAME, actionStageLevel);
@@ -111,6 +114,7 @@ public class InspectionListAdapter extends RecyclerView.Adapter<InspectionListAd
     public void imagePreviewScreen(int position) {
         //String inspection_id = String.valueOf(inspectionlistvalues.get(position).getInspectionID());
         String Online_inspect_id = String.valueOf(inspectionlistvalues.get(position).getOnlineInspectID());
+        prefManager.setAppKey(Online_inspect_id);
 
         Activity activity = (Activity) context;
         Intent intent = new Intent(context, ImagePreviewScreen.class);
@@ -135,8 +139,19 @@ public class InspectionListAdapter extends RecyclerView.Adapter<InspectionListAd
         holder.date_of_inspection.setText(inspectionlistvalues.get(position).getDate_of_inspection());
         holder.remark.setText(inspectionlistvalues.get(position).getInspection_remark());
         holder.observation.setText(inspectionlistvalues.get(position).getObservation());
-        holder.action_result_tv.setText(inspectionlistvalues.get(position).getDetail());
+        if (!prefManager.getLevels().equalsIgnoreCase("B")) {
+            holder.ins_result_tv_on_ff.setText(inspectionlistvalues.get(position).getDetail());
 
+        } else {
+            holder.ins_result_tv_on_ff.setVisibility(View.GONE);
+            RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+            params.addRule(RelativeLayout.CENTER_IN_PARENT);
+            holder.view_action.setPadding(10,10,10,10);
+            holder.view_action.setBackgroundResource(R.drawable.rectangle_shape_green);
+            holder.view_action.setLayoutParams(params);
+
+        }
         holder.rainbowTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -171,7 +186,7 @@ public class InspectionListAdapter extends RecyclerView.Adapter<InspectionListAd
         return inspectionlistvalues.size();
     }
 
-    public void viewAction(int position){
+    public void viewAction(int position) {
         String work_id = inspectionlistvalues.get(position).getWorkID();
         String inspect_id = String.valueOf(inspectionlistvalues.get(position).getOnlineInspectID());
 

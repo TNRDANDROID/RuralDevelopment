@@ -127,8 +127,17 @@ public class PendingLayoutFragment extends Fragment implements View.OnClickListe
         } else {
             //not_found_tv.setVisibility(View.VISIBLE);
             Dashboard.getPendingCount();
-            getActivity().onBackPressed();
         }
+
+    }
+
+    void startActivity( ) {
+
+
+            Intent intent = new Intent(getActivity(), Dashboard.class);
+
+            getActivity().startActivityForResult(intent, 1);
+            getActivity().overridePendingTransition(R.anim.slide_in, R.anim.slide_out);
 
     }
 
@@ -186,14 +195,17 @@ public class PendingLayoutFragment extends Fragment implements View.OnClickListe
                 if (jsonObject.getString("STATUS").equalsIgnoreCase("OK") && jsonObject.getString("RESPONSE").equalsIgnoreCase("OK")) {
                     // loadBlockList(jsonObject.getJSONArray(AppConstant.JSON_DATA));
                   db.delete(DBHelper.INSPECTION_PENDING,"inspection_id=?",new String[] {prefManager.getKeyDeleteId()});
-                    Dashboard.getPendingCount();
                     retrievePendingdata();
                     pendingLayoutAdapter.notifyDataSetChanged();
+
                     Utils.showAlert(getActivity(), "Uploaded");
                 }
                 Log.d("saved_response", "" + responseDecryptedBlockKey);
             }
-
+            Dashboard.getPendingCount();
+            if(pendingLayoutAdapter.getPendingSize() <1){
+                Dashboard.hidePending();
+            }
 
         } catch (JSONException e) {
             e.printStackTrace();

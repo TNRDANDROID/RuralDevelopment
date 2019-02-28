@@ -119,11 +119,11 @@
                                 android:orientation="vertical">
 
                                 <com.nic.RuralInspection.Support.MyCustomTextView
-                                    android:id="@+id/date_of_inspection"
+                                    android:id="@+id/action_on_off"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
                                     android:padding="10dp"
-                                    android:text=" "
+                                    android:text="ONLINE"
                                     android:textAlignment="inherit"
                                     android:textColor="#FFF"
                                     android:textSize="18sp"

@@ -15,7 +15,7 @@
         android:id="@+id/image_preview_recyclerview"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-         android:layout_below="@id/toolbar"
+        android:layout_below="@id/toolbar"
         android:fadeScrollbars="false"
         android:scrollbarSize="4dp"
         android:scrollbars="vertical" />

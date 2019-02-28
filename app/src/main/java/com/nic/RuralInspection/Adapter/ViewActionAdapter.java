@@ -39,13 +39,14 @@ public class ViewActionAdapter extends RecyclerView.Adapter<ViewActionAdapter.My
     }
 
     public class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        public MyCustomTextView date_of_action,action_remark,action_result_tv;
+        public MyCustomTextView date_of_action,action_remark,action_result_tv,action_on_off;
 
         public MyViewHolder(View itemView) {
             super(itemView);
             date_of_action = (MyCustomTextView) itemView.findViewById(R.id.date_of_action);
             action_remark = (MyCustomTextView) itemView.findViewById(R.id.action_remark);
             action_result_tv = (MyCustomTextView) itemView.findViewById(R.id.action_result_tv);
+            action_on_off = (MyCustomTextView) itemView.findViewById(R.id.action_on_off);
         }
 
 
@@ -60,6 +61,12 @@ public class ViewActionAdapter extends RecyclerView.Adapter<ViewActionAdapter.My
         holder.date_of_action.setText(actionListValues.get(position).getDate_of_Action());
         holder.action_remark.setText(actionListValues.get(position).getAction_remark());
         holder.action_result_tv.setText(actionListValues.get(position).getActionresult());
+        if(prefManager.getLevels().equalsIgnoreCase("B")){
+            holder.action_on_off.setVisibility(View.VISIBLE);
+        }
+        else {
+            holder.action_on_off.setVisibility(View.GONE);
+        }
 
     }
 

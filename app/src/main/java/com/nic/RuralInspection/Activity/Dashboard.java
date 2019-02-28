@@ -178,6 +178,9 @@ public class Dashboard extends AppCompatActivity implements Api.ServerResponseLi
         count_tv.setText(String.valueOf(count));
         }
     }
+    public static void hidePending(){
+        pending_upload_layout.setVisibility(View.GONE);
+    }
 
 
     public void getBlockList() {

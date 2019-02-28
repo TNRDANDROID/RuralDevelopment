@@ -70,8 +70,7 @@ public class LoginScreen extends AppCompatActivity implements View.OnClickListen
         try {
             dbHelper = new DBHelper(this);
             db = dbHelper.getWritableDatabase();
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         intializeUI();
@@ -143,21 +142,21 @@ public class LoginScreen extends AppCompatActivity implements View.OnClickListen
     private void checkLoginScreen() {
         if ((Utils.isOnline())) {
 
-            try{
-                db.delete(DBHelper.BLOCK_TABLE_NAME,null,null);
-                db.delete(DBHelper.VILLAGE_TABLE_NAME,null,null);
-                db.delete(DBHelper.SCHEME_TABLE_NAME,null,null);
-                db.delete(DBHelper.FINANCIAL_YEAR_TABLE_NAME,null ,null);
-                db.delete(DBHelper.WORK_STAGE_TABLE,null ,null);
-                db.delete(DBHelper.WORK_LIST_OPTIONAL,null,null);
-              //  db.delete(DBHelper.INSPECTION,null,null);
-              //  db.delete(DBHelper.CAPTURED_PHOTO,null,null);
-                db.delete(DBHelper.OBSERVATION_TABLE,null,null);
-                db.delete(DBHelper.INSPECTION_ACTION,null,null);
+            try {
+                db.delete(DBHelper.BLOCK_TABLE_NAME, null, null);
+                db.delete(DBHelper.VILLAGE_TABLE_NAME, null, null);
+                db.delete(DBHelper.SCHEME_TABLE_NAME, null, null);
+                db.delete(DBHelper.FINANCIAL_YEAR_TABLE_NAME, null, null);
+                db.delete(DBHelper.WORK_STAGE_TABLE, null, null);
+                db.delete(DBHelper.WORK_LIST_OPTIONAL, null, null);
+                //  db.delete(DBHelper.INSPECTION,null,null);
+                //  db.delete(DBHelper.CAPTURED_PHOTO,null,null);
+                db.delete(DBHelper.OBSERVATION_TABLE, null, null);
+                db.delete(DBHelper.INSPECTION_ACTION, null, null);
+                db.delete(DBHelper.IMAGE_GROUP_ID, null, null);
 
 
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }
@@ -191,7 +190,7 @@ public class LoginScreen extends AppCompatActivity implements View.OnClickListen
                     new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog,
                                             int whichButton) {
-                            offline_mode(username,password);
+                            offline_mode(username, password);
                         }
                     });
             ab.show();
@@ -281,7 +280,7 @@ public class LoginScreen extends AppCompatActivity implements View.OnClickListen
 
     @Override
     public void OnError(VolleyError volleyError) {
-
+        Utils.showAlert(this, "Again Login");
     }
 
 //    @Override
@@ -298,14 +297,13 @@ public class LoginScreen extends AppCompatActivity implements View.OnClickListen
         overridePendingTransition(R.anim.slide_in, R.anim.slide_out);
     }
 
-    public void offline_mode(String name,String pass) {
+    public void offline_mode(String name, String pass) {
         String userName = prefManager.getUserName();
         String password = prefManager.getUserPassword();
-        if(name.equals(userName) && pass.equals(password)) {
+        if (name.equals(userName) && pass.equals(password)) {
             showHomeScreen();
-        }
-        else {
-            Utils.showAlert(this,"No data available for offline. Please Turn On Your Network");
+        } else {
+            Utils.showAlert(this, "No data available for offline. Please Turn On Your Network");
         }
     }
 

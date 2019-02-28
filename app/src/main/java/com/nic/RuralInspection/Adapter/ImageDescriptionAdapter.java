@@ -1,15 +1,20 @@
 package com.nic.RuralInspection.Adapter;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
+import com.nic.RuralInspection.Activity.FullImageActivity;
+import com.nic.RuralInspection.Activity.ImagePreviewScreen;
 import com.nic.RuralInspection.Model.BlockListValue;
 import com.nic.RuralInspection.R;
 import com.nic.RuralInspection.Support.MyCustomTextView;
+import com.nic.RuralInspection.constant.AppConstant;
 import com.nic.RuralInspection.session.PrefManager;
 
 import java.util.List;
@@ -18,7 +23,7 @@ import java.util.List;
  * Created by NIC on 13-02-2019.
  */
 
-public class ImageDescriptionAdapter extends RecyclerView.Adapter<ImageDescriptionAdapter.MyViewHolder> {
+public class ImageDescriptionAdapter extends RecyclerView.Adapter<ImageDescriptionAdapter.MyViewHolder> implements View.OnClickListener {
 
     private Context context;
     private PrefManager prefManager;
@@ -37,6 +42,11 @@ public class ImageDescriptionAdapter extends RecyclerView.Adapter<ImageDescripti
         return new MyViewHolder(itemView);
     }
 
+    @Override
+    public void onClick(View v) {
+
+    }
+
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
         private ImageView preview_image_view;
@@ -50,10 +60,25 @@ public class ImageDescriptionAdapter extends RecyclerView.Adapter<ImageDescripti
 
     }
 
+    public void FullImageAcivity(int position) {
+
+        Activity activity = (Activity) context;
+        Intent intent = new Intent(context, FullImageActivity.class);
+        intent.putExtra(AppConstant.INSPECTION_ID, prefManager.getAppKey());
+        activity.startActivity(intent);
+        activity.overridePendingTransition(R.anim.slide_in, R.anim.slide_out);
+    }
+
     @Override
-    public void onBindViewHolder(MyViewHolder holder, int position) {
+    public void onBindViewHolder(MyViewHolder holder, final int position) {
         holder.description.setText(imagelistvalues.get(position).getDescription());
         holder.preview_image_view.setImageBitmap(imagelistvalues.get(position).getImage());
+        holder.preview_image_view.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FullImageAcivity(position);
+            }
+        });
     }
 
     @Override

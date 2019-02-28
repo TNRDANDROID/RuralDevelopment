@@ -1,5 +1,6 @@
 package com.nic.RuralInspection.Adapter;
 
+import android.app.Activity;
 import android.content.Context;
 import android.database.Cursor;
 import android.os.AsyncTask;
@@ -41,13 +42,13 @@ import static com.nic.RuralInspection.Activity.LoginScreen.db;
 
 public class PendingLayoutAdapter extends RecyclerView.Adapter<PendingLayoutAdapter.MyViewHolder> {
 
-    private static Context context;
+    private static Activity context;
     private List<BlockListValue> pendingListValues;
     static PrefManager prefManager;
     static JSONObject dataset = new JSONObject();
     private PendingLayoutFragment pendingLayoutFragment;
 
-    public PendingLayoutAdapter(Context context, List<BlockListValue> pendingListValues, PendingLayoutFragment pendingLayoutFragment) {
+    public PendingLayoutAdapter(Activity context, List<BlockListValue> pendingListValues, PendingLayoutFragment pendingLayoutFragment) {
 
         this.context = context;
         prefManager = new PrefManager(context);
@@ -94,7 +95,7 @@ public class PendingLayoutAdapter extends RecyclerView.Adapter<PendingLayoutAdap
     }
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
-        private MyCustomTextView pend_work_id, pend_stage, pend_inspected_date, pend_observation, add_inspection_report,del_inspection_report;
+        private MyCustomTextView pend_work_id, pend_stage, pend_inspected_date, pend_observation, add_inspection_report, del_inspection_report;
 
         public MyViewHolder(View itemView) {
             super(itemView);
@@ -182,25 +183,44 @@ public class PendingLayoutAdapter extends RecyclerView.Adapter<PendingLayoutAdap
             end = end > oof.length() ? oof.length() : end;
             Log.v("oof", oof.substring(start, end));
         }
-        if(Utils.isOnline()) {
+        if (Utils.isOnline()) {
             pendingLayoutFragment.pending_Sync_Data(dataset);
-        }else {
-            Utils.showAlert(context,"Turn On Mobile Data To Upload");
+        } else {
+            Utils.showAlert(context, "Turn On Mobile Data To Upload");
         }
 
 
     }
 
     public void deletePending(int position) {
+
         String work_id = pendingListValues.get(position).getWorkID();
         String inspection_id = String.valueOf(pendingListValues.get(position).getInspectionID());
 
-       int sdsm = db.delete(DBHelper.INSPECTION_PENDING,"inspection_id=? and work_id=?",new String[] {inspection_id,work_id});
-       Log.d("sdsm",String.valueOf(sdsm));
-       Dashboard.getPendingCount();
+        int sdsm = db.delete(DBHelper.INSPECTION_PENDING, "inspection_id=? and work_id=?", new String[]{inspection_id, work_id});
         pendingListValues.remove(position);
-      //  pendingLayoutFragment.notify();
+        notifyItemRemoved(position);
+        notifyItemChanged(position, pendingListValues.size());
+        Log.d("sdsm", String.valueOf(sdsm));
+        Dashboard.getPendingCount();
+        if (pendingListValues.size() < 1) {
+            Dashboard.hidePending();
+            closeFunction();
+        }
+
     }
+
+    public int getPendingSize(){
+        return pendingListValues.size();
+    }
+
+    public void closeFunction() {
+        context.onBackPressed();
+        context.overridePendingTransition(R.anim.slide_enter, R.anim.slide_exit);
+    }
+
+//        pendingListValues.remove(position);
+    //  pendingLayoutFragment.notify();
 
 
     public static JSONObject dataTobeSavedJsonParams() throws JSONException {

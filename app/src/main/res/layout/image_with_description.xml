@@ -99,10 +99,11 @@
                             android:layout_marginTop="10dip"
                             android:layout_marginLeft="10dip"
                             android:textSize="15sp"
+                            android:textColor="@android:color/black"
                             android:layout_marginRight="10dip"
                             android:background="@drawable/gray_background"
                             android:hint="Enter Description"
-                            customfontdemo:fontName="@string/font_circular_book" />
+                            customfontdemo:fontName="@string/font_circular_bold" />
                     </LinearLayout>
 
 
