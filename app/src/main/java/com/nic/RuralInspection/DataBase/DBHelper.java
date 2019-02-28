@@ -20,6 +20,7 @@ public class DBHelper extends SQLiteOpenHelper {
     public static final String INSPECTION_PENDING = "inspection_pending";
     public static final String CAPTURED_PHOTO = "captured_photo";
     public static final String INSPECTION_ACTION = "inspection_action";
+    public static final String IMAGE_GROUP_ID = "image_grouping";
 
     private Context context;
 
@@ -110,6 +111,8 @@ public class DBHelper extends SQLiteOpenHelper {
         db.execSQL("CREATE TABLE "+ CAPTURED_PHOTO + "("
                 + "id INTEGER," +
                 "inspection_id INTEGER," +
+                "action_id INTEGER," +
+                "image_group_id INTEGER," +
                 "work_id TEXT," +
                 "latitude TEXT," +
                 "longitude TEXT," +
@@ -117,17 +120,22 @@ public class DBHelper extends SQLiteOpenHelper {
                 "description TEXT)");
 
         db.execSQL("CREATE TABLE "+ INSPECTION_ACTION  + "("
-                + "id INTEGER," +
+                + "id INTEGER PRIMARY KEY AUTOINCREMENT," +
                 "work_id INTEGER," +
                 "inspection_id INTEGER," +
                 "date_of_action TEXT," +
                 "action_taken TEXT," +
+                "delete_flag INTEGER," +
                 "action_remark TEXT," +
                 "created_date TEXT," +
                 "dist_action TEXT," +
                 "state_action TEXT," +
                 "sub_div_action TEXT)");
 
+        db.execSQL("CREATE TABLE " + IMAGE_GROUP_ID  + " ("
+                + "id INTEGER PRIMARY KEY AUTOINCREMENT," +
+                "action_id TEXT," +
+                "grouping TEXT)");
 
     }
 

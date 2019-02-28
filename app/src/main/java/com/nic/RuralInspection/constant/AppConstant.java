@@ -111,5 +111,7 @@ public class AppConstant {
     public static String DATE_OF_ACTION = "date_of_action";
     public static String ACTION_TAKEN = "action_taken";
     public static String ACTION_REMARK = "action_remark";
+    public static String DELETE_FLAG = "delete_flag";
+    public static String KEY_HIGH_VALUE_PROJECT_ACTION_SAVE= "high_value_project_action_save";
 
 }

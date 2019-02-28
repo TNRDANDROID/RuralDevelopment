@@ -13,7 +13,8 @@
         android:id="@+id/scroll_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/app_bar">
+        android:layout_below="@+id/app_bar"
+        android:layout_alignParentStart="true">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -1027,6 +1028,7 @@
                                                     android:visibility="visible">
 
                                                     <EditText
+                                                        android:id="@+id/remark_action_tv"
                                                         android:layout_width="match_parent"
                                                         android:layout_height="wrap_content"
                                                         android:layout_below="@+id/remark_title"
