@@ -79,7 +79,7 @@ import static com.nic.RuralInspection.Activity.LoginScreen.db;
  * Created by NIC on 21-02-2019.
  */
 
-public class ViewInspectionInActionScreen extends AppCompatActivity implements View.OnClickListener,Api.ServerResponseListener {
+public class ViewInspectionInActionScreen extends AppCompatActivity implements View.OnClickListener, Api.ServerResponseListener {
     private ScrollView scrollView;
     private MyCustomTextView action_tv;
     private List<View> viewArrayList = new ArrayList<>();
@@ -107,13 +107,11 @@ public class ViewInspectionInActionScreen extends AppCompatActivity implements V
     LocationListener mlocListener;
 
 
-
-
     private static String imageStoragePath;
     private ImageView back_img, image_view_preview;
-    private MyCustomTextView district_tv, scheme_name_tv, block_name_tv,block_user_tv, village_name_tv, fin_year_tv;
-    private MyCustomTextView projectName, amountTv, levelTv;
-    private LinearLayout village_layout,block_layout;
+    private MyCustomTextView district_tv, scheme_name_tv, block_name_tv, block_user_tv, village_name_tv, fin_year_tv, take_photo;
+    private MyCustomTextView projectName, amountTv, levelTv, inspected_date, remark, observation;
+    private LinearLayout village_layout, block_layout;
     private AddActionAdapter addActionAdapter;
     private RecyclerView imageRecyclerView, inspectionListRecyclerView;
     PrefManager prefManager;
@@ -133,11 +131,12 @@ public class ViewInspectionInActionScreen extends AppCompatActivity implements V
 
         intializeUI();
     }
+
     public void intializeUI() {
         prefManager = new PrefManager(this);
         village_layout = (LinearLayout) findViewById(R.id.village_layout);
-        block_layout = (LinearLayout)findViewById(R.id.block_user_layout);
-        block_user_tv = (MyCustomTextView)findViewById(R.id.block_user_tv);
+        block_layout = (LinearLayout) findViewById(R.id.block_user_layout);
+        block_user_tv = (MyCustomTextView) findViewById(R.id.block_user_tv);
         district_tv = (MyCustomTextView) findViewById(R.id.district_tv);
         scheme_name_tv = (MyCustomTextView) findViewById(R.id.scheme_name_tv);
         block_name_tv = (MyCustomTextView) findViewById(R.id.block_name_tv);
@@ -147,22 +146,29 @@ public class ViewInspectionInActionScreen extends AppCompatActivity implements V
         projectName = (MyCustomTextView) findViewById(R.id.project_title_tv);
         amountTv = (MyCustomTextView) findViewById(R.id.amount_tv);
         levelTv = (MyCustomTextView) findViewById(R.id.level_tv);
+        take_photo = (MyCustomTextView) findViewById(R.id.take_photo);
+        inspected_date = (MyCustomTextView) findViewById(R.id.action_inspected_date);
+        remark = (MyCustomTextView) findViewById(R.id.action_remark);
+        observation = (MyCustomTextView) findViewById(R.id.action_observation);
 
         scrollView = (ScrollView) findViewById(R.id.scroll_view);
 //        action_tv = (MyCustomTextView) findViewById(R.id.action_tv);
         back_img = (ImageView) findViewById(R.id.backimg);
-        inspectionListRecyclerView = (RecyclerView) findViewById(R.id.image_list_with_description);
 
         district_tv.setText(prefManager.getDistrictName());
         scheme_name_tv.setText(prefManager.getSchemeName());
         block_name_tv.setText(prefManager.getBlockName());
         fin_year_tv.setText(prefManager.getFinancialyearName());
 
-        projectName.setText(getIntent().getStringExtra(AppConstant.WORK_NAME));
-        amountTv.setText(getIntent().getStringExtra(AppConstant.AS_AMOUNT));
-        levelTv.setText(getIntent().getStringExtra(AppConstant.WORK_SATGE_NAME));
+        projectName.setText(prefManager.getKeyActionProjectName());
+        amountTv.setText(prefManager.getKeyActionAmount());
+        levelTv.setText(prefManager.getKeyActionStageLevel());
+        inspected_date.setText(getIntent().getStringExtra(AppConstant.DATE_OF_INSPECTION));
+        remark.setText(getIntent().getStringExtra(AppConstant.INSPECTION_REMARK));
+        observation.setText(getIntent().getStringExtra(AppConstant.OBSERVATION));
 
         back_img.setOnClickListener(this);
+        take_photo.setOnClickListener(this);
 
 //        addActionAdapter = new AddActionAdapter(this, actionlistvalues);
 //
@@ -173,7 +179,7 @@ public class ViewInspectionInActionScreen extends AppCompatActivity implements V
 //        inspectionListRecyclerView.setFocusable(false);
 //        inspectionListRecyclerView.setNestedScrollingEnabled(false);
 
-        if(prefManager.getLevels().equalsIgnoreCase("B")){
+        if (prefManager.getLevels().equalsIgnoreCase("B")) {
             village_layout.setVisibility(View.VISIBLE);
             village_name_tv.setText(prefManager.getVillageListPvName());
             block_layout.setVisibility(View.VISIBLE);
@@ -188,15 +194,12 @@ public class ViewInspectionInActionScreen extends AppCompatActivity implements V
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.take_photo:
-//                if (!"Select Stage of Work".equalsIgnoreCase(stageListValues.get(sp_stage.getSelectedItemPosition()).getWorkStageName())) {
-//                    if (!"Select Observation".equalsIgnoreCase(sp_observation.getSelectedItem().toString())) {
-//                        imageWithDescription(take_photo, "mobile", scrollView);
-//                    } else {
-//                        Utils.showAlert(this, "Select Observation");
-//                    }
-//                } else {
-//                    Utils.showAlert(this, "Select Stage of Work");
-//                }
+                if (!(remarkTv.getText().toString().equals(null) )&& !(remarkTv.getText().toString().equalsIgnoreCase("null"))) {
+                    imageWithDescription(take_photo, "mobile", scrollView);
+
+                } else {
+                    Utils.showAlert(this, "Enter Remarks");
+                }
 
                 break;
             case R.id.backimg:
@@ -213,41 +216,37 @@ public class ViewInspectionInActionScreen extends AppCompatActivity implements V
 
         work_id = getIntent().getStringExtra(AppConstant.WORK_ID);
 
-       // String stage_of_work_on_inspection_name = stageListValues.get(sp_stage.getSelectedItemPosition()).getWorkStageName();
+        // String stage_of_work_on_inspection_name = stageListValues.get(sp_stage.getSelectedItemPosition()).getWorkStageName();
         //String date_of_inspection = sdf.format(new Date());
         //int observation = observationList.get(sp_observation.getSelectedItemPosition()).getObservationID();
-        String inspection_remark = remarkTv.getText().toString();
+        String action_remark = remarkTv.getText().toString();
         //String created_date = date_of_inspection;
         String created_ipaddress = "123214124";
         String created_username = "test";
 
-        if(!Utils.isOnline()) {
+        if (!Utils.isOnline()) {
             ContentValues inspectionValue = new ContentValues();
-            inspectionValue.put(AppConstant.WORK_ID,work_id);
+            inspectionValue.put(AppConstant.WORK_ID, work_id);
 //            inspectionValue.put(AppConstant.STAGE_OF_WORK_ON_INSPECTION,stage_of_work_on_inspection);
 //            inspectionValue.put(AppConstant.STAGE_OF_WORK_ON_INSPECTION_NAME,stage_of_work_on_inspection_name);
 //            inspectionValue.put(AppConstant.DATE_OF_INSPECTION,date_of_inspection);
 
-           // inspectionValue.put(AppConstant.OBSERVATION,observation);
-            inspectionValue.put(AppConstant.INSPECTION_REMARK,inspection_remark);
-           // inspectionValue.put(AppConstant.CREATED_DATE,created_date);
-            inspectionValue.put(AppConstant.CREATED_IP_ADDRESS,prefManager.getIMEI());
-            inspectionValue.put(AppConstant.CREATED_USER_NAME,prefManager.getUserName());
-            inspectionValue.put("delete_flag",0);
+            // inspectionValue.put(AppConstant.OBSERVATION,observation);
+            inspectionValue.put(AppConstant.INSPECTION_REMARK, action_remark);
+            // inspectionValue.put(AppConstant.CREATED_DATE,created_date);
+            inspectionValue.put("delete_flag", 0);
 
-            LoginScreen.db.insert(DBHelper.INSPECTION_PENDING,null,inspectionValue);
+            LoginScreen.db.insert(DBHelper.INSPECTION_PENDING, null, inspectionValue);
         } else {
             try {
                 dataset.put(AppConstant.KEY_SERVICE_ID, AppConstant.KEY_HIGH_VALUE_PROJECT_INSPECTION_SAVE);
-                dataset.put(AppConstant.WORK_ID,work_id);
-              //  dataset.put(AppConstant.STAGE_OF_WORK_ON_INSPECTION,stage_of_work_on_inspection);
-              //  dataset.put(AppConstant.DATE_OF_INSPECTION,date_of_inspection);
+                dataset.put(AppConstant.WORK_ID, work_id);
+                //  dataset.put(AppConstant.STAGE_OF_WORK_ON_INSPECTION,stage_of_work_on_inspection);
+                //  dataset.put(AppConstant.DATE_OF_INSPECTION,date_of_inspection);
 
-              //  dataset.put(AppConstant.OBSERVATION,observation);
-                dataset.put(AppConstant.INSPECTION_REMARK,inspection_remark);
-              //  dataset.put(AppConstant.CREATED_DATE,created_date);
-                dataset.put(AppConstant.CREATED_IP_ADDRESS,prefManager.getIMEI());
-                dataset.put(AppConstant.CREATED_USER_NAME,prefManager.getUserName());
+                //  dataset.put(AppConstant.OBSERVATION,observation);
+                dataset.put(AppConstant.INSPECTION_REMARK, action_remark);
+                //  dataset.put(AppConstant.CREATED_DATE,created_date);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -284,7 +283,7 @@ public class ViewInspectionInActionScreen extends AppCompatActivity implements V
                 int inspectionID = 0;
                 JSONArray imageJson = new JSONArray();
 
-                Cursor inpection_Cursor = getRawEvents("SELECT MAX(inspection_id) FROM "+DBHelper.INSPECTION_PENDING,null);
+                Cursor inpection_Cursor = getRawEvents("SELECT MAX(inspection_id) FROM " + DBHelper.INSPECTION_PENDING, null);
                 Log.d("cursor_count", String.valueOf(inpection_Cursor.getCount()));
                 if (inpection_Cursor.getCount() > 0) {
                     if (inpection_Cursor.moveToFirst()) {
@@ -295,27 +294,27 @@ public class ViewInspectionInActionScreen extends AppCompatActivity implements V
                     }
                 }
                 int childCount = mobileNumberLayout.getChildCount();
-                if(childCount > 0 ) {
+                if (childCount > 0) {
                     for (int i = 0; i < childCount; i++) {
                         JSONArray imageArray = new JSONArray();
 
                         View vv = mobileNumberLayout.getChildAt(i);
                         EditText myEditTextView = (EditText) vv.findViewById(R.id.description);
 
-                        ImageView imageView = (ImageView)vv. findViewById(R.id.image_view);
+                        ImageView imageView = (ImageView) vv.findViewById(R.id.image_view);
                         byte[] imageInByte = new byte[0];
                         String image_str = "";
-                        try{
-                            Bitmap bitmap = ((BitmapDrawable)imageView.getDrawable()).getBitmap();
+                        try {
+                            Bitmap bitmap = ((BitmapDrawable) imageView.getDrawable()).getBitmap();
                             ByteArrayOutputStream baos = new ByteArrayOutputStream();
                             bitmap.compress(Bitmap.CompressFormat.JPEG, 90, baos);
                             imageInByte = baos.toByteArray();
-                            image_str = Base64.encodeToString(imageInByte,Base64.DEFAULT);
+                            image_str = Base64.encodeToString(imageInByte, Base64.DEFAULT);
                             // String string = new String(imageInByte);
                             //Log.d("imageInByte_string",string);
-                            Log.d("image_str",image_str);
-                        }catch (Exception e) {
-                            Utils.showAlert(ViewInspectionInActionScreen.this,"Atleast Capture one Photo");
+                            Log.d("image_str", image_str);
+                        } catch (Exception e) {
+                            Utils.showAlert(ViewInspectionInActionScreen.this, "Atleast Capture one Photo");
                             break;
                             //e.printStackTrace();
                         }
@@ -333,24 +332,23 @@ public class ViewInspectionInActionScreen extends AppCompatActivity implements V
 
                             ContentValues imageValue = new ContentValues();
 
-                            imageValue.put(AppConstant.INSPECTION_ID,inspectionID);
-                            imageValue.put(AppConstant.WORK_ID,work_id);
-                            imageValue.put(AppConstant.LATITUDE,offlatTextValue);
-                            imageValue.put(AppConstant.LONGITUDE,offlanTextValue);
-                            imageValue.put(AppConstant.IMAGE,image_str.trim());
-                            imageValue.put(AppConstant.DESCRIPTION,description);
+                            imageValue.put(AppConstant.INSPECTION_ID, inspectionID);
+                            imageValue.put(AppConstant.WORK_ID, work_id);
+                            imageValue.put(AppConstant.LATITUDE, offlatTextValue);
+                            imageValue.put(AppConstant.LONGITUDE, offlanTextValue);
+                            imageValue.put(AppConstant.IMAGE, image_str.trim());
+                            imageValue.put(AppConstant.DESCRIPTION, description);
 
-                            long rowInserted = LoginScreen.db.insert(DBHelper.CAPTURED_PHOTO,null,imageValue);
+                            long rowInserted = LoginScreen.db.insert(DBHelper.CAPTURED_PHOTO, null, imageValue);
 
-                            if(rowInserted != -1) {
+                            if (rowInserted != -1) {
                                 Toast.makeText(ViewInspectionInActionScreen.this, "New Inspection added", Toast.LENGTH_SHORT).show();
                                 Dashboard.getPendingCount();
                                 finish();
+                            } else {
+                                Toast.makeText(ViewInspectionInActionScreen.this, "Something wrong", Toast.LENGTH_SHORT).show();
                             }
-                            else{
-                                Toast.makeText(ViewInspectionInActionScreen.this, "Something wrong", Toast.LENGTH_SHORT).show(); }
-                        }
-                        else {
+                        } else {
                             imageArray.put(i);
                             imageArray.put(work_id);
                             imageArray.put(offlatTextValue);
@@ -361,10 +359,10 @@ public class ViewInspectionInActionScreen extends AppCompatActivity implements V
                         }
                     }
                     try {
-                        dataset.put("image_details",imageJson);
+                        dataset.put("image_details", imageJson);
 
-                        Log.d("post_dataset",dataset.toString());
-                        String authKey = Utils.encrypt(prefManager.getUserPassKey(), getResources().getString(R.string.init_vector),dataset.toString());
+                        Log.d("post_dataset", dataset.toString());
+                        String authKey = Utils.encrypt(prefManager.getUserPassKey(), getResources().getString(R.string.init_vector), dataset.toString());
 //                        int maxLogSize = 1000;
 //                        for(int i = 0; i <= authKey.length() / maxLogSize; i++) {
 //                            int start = i * maxLogSize;
@@ -496,7 +494,7 @@ public class ViewInspectionInActionScreen extends AppCompatActivity implements V
         return hiddenInfo;
     }
 
-    private void getLatLong(){
+    private void getLatLong() {
         mlocManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         mlocListener = new MyLocationListener();
 
@@ -753,7 +751,7 @@ public class ViewInspectionInActionScreen extends AppCompatActivity implements V
     }
 
     public JSONObject dataTobeSavedJsonParams() throws JSONException {
-        String authKey = Utils.encrypt(prefManager.getUserPassKey(), getResources().getString(R.string.init_vector),dataset.toString().replaceAll(" ",""));
+        String authKey = Utils.encrypt(prefManager.getUserPassKey(), getResources().getString(R.string.init_vector), dataset.toString().replaceAll(" ", ""));
         JSONObject dataSet = new JSONObject();
         dataSet.put(AppConstant.KEY_USER_NAME, prefManager.getUserName());
         dataSet.put(AppConstant.DATA_CONTENT, authKey);

@@ -798,7 +798,6 @@
                                                 android:orientation="vertical">
 
                                                 <com.nic.RuralInspection.Support.MyCustomTextView
-
                                                     android:layout_width="match_parent"
                                                     android:layout_height="wrap_content"
                                                     android:padding="5dp"
@@ -840,7 +839,7 @@
                                                 android:orientation="vertical">
 
                                                 <com.nic.RuralInspection.Support.MyCustomTextView
-                                                    android:id="@+id/date_of_inspection"
+                                                    android:id="@+id/action_inspected_date"
                                                     android:layout_width="match_parent"
                                                     android:layout_height="wrap_content"
                                                     android:padding="10dp"
@@ -867,7 +866,6 @@
                                                 android:orientation="vertical">
 
                                                 <com.nic.RuralInspection.Support.MyCustomTextView
-
                                                     android:layout_width="match_parent"
                                                     android:layout_height="wrap_content"
                                                     android:padding="5dp"
@@ -906,7 +904,7 @@
                                                 android:orientation="vertical">
 
                                                 <com.nic.RuralInspection.Support.MyCustomTextView
-                                                    android:id="@+id/remark"
+                                                    android:id="@+id/action_remark"
                                                     android:layout_width="match_parent"
                                                     android:layout_height="wrap_content"
                                                     android:padding="10dp"
@@ -939,7 +937,6 @@
                                                 android:orientation="vertical">
 
                                                 <com.nic.RuralInspection.Support.MyCustomTextView
-
                                                     android:layout_width="match_parent"
                                                     android:layout_height="wrap_content"
                                                     android:padding="5dp"
@@ -980,7 +977,7 @@
                                                 android:orientation="vertical">
 
                                                 <com.nic.RuralInspection.Support.MyCustomTextView
-                                                    android:id="@+id/observation"
+                                                    android:id="@+id/action_observation"
                                                     android:layout_width="match_parent"
                                                     android:layout_height="wrap_content"
                                                     android:padding="10dp"
