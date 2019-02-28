@@ -185,7 +185,7 @@
                                 android:orientation="vertical">
 
                                 <com.nic.RuralInspection.Support.MyCustomTextView
-                                    android:id="@+id/remark"
+                                    android:id="@+id/date_of_action"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
                                     android:padding="10dp"
@@ -261,7 +261,7 @@
                                 android:orientation="vertical">
 
                                 <com.nic.RuralInspection.Support.MyCustomTextView
-
+                                    android:id="@+id/action_remark"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
                                     android:padding="10dp"
@@ -337,7 +337,7 @@
                                 android:orientation="vertical">
 
                                 <com.nic.RuralInspection.Support.MyCustomTextView
-                                    android:id="@+id/observation"
+                                    android:id="@+id/action_result_tv"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
                                     android:padding="10dp"

@@ -848,6 +848,9 @@ public class SelectBlockSchemeScreen extends AppCompatActivity implements View.O
                     String workID = jsonArray.getJSONObject(i).getString(AppConstant.WORK_ID);
                     String id = jsonArray.getJSONObject(i).getString("id");
                     String inspection_id = jsonArray.getJSONObject(i).getString(AppConstant.INSPECTION_ID);
+                    String date_of_action = jsonArray.getJSONObject(i).getString(AppConstant.DATE_OF_ACTION);
+                    String action_taken = jsonArray.getJSONObject(i).getString(AppConstant.ACTION_TAKEN);
+                    String action_remark = jsonArray.getJSONObject(i).getString(AppConstant.ACTION_REMARK);
                     String dist_action = jsonArray.getJSONObject(i).getString(AppConstant.DISTRICT_ACTION);
                     String state_action = jsonArray.getJSONObject(i).getString(AppConstant.STATE_ACTION);
                     String sub_div_action = jsonArray.getJSONObject(i).getString(AppConstant.SUB_DIV_ACTION);
@@ -857,6 +860,9 @@ public class SelectBlockSchemeScreen extends AppCompatActivity implements View.O
                     ActionList.put(AppConstant.WORK_ID, workID);
                     ActionList.put("id", id);
                     ActionList.put(AppConstant.INSPECTION_ID, inspection_id);
+                    ActionList.put(AppConstant.DATE_OF_ACTION, date_of_action);
+                    ActionList.put(AppConstant.ACTION_TAKEN, action_taken);
+                    ActionList.put(AppConstant.ACTION_REMARK, action_remark);
                     ActionList.put(AppConstant.DISTRICT_ACTION, dist_action);
                     ActionList.put(AppConstant.STATE_ACTION, state_action);
                     ActionList.put(AppConstant.SUB_DIV_ACTION, sub_div_action);

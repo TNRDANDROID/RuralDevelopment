@@ -52,6 +52,25 @@ public class BlockListValue {
     private String OnlineInspectID;
     private String detail;
 
+    public String getDate_of_Action() {
+        return Date_of_Action;
+    }
+
+    public void setDate_of_Action(String date_of_Action) {
+        Date_of_Action = date_of_Action;
+    }
+
+    public String getAction_remark() {
+        return Action_remark;
+    }
+
+    public void setAction_remark(String action_remark) {
+        Action_remark = action_remark;
+    }
+
+    private String Date_of_Action;
+    private String Action_remark;
+
     public String getDetail() {
         return detail;
     }

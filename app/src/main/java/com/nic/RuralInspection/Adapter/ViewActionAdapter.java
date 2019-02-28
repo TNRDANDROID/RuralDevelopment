@@ -8,7 +8,9 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.RelativeLayout;
 
+import com.hanks.htextview.rainbow.RainbowTextView;
 import com.nic.RuralInspection.Model.BlockListValue;
 import com.nic.RuralInspection.R;
 import com.nic.RuralInspection.Support.MyCustomTextView;
@@ -37,12 +39,13 @@ public class ViewActionAdapter extends RecyclerView.Adapter<ViewActionAdapter.My
     }
 
     public class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        public MyCustomTextView date_of_inspection, remark, observation, view_image, action_result_tv,view_action;
-
+        public MyCustomTextView date_of_action,action_remark,action_result_tv;
 
         public MyViewHolder(View itemView) {
-
             super(itemView);
+            date_of_action = (MyCustomTextView) itemView.findViewById(R.id.date_of_action);
+            action_remark = (MyCustomTextView) itemView.findViewById(R.id.action_remark);
+            action_result_tv = (MyCustomTextView) itemView.findViewById(R.id.action_result_tv);
         }
 
 
@@ -54,16 +57,15 @@ public class ViewActionAdapter extends RecyclerView.Adapter<ViewActionAdapter.My
 
     @Override
     public void onBindViewHolder(final ViewActionAdapter.MyViewHolder holder, final int position) {
-//        holder.date_of_inspection.setText(inspectionlistvalues.get(position).getDate_of_inspection());
-//        holder.remark.setText(inspectionlistvalues.get(position).getInspection_remark());
-//        holder.observation.setText(inspectionlistvalues.get(position).getObservation());
-//        holder.action_result_tv.setText(inspectionlistvalues.get(position).getDetail());
+        holder.date_of_action.setText(actionListValues.get(position).getDate_of_Action());
+        holder.action_remark.setText(actionListValues.get(position).getAction_remark());
+        holder.action_result_tv.setText(actionListValues.get(position).getActionresult());
 
     }
 
     @Override
     public int getItemCount() {
-        return 10;
+        return actionListValues.size();
     }
 
 }

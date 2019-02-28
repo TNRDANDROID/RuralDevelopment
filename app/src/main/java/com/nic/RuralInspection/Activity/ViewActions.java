@@ -19,6 +19,7 @@ import com.nic.RuralInspection.Adapter.ViewActionAdapter;
 import com.nic.RuralInspection.DataBase.DBHelper;
 import com.nic.RuralInspection.Model.BlockListValue;
 import com.nic.RuralInspection.R;
+import com.nic.RuralInspection.Support.MyCustomTextView;
 import com.nic.RuralInspection.Utils.UrlGenerator;
 import com.nic.RuralInspection.Utils.Utils;
 import com.nic.RuralInspection.api.Api;
@@ -42,6 +43,7 @@ public class ViewActions extends AppCompatActivity implements View.OnClickListen
     private ImageView back_img;
     private ArrayList<BlockListValue> actionListValues = new ArrayList<>();
     private static Context context;
+    private MyCustomTextView not_found_tv;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -54,6 +56,7 @@ public class ViewActions extends AppCompatActivity implements View.OnClickListen
         prefManager = new PrefManager(this);
         context = this;
         viewActionRecycleView = (RecyclerView) findViewById(R.id.viewAction_recycler_view);
+        not_found_tv = (MyCustomTextView) findViewById(R.id.not_found_tv);
         back_img = (ImageView) findViewById(R.id.backimg);
         back_img.setOnClickListener(this);
 
@@ -80,40 +83,35 @@ public class ViewActions extends AppCompatActivity implements View.OnClickListen
 
     private void retrieveActiondata() {
         actionListValues.clear();
-        String actionList_sql = "select * from(select * from "+DBHelper.INSPECTION_PENDING +" WHERE inspection_id in (select inspection_id from "+DBHelper.CAPTURED_PHOTO+"))a left join (select * from observation)b on a.observation = b.id where delete_flag = 0";
+        String work_id = getIntent().getStringExtra(AppConstant.WORK_ID);
+        String inspection_id = getIntent().getStringExtra(AppConstant.INSPECTION_ID);
+
+        String actionList_sql = "select * from inspection_action where inspection_id ="+inspection_id+" and work_id ="+work_id;
         Log.d("sql", actionList_sql);
         Cursor actionList = getRawEvents(actionList_sql, null);
 
         if (actionList.getCount() > 0) {
             if (actionList.moveToFirst()) {
                 do {
-//                    String work_id = actionList.getString(pendingList.getColumnIndexOrThrow(AppConstant.WORK_ID));
-//                    int inspection_id = actionList.getInt(pendingList.getColumnIndexOrThrow(AppConstant.INSPECTION_ID));
-//                    String stage_of_work_on_inspection = pendingList.getString(pendingList.getColumnIndexOrThrow(AppConstant.STAGE_OF_WORK_ON_INSPECTION));
-//                    String stage_of_work_on_inspection_name = pendingList.getString(pendingList.getColumnIndexOrThrow(AppConstant.STAGE_OF_WORK_ON_INSPECTION_NAME));
-//                    String date_of_inspection = pendingList.getString(pendingList.getColumnIndexOrThrow(AppConstant.DATE_OF_INSPECTION));
-//                    int observation = pendingList.getInt(pendingList.getColumnIndexOrThrow(AppConstant.OBSERVATION_ID));
-//                    String inspection_remark = pendingList.getString(pendingList.getColumnIndexOrThrow(AppConstant.INSPECTION_REMARK));
-//                    String created_date = pendingList.getString(pendingList.getColumnIndexOrThrow(AppConstant.CREATED_DATE));
-//                    String created_ipaddress = pendingList.getString(pendingList.getColumnIndexOrThrow(AppConstant.CREATED_IP_ADDRESS));
-//                    String created_username = pendingList.getString(pendingList.getColumnIndexOrThrow(AppConstant.CREATED_USER_NAME));
-//                    String Observation = pendingList.getString(pendingList.getColumnIndexOrThrow(AppConstant.OBSERVATION_NAME));
-//
-//
-//                    BlockListValue pendingListValue = new BlockListValue();
-//                    pendingListValue.setWorkID(work_id);
-//                    pendingListValue.setInspectionID(inspection_id);
-//                    pendingListValue.setWorkStageCode(stage_of_work_on_inspection);
-//                    pendingListValue.setWorkStageName(stage_of_work_on_inspection_name);
-//                    pendingListValue.setDate_of_inspection(date_of_inspection);
-//                    pendingListValue.setObservationID(observation);
-//                    pendingListValue.setInspection_remark(inspection_remark);
-//                    pendingListValue.setCreatedDate(created_date);
-//                    pendingListValue.setCreatedUserName(created_username);
-//                    pendingListValue.setCreatedIpAddress(created_ipaddress);
-//                    pendingListValue.setWorkStageName(stage_of_work_on_inspection_name);
-//                    pendingListValue.setObservation(Observation);
-                    //actionListValues.add(pendingListValue);
+                    String date_of_action = actionList.getString(actionList.getColumnIndexOrThrow(AppConstant.DATE_OF_ACTION));
+                    String action_remark = actionList.getString(actionList.getColumnIndexOrThrow(AppConstant.ACTION_REMARK));
+                    String dist_action = actionList.getString(actionList.getColumnIndexOrThrow(AppConstant.DISTRICT_ACTION));
+                    String state_action = actionList.getString(actionList.getColumnIndexOrThrow(AppConstant.STATE_ACTION));
+                    String sub_div_action = actionList.getString(actionList.getColumnIndexOrThrow(AppConstant.SUB_DIV_ACTION));
+
+
+                    BlockListValue actionListValue = new BlockListValue();
+                    actionListValue.setDate_of_Action(date_of_action);
+                    actionListValue.setAction_remark(action_remark);
+
+                    if (dist_action == null && state_action == null && sub_div_action == null) {
+                        actionListValue.setActionresult("NO Action Taken Yet");
+                    } else if (dist_action == "1" && state_action == "1" && sub_div_action == "1") {
+                        actionListValue.setActionresult("Accepted");
+                    } else {
+                        actionListValue.setActionresult("Pending");
+                    }
+                   actionListValues.add(actionListValue);
 
                 } while (actionList.moveToNext());
             }
@@ -124,7 +122,7 @@ public class ViewActions extends AppCompatActivity implements View.OnClickListen
 
         } else {
             //list_count.setText("0");
-            //not_found_tv.setVisibility(View.VISIBLE);
+           not_found_tv.setVisibility(View.VISIBLE);
         }
 
     }

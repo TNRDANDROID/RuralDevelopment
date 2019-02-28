@@ -108,5 +108,8 @@ public class AppConstant {
     public static String DISTRICT_ACTION = "dist_action";
     public static String STATE_ACTION = "state_action";
     public static String SUB_DIV_ACTION = "sub_div_action";
+    public static String DATE_OF_ACTION = "date_of_action";
+    public static String ACTION_TAKEN = "action_taken";
+    public static String ACTION_REMARK = "action_remark";
 
 }
