@@ -96,10 +96,10 @@ public class ProjectListAdapter extends RecyclerView.Adapter<ProjectListAdapter.
         String stageName = projectListValues.get(position).getWorkStageName();
         String asAmount = projectListValues.get(position).getAsAmount();
         Log.d("viewworkId",""+workid);
-//        prefManager.setKeyActionProjectName(workName);
-//        prefManager.setKeyActionAmount(asAmount);
-//        prefManager.setKeyActionWorkid(workid);
-//        prefManager.setKeyActionStageLevel(stageName);
+        prefManager.setKeyActionProjectName(workName);
+        prefManager.setKeyActionAmount(asAmount);
+        prefManager.setKeyActionWorkid(workid);
+        prefManager.setKeyActionStageLevel(stageName);
 
         Activity activity = (Activity) context;
         Intent intent = new Intent(context, ViewInspectionReportScreen.class);
