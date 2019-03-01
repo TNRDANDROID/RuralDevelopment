@@ -28,17 +28,18 @@
         android:textColor="#000000"
         android:textSize="@dimen/_15sdp"
         style="@style/font_circular_bold" />
-    <Button
-        android:id="@+id/btn_save"
-        android:layout_width="wrap_content"
-        android:layout_height="30dp"
-        android:layout_alignParentRight="true"
-        android:layout_centerInParent="true"
-        android:layout_margin="5dp"
-        android:background="@drawable/save_button"
-        android:text="Done"
-        android:textAllCaps="false"
-        android:textColor="@color/account_status_green_color"
-          />
+    <!--<Button-->
+        <!--android:id="@+id/btn_save"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="30dp"-->
+        <!--android:layout_alignParentRight="true"-->
+        <!--android:layout_centerInParent="true"-->
+        <!--android:layout_margin="5dp"-->
+        <!--android:background="@drawable/save_button"-->
+        <!--android:text="Done"-->
+        <!--android:textAllCaps="false"-->
+        <!--android:textColor="@color/account_status_green_color"-->
+        <!--android:visibility="gone"-->
+          <!--/>-->
 
 </RelativeLayout>

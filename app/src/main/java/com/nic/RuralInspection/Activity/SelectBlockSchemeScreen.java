@@ -50,7 +50,7 @@ import static com.nic.RuralInspection.DataBase.DBHelper.VILLAGE_TABLE_NAME;
 
 public class SelectBlockSchemeScreen extends AppCompatActivity implements View.OnClickListener, Api.ServerResponseListener {
 
-    private ImageView home;
+//    private ImageView home;
     private Button done;
     private RadioGroup radioGroup;
     CheckBox all_block, all_village, all_scheme, high_value_projects, all_projects;
@@ -64,6 +64,7 @@ public class SelectBlockSchemeScreen extends AppCompatActivity implements View.O
     private List<BlockListValue> Scheme = new ArrayList<>();
     private List<BlockListValue> FinYearList = new ArrayList<>();
     private ProgressHUD progressHUD;
+    private ImageView back_img;
 
     String pref_Block, pref_Village, pref_Scheme, pref_finYear;
 
@@ -86,7 +87,7 @@ public class SelectBlockSchemeScreen extends AppCompatActivity implements View.O
 
     public void intializeUI() {
         prefManager = new PrefManager(this);
-        home = (ImageView) findViewById(R.id.home);
+//        home = (ImageView) findViewById(R.id.home);
         done = (Button) findViewById(R.id.btn_save);
         high_value_projects = (CheckBox) findViewById(R.id.high_value_projects);
         all_projects = (CheckBox) findViewById(R.id.all_projects);
@@ -98,9 +99,11 @@ public class SelectBlockSchemeScreen extends AppCompatActivity implements View.O
         all_village = (CheckBox) findViewById(R.id.all_village);
         all_scheme = (CheckBox) findViewById(R.id.all_scheme);
         block_layout = (LinearLayout) findViewById(R.id.block_layout);
+        back_img = (ImageView) findViewById(R.id.backimg);
+        back_img.setOnClickListener(this);
 
         done.setOnClickListener(this);
-        home.setOnClickListener(this);
+//        home.setOnClickListener(this);
 
         high_value_projects.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -183,17 +186,17 @@ public class SelectBlockSchemeScreen extends AppCompatActivity implements View.O
 //            }
 //        });
 
-        all_village.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked) {
-                    sp_village.setSelection(0);
-                    sp_village.setEnabled(false);
-                } else {
-                    sp_village.setEnabled(true);
-                }
-            }
-        });
+//        all_village.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+//            @Override
+//            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+//                if (isChecked) {
+//                    sp_village.setSelection(0);
+//                    sp_village.setEnabled(false);
+//                } else {
+//                    sp_village.setEnabled(true);
+//                }
+//            }
+//        });
 
         sp_scheme.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -214,17 +217,17 @@ public class SelectBlockSchemeScreen extends AppCompatActivity implements View.O
 
             }
         });
-        all_scheme.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked) {
-                    sp_scheme.setSelection(0);
-                    sp_scheme.setEnabled(false);
-                } else {
-                    sp_scheme.setEnabled(true);
-                }
-            }
-        });
+//        all_scheme.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+//            @Override
+//            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+//                if (isChecked) {
+//                    sp_scheme.setSelection(0);
+//                    sp_scheme.setEnabled(false);
+//                } else {
+//                    sp_scheme.setEnabled(true);
+//                }
+//            }
+//        });
         sp_financialYear.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -292,6 +295,10 @@ public class SelectBlockSchemeScreen extends AppCompatActivity implements View.O
                 } else {
                     projectListScreen_offline();
                 }
+                break;
+            case R.id.backimg:
+                onBackPress();
+                break;
 
         }
     }
@@ -352,8 +359,8 @@ public class SelectBlockSchemeScreen extends AppCompatActivity implements View.O
         if (!"Select Financial year".equalsIgnoreCase(FinYearList.get(sp_financialYear.getSelectedItemPosition()).getFinancialYear())) {
 //            if (!"Select Block".equalsIgnoreCase(Block.get(sp_block.getSelectedItemPosition()).getBlockName()) || (all_block.isChecked())) {
             if (!"Select Block".equalsIgnoreCase(Block.get(sp_block.getSelectedItemPosition()).getBlockName())) {
-                if (!"Select Village".equalsIgnoreCase(Village.get(sp_village.getSelectedItemPosition()).getVillageListPvName()) || (all_village.isChecked())) {
-                    if (!"Select Scheme".equalsIgnoreCase(Scheme.get(sp_scheme.getSelectedItemPosition()).getSchemeName()) || (all_scheme.isChecked())) {
+                if (!"Select Village".equalsIgnoreCase(Village.get(sp_village.getSelectedItemPosition()).getVillageListPvName())) {
+                    if (!"Select Scheme".equalsIgnoreCase(Scheme.get(sp_scheme.getSelectedItemPosition()).getSchemeName())) {
                         if (Utils.isOnline()) {
                             getWorkListOptional();
                             getInspectionList_blockwise();
@@ -625,6 +632,12 @@ public class SelectBlockSchemeScreen extends AppCompatActivity implements View.O
         return dataSet;
     }
 
+    public void onBackPress() {
+        super.onBackPressed();
+        setResult(Activity.RESULT_CANCELED);
+        overridePendingTransition(R.anim.slide_enter, R.anim.slide_exit);
+    }
+
     @Override
     public void onBackPressed() {
         super.onBackPressed();
@@ -645,7 +658,7 @@ public class SelectBlockSchemeScreen extends AppCompatActivity implements View.O
                 if (jsonObject.getString("STATUS").equalsIgnoreCase("OK") && jsonObject.getString("RESPONSE").equalsIgnoreCase("OK")) {
                     workListOptionalS(jsonObject.getJSONArray(AppConstant.JSON_DATA));
                 } else if (jsonObject.getString("STATUS").equalsIgnoreCase("OK") && jsonObject.getString("RESPONSE").equalsIgnoreCase("NO_RECORD")) {
-                 Utils.showAlert(this, "No Record Found");
+                 Utils.showAlert(this, "No Projects Found!");
                 }
                 Log.d("responseWorkList", "" + jsonObject.getJSONArray(AppConstant.JSON_DATA));
 
