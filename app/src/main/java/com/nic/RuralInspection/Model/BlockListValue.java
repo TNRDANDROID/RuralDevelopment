@@ -70,6 +70,15 @@ public class BlockListValue {
 
     private String Date_of_Action;
     private String Action_remark;
+    private String Delete_Flag;
+
+    public String getDelete_Flag() {
+        return Delete_Flag;
+    }
+
+    public void setDelete_Flag(String delete_Flag) {
+        Delete_Flag = delete_Flag;
+    }
 
     public String getDetail() {
         return detail;

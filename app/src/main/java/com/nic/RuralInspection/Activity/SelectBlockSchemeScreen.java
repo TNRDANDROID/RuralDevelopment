@@ -866,6 +866,7 @@ public class SelectBlockSchemeScreen extends AppCompatActivity implements View.O
                     ActionList.put(AppConstant.DISTRICT_ACTION, dist_action);
                     ActionList.put(AppConstant.STATE_ACTION, state_action);
                     ActionList.put(AppConstant.SUB_DIV_ACTION, sub_div_action);
+                    ActionList.put(AppConstant.DELETE_FLAG, "1");
 
                     LoginScreen.db.insert(DBHelper.INSPECTION_ACTION, null, ActionList);
                 }

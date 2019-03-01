@@ -98,11 +98,16 @@ public class ViewActions extends AppCompatActivity implements View.OnClickListen
                     String dist_action = actionList.getString(actionList.getColumnIndexOrThrow(AppConstant.DISTRICT_ACTION));
                     String state_action = actionList.getString(actionList.getColumnIndexOrThrow(AppConstant.STATE_ACTION));
                     String sub_div_action = actionList.getString(actionList.getColumnIndexOrThrow(AppConstant.SUB_DIV_ACTION));
-
+                    String delete_flag = actionList.getString(actionList.getColumnIndexOrThrow(AppConstant.DELETE_FLAG));
 
                     BlockListValue actionListValue = new BlockListValue();
                     actionListValue.setDate_of_Action(date_of_action);
                     actionListValue.setAction_remark(action_remark);
+                    if(delete_flag == "1") {
+                        actionListValue.setDelete_Flag("Online");
+                    }else if(delete_flag == "0"){
+                        actionListValue.setDelete_Flag("Offline");
+                    }
 
                     if (dist_action == null && state_action == null && sub_div_action == null) {
                         actionListValue.setActionresult("NO Action Taken Yet");

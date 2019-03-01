@@ -433,7 +433,7 @@ public class AddInspectionReportScreen extends AppCompatActivity implements View
                     try {
                         dataset.put("image_details", imageJson);
 
-                        Log.d("post_dataset", dataset.toString());
+                        Log.d("post_dataset_inspection", dataset.toString());
                         String authKey = Utils.encrypt(prefManager.getUserPassKey(), getResources().getString(R.string.init_vector), dataset.toString());
 //                        int maxLogSize = 1000;
 //                        for(int i = 0; i <= authKey.length() / maxLogSize; i++) {
@@ -1020,6 +1020,7 @@ public class AddInspectionReportScreen extends AppCompatActivity implements View
                     String inspection_id = jsonArray.getJSONObject(i).getString(AppConstant.INSPECTION_ID);
                     String date_of_action = jsonArray.getJSONObject(i).getString(AppConstant.DATE_OF_ACTION);
                     String action_taken = jsonArray.getJSONObject(i).getString(AppConstant.ACTION_TAKEN);
+                    String action_remark = jsonArray.getJSONObject(i).getString(AppConstant.ACTION_REMARK);
                     String dist_action = jsonArray.getJSONObject(i).getString(AppConstant.DISTRICT_ACTION);
                     String state_action = jsonArray.getJSONObject(i).getString(AppConstant.STATE_ACTION);
                     String sub_div_action = jsonArray.getJSONObject(i).getString(AppConstant.SUB_DIV_ACTION);
@@ -1027,13 +1028,15 @@ public class AddInspectionReportScreen extends AppCompatActivity implements View
                     ContentValues ActionList = new ContentValues();
 
                     ActionList.put(AppConstant.WORK_ID, workID);
-                   // ActionList.put("id", id);
+                    //   ActionList.put("id", id);
                     ActionList.put(AppConstant.INSPECTION_ID, inspection_id);
                     ActionList.put(AppConstant.DATE_OF_ACTION, date_of_action);
                     ActionList.put(AppConstant.ACTION_TAKEN, action_taken);
+                    ActionList.put(AppConstant.ACTION_REMARK, action_remark);
                     ActionList.put(AppConstant.DISTRICT_ACTION, dist_action);
                     ActionList.put(AppConstant.STATE_ACTION, state_action);
                     ActionList.put(AppConstant.SUB_DIV_ACTION, sub_div_action);
+                    ActionList.put(AppConstant.DELETE_FLAG, "1");
 
                     LoginScreen.db.insert(DBHelper.INSPECTION_ACTION, null, ActionList);
                 }

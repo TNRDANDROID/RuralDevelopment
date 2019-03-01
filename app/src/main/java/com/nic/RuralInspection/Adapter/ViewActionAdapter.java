@@ -61,6 +61,7 @@ public class ViewActionAdapter extends RecyclerView.Adapter<ViewActionAdapter.My
         holder.date_of_action.setText(actionListValues.get(position).getDate_of_Action());
         holder.action_remark.setText(actionListValues.get(position).getAction_remark());
         holder.action_result_tv.setText(actionListValues.get(position).getActionresult());
+        holder.action_result_tv.setText(actionListValues.get(position).getDelete_Flag());
         if(prefManager.getLevels().equalsIgnoreCase("B")){
             holder.action_on_off.setVisibility(View.VISIBLE);
         }
