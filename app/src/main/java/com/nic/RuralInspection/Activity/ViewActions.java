@@ -103,13 +103,13 @@ public class ViewActions extends AppCompatActivity implements View.OnClickListen
                     BlockListValue actionListValue = new BlockListValue();
                     actionListValue.setDate_of_Action(date_of_action);
                     actionListValue.setAction_remark(action_remark);
-                    if(delete_flag == "1") {
+                    if(delete_flag.equals("1")) {
                         actionListValue.setDelete_Flag("Online");
-                    }else if(delete_flag == "0"){
+                    }else if(delete_flag.equals("0")){
                         actionListValue.setDelete_Flag("Offline");
                     }
 
-                    if (dist_action == null && state_action == null && sub_div_action == null) {
+                    if (dist_action.equals("") & state_action.equals("") & sub_div_action.equals("")) {
                         actionListValue.setActionresult("NO Action Taken Yet");
                     } else if (dist_action == "1" && state_action == "1" && sub_div_action == "1") {
                         actionListValue.setActionresult("Accepted");
