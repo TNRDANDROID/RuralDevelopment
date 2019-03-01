@@ -332,7 +332,7 @@ public class ProjectListScreen extends AppCompatActivity implements View.OnClick
                     String inspection_remark = jsonArray.getJSONObject(i).getString(AppConstant.INSPECTION_REMARK);
                     String created_date = jsonArray.getJSONObject(i).getString(AppConstant.CREATED_DATE);
                     String created_username = jsonArray.getJSONObject(i).getString(AppConstant.CREATED_USER_NAME);
-                    String created_ipaddress = jsonArray.getJSONObject(i).getString(AppConstant.CREATED_IP_ADDRESS);
+                    String created_ipaddress = jsonArray.getJSONObject(i).getString(AppConstant.CREATED_IMEI_NO);
 
                     ContentValues InspectValue = new ContentValues();
 
@@ -344,7 +344,7 @@ public class ProjectListScreen extends AppCompatActivity implements View.OnClick
                     InspectValue.put(AppConstant.OBSERVATION,observation);
                     InspectValue.put(AppConstant.INSPECTION_REMARK,inspection_remark);
                     InspectValue.put(AppConstant.CREATED_DATE,created_date);
-                    InspectValue.put(AppConstant.CREATED_IP_ADDRESS,created_username);
+                    InspectValue.put(AppConstant.CREATED_IMEI_NO,created_username);
                     InspectValue.put(AppConstant.CREATED_USER_NAME,created_ipaddress);
 
                     LoginScreen.db.insert(DBHelper.INSPECTION, null, InspectValue);

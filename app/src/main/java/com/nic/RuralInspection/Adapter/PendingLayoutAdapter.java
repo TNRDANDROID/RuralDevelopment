@@ -132,7 +132,7 @@ public class PendingLayoutAdapter extends RecyclerView.Adapter<PendingLayoutAdap
             dataset.put(AppConstant.OBSERVATION, observation);
             dataset.put(AppConstant.INSPECTION_REMARK, inspection_remark);
             dataset.put(AppConstant.CREATED_DATE, created_date);
-            dataset.put(AppConstant.CREATED_IP_ADDRESS, created_ipaddress);
+            dataset.put(AppConstant.CREATED_IMEI_NO, created_ipaddress);
             dataset.put(AppConstant.CREATED_USER_NAME, created_username);
         } catch (JSONException e) {
             e.printStackTrace();

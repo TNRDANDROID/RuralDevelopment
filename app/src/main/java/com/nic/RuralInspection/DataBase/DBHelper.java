@@ -153,6 +153,8 @@ public class DBHelper extends SQLiteOpenHelper {
             db.execSQL("DROP TABLE IF EXISTS " + INSPECTION);
             db.execSQL("DROP TABLE IF EXISTS " + CAPTURED_PHOTO);
             db.execSQL("DROP TABLE IF EXISTS " + INSPECTION_ACTION);
+            db.execSQL("DROP TABLE IF EXISTS " + IMAGE_GROUP_ID);
+            db.execSQL("DROP TABLE IF EXISTS " + INSPECTION_PENDING);
             onCreate(db);
         }
     }

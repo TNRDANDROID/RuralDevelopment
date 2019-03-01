@@ -86,7 +86,7 @@ public class AppConstant {
     public static String OBSERVATION = "observation";
     public static String INSPECTION_REMARK = "inspection_remark";
     public static String CREATED_DATE = "created_date";
-    public static String CREATED_IP_ADDRESS = "created_ipaddress";
+    public static String CREATED_IMEI_NO = "imei_no";
     public static String CREATED_USER_NAME = "created_username";
 
     //Inspection table

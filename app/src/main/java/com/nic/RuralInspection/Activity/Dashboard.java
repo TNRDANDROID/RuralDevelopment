@@ -59,7 +59,7 @@ public class Dashboard extends AppCompatActivity implements Api.ServerResponseLi
     private static LinearLayout uploadInspectionReport, block_user_layout, pending_upload_layout;
     private static PrefManager prefManager;
     private ProgressHUD progressHUD;
-    private static MyCustomTextView district_tv, block_user_tv, upload_inspection_report_tv, count_tv,title_tv;
+    private static MyCustomTextView district_tv, block_user_tv, upload_inspection_report_tv, count_tv, title_tv;
     private JSONArray updatedJsonArray;
     private static final int PERMISSIONS_REQUEST_READ_PHONE_STATE = 999;
     TelephonyManager telephonyManager;
@@ -68,13 +68,12 @@ public class Dashboard extends AppCompatActivity implements Api.ServerResponseLi
     private Fragment mContent;
 
 
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
         setContentView(R.layout.frame_layout_dashboard);
-        if(mContent == null){
+        if (mContent == null) {
             mContent = new PendingLayoutFragment();
         }
         intializeUI();
@@ -174,19 +173,19 @@ public class Dashboard extends AppCompatActivity implements Api.ServerResponseLi
     public static void getPendingCount() {
         String pendingList_sql = "";
         if (prefManager.getLevels().equalsIgnoreCase("D")) {
-            pendingList_sql = "select * from(select * from "+DBHelper.INSPECTION_PENDING+" WHERE inspection_id in (select inspection_id from captured_photo))a left join (select * from observation)b on a.observation = b.id where delete_flag = 0";
-        }
-        else if (prefManager.getLevels().equalsIgnoreCase("B")) {
-            pendingList_sql = "select * from "+DBHelper.INSPECTION_ACTION+" WHERE id in (select action_id from captured_photo) and delete_flag = 0";
+            pendingList_sql = "select * from(select * from " + DBHelper.INSPECTION_PENDING + " WHERE inspection_id in (select inspection_id from captured_photo))a left join (select * from observation)b on a.observation = b.id where delete_flag = 0";
+        } else if (prefManager.getLevels().equalsIgnoreCase("B")) {
+            pendingList_sql = "select * from " + DBHelper.INSPECTION_ACTION + " WHERE id in (select action_id from captured_photo) and delete_flag = 0";
         }
         Cursor pendingList = getRawEvents(pendingList_sql, null);
         int count = pendingList.getCount();
-        if(count > 0) {
-        pending_upload_layout.setVisibility(View.VISIBLE);
-        count_tv.setText(String.valueOf(count));
+        if (count > 0) {
+            pending_upload_layout.setVisibility(View.VISIBLE);
+            count_tv.setText(String.valueOf(count));
         }
     }
-    public static void hidePending(){
+
+    public static void hidePending() {
         pending_upload_layout.setVisibility(View.GONE);
     }
 
@@ -311,12 +310,12 @@ public class Dashboard extends AppCompatActivity implements Api.ServerResponseLi
 
     }
 
-    public void openPendingLayoutFragment( ) {
+    public void openPendingLayoutFragment() {
 
-        mContent= new PendingLayoutFragment();
+        mContent = new PendingLayoutFragment();
 
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.content,mContent ).addToBackStack("editquestion");
+        transaction.replace(R.id.content, mContent).addToBackStack("editquestion");
         overridePendingTransition(R.anim.slide_in, R.anim.slide_out);
         transaction.commit();
 
@@ -653,10 +652,7 @@ public class Dashboard extends AppCompatActivity implements Api.ServerResponseLi
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    if(!prefManager.getLevels().equalsIgnoreCase("B")) {
-                        getImei();
-                    }
-
+                    getImei();
                 }
             }, 4000);
 

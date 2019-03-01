@@ -110,7 +110,7 @@ public class ViewInspectionInActionScreen extends AppCompatActivity implements V
 
     private static String imageStoragePath;
     private ImageView back_img, image_view_preview;
-    private MyCustomTextView district_tv, scheme_name_tv, block_name_tv, block_user_tv, village_name_tv, fin_year_tv, take_photo,title_tv;
+    private MyCustomTextView district_tv, scheme_name_tv, block_name_tv, block_user_tv, village_name_tv, fin_year_tv, take_photo, title_tv;
     private MyCustomTextView projectName, amountTv, levelTv, inspected_date, remark, observation;
     private LinearLayout village_layout, block_layout;
     private AddActionAdapter addActionAdapter;
@@ -226,19 +226,20 @@ public class ViewInspectionInActionScreen extends AppCompatActivity implements V
         if (!Utils.isOnline()) {
             ContentValues actionValue = new ContentValues();
             actionValue.put(AppConstant.WORK_ID, work_id);
-            actionValue.put(AppConstant.INSPECTION_ID,inspection_id);
-            actionValue.put(AppConstant.DATE_OF_ACTION,date_of_action);
-            actionValue.put(AppConstant.ACTION_REMARK,action_remark);
+            actionValue.put(AppConstant.INSPECTION_ID, inspection_id);
+            actionValue.put(AppConstant.DATE_OF_ACTION, date_of_action);
+            actionValue.put(AppConstant.ACTION_REMARK, action_remark);
             actionValue.put(AppConstant.DELETE_FLAG, 0);
 
-   long rowInserted = LoginScreen.db.insert(DBHelper.INSPECTION_ACTION, null, actionValue);
-    Log.d("rowInserted",String.valueOf(rowInserted));
+            long rowInserted = LoginScreen.db.insert(DBHelper.INSPECTION_ACTION, null, actionValue);
+            Log.d("rowInserted", String.valueOf(rowInserted));
         } else {
             try {
                 dataset.put(AppConstant.KEY_SERVICE_ID, AppConstant.KEY_HIGH_VALUE_PROJECT_ACTION_SAVE);
                 dataset.put(AppConstant.WORK_ID, work_id);
-                dataset.put(AppConstant.INSPECTION_ID,inspection_id);
-                dataset.put(AppConstant.DATE_OF_ACTION,date_of_action);
+                dataset.put(AppConstant.INSPECTION_ID, inspection_id);
+                dataset.put(AppConstant.CREATED_IMEI_NO, prefManager.getIMEI());
+                dataset.put(AppConstant.DATE_OF_ACTION, date_of_action);
                 dataset.put(AppConstant.ACTION_REMARK, action_remark);
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -247,7 +248,7 @@ public class ViewInspectionInActionScreen extends AppCompatActivity implements V
         }
         int actionID = 0;
 
-        if(!Utils.isOnline()) {
+        if (!Utils.isOnline()) {
             Cursor action_Cursor = getRawEvents("SELECT MAX(id) FROM " + DBHelper.INSPECTION_ACTION, null);
             Log.d("cursor_count", String.valueOf(action_Cursor.getCount()));
             if (action_Cursor.getCount() > 0) {
@@ -259,7 +260,7 @@ public class ViewInspectionInActionScreen extends AppCompatActivity implements V
                 }
             }
         }
-        String imagelist_sql = "select * from "+DBHelper.CAPTURED_PHOTO+ " where inspection_id="+inspection_id;
+        String imagelist_sql = "select * from " + DBHelper.CAPTURED_PHOTO + " where inspection_id=" + inspection_id;
         Log.d("sql", imagelist_sql);
         Cursor imagelist = getRawEvents(imagelist_sql, null);
 
@@ -268,40 +269,42 @@ public class ViewInspectionInActionScreen extends AppCompatActivity implements V
             if (imagelist.moveToFirst()) {
                 do {
                     String image_id = imagelist.getString(imagelist.getColumnIndexOrThrow("id"));
-                    group.put(image_id);
+                    group.put(Integer.parseInt(image_id));
                 } while (imagelist.moveToNext());
             }
             ContentValues grouped_array = new ContentValues();
             grouped_array.put("action_id",actionID);
-            grouped_array.put("grouping",group.toString());
+            grouped_array.put("grouping", String.valueOf(group));
             Log.d("grouping",group.toString());
             LoginScreen.db.insert(DBHelper.IMAGE_GROUP_ID,null,grouped_array);
         }
 
-        String list_sql = "select * from "+DBHelper.IMAGE_GROUP_ID;
+        String list_sql = "select * from " + DBHelper.IMAGE_GROUP_ID;
         Log.d("sql", imagelist_sql);
         Cursor list = getRawEvents(list_sql, null);
 
         if (list.getCount() > 0) {
-            JSONObject group_info = null;
+            JSONArray group_info = new JSONArray();
+            JSONObject element;
             if (list.moveToFirst()) {
                 do {
-                    group_info = new JSONObject();
+                    element = new JSONObject();
 
                     String id = list.getString(list.getColumnIndexOrThrow("id"));
                     String grouping = list.getString(list.getColumnIndexOrThrow("grouping"));
 
                     try {
-                        group_info.put("id", id);
-                        group_info.put("grouping", grouping);
+                        element.put("id",id);
+                        element.put("grouping",grouping);
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
-
+                    group_info.put(element);
                 } while (list.moveToNext());
+
             }
             try {
-                dataset.put("grouping_details", group_info.toString());
+                dataset.put("grouping_details", group_info);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -394,7 +397,7 @@ public class ViewInspectionInActionScreen extends AppCompatActivity implements V
                             imageValue.put(AppConstant.IMAGE, image_str.trim());
                             imageValue.put(AppConstant.DESCRIPTION, description);
                             imageValue.put("action_id", finalActionID);
-                            imageValue.put("image_group_id",image_group_id);
+                            imageValue.put("image_group_id", image_group_id);
 
                             long rowInserted = LoginScreen.db.insert(DBHelper.CAPTURED_PHOTO, null, imageValue);
 
@@ -429,7 +432,7 @@ public class ViewInspectionInActionScreen extends AppCompatActivity implements V
 //                            Log.v("to_send", authKey.substring(start, end));
 //                        }
 
-//                        sync_data();
+                        sync_data();
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
@@ -737,7 +740,10 @@ public class ViewInspectionInActionScreen extends AppCompatActivity implements V
     public void OnMyResponse(ServerResponse serverResponse) {
         try {
             String urlType = serverResponse.getApi();
+            Utils.showAlert(this, "Saved");
+            finish();
             JSONObject responseObj = serverResponse.getJsonResponse();
+            Utils.showAlert(this, "Saved");
             if (prefManager.getLevels().equalsIgnoreCase("D")) {
                 if ("save_data".equals(urlType) && responseObj != null) {
                     String key = responseObj.getString(AppConstant.ENCODE_DATA);

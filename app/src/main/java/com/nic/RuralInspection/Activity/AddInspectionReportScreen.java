@@ -303,7 +303,7 @@ public class AddInspectionReportScreen extends AppCompatActivity implements View
             inspectionValue.put(AppConstant.OBSERVATION, observation);
             inspectionValue.put(AppConstant.INSPECTION_REMARK, inspection_remark);
             inspectionValue.put(AppConstant.CREATED_DATE, created_date);
-            inspectionValue.put(AppConstant.CREATED_IP_ADDRESS, prefManager.getIMEI());
+            inspectionValue.put(AppConstant.CREATED_IMEI_NO, prefManager.getIMEI());
             inspectionValue.put(AppConstant.CREATED_USER_NAME, prefManager.getUserName());
             inspectionValue.put("delete_flag", 0);
 
@@ -318,7 +318,7 @@ public class AddInspectionReportScreen extends AppCompatActivity implements View
                 dataset.put(AppConstant.OBSERVATION, observation);
                 dataset.put(AppConstant.INSPECTION_REMARK, inspection_remark);
                 dataset.put(AppConstant.CREATED_DATE, created_date);
-                dataset.put(AppConstant.CREATED_IP_ADDRESS, prefManager.getIMEI());
+                dataset.put(AppConstant.CREATED_IMEI_NO, prefManager.getIMEI());
                 dataset.put(AppConstant.CREATED_USER_NAME, prefManager.getUserName());
             } catch (JSONException e) {
                 e.printStackTrace();
