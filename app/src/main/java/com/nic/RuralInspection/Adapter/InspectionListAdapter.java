@@ -49,6 +49,7 @@ public class InspectionListAdapter extends RecyclerView.Adapter<InspectionListAd
 
     public class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         public MyCustomTextView date_of_inspection, remark, observation, view_image, ins_result_tv_on_ff,view_action;
+        public  View  view;
         public RainbowTextView rainbowTextView;
         private RelativeLayout add_action_layout;
         private LinearLayout action_part_visible_layout;
@@ -64,6 +65,7 @@ public class InspectionListAdapter extends RecyclerView.Adapter<InspectionListAd
             observation = (MyCustomTextView) itemView.findViewById(R.id.observation);
             ins_result_tv_on_ff = (MyCustomTextView) itemView.findViewById(R.id.ins_result_tv_on_ff);
             view_action = (MyCustomTextView) itemView.findViewById(R.id.view_action);
+            view = (View)itemView.findViewById(R.id.view) ;
 
             add_action_layout.setOnClickListener(this);
 
@@ -144,10 +146,11 @@ public class InspectionListAdapter extends RecyclerView.Adapter<InspectionListAd
 
         } else {
             holder.ins_result_tv_on_ff.setVisibility(View.GONE);
+            holder.view.setVisibility(View.GONE);
             RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
                     ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
             params.addRule(RelativeLayout.CENTER_IN_PARENT);
-            holder.view_action.setPadding(10,10,10,10);
+            holder.view_action.setPadding(20,20,20,20);
             holder.view_action.setBackgroundResource(R.drawable.rectangle_shape_green);
             holder.view_action.setLayoutParams(params);
 

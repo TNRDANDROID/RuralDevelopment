@@ -110,7 +110,7 @@ public class ViewInspectionInActionScreen extends AppCompatActivity implements V
 
     private static String imageStoragePath;
     private ImageView back_img, image_view_preview;
-    private MyCustomTextView district_tv, scheme_name_tv, block_name_tv, block_user_tv, village_name_tv, fin_year_tv, take_photo;
+    private MyCustomTextView district_tv, scheme_name_tv, block_name_tv, block_user_tv, village_name_tv, fin_year_tv, take_photo,title_tv;
     private MyCustomTextView projectName, amountTv, levelTv, inspected_date, remark, observation;
     private LinearLayout village_layout, block_layout;
     private AddActionAdapter addActionAdapter;
@@ -144,6 +144,7 @@ public class ViewInspectionInActionScreen extends AppCompatActivity implements V
         block_name_tv = (MyCustomTextView) findViewById(R.id.block_name_tv);
         village_name_tv = (MyCustomTextView) findViewById(R.id.village_name_tv);
         fin_year_tv = (MyCustomTextView) findViewById(R.id.fin_year_tv);
+        title_tv = (MyCustomTextView) findViewById(R.id.title_tv);
 
         projectName = (MyCustomTextView) findViewById(R.id.project_title_tv);
         amountTv = (MyCustomTextView) findViewById(R.id.amount_tv);
@@ -169,7 +170,7 @@ public class ViewInspectionInActionScreen extends AppCompatActivity implements V
         inspected_date.setText(getIntent().getStringExtra(AppConstant.DATE_OF_INSPECTION));
         remark.setText(getIntent().getStringExtra(AppConstant.INSPECTION_REMARK));
         observation.setText(getIntent().getStringExtra(AppConstant.OBSERVATION));
-
+        title_tv.setText("Take Action");
         back_img.setOnClickListener(this);
         take_photo.setOnClickListener(this);
 
@@ -197,7 +198,7 @@ public class ViewInspectionInActionScreen extends AppCompatActivity implements V
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.take_photo:
-                if (!remark_action_tv.getText().toString().matches("")) {
+                if (!remark_action_tv.getText().toString().isEmpty()) {
                     imageWithDescription(take_photo, "mobile", scrollView);
                 } else {
                     Utils.showAlert(this, "Enter Remark");
@@ -244,18 +245,20 @@ public class ViewInspectionInActionScreen extends AppCompatActivity implements V
             }
 
         }
-        int actionID = 1;
-//        Cursor action_Cursor = getRawEvents("SELECT MAX(id) FROM " + DBHelper.INSPECTION_ACTION, null);
-//        Log.d("cursor_count", String.valueOf(action_Cursor.getCount()));
-//        if (action_Cursor.getCount() > 0) {
-//            if (action_Cursor.moveToFirst()) {
-//                do {
-//                    actionID = action_Cursor.getInt(0);
-//                    Log.d("actionID", "" + actionID);
-//                } while (action_Cursor.moveToNext());
-//            }
-//        }
+        int actionID = 0;
 
+        if(!Utils.isOnline()) {
+            Cursor action_Cursor = getRawEvents("SELECT MAX(id) FROM " + DBHelper.INSPECTION_ACTION, null);
+            Log.d("cursor_count", String.valueOf(action_Cursor.getCount()));
+            if (action_Cursor.getCount() > 0) {
+                if (action_Cursor.moveToFirst()) {
+                    do {
+                        actionID = action_Cursor.getInt(0);
+                        Log.d("actionID", "" + actionID);
+                    } while (action_Cursor.moveToNext());
+                }
+            }
+        }
         String imagelist_sql = "select * from "+DBHelper.CAPTURED_PHOTO+ " where inspection_id="+inspection_id;
         Log.d("sql", imagelist_sql);
         Cursor imagelist = getRawEvents(imagelist_sql, null);
@@ -415,18 +418,18 @@ public class ViewInspectionInActionScreen extends AppCompatActivity implements V
                     try {
                         dataset.put("image_details", imageJson);
 
-                        Log.d("post_dataset", dataset.toString());
-                       String authKey = Utils.encrypt(prefManager.getUserPassKey(), getResources().getString(R.string.init_vector), dataset.toString());
-                       // String authKey = dataset.toString();
-                        int maxLogSize = 1000;
-                        for(int i = 0; i <= authKey.length() / maxLogSize; i++) {
-                            int start = i * maxLogSize;
-                           int end = (i+1) * maxLogSize;
-                            end = end > authKey.length() ? authKey.length() : end;
-                            Log.v("to_send", authKey.substring(start, end));
-                        }
+                        Log.d("post_dataset_action", dataset.toString());
+//                       String authKey = Utils.encrypt(prefManager.getUserPassKey(), getResources().getString(R.string.init_vector), dataset.toString());
+//                       // String authKey = dataset.toString();
+//                        int maxLogSize = 4000;
+//                        for(int i = 0; i <= authKey.length() / maxLogSize; i++) {
+//                            int start = i * maxLogSize;
+//                           int end = (i+1) * maxLogSize;
+//                            end = end > authKey.length() ? authKey.length() : end;
+//                            Log.v("to_send", authKey.substring(start, end));
+//                        }
 
-                       // sync_data();
+//                        sync_data();
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
@@ -813,5 +816,4 @@ public class ViewInspectionInActionScreen extends AppCompatActivity implements V
         Log.d("saving", "" + authKey);
         return dataSet;
     }
-
 }

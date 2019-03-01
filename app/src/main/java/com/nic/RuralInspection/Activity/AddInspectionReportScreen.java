@@ -139,6 +139,7 @@ public class AddInspectionReportScreen extends AppCompatActivity implements View
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
         setContentView(R.layout.add_inspection_with_toolbar);
         intializeUI();
         viewStage();
