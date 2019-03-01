@@ -57,9 +57,9 @@ import static com.nic.RuralInspection.Activity.LoginScreen.db;
 public class Dashboard extends AppCompatActivity implements Api.ServerResponseListener, View.OnClickListener, MyDialog.myOnClickListener {
     private ImageView logout;
     private static LinearLayout uploadInspectionReport, block_user_layout, pending_upload_layout;
-    private PrefManager prefManager;
+    private static PrefManager prefManager;
     private ProgressHUD progressHUD;
-    private static MyCustomTextView district_tv, block_user_tv, upload_inspection_report_tv, count_tv;
+    private static MyCustomTextView district_tv, block_user_tv, upload_inspection_report_tv, count_tv,title_tv;
     private JSONArray updatedJsonArray;
     private static final int PERMISSIONS_REQUEST_READ_PHONE_STATE = 999;
     TelephonyManager telephonyManager;
@@ -93,9 +93,11 @@ public class Dashboard extends AppCompatActivity implements Api.ServerResponseLi
         upload_inspection_report_tv = (MyCustomTextView) findViewById(R.id.upload_inspection_report_tv);
         count_tv = (MyCustomTextView) findViewById(R.id.count_tv);
         district_tv = (MyCustomTextView) findViewById(R.id.district_tv);
+        title_tv = (MyCustomTextView) findViewById(R.id.title_tv);
         uploadInspectionReport.setOnClickListener(this);
         pending_upload_layout.setOnClickListener(this);
         logout.setOnClickListener(this);
+        title_tv.setText("Dashboard");
         district_tv.setText(prefManager.getDistrictName());
         if (prefManager.getLevels().equalsIgnoreCase("B")) {
             block_user_layout.setVisibility(View.VISIBLE);
@@ -170,7 +172,13 @@ public class Dashboard extends AppCompatActivity implements Api.ServerResponseLi
     }
 
     public static void getPendingCount() {
-        String pendingList_sql = "select * from(select * from "+DBHelper.INSPECTION_PENDING+" WHERE inspection_id in (select inspection_id from captured_photo))a left join (select * from observation)b on a.observation = b.id where delete_flag = 0";
+        String pendingList_sql = "";
+        if (prefManager.getLevels().equalsIgnoreCase("D")) {
+            pendingList_sql = "select * from(select * from "+DBHelper.INSPECTION_PENDING+" WHERE inspection_id in (select inspection_id from captured_photo))a left join (select * from observation)b on a.observation = b.id where delete_flag = 0";
+        }
+        else if (prefManager.getLevels().equalsIgnoreCase("B")) {
+            pendingList_sql = "select * from "+DBHelper.INSPECTION_ACTION+" WHERE id in (select action_id from captured_photo) and delete_flag = 0";
+        }
         Cursor pendingList = getRawEvents(pendingList_sql, null);
         int count = pendingList.getCount();
         if(count > 0) {
@@ -645,7 +653,9 @@ public class Dashboard extends AppCompatActivity implements Api.ServerResponseLi
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    getImei();
+                    if(!prefManager.getLevels().equalsIgnoreCase("B")) {
+                        getImei();
+                    }
 
                 }
             }, 4000);

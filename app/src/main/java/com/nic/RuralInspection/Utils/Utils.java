@@ -1263,7 +1263,7 @@ public class Utils {
         Log.d("object", "" + dataSet);
         return dataSet;
     }
-    public static JSONObject InspectionList_Action(Activity activity) throws JSONException {
+    public static JSONObject  InspectionList_Action(Activity activity) throws JSONException {
         prefManager = new PrefManager(activity);
         JSONObject dataSet = new JSONObject();
         dataSet.put(AppConstant.KEY_SERVICE_ID, AppConstant.KEY_INSPECTION_LIST_DISTRICT_WISE_ACTION);
