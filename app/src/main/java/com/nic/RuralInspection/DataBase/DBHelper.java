@@ -89,7 +89,7 @@ public class DBHelper extends SQLiteOpenHelper {
                 "observation TEXT," +
                 "inspection_remark TEXT," +
                 "created_date TEXT," +
-                "created_ipaddress TEXT," +
+                "imei_no TEXT," +
                 "delete_flag INTEGER," +
                 "created_username TEXT)");
 
@@ -104,7 +104,7 @@ public class DBHelper extends SQLiteOpenHelper {
                 "observation TEXT," +
                 "inspection_remark TEXT," +
                 "created_date TEXT," +
-                "created_ipaddress TEXT," +
+                "imei_no TEXT," +
                 "delete_flag INTEGER," +
                 "created_username TEXT)");
 
