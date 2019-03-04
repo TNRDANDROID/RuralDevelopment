@@ -131,6 +131,7 @@
 
 
                         <LinearLayout
+                            android:id="@+id/stageLayout"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
 
@@ -216,7 +217,7 @@
                                 android:orientation="vertical">
 
                                 <com.nic.RuralInspection.Support.MyCustomTextView
-
+                                    android:id="@+id/date"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
                                     android:padding="5dp"
@@ -292,7 +293,7 @@
                                 android:orientation="vertical">
 
                                 <com.nic.RuralInspection.Support.MyCustomTextView
-                                    android:id="@+id/action_tv"
+                                    android:id="@+id/remark_Of_remark"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
                                     android:padding="5dp"

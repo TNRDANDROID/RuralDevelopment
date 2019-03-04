@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.android.volley.VolleyError;
@@ -68,21 +69,53 @@ public class PendingLayoutAdapter extends RecyclerView.Adapter<PendingLayoutAdap
     public void onBindViewHolder(PendingLayoutAdapter.MyViewHolder holder, final int position) {
 
         holder.pend_work_id.setText(pendingListValues.get(position).getWorkID());
-        holder.pend_stage.setText(pendingListValues.get(position).getWorkStageName());
-        holder.pend_inspected_date.setText(pendingListValues.get(position).getDate_of_inspection());
-        holder.pend_observation.setText(pendingListValues.get(position).getObservation());
+        if(prefManager.getLevels().equalsIgnoreCase("D")){
+            holder.pend_stage.setText(pendingListValues.get(position).getWorkStageName());
+        }
+
+        if (prefManager.getLevels().equalsIgnoreCase("D")) {
+            holder.pend_inspected_date.setText(pendingListValues.get(position).getDate_of_inspection());
+        }else if(prefManager.getLevels().equalsIgnoreCase("B")){
+            holder.pend_inspected_date.setText(pendingListValues.get(position).getDate_of_Action());
+        }
+
+        if (prefManager.getLevels().equalsIgnoreCase("D")) {
+            holder.pend_observation.setText(pendingListValues.get(position).getObservation());
+        }else if(prefManager.getLevels().equalsIgnoreCase("B")){
+            holder.pend_observation.setText(pendingListValues.get(position).getAction_remark());
+        }
+
+
+
+
+        if (prefManager.getLevels().equalsIgnoreCase("B")) {
+          //  holder.date.setText("Action Date");
+        }
 
         holder.add_inspection_report.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                UploadPending(position);
+
+                if (prefManager.getLevels().equalsIgnoreCase("D")) {
+                   UploadPending_Inspection(position);
+                }else
+                if (prefManager.getLevels().equalsIgnoreCase("B")) {
+                    UploadPending_Action(position);
+                }
+
             }
         });
 
         holder.del_inspection_report.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                deletePending(position);
+                if (prefManager.getLevels().equalsIgnoreCase("D")) {
+                    deletePending_Inspection(position);
+                }else
+                if (prefManager.getLevels().equalsIgnoreCase("B")) {
+                    deletePending_Action(position);
+
+                }
             }
         });
 
@@ -95,7 +128,8 @@ public class PendingLayoutAdapter extends RecyclerView.Adapter<PendingLayoutAdap
     }
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
-        private MyCustomTextView pend_work_id, pend_stage, pend_inspected_date, pend_observation, add_inspection_report, del_inspection_report;
+        private MyCustomTextView pend_work_id, pend_stage, pend_inspected_date, pend_observation, add_inspection_report, del_inspection_report,date,remark_Of_remark;
+        private LinearLayout stageLayout;
 
         public MyViewHolder(View itemView) {
             super(itemView);
@@ -105,10 +139,19 @@ public class PendingLayoutAdapter extends RecyclerView.Adapter<PendingLayoutAdap
             pend_observation = (MyCustomTextView) itemView.findViewById(R.id.pend_observation);
             add_inspection_report = (MyCustomTextView) itemView.findViewById(R.id.add_inspection_report);
             del_inspection_report = (MyCustomTextView) itemView.findViewById(R.id.del_inspection_report);
+            remark_Of_remark = (MyCustomTextView) itemView.findViewById(R.id.remark_Of_remark);
+            date = (MyCustomTextView) itemView.findViewById(R.id.date);
+            stageLayout = (LinearLayout) itemView.findViewById(R.id.stageLayout);
+
+            if (prefManager.getLevels().equalsIgnoreCase("B")) {
+                stageLayout.setVisibility(View.GONE);
+                remark_Of_remark.setText("Remark");
+                date.setText("Action Date");
+            }
         }
     }
 
-    public void UploadPending(int position) {
+    public void UploadPending_Inspection(int position) {
 
         String work_id = pendingListValues.get(position).getWorkID();
         int inspection_id = pendingListValues.get(position).getInspectionID();
@@ -192,7 +235,139 @@ public class PendingLayoutAdapter extends RecyclerView.Adapter<PendingLayoutAdap
 
     }
 
-    public void deletePending(int position) {
+    public void UploadPending_Action(int position) {
+
+        String work_id = pendingListValues.get(position).getWorkID();
+        int inspection_id = pendingListValues.get(position).getInspectionID();
+        int action_id = pendingListValues.get(position).getActionID();
+        prefManager.setKeyDeleteId(String.valueOf(action_id));
+        String date_of_action = pendingListValues.get(position).getDate_of_Action();
+        String action_remark = pendingListValues.get(position).getAction_remark();
+
+
+
+        try {
+            dataset.put(AppConstant.KEY_SERVICE_ID, AppConstant.KEY_HIGH_VALUE_PROJECT_ACTION_SAVE);
+            dataset.put(AppConstant.WORK_ID, work_id);
+            dataset.put(AppConstant.INSPECTION_ID, inspection_id);
+            dataset.put(AppConstant.CREATED_IMEI_NO, prefManager.getIMEI());
+            dataset.put(AppConstant.DATE_OF_ACTION, date_of_action);
+            dataset.put(AppConstant.ACTION_REMARK, action_remark);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        String list_sql = "select * from " + DBHelper.IMAGE_GROUP_ID+" where action_id="+action_id;
+        Log.d("sql", list_sql);
+        Cursor list = getRawEvents(list_sql, null);
+
+        if (list.getCount() > 0) {
+            JSONArray group_array = new JSONArray();
+            JSONObject element = new JSONObject();
+            if (list.moveToFirst()) {
+                do {
+                    element = new JSONObject();
+
+                    String id = list.getString(list.getColumnIndexOrThrow("id"));
+                    String grouping = list.getString(list.getColumnIndexOrThrow("grouping"));
+                    JSONArray arr = null;
+                    try {
+                        arr = new JSONArray(grouping);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    try {
+                        element.put("id",id);
+                        element.put("grouping",arr);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    group_array.put(element);
+                } while (list.moveToNext());
+
+            }
+            try {
+                dataset.put("grouping_details", group_array);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
+        JSONArray imageJson = new JSONArray();
+
+        String image_sql = "Select * from " + DBHelper.CAPTURED_PHOTO + " where action_id =" + action_id + " and work_id =" + work_id;
+        Log.d("sql", image_sql);
+        Cursor image = getRawEvents(image_sql, null);
+
+        if (image.getCount() > 0) {
+            int i = 0;
+            if (image.moveToFirst()) {
+                do {
+                    String image_work_id = image.getString(image.getColumnIndexOrThrow(AppConstant.WORK_ID));
+                    String image_group_id = image.getString(image.getColumnIndexOrThrow(AppConstant.IMAGE_GROUP_ID));
+                    int image_inspection_id = image.getInt(image.getColumnIndexOrThrow(AppConstant.INSPECTION_ID));
+                    String latitude = image.getString(image.getColumnIndexOrThrow(AppConstant.LATITUDE));
+                    String longitude = image.getString(image.getColumnIndexOrThrow(AppConstant.LONGITUDE));
+                    String images = image.getString(image.getColumnIndexOrThrow(AppConstant.IMAGE));
+                    String description = image.getString(image.getColumnIndexOrThrow(AppConstant.DESCRIPTION));
+
+                    JSONArray imageArray = new JSONArray();
+
+                    imageArray.put(image_work_id);
+                    imageArray.put(image_group_id);
+                    imageArray.put(latitude);
+                    imageArray.put(longitude);
+                    imageArray.put(images.trim());
+                    imageArray.put(description);
+                    i++;
+                    imageJson.put(imageArray);
+
+                } while (image.moveToNext());
+            }
+        }
+
+        try {
+            dataset.put("image_details", imageJson);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        String oof = dataset.toString();
+        int maxLogSize = 1000;
+        for (int i = 0; i <= oof.length() / maxLogSize; i++) {
+            int start = i * maxLogSize;
+            int end = (i + 1) * maxLogSize;
+            end = end > oof.length() ? oof.length() : end;
+            Log.v("oof", oof.substring(start, end));
+        }
+        if (Utils.isOnline()) {
+          pendingLayoutFragment.pending_Sync_Data(dataset);
+        } else {
+            Utils.showAlert(context, "Turn On Mobile Data To Upload");
+        }
+
+
+    }
+
+    public void deletePending_Inspection(int position) {
+
+        String work_id = pendingListValues.get(position).getWorkID();
+        String inspection_id = String.valueOf(pendingListValues.get(position).getInspectionID());
+        String action_id = String.valueOf(pendingListValues.get(position).getActionID());
+
+        int sdsm = db.delete(DBHelper.INSPECTION_ACTION, "inspection_id=? and id=?", new String[]{inspection_id, action_id});
+        pendingListValues.remove(position);
+        notifyItemRemoved(position);
+        notifyItemChanged(position, pendingListValues.size());
+        Log.d("sdsm", String.valueOf(sdsm));
+        Dashboard.getPendingCount();
+        if (pendingListValues.size() < 1) {
+            Dashboard.hidePending();
+            closeFunction();
+        }
+
+    }
+
+    public void deletePending_Action(int position) {
 
         String work_id = pendingListValues.get(position).getWorkID();
         String inspection_id = String.valueOf(pendingListValues.get(position).getInspectionID());

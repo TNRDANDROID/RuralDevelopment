@@ -69,8 +69,10 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import static android.Manifest.permission.ACCESS_FINE_LOCATION;
 import static android.Manifest.permission.CAMERA;
@@ -123,6 +125,7 @@ public class ViewInspectionInActionScreen extends AppCompatActivity implements V
     String work_id;
     EditText remarkTv;
     static JSONObject dataset;
+    private JSONArray updatedJsonArray;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -265,18 +268,21 @@ public class ViewInspectionInActionScreen extends AppCompatActivity implements V
         Cursor imagelist = getRawEvents(imagelist_sql, null);
 
         if (imagelist.getCount() > 0) {
-            JSONArray group = new JSONArray();
+           JSONArray group = new JSONArray();
             if (imagelist.moveToFirst()) {
+                int i = 0;
                 do {
                     String image_id = imagelist.getString(imagelist.getColumnIndexOrThrow("id"));
-                    group.put(Integer.parseInt(image_id));
+                   group.put(image_id);
+                  //  friendsNames.add(image_id);
+                    i++;
                 } while (imagelist.moveToNext());
             }
-            ContentValues grouped_array = new ContentValues();
-            grouped_array.put("action_id",actionID);
-            grouped_array.put("grouping", String.valueOf(group));
+            ContentValues groupedValue = new ContentValues();
+            groupedValue.put("action_id",actionID);
+            groupedValue.put("grouping", String.valueOf(group));
             Log.d("grouping",group.toString());
-            LoginScreen.db.insert(DBHelper.IMAGE_GROUP_ID,null,grouped_array);
+            LoginScreen.db.insert(DBHelper.IMAGE_GROUP_ID,null,groupedValue);
         }
 
         String list_sql = "select * from " + DBHelper.IMAGE_GROUP_ID;
@@ -284,27 +290,32 @@ public class ViewInspectionInActionScreen extends AppCompatActivity implements V
         Cursor list = getRawEvents(list_sql, null);
 
         if (list.getCount() > 0) {
-            JSONArray group_info = new JSONArray();
-            JSONObject element;
+            JSONArray group_array = new JSONArray();
+            JSONObject element = new JSONObject();
             if (list.moveToFirst()) {
                 do {
                     element = new JSONObject();
 
                     String id = list.getString(list.getColumnIndexOrThrow("id"));
                     String grouping = list.getString(list.getColumnIndexOrThrow("grouping"));
-
+                    JSONArray arr = null;
                     try {
-                        element.put("id",id);
-                        element.put("grouping",grouping);
+                        arr = new JSONArray(grouping);
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
-                    group_info.put(element);
+                    try {
+                        element.put("id",id);
+                        element.put("grouping",arr);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    group_array.put(element);
                 } while (list.moveToNext());
 
             }
             try {
-                dataset.put("grouping_details", group_info);
+                dataset.put("grouping_details", group_array);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -328,7 +339,7 @@ public class ViewInspectionInActionScreen extends AppCompatActivity implements V
 
         final LinearLayout mobileNumberLayout = (LinearLayout) dialog.findViewById(R.id.mobile_number_layout);
 
-        Button done = (Button) dialog.findViewById(R.id.btn_save);
+        Button done = (Button) dialog.findViewById(R.id.btn_save_inspection);
         done.setGravity(Gravity.CENTER);
         done.setVisibility(View.VISIBLE);
         done.setTypeface(FontCache.getInstance(this).getFont(FontCache.Font.HEAVY));
@@ -422,15 +433,15 @@ public class ViewInspectionInActionScreen extends AppCompatActivity implements V
                         dataset.put("image_details", imageJson);
 
                         Log.d("post_dataset_action", dataset.toString());
-//                       String authKey = Utils.encrypt(prefManager.getUserPassKey(), getResources().getString(R.string.init_vector), dataset.toString());
-//                       // String authKey = dataset.toString();
-//                        int maxLogSize = 4000;
-//                        for(int i = 0; i <= authKey.length() / maxLogSize; i++) {
-//                            int start = i * maxLogSize;
-//                           int end = (i+1) * maxLogSize;
-//                            end = end > authKey.length() ? authKey.length() : end;
-//                            Log.v("to_send", authKey.substring(start, end));
-//                        }
+                      String authKey = Utils.encrypt(prefManager.getUserPassKey(), getResources().getString(R.string.init_vector), dataset.toString());
+                    //   String authKey = dataset.toString();
+                        int maxLogSize = 4000;
+                        for(int i = 0; i <= authKey.length() / maxLogSize; i++) {
+                            int start = i * maxLogSize;
+                           int end = (i+1) * maxLogSize;
+                            end = end > authKey.length() ? authKey.length() : end;
+                            Log.v("to_send", authKey.substring(start, end));
+                        }
 
                         sync_data();
                     } catch (JSONException e) {
@@ -740,22 +751,33 @@ public class ViewInspectionInActionScreen extends AppCompatActivity implements V
     public void OnMyResponse(ServerResponse serverResponse) {
         try {
             String urlType = serverResponse.getApi();
-            Utils.showAlert(this, "Saved");
-            finish();
             JSONObject responseObj = serverResponse.getJsonResponse();
-            Utils.showAlert(this, "Saved");
-            if (prefManager.getLevels().equalsIgnoreCase("D")) {
+         //   if (prefManager.getLevels().equalsIgnoreCase("D")) {
                 if ("save_data".equals(urlType) && responseObj != null) {
                     String key = responseObj.getString(AppConstant.ENCODE_DATA);
                     String responseDecryptedBlockKey = Utils.decrypt(prefManager.getUserPassKey(), key);
                     JSONObject jsonObject = new JSONObject(responseDecryptedBlockKey);
                     if (jsonObject.getString("STATUS").equalsIgnoreCase("OK") && jsonObject.getString("RESPONSE").equalsIgnoreCase("OK")) {
                         // loadBlockList(jsonObject.getJSONArray(AppConstant.JSON_DATA));
+                        getAction_ForInspection();
                         Utils.showAlert(this, "Saved");
                         finish();
                     }
                     Log.d("saved_response", "" + responseDecryptedBlockKey);
+              // }
+
+            }
+            if ("InspectionListBlockWise_Action".equals(urlType) && responseObj != null) {
+                String key = responseObj.getString(AppConstant.ENCODE_DATA);
+                String responseDecryptedKey = Utils.decrypt(prefManager.getUserPassKey(), key);
+                JSONObject jsonObject = new JSONObject(responseDecryptedKey);
+                if (jsonObject.getString("STATUS").equalsIgnoreCase("OK") && jsonObject.getString("RESPONSE").equalsIgnoreCase("OK")) {
+                    Insert_inspectionList_Action(jsonObject.getJSONArray(AppConstant.JSON_DATA));
+                } else if (jsonObject.getString("STATUS").equalsIgnoreCase("OK") && jsonObject.getString("RESPONSE").equalsIgnoreCase("NO_RECORD")) {
+                    // Utils.showAlert(this, "No Record Found");
+                    Log.d("responseInspect_Action",jsonObject.getString("MESSAGE"));
                 }
+                Log.d("responseInspect_Action", "" + jsonObject.getJSONArray(AppConstant.JSON_DATA));
 
             }
         } catch (JSONException e) {
@@ -821,5 +843,73 @@ public class ViewInspectionInActionScreen extends AppCompatActivity implements V
         dataSet.put(AppConstant.DATA_CONTENT, authKey);
         Log.d("saving", "" + authKey);
         return dataSet;
+    }
+
+
+    public void getAction_ForInspection() {
+        try {
+            new ApiService(this).makeJSONObjectRequest("InspectionListBlockWise_Action", Api.Method.POST, UrlGenerator.getInspectionServicesListUrl(), InspectionListActionJsonParams(), "not cache", this);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+
+    public JSONObject InspectionListActionJsonParams() throws JSONException {
+        String authKey = Utils.encrypt(prefManager.getUserPassKey(), getResources().getString(R.string.init_vector), Utils.InspectionList_Action(this).toString());
+        JSONObject dataSet = new JSONObject();
+        dataSet.put(AppConstant.KEY_USER_NAME, prefManager.getUserName());
+        dataSet.put(AppConstant.DATA_CONTENT, authKey);
+        Log.d("InspectionList_Action", "" + authKey);
+        return dataSet;
+    }
+
+    private void Insert_inspectionList_Action(JSONArray jsonArray) {
+        try {
+            db.delete(DBHelper.INSPECTION_ACTION, null, null);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        try {
+            updatedJsonArray = new JSONArray();
+            updatedJsonArray = jsonArray;
+            if (jsonArray.length() > 0) {
+                for (int i = 0; i < jsonArray.length(); i++) {
+                    String workID = jsonArray.getJSONObject(i).getString(AppConstant.WORK_ID);
+                    String id = jsonArray.getJSONObject(i).getString("id");
+                    String inspection_id = jsonArray.getJSONObject(i).getString(AppConstant.INSPECTION_ID);
+                    String date_of_action = jsonArray.getJSONObject(i).getString(AppConstant.DATE_OF_ACTION);
+                    String action_taken = jsonArray.getJSONObject(i).getString(AppConstant.ACTION_TAKEN);
+                    String action_remark = jsonArray.getJSONObject(i).getString(AppConstant.ACTION_REMARK);
+                    String dist_action = jsonArray.getJSONObject(i).getString(AppConstant.DISTRICT_ACTION);
+                    String state_action = jsonArray.getJSONObject(i).getString(AppConstant.STATE_ACTION);
+                    String sub_div_action = jsonArray.getJSONObject(i).getString(AppConstant.SUB_DIV_ACTION);
+
+                    ContentValues ActionList = new ContentValues();
+
+                    ActionList.put(AppConstant.WORK_ID, workID);
+                    //   ActionList.put("id", id);
+                    ActionList.put(AppConstant.INSPECTION_ID, inspection_id);
+                    ActionList.put(AppConstant.DATE_OF_ACTION, date_of_action);
+                    ActionList.put(AppConstant.ACTION_TAKEN, action_taken);
+                    ActionList.put(AppConstant.ACTION_REMARK, action_remark);
+                    ActionList.put(AppConstant.DISTRICT_ACTION, dist_action);
+                    ActionList.put(AppConstant.STATE_ACTION, state_action);
+                    ActionList.put(AppConstant.SUB_DIV_ACTION, sub_div_action);
+                    ActionList.put(AppConstant.DELETE_FLAG, "1");
+
+                    LoginScreen.db.insert(DBHelper.INSPECTION_ACTION, null, ActionList);
+                }
+            } else {
+                Utils.showAlert(this, "No Record Found!");
+            }
+
+        } catch (JSONException j) {
+            j.printStackTrace();
+        } catch (ArrayIndexOutOfBoundsException a) {
+            a.printStackTrace();
+        }
+
     }
 }

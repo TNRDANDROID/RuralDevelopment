@@ -75,11 +75,15 @@ public class PendingLayoutFragment extends Fragment implements View.OnClickListe
         pendingLayoutAdapter = new PendingLayoutAdapter(getActivity(), pendingListValues,this );
         pending_recycler_view.setAdapter(pendingLayoutAdapter);
         pending_recycler_view.setNestedScrollingEnabled(false);
-        retrievePendingdata();
+        if (prefManager.getLevels().equalsIgnoreCase("D")) {
+            retrievePendingdata_Inspection();
+        }else if(prefManager.getLevels().equalsIgnoreCase("B")) {
+            retrievePendingdata_Action();
+        }
 
 
     }
-    public void retrievePendingdata() {
+    public void retrievePendingdata_Inspection() {
         pendingListValues.clear();
         String pendingList_sql = "select * from(select * from "+DBHelper.INSPECTION_PENDING +" WHERE inspection_id in (select inspection_id from "+DBHelper.CAPTURED_PHOTO+"))a left join (select * from "+DBHelper.OBSERVATION_TABLE+")b on a.observation = b.id where delete_flag = 0";
         Log.d("sql", pendingList_sql);
@@ -130,6 +134,46 @@ public class PendingLayoutFragment extends Fragment implements View.OnClickListe
         }
 
     }
+
+    public void retrievePendingdata_Action() {
+        pendingListValues.clear();
+        String pendingList_sql = "select * from " + DBHelper.INSPECTION_ACTION + " WHERE id in (select action_id from captured_photo) and delete_flag = 0";
+        Cursor pendingList = getRawEvents(pendingList_sql, null);
+
+        if (pendingList.getCount() > 0) {
+            if (pendingList.moveToFirst()) {
+                do {
+                    String work_id = pendingList.getString(pendingList.getColumnIndexOrThrow(AppConstant.WORK_ID));
+                    int inspection_id = pendingList.getInt(pendingList.getColumnIndexOrThrow(AppConstant.INSPECTION_ID));
+                    String date_of_action = pendingList.getString(pendingList.getColumnIndexOrThrow(AppConstant.DATE_OF_ACTION));
+                    String action_remark = pendingList.getString(pendingList.getColumnIndexOrThrow(AppConstant.ACTION_REMARK));
+                    int action_id = pendingList.getInt(pendingList.getColumnIndexOrThrow("id"));
+
+
+                    BlockListValue pendingListValue = new BlockListValue();
+                    pendingListValue.setWorkID(work_id);
+                    pendingListValue.setInspectionID(inspection_id);
+                    pendingListValue.setActionID(action_id);
+                    pendingListValue.setDate_of_Action(date_of_action);
+                    pendingListValue.setAction_remark(action_remark);
+
+                    pendingListValues.add(pendingListValue);
+
+                } while (pendingList.moveToNext());
+            }
+        }
+
+        if (!(pendingListValues.size() < 1)) {
+            Dashboard.getPendingCount();
+            pending_recycler_view.setAdapter(pendingLayoutAdapter);
+
+        } else {
+            //not_found_tv.setVisibility(View.VISIBLE);
+            Dashboard.getPendingCount();
+        }
+
+    }
+
 
     void startActivity( ) {
 
@@ -194,8 +238,14 @@ public class PendingLayoutFragment extends Fragment implements View.OnClickListe
                 JSONObject jsonObject = new JSONObject(responseDecryptedBlockKey);
                 if (jsonObject.getString("STATUS").equalsIgnoreCase("OK") && jsonObject.getString("RESPONSE").equalsIgnoreCase("OK")) {
                     // loadBlockList(jsonObject.getJSONArray(AppConstant.JSON_DATA));
-                  db.delete(DBHelper.INSPECTION_PENDING,"inspection_id=?",new String[] {prefManager.getKeyDeleteId()});
-                    retrievePendingdata();
+                    if (prefManager.getLevels().equalsIgnoreCase("D")) {
+                        db.delete(DBHelper.INSPECTION_PENDING,"inspection_id=?",new String[] {prefManager.getKeyDeleteId()});
+                        retrievePendingdata_Inspection();
+                    }else if(prefManager.getLevels().equalsIgnoreCase("B")) {
+                        db.delete(DBHelper.INSPECTION_ACTION,"id=?",new String[] {prefManager.getKeyDeleteId()});
+                        retrievePendingdata_Action();
+                    }
+
                     pendingLayoutAdapter.notifyDataSetChanged();
 
                     Utils.showAlert(getActivity(), "Uploaded");

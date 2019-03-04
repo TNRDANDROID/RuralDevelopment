@@ -47,6 +47,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
         db.execSQL("CREATE TABLE " + SCHEME_TABLE_NAME + " ("
                 + "scheme_name varchar(32)," +
+                "fin_year  varchar(32),"+
                 "scheme_seq_id varchar(4))");
 
         db.execSQL("CREATE TABLE " + OBSERVATION_TABLE + " ("

@@ -252,9 +252,9 @@ public class ViewInspectionReportScreen extends AppCompatActivity implements Vie
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.action_tv:
+          //  case R.id.action_tv:
 //                imageWithDescription(action_tv, "mobile", scrollView);
-                break;
+           //     break;
             case R.id.backimg:
                 onBackPress();
                 break;

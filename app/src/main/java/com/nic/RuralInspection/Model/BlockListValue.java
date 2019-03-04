@@ -51,6 +51,15 @@ public class BlockListValue {
     public boolean setItemSelected;
     private String OnlineInspectID;
     private String detail;
+    private int ActionID;
+
+    public int getActionID() {
+        return ActionID;
+    }
+
+    public void setActionID(int actionID) {
+        ActionID = actionID;
+    }
 
     public String getDate_of_Action() {
         return Date_of_Action;
