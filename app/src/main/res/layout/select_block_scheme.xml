@@ -12,7 +12,7 @@
         android:id="@+id/toolbar_container"
         layout="@layout/toolbar_with_back"
         android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
+        android:layout_height="wrap_content"
         />
 
 
@@ -342,7 +342,7 @@
 
                 android:textColor="@android:color/black"
                 android:textSize="13sp"
-                android:visibility="gone"/>
+                />
 
 <RelativeLayout
     android:layout_width="match_parent"

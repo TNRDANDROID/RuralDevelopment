@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -24,6 +25,7 @@ import com.nic.RuralInspection.Adapter.CommonAdapter;
 import com.nic.RuralInspection.DataBase.DBHelper;
 import com.nic.RuralInspection.Model.BlockListValue;
 import com.nic.RuralInspection.R;
+import com.nic.RuralInspection.Support.MyCustomTextView;
 import com.nic.RuralInspection.Support.ProgressHUD;
 import com.nic.RuralInspection.Utils.UrlGenerator;
 import com.nic.RuralInspection.Utils.Utils;
@@ -55,6 +57,7 @@ public class SelectBlockSchemeScreen extends AppCompatActivity implements View.O
     private RadioGroup radioGroup;
     CheckBox all_block, all_village, all_scheme, high_value_projects, all_projects;
     private Spinner sp_block, sp_village, sp_scheme, sp_financialYear;
+    private MyCustomTextView title_tv;
     private LinearLayout block_layout;
     String arr_block[], arr_scheme[], arr_financialYear[];
     private PrefManager prefManager;
@@ -100,7 +103,9 @@ public class SelectBlockSchemeScreen extends AppCompatActivity implements View.O
         all_scheme = (CheckBox) findViewById(R.id.all_scheme);
         block_layout = (LinearLayout) findViewById(R.id.block_layout);
         back_img = (ImageView) findViewById(R.id.backimg);
+        title_tv = (MyCustomTextView)findViewById(R.id.title_tv);
         back_img.setOnClickListener(this);
+        title_tv.setText("WorkList Filter");
 
         done.setOnClickListener(this);
 //        home.setOnClickListener(this);
@@ -217,23 +222,29 @@ public class SelectBlockSchemeScreen extends AppCompatActivity implements View.O
 
             }
         });
-//        all_scheme.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-//            @Override
-//            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-//                if (isChecked) {
-//                    sp_scheme.setSelection(0);
-//                    sp_scheme.setEnabled(false);
-//                } else {
-//                    sp_scheme.setEnabled(true);
-//                }
-//            }
-//        });
+        all_scheme.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    sp_scheme.setSelection(0);
+                    sp_scheme.setEnabled(false);
+                } else {
+                    sp_scheme.setEnabled(true);
+                }
+            }
+        });
         sp_financialYear.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 if (position > 0) {
                     pref_finYear = FinYearList.get(position).getFinancialYear();
                     prefManager.setFinancialyearName(pref_finYear);
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            getSchemeList();
+                        }
+                    },5000);
                 }
             }
 
@@ -360,7 +371,7 @@ public class SelectBlockSchemeScreen extends AppCompatActivity implements View.O
 //            if (!"Select Block".equalsIgnoreCase(Block.get(sp_block.getSelectedItemPosition()).getBlockName()) || (all_block.isChecked())) {
             if (!"Select Block".equalsIgnoreCase(Block.get(sp_block.getSelectedItemPosition()).getBlockName())) {
                 if (!"Select Village".equalsIgnoreCase(Village.get(sp_village.getSelectedItemPosition()).getVillageListPvName())) {
-                    if (!"Select Scheme".equalsIgnoreCase(Scheme.get(sp_scheme.getSelectedItemPosition()).getSchemeName())) {
+                    if (!"Select Scheme".equalsIgnoreCase(Scheme.get(sp_scheme.getSelectedItemPosition()).getSchemeName())|| (all_scheme.isChecked())) {
                         if (Utils.isOnline()) {
                             getWorkListOptional();
                             getInspectionList_blockwise();
@@ -388,7 +399,7 @@ public class SelectBlockSchemeScreen extends AppCompatActivity implements View.O
 
         if (!"Select Financial year".equalsIgnoreCase(FinYearList.get(sp_financialYear.getSelectedItemPosition()).getFinancialYear())) {
 //            if (!"Select Block".equalsIgnoreCase(Block.get(sp_block.getSelectedItemPosition()).getBlockName()) || (all_block.isChecked())) {
-            if (!"Select Village".equalsIgnoreCase(Village.get(sp_village.getSelectedItemPosition()).getVillageListPvName()) || (all_village.isChecked())) {
+            if (!"Select Village".equalsIgnoreCase(Village.get(sp_village.getSelectedItemPosition()).getVillageListPvName())) {
                 if (!"Select Scheme".equalsIgnoreCase(Scheme.get(sp_scheme.getSelectedItemPosition()).getSchemeName()) || (all_scheme.isChecked())) {
                     if (Utils.isOnline()) {
                         getWorkListOptional();
@@ -462,7 +473,6 @@ public class SelectBlockSchemeScreen extends AppCompatActivity implements View.O
         if (!prefManager.getLevels().equalsIgnoreCase("B")) {
             loadOfflineVillgeListDBValues();
         }
-        loadOfflineSchemeListDBValues();
         loadOfflineFinYearListDBValues();
     }
 
@@ -563,6 +573,13 @@ public class SelectBlockSchemeScreen extends AppCompatActivity implements View.O
 
         sp_financialYear.setAdapter(new CommonAdapter(this, FinYearList, "FinYearList"));
     }
+    public void getSchemeList() {
+        try {
+            new ApiService(this).makeJSONObjectRequest("SchemeList", Api.Method.POST, UrlGenerator.getServicesListUrl(), schemeListJsonParams(), "not cache", this);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
 
     public void getWorkListOptional() {
         try {
@@ -594,6 +611,15 @@ public class SelectBlockSchemeScreen extends AppCompatActivity implements View.O
         } catch (JSONException e) {
             e.printStackTrace();
         }
+    }
+
+    public JSONObject schemeListJsonParams() throws JSONException {
+        String authKey = Utils.encrypt(prefManager.getUserPassKey(), getResources().getString(R.string.init_vector), Utils.schemeListDistrictWiseJsonParams(this).toString());
+        JSONObject dataSet = new JSONObject();
+        dataSet.put(AppConstant.KEY_USER_NAME, prefManager.getUserName());
+        dataSet.put(AppConstant.DATA_CONTENT, authKey);
+        Log.d("schemeList", "" + authKey);
+        return dataSet;
     }
 
     public JSONObject workListOptionalJsonParams() throws JSONException {
@@ -651,6 +677,15 @@ public class SelectBlockSchemeScreen extends AppCompatActivity implements View.O
 
             String urlType = serverResponse.getApi();
             JSONObject responseObj = serverResponse.getJsonResponse();
+            if ("SchemeList".equals(urlType) && responseObj != null) {
+                String key = responseObj.getString(AppConstant.ENCODE_DATA);
+                String responseDecryptedSchemeKey = Utils.decrypt(prefManager.getUserPassKey(), key);
+                JSONObject jsonObject = new JSONObject(responseDecryptedSchemeKey);
+                if (jsonObject.getString("STATUS").equalsIgnoreCase("OK") && jsonObject.getString("RESPONSE").equalsIgnoreCase("OK")) {
+                    loadSchemeList(jsonObject.getJSONArray(AppConstant.JSON_DATA));
+                }
+                Log.d("schemeAll", "" + responseDecryptedSchemeKey);
+            }
             if ("WorkListOptional".equals(urlType) && responseObj != null) {
                 String key = responseObj.getString(AppConstant.ENCODE_DATA);
                 String responseDecryptedKey = Utils.decrypt(prefManager.getUserPassKey(), key);
@@ -705,6 +740,36 @@ public class SelectBlockSchemeScreen extends AppCompatActivity implements View.O
         } catch (JSONException e) {
 
             e.printStackTrace();
+        }
+    }
+
+    private void loadSchemeList(JSONArray jsonArray) {
+        progressHUD = ProgressHUD.show(this, "Loading...", true, false, null);
+
+        try {
+            updatedJsonArray = new JSONArray();
+            updatedJsonArray = jsonArray;
+
+            for (int i = 0; i < jsonArray.length(); i++) {
+                String schemeSequentialID = jsonArray.getJSONObject(i).getString(AppConstant.SCHEME_SEQUENTIAL_ID);
+                String schemeName = jsonArray.getJSONObject(i).getString(AppConstant.SCHEME_NAME);
+
+                ContentValues schemeListLocalDbValues = new ContentValues();
+                schemeListLocalDbValues.put(AppConstant.SCHEME_SEQUENTIAL_ID, schemeSequentialID);
+                schemeListLocalDbValues.put(AppConstant.SCHEME_NAME, schemeName);
+
+                LoginScreen.db.insert(DBHelper.SCHEME_TABLE_NAME, null, schemeListLocalDbValues);
+                Log.d("LocalDBSchemeList", "" + schemeListLocalDbValues);
+
+            }
+            loadOfflineSchemeListDBValues();
+        } catch (JSONException j) {
+            j.printStackTrace();
+        } catch (ArrayIndexOutOfBoundsException a) {
+            a.printStackTrace();
+        }
+        if (progressHUD != null) {
+            progressHUD.cancel();
         }
     }
 
