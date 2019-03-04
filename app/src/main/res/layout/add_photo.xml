@@ -50,7 +50,31 @@
                 android:text="Add Photo"
                 android:textAllCaps="false"
                 android:textColor="@android:color/white" />
+
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:layout_marginBottom="20dp"
+                >
+                <Button
+                    android:id="@+id/btn_save_inspection"
+                    android:layout_width="150dp"
+                    android:layout_height="40dp"
+                    android:layout_alignParentBottom="true"
+                    android:layout_centerInParent="true"
+                    android:layout_margin="5dp"
+                    android:background="@drawable/login_button"
+                    android:text="SUBMIT"
+                    android:textAllCaps="false"
+                    android:textColor="@android:color/white"
+                    />
+            </RelativeLayout>
         </LinearLayout>
+
     </ScrollView>
+
+
 
 </LinearLayout>
