@@ -1205,15 +1205,17 @@ public class Utils {
     public static JSONObject schemeListDistrictWiseJsonParams(Activity activity) throws JSONException {
         prefManager = new PrefManager(activity);
         JSONObject dataSet = new JSONObject();
-        dataSet.put(AppConstant.KEY_SERVICE_ID, AppConstant.KEY_SCHEME_LIST_DISTRICT_WISE);
+        dataSet.put(AppConstant.KEY_SERVICE_ID, AppConstant.KEY_SCHEME_LIST_DISTRICT_FINYEAR_WISE);
         dataSet.put(AppConstant.DISTRICT_CODE, prefManager.getDistrictCode());
+        dataSet.put(AppConstant.FIN_YEAR,prefManager.getFinancialyearName());
         Log.d("object", "" + dataSet);
         return dataSet;
     }
 
     public static JSONObject schemeFinyearListJsonParams() throws JSONException {
         JSONObject dataSet = new JSONObject();
-        dataSet.put(AppConstant.KEY_SERVICE_ID, AppConstant.KEY_SCHEME_FINYEAR_LIST);
+        dataSet.put(AppConstant.KEY_SERVICE_ID, AppConstant.KEY_SCHEME_FINYEAR_LIST_LAST_NYEARS);
+        dataSet.put(AppConstant.N_YEAR,4);
         Log.d("object", "" + dataSet);
         return dataSet;
     }

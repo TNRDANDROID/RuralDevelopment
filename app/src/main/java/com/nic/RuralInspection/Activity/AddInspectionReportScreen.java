@@ -199,7 +199,7 @@ public class AddInspectionReportScreen extends AppCompatActivity implements View
         switch (v.getId()) {
             case R.id.take_photo:
                 if (!"Select Stage of Work".equalsIgnoreCase(stageListValues.get(sp_stage.getSelectedItemPosition()).getWorkStageName())) {
-                    if (!"Select Observation".equalsIgnoreCase(sp_observation.getSelectedItem().toString())) {
+                    if (!"Select Observation".equalsIgnoreCase(observationList.get(sp_observation.getSelectedItemPosition()).getObservationName())) {
                         imageWithDescription(take_photo, "mobile", scrollView);
                     } else {
                         Utils.showAlert(this, "Select Observation");
@@ -344,7 +344,7 @@ public class AddInspectionReportScreen extends AppCompatActivity implements View
 
         final LinearLayout mobileNumberLayout = (LinearLayout) dialog.findViewById(R.id.mobile_number_layout);
 
-        Button done = (Button) dialog.findViewById(R.id.btn_save);
+        Button done = (Button) dialog.findViewById(R.id.btn_save_inspection);
         done.setGravity(Gravity.CENTER);
         done.setVisibility(View.VISIBLE);
         done.setTypeface(FontCache.getInstance(this).getFont(FontCache.Font.HEAVY));
@@ -355,6 +355,7 @@ public class AddInspectionReportScreen extends AppCompatActivity implements View
             public void onClick(View v) {
                 int inspectionID = 0;
                 JSONArray imageJson = new JSONArray();
+           JSONArray imageArray = new JSONArray();
 
                 Cursor inpection_Cursor = getRawEvents("SELECT MAX(inspection_id) FROM " + DBHelper.INSPECTION_PENDING, null);
                 Log.d("cursor_count", String.valueOf(inpection_Cursor.getCount()));
@@ -369,7 +370,7 @@ public class AddInspectionReportScreen extends AppCompatActivity implements View
                 int childCount = mobileNumberLayout.getChildCount();
                 if (childCount > 0) {
                     for (int i = 0; i < childCount; i++) {
-                        JSONArray imageArray = new JSONArray();
+
 
                         View vv = mobileNumberLayout.getChildAt(i);
                         EditText myEditTextView = (EditText) vv.findViewById(R.id.description);
@@ -443,8 +444,8 @@ public class AddInspectionReportScreen extends AppCompatActivity implements View
 //                            end = end > authKey.length() ? authKey.length() : end;
 //                            Log.v("to_send", authKey.substring(start, end));
 //                        }
-
-                        sync_data();
+if(imageArray.length()> 1){
+                        sync_data();}
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }

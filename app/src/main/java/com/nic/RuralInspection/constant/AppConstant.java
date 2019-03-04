@@ -25,8 +25,8 @@ public class AppConstant {
     public static String KEY_HABITATION_LIST_DISTRICT_BLOCK_VILLAGE_WISE = "habitation_list_district_block_village_wise";
     public static String KEY_WORK_TYPE_STAGE_LINK = "work_type_stage_link";
     public static String KEY_SCHEME_LIST_ALL = "scheme_list_all";
-    public static String KEY_SCHEME_LIST_DISTRICT_WISE = "scheme_list_district_wise";
-    public static String KEY_SCHEME_FINYEAR_LIST = "scheme_finyear_list";
+    public static String KEY_SCHEME_LIST_DISTRICT_FINYEAR_WISE = "scheme_list_district_finyear_wise";
+    public static String KEY_SCHEME_FINYEAR_LIST_LAST_NYEARS = "scheme_finyear_list_last_nyears";
     public static String KEY_WORK_LIST_OPTIONAL = "work_list_optional";
     public static String USER_LOGIN_KEY = "user_login_key";
     public static String KEY_USER_NAME = "user_name";
@@ -38,6 +38,9 @@ public class AppConstant {
     public static String USER_DATA = "user_data";
     public static String ENCODE_DATA = "enc_data";
     public static String DATA_CONTENT = "data_content";
+    public static String N_YEAR = "nyear";
+    public static String FIN_YEAR = "finyear";
+    public static String IMAGE_GROUP_ID = "image_group_id";
 
     public static String DISTRICT_CODE = "dcode";
     public static String BLOCK_CODE = "bcode";

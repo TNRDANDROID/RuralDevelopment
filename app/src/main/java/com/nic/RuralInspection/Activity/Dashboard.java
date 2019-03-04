@@ -165,7 +165,6 @@ public class Dashboard extends AppCompatActivity implements Api.ServerResponseLi
         } else {
 //            block_layout.setVisibility(View.GONE);
         }
-        getSchemeList();
         getVillageList();
         getFinYearList();
     }
@@ -206,13 +205,7 @@ public class Dashboard extends AppCompatActivity implements Api.ServerResponseLi
         }
     }
 
-    public void getSchemeList() {
-        try {
-            new ApiService(this).makeJSONObjectRequest("SchemeList", Api.Method.POST, UrlGenerator.getServicesListUrl(), schemeListJsonParams(), "not cache", this);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-    }
+
 
     public void getFinYearList() {
         try {
@@ -256,14 +249,7 @@ public class Dashboard extends AppCompatActivity implements Api.ServerResponseLi
         return dataSet;
     }
 
-    public JSONObject schemeListJsonParams() throws JSONException {
-        String authKey = Utils.encrypt(prefManager.getUserPassKey(), getResources().getString(R.string.init_vector), Utils.schemeListDistrictWiseJsonParams(this).toString());
-        JSONObject dataSet = new JSONObject();
-        dataSet.put(AppConstant.KEY_USER_NAME, prefManager.getUserName());
-        dataSet.put(AppConstant.DATA_CONTENT, authKey);
-        Log.d("schemeList", "" + authKey);
-        return dataSet;
-    }
+
 
     public JSONObject finyearListJsonParams() throws JSONException {
         String authKey = Utils.encrypt(prefManager.getUserPassKey(), getResources().getString(R.string.init_vector), Utils.schemeFinyearListJsonParams().toString());
@@ -429,15 +415,6 @@ public class Dashboard extends AppCompatActivity implements Api.ServerResponseLi
                 Log.d("VillageList", "" + responseDecryptedBlockKey);
             }
 
-            if ("SchemeList".equals(urlType) && responseObj != null) {
-                String key = responseObj.getString(AppConstant.ENCODE_DATA);
-                String responseDecryptedSchemeKey = Utils.decrypt(prefManager.getUserPassKey(), key);
-                JSONObject jsonObject = new JSONObject(responseDecryptedSchemeKey);
-                if (jsonObject.getString("STATUS").equalsIgnoreCase("OK") && jsonObject.getString("RESPONSE").equalsIgnoreCase("OK")) {
-                    loadSchemeList(jsonObject.getJSONArray(AppConstant.JSON_DATA));
-                }
-                Log.d("schemeAll", "" + responseDecryptedSchemeKey);
-            }
             if ("FinYearList".equals(urlType) && responseObj != null) {
                 String key = responseObj.getString(AppConstant.ENCODE_DATA);
                 String responseDecryptedSchemeKey = Utils.decrypt(prefManager.getUserPassKey(), key);
@@ -533,35 +510,7 @@ public class Dashboard extends AppCompatActivity implements Api.ServerResponseLi
         }
     }
 
-    private void loadSchemeList(JSONArray jsonArray) {
-        progressHUD = ProgressHUD.show(this, "Loading...", true, false, null);
 
-        try {
-            updatedJsonArray = new JSONArray();
-            updatedJsonArray = jsonArray;
-
-            for (int i = 0; i < jsonArray.length(); i++) {
-                String schemeSequentialID = jsonArray.getJSONObject(i).getString(AppConstant.SCHEME_SEQUENTIAL_ID);
-                String schemeName = jsonArray.getJSONObject(i).getString(AppConstant.SCHEME_NAME);
-
-                ContentValues schemeListLocalDbValues = new ContentValues();
-                schemeListLocalDbValues.put(AppConstant.SCHEME_SEQUENTIAL_ID, schemeSequentialID);
-                schemeListLocalDbValues.put(AppConstant.SCHEME_NAME, schemeName);
-
-                LoginScreen.db.insert(DBHelper.SCHEME_TABLE_NAME, null, schemeListLocalDbValues);
-                Log.d("LocalDBSchemeList", "" + schemeListLocalDbValues);
-
-            }
-
-        } catch (JSONException j) {
-            j.printStackTrace();
-        } catch (ArrayIndexOutOfBoundsException a) {
-            a.printStackTrace();
-        }
-        if (progressHUD != null) {
-            progressHUD.cancel();
-        }
-    }
 
     private void loadFinYearList(JSONArray jsonArray) {
         progressHUD = ProgressHUD.show(this, "Loading...", true, false, null);
