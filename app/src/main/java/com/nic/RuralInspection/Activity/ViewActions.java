@@ -43,7 +43,7 @@ public class ViewActions extends AppCompatActivity implements View.OnClickListen
     private ImageView back_img;
     private ArrayList<BlockListValue> actionListValues = new ArrayList<>();
     private static Context context;
-    private MyCustomTextView not_found_tv;
+    private MyCustomTextView not_found_tv,title_tv;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -57,6 +57,7 @@ public class ViewActions extends AppCompatActivity implements View.OnClickListen
         context = this;
         viewActionRecycleView = (RecyclerView) findViewById(R.id.viewAction_recycler_view);
         not_found_tv = (MyCustomTextView) findViewById(R.id.not_found_tv);
+        title_tv = (MyCustomTextView) findViewById(R.id.title_tv);
         back_img = (ImageView) findViewById(R.id.backimg);
         back_img.setOnClickListener(this);
 
@@ -68,6 +69,7 @@ public class ViewActions extends AppCompatActivity implements View.OnClickListen
         viewActionRecycleView.setHasFixedSize(true);
         viewActionRecycleView.setNestedScrollingEnabled(false);
         viewActionRecycleView.setFocusable(false);
+        title_tv.setText("View Actions");
         retrieveActiondata();
         viewActionRecycleView.setAdapter(viewActionAdapter);
     }

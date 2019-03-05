@@ -90,6 +90,7 @@
                             android:layout_marginTop="10dip"
                             android:layout_marginLeft="10dip"
                             android:textSize="15sp"
+                            android:textColor="@android:color/black"
                             android:layout_marginRight="10dip"
                             android:background="@drawable/gray_background"
                             customfontdemo:fontName="@string/font_circular_book" />
