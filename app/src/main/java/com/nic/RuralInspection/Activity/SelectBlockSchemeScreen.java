@@ -44,6 +44,7 @@ import java.util.List;
 
 import static com.nic.RuralInspection.Activity.LoginScreen.db;
 import static com.nic.RuralInspection.DataBase.DBHelper.BLOCK_TABLE_NAME;
+import static com.nic.RuralInspection.DataBase.DBHelper.SCHEME_TABLE_NAME;
 import static com.nic.RuralInspection.DataBase.DBHelper.VILLAGE_TABLE_NAME;
 
 /**
@@ -52,7 +53,7 @@ import static com.nic.RuralInspection.DataBase.DBHelper.VILLAGE_TABLE_NAME;
 
 public class SelectBlockSchemeScreen extends AppCompatActivity implements View.OnClickListener, Api.ServerResponseListener {
 
-//    private ImageView home;
+    //    private ImageView home;
     private Button done;
     private RadioGroup radioGroup;
     CheckBox all_block, all_village, all_scheme, high_value_projects, all_projects;
@@ -103,7 +104,7 @@ public class SelectBlockSchemeScreen extends AppCompatActivity implements View.O
         all_scheme = (CheckBox) findViewById(R.id.all_scheme);
         block_layout = (LinearLayout) findViewById(R.id.block_layout);
         back_img = (ImageView) findViewById(R.id.backimg);
-        title_tv = (MyCustomTextView)findViewById(R.id.title_tv);
+        title_tv = (MyCustomTextView) findViewById(R.id.title_tv);
         back_img.setOnClickListener(this);
         title_tv.setText("WorkList Filter");
 
@@ -239,12 +240,17 @@ public class SelectBlockSchemeScreen extends AppCompatActivity implements View.O
                 if (position > 0) {
                     pref_finYear = FinYearList.get(position).getFinancialYear();
                     prefManager.setFinancialyearName(pref_finYear);
-                    new Handler().postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            getSchemeList();
+                    if (Utils.isOnline()) {
+                        try {
+                            db.delete(DBHelper.SCHEME_TABLE_NAME, null, null);
+                        } catch (Exception e) {
+                            e.printStackTrace();
                         }
-                    },5000);
+                        getSchemeList();
+                    } else {
+                        selectFinancialYear();
+                        loadOfflineSchemeListDBValues();
+                    }
                 }
             }
 
@@ -257,6 +263,21 @@ public class SelectBlockSchemeScreen extends AppCompatActivity implements View.O
             villageFilterSpinner(prefManager.getBlockCode());
         }
         loadOfflineDBValues();
+    }
+
+    public void selectFinancialYear() {
+        String fin_Year = "SELECT distinct(fin_year) FROM " + SCHEME_TABLE_NAME;
+        String Fin_Year_DB = null;
+        Cursor selectFinYearInDB = getRawEvents(fin_Year, null);
+        if (selectFinYearInDB.moveToFirst()) {
+            do {
+                Fin_Year_DB = selectFinYearInDB.getString(0);
+                Log.d("inspectionID", "" + Fin_Year_DB);
+            } while (selectFinYearInDB.moveToNext());
+        }
+        if (!Fin_Year_DB.equalsIgnoreCase(prefManager.getFinancialyearName())) {
+            Utils.showAlert(this, "Data Not Available for this Financial Year! please turn on your Mobile Network");
+        }
     }
 
     public void villageFilterSpinner(String filterVillage) {
@@ -371,7 +392,7 @@ public class SelectBlockSchemeScreen extends AppCompatActivity implements View.O
 //            if (!"Select Block".equalsIgnoreCase(Block.get(sp_block.getSelectedItemPosition()).getBlockName()) || (all_block.isChecked())) {
             if (!"Select Block".equalsIgnoreCase(Block.get(sp_block.getSelectedItemPosition()).getBlockName())) {
                 if (!"Select Village".equalsIgnoreCase(Village.get(sp_village.getSelectedItemPosition()).getVillageListPvName())) {
-                    if (!"Select Scheme".equalsIgnoreCase(Scheme.get(sp_scheme.getSelectedItemPosition()).getSchemeName())|| (all_scheme.isChecked())) {
+                    if (!"Select Scheme".equalsIgnoreCase(Scheme.get(sp_scheme.getSelectedItemPosition()).getSchemeName()) || (all_scheme.isChecked())) {
                         if (Utils.isOnline()) {
                             getWorkListOptional();
                             getInspectionList_blockwise();
@@ -474,6 +495,9 @@ public class SelectBlockSchemeScreen extends AppCompatActivity implements View.O
             loadOfflineVillgeListDBValues();
         }
         loadOfflineFinYearListDBValues();
+//        if (!Utils.isOnline()) {
+//            loadOfflineSchemeListDBValues();
+//        }
     }
 
     public void loadOfflineBlockListDBValues() {
@@ -529,8 +553,9 @@ public class SelectBlockSchemeScreen extends AppCompatActivity implements View.O
     }
 
     public void loadOfflineSchemeListDBValues() {
-
-        Cursor SchemeList = getRawEvents("SELECT * FROM " + DBHelper.SCHEME_TABLE_NAME, null);
+        String query = "SELECT * FROM " + DBHelper.SCHEME_TABLE_NAME + " Where fin_year = '" + prefManager.getFinancialyearName() + "'";
+        Cursor SchemeList = getRawEvents(query, null);
+        Log.d("SchemeQuery", "" + query);
 
         Scheme.clear();
         BlockListValue schemeListValue = new BlockListValue();
@@ -542,8 +567,10 @@ public class SelectBlockSchemeScreen extends AppCompatActivity implements View.O
                     BlockListValue schemeList = new BlockListValue();
                     String schemeSequentialID = SchemeList.getString(SchemeList.getColumnIndexOrThrow(AppConstant.SCHEME_SEQUENTIAL_ID));
                     String schemeName = SchemeList.getString(SchemeList.getColumnIndexOrThrow(AppConstant.SCHEME_NAME));
+                    String fin_year = SchemeList.getString(SchemeList.getColumnIndexOrThrow(AppConstant.FINANCIAL_YEAR));
                     schemeList.setSchemeSequentialID(schemeSequentialID);
                     schemeList.setSchemeName(schemeName);
+                    schemeList.setFinancialYear(fin_year);
                     Scheme.add(schemeList);
 
                 } while (SchemeList.moveToNext());
@@ -573,6 +600,7 @@ public class SelectBlockSchemeScreen extends AppCompatActivity implements View.O
 
         sp_financialYear.setAdapter(new CommonAdapter(this, FinYearList, "FinYearList"));
     }
+
     public void getSchemeList() {
         try {
             new ApiService(this).makeJSONObjectRequest("SchemeList", Api.Method.POST, UrlGenerator.getServicesListUrl(), schemeListJsonParams(), "not cache", this);
@@ -591,7 +619,7 @@ public class SelectBlockSchemeScreen extends AppCompatActivity implements View.O
 
     public void getInspectionList_blockwise() {
         try {
-            new ApiService(this ).makeJSONObjectRequest("InspectionListBlockWise", Api.Method.POST, UrlGenerator.getInspectionServicesListUrl(), InspectionListBlockwiseJsonParams(), "not cache", this);
+            new ApiService(this).makeJSONObjectRequest("InspectionListBlockWise", Api.Method.POST, UrlGenerator.getInspectionServicesListUrl(), InspectionListBlockwiseJsonParams(), "not cache", this);
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -693,7 +721,7 @@ public class SelectBlockSchemeScreen extends AppCompatActivity implements View.O
                 if (jsonObject.getString("STATUS").equalsIgnoreCase("OK") && jsonObject.getString("RESPONSE").equalsIgnoreCase("OK")) {
                     workListOptionalS(jsonObject.getJSONArray(AppConstant.JSON_DATA));
                 } else if (jsonObject.getString("STATUS").equalsIgnoreCase("OK") && jsonObject.getString("RESPONSE").equalsIgnoreCase("NO_RECORD")) {
-                 Utils.showAlert(this, "No Projects Found!");
+                    Utils.showAlert(this, "No Projects Found!");
                 }
                 Log.d("responseWorkList", "" + jsonObject.getJSONArray(AppConstant.JSON_DATA));
 
@@ -703,7 +731,7 @@ public class SelectBlockSchemeScreen extends AppCompatActivity implements View.O
                 String responseDecryptedKey = Utils.decrypt(prefManager.getUserPassKey(), key);
                 JSONObject jsonObject = new JSONObject(responseDecryptedKey);
                 if (jsonObject.getString("STATUS").equalsIgnoreCase("OK") && jsonObject.getString("RESPONSE").equalsIgnoreCase("OK")) {
-                     Insert_inspectionList(jsonObject.getJSONArray(AppConstant.JSON_DATA));
+                    Insert_inspectionList(jsonObject.getJSONArray(AppConstant.JSON_DATA));
                 } else if (jsonObject.getString("STATUS").equalsIgnoreCase("OK") && jsonObject.getString("RESPONSE").equalsIgnoreCase("NO_RECORD")) {
                     // Utils.showAlert(this, "No Record Found");
                 }
@@ -718,7 +746,7 @@ public class SelectBlockSchemeScreen extends AppCompatActivity implements View.O
                     Insert_inspectionList_Images(jsonObject.getJSONArray(AppConstant.JSON_DATA));
                 } else if (jsonObject.getString("STATUS").equalsIgnoreCase("OK") && jsonObject.getString("RESPONSE").equalsIgnoreCase("NO_RECORD")) {
                     // Utils.showAlert(this, "No Record Found");
-                    Log.d("responseInspect_Action",jsonObject.getString("MESSAGE"));
+                    Log.d("responseInspect_Action", jsonObject.getString("MESSAGE"));
                 }
                 Log.d("response_Images", "" + jsonObject.getJSONArray(AppConstant.JSON_DATA));
 
@@ -731,7 +759,7 @@ public class SelectBlockSchemeScreen extends AppCompatActivity implements View.O
                     Insert_inspectionList_Action(jsonObject.getJSONArray(AppConstant.JSON_DATA));
                 } else if (jsonObject.getString("STATUS").equalsIgnoreCase("OK") && jsonObject.getString("RESPONSE").equalsIgnoreCase("NO_RECORD")) {
                     // Utils.showAlert(this, "No Record Found");
-                    Log.d("responseInspect_Action",jsonObject.getString("MESSAGE"));
+                    Log.d("responseInspect_Action", jsonObject.getString("MESSAGE"));
                 }
                 Log.d("responseInspect_Action", "" + jsonObject.getJSONArray(AppConstant.JSON_DATA));
 
@@ -753,10 +781,12 @@ public class SelectBlockSchemeScreen extends AppCompatActivity implements View.O
             for (int i = 0; i < jsonArray.length(); i++) {
                 String schemeSequentialID = jsonArray.getJSONObject(i).getString(AppConstant.SCHEME_SEQUENTIAL_ID);
                 String schemeName = jsonArray.getJSONObject(i).getString(AppConstant.SCHEME_NAME);
+                String fin_year = jsonArray.getJSONObject(i).getString(AppConstant.FINANCIAL_YEAR);
 
                 ContentValues schemeListLocalDbValues = new ContentValues();
                 schemeListLocalDbValues.put(AppConstant.SCHEME_SEQUENTIAL_ID, schemeSequentialID);
                 schemeListLocalDbValues.put(AppConstant.SCHEME_NAME, schemeName);
+                schemeListLocalDbValues.put(AppConstant.FINANCIAL_YEAR, fin_year);
 
                 LoginScreen.db.insert(DBHelper.SCHEME_TABLE_NAME, null, schemeListLocalDbValues);
                 Log.d("LocalDBSchemeList", "" + schemeListLocalDbValues);
@@ -830,8 +860,8 @@ public class SelectBlockSchemeScreen extends AppCompatActivity implements View.O
 
     private void Insert_inspectionList(JSONArray jsonArray) {
         try {
-      //db.rawQuery("DELETE FROM "+DBHelper.INSPECTION+" WHERE delete_flag =1",null);
-     db.delete(DBHelper.INSPECTION,null,null);
+            //db.rawQuery("DELETE FROM "+DBHelper.INSPECTION+" WHERE delete_flag =1",null);
+            db.delete(DBHelper.INSPECTION, null, null);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -890,10 +920,10 @@ public class SelectBlockSchemeScreen extends AppCompatActivity implements View.O
                     String inspection_id = jsonArray.getJSONObject(i).getString(AppConstant.INSPECTION_ID);
                     String image = jsonArray.getJSONObject(i).getString(AppConstant.IMAGE);
                     String image_description = jsonArray.getJSONObject(i).getString("image_description");
-                    String image_id  = jsonArray.getJSONObject(i).getString(AppConstant.IMAGE_ID);
+                    String image_id = jsonArray.getJSONObject(i).getString(AppConstant.IMAGE_ID);
 
 
-                    ContentValues Imageist= new ContentValues();
+                    ContentValues Imageist = new ContentValues();
                     Imageist.put(AppConstant.IMAGE_ID, image_id);
                     Imageist.put(AppConstant.INSPECTION_ID, inspection_id);
                     Imageist.put(AppConstant.IMAGE, image);
@@ -914,7 +944,7 @@ public class SelectBlockSchemeScreen extends AppCompatActivity implements View.O
 
     private void Insert_inspectionList_Action(JSONArray jsonArray) {
         try {
-            db.delete(DBHelper.INSPECTION_ACTION, null, null);
+            db.execSQL(String.format("DELETE FROM " + DBHelper.INSPECTION_ACTION + " WHERE delete_flag=1;", null));
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -936,7 +966,7 @@ public class SelectBlockSchemeScreen extends AppCompatActivity implements View.O
                     ContentValues ActionList = new ContentValues();
 
                     ActionList.put(AppConstant.WORK_ID, workID);
-                 //   ActionList.put("id", id);
+                    //   ActionList.put("id", id);
                     ActionList.put(AppConstant.INSPECTION_ID, inspection_id);
                     ActionList.put(AppConstant.DATE_OF_ACTION, date_of_action);
                     ActionList.put(AppConstant.ACTION_TAKEN, action_taken);

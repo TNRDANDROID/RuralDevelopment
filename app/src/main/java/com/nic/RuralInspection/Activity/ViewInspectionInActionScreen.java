@@ -867,7 +867,7 @@ public class ViewInspectionInActionScreen extends AppCompatActivity implements V
 
     private void Insert_inspectionList_Action(JSONArray jsonArray) {
         try {
-            db.delete(DBHelper.INSPECTION_ACTION, null, null);
+            db.execSQL(String.format("DELETE FROM "+DBHelper.INSPECTION_ACTION+" WHERE delete_flag=1;", null));
         } catch (Exception e) {
             e.printStackTrace();
         }

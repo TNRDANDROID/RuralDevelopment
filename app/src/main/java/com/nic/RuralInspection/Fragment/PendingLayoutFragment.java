@@ -48,7 +48,7 @@ public class PendingLayoutFragment extends Fragment implements View.OnClickListe
     private JSONArray updatedJsonArray;
     private Context context;
     private static PendingLayoutAdapter pendingLayoutAdapter;
-    private MyCustomTextView not_found_tv;
+    private MyCustomTextView not_found_tv,title_tv;
 
 
     public PendingLayoutFragment() {
@@ -70,6 +70,7 @@ public class PendingLayoutFragment extends Fragment implements View.OnClickListe
 
         pending_recycler_view = (RecyclerView) view.findViewById(R.id.pending_recycler_view);
         not_found_tv = (MyCustomTextView) view.findViewById(R.id.not_found_tv);
+        title_tv = (MyCustomTextView) view.findViewById(R.id.title_tv);
         MyCustomLayoutManager mLayoutManager = new MyCustomLayoutManager(getActivity());
         pending_recycler_view.setLayoutManager(mLayoutManager);
         pendingLayoutAdapter = new PendingLayoutAdapter(getActivity(), pendingListValues,this );
@@ -80,6 +81,7 @@ public class PendingLayoutFragment extends Fragment implements View.OnClickListe
         }else if(prefManager.getLevels().equalsIgnoreCase("B")) {
             retrievePendingdata_Action();
         }
+        title_tv.setText("Pending Screen");
 
 
     }
