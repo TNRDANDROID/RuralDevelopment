@@ -92,12 +92,6 @@
             android:windowSoftInputMode="stateUnchanged|adjustPan" />
 
         <activity
-            android:name="com.nic.RuralInspection.Activity.PendinglayoutScreen"
-            android:configChanges="orientation|keyboardHidden"
-            android:screenOrientation="portrait"
-            android:windowSoftInputMode="stateUnchanged|adjustPan" />
-
-        <activity
             android:name="com.nic.RuralInspection.Activity.ImagePreviewScreen"
             android:configChanges="orientation|keyboardHidden"
             android:screenOrientation="portrait"

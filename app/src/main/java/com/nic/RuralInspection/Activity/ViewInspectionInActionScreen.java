@@ -267,6 +267,10 @@ public class ViewInspectionInActionScreen extends AppCompatActivity implements V
         Log.d("sql", imagelist_sql);
         Cursor imagelist = getRawEvents(imagelist_sql, null);
 
+        if(Utils.isOnline()) {
+            db.delete(DBHelper.IMAGE_GROUP_ID,null,null);
+        }
+
         if (imagelist.getCount() > 0) {
            JSONArray group = new JSONArray();
             if (imagelist.moveToFirst()) {
@@ -409,6 +413,7 @@ public class ViewInspectionInActionScreen extends AppCompatActivity implements V
                             imageValue.put(AppConstant.DESCRIPTION, description);
                             imageValue.put("action_id", finalActionID);
                             imageValue.put("image_group_id", image_group_id);
+                            imageValue.put("pending_flag", 1);
 
                             long rowInserted = LoginScreen.db.insert(DBHelper.CAPTURED_PHOTO, null, imageValue);
 
@@ -433,8 +438,8 @@ public class ViewInspectionInActionScreen extends AppCompatActivity implements V
                         dataset.put("image_details", imageJson);
 
                         Log.d("post_dataset_action", dataset.toString());
-                      String authKey = Utils.encrypt(prefManager.getUserPassKey(), getResources().getString(R.string.init_vector), dataset.toString());
-                    //   String authKey = dataset.toString();
+                     // String authKey = Utils.encrypt(prefManager.getUserPassKey(), getResources().getString(R.string.init_vector), dataset.toString());
+                      String authKey = dataset.toString();
                         int maxLogSize = 4000;
                         for(int i = 0; i <= authKey.length() / maxLogSize; i++) {
                             int start = i * maxLogSize;

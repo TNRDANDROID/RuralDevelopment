@@ -112,6 +112,7 @@ public class DBHelper extends SQLiteOpenHelper {
         db.execSQL("CREATE TABLE "+ CAPTURED_PHOTO + "("
                 + "id INTEGER," +
                 "inspection_id INTEGER," +
+                "pending_flag INTEGER," +
                 "action_id INTEGER," +
                 "image_group_id INTEGER," +
                 "work_id TEXT," +

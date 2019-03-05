@@ -170,7 +170,7 @@ public class PendingLayoutFragment extends Fragment implements View.OnClickListe
             pending_recycler_view.setAdapter(pendingLayoutAdapter);
 
         } else {
-            //not_found_tv.setVisibility(View.VISIBLE);
+           not_found_tv.setVisibility(View.VISIBLE);
             Dashboard.getPendingCount();
         }
 

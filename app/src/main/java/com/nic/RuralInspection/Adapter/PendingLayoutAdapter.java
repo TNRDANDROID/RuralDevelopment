@@ -1,31 +1,21 @@
 package com.nic.RuralInspection.Adapter;
 
 import android.app.Activity;
-import android.content.Context;
 import android.database.Cursor;
-import android.os.AsyncTask;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
-import android.widget.Toast;
 
-import com.android.volley.VolleyError;
 import com.nic.RuralInspection.Activity.Dashboard;
-import com.nic.RuralInspection.Activity.PendinglayoutScreen;
 import com.nic.RuralInspection.DataBase.DBHelper;
 import com.nic.RuralInspection.Fragment.PendingLayoutFragment;
 import com.nic.RuralInspection.Model.BlockListValue;
 import com.nic.RuralInspection.R;
 import com.nic.RuralInspection.Support.MyCustomTextView;
-import com.nic.RuralInspection.Utils.UrlGenerator;
 import com.nic.RuralInspection.Utils.Utils;
-import com.nic.RuralInspection.api.Api;
-import com.nic.RuralInspection.api.ApiService;
-import com.nic.RuralInspection.api.PostMethod;
-import com.nic.RuralInspection.api.ServerResponse;
 import com.nic.RuralInspection.constant.AppConstant;
 import com.nic.RuralInspection.session.PrefManager;
 
@@ -348,7 +338,7 @@ public class PendingLayoutAdapter extends RecyclerView.Adapter<PendingLayoutAdap
 
     }
 
-    public void deletePending_Inspection(int position) {
+    public void deletePending_Action(int position) {
 
         String work_id = pendingListValues.get(position).getWorkID();
         String inspection_id = String.valueOf(pendingListValues.get(position).getInspectionID());
@@ -367,7 +357,7 @@ public class PendingLayoutAdapter extends RecyclerView.Adapter<PendingLayoutAdap
 
     }
 
-    public void deletePending_Action(int position) {
+    public void deletePending_Inspection(int position) {
 
         String work_id = pendingListValues.get(position).getWorkID();
         String inspection_id = String.valueOf(pendingListValues.get(position).getInspectionID());

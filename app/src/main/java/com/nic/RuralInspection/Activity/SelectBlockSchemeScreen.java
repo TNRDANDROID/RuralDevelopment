@@ -908,7 +908,8 @@ public class SelectBlockSchemeScreen extends AppCompatActivity implements View.O
 
     private void Insert_inspectionList_Images(JSONArray jsonArray) {
         try {
-            db.delete(DBHelper.CAPTURED_PHOTO, null, null);
+           // db.delete(DBHelper.CAPTURED_PHOTO, null, null);
+            db.execSQL(String.format("DELETE FROM "+DBHelper.CAPTURED_PHOTO+" WHERE pending_flag IS NULL OR trim(pending_flag) = '';", null));
         } catch (Exception e) {
             e.printStackTrace();
         }

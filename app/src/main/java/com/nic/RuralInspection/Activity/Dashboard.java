@@ -307,12 +307,6 @@ public class Dashboard extends AppCompatActivity implements Api.ServerResponseLi
 
     }
 
-    public void pendingLyoutScreen() {
-        Intent intent = new Intent(this, PendinglayoutScreen.class);
-        startActivity(intent);
-        overridePendingTransition(R.anim.slide_in, R.anim.slide_out);
-    }
-
     public void getServiceList() {
         try {
             new ApiService(this).makeJSONObjectRequest("ServiceList", Api.Method.POST, UrlGenerator.getServicesListUrl(), serviceListJsonParams(), "not cache", this);
