@@ -3,6 +3,7 @@ package com.nic.RuralInspection.Adapter;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -48,10 +49,10 @@ public class InspectionListAdapter extends RecyclerView.Adapter<InspectionListAd
 
 
     public class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        public MyCustomTextView date_of_inspection, remark, observation, view_image, ins_result_tv_on_ff,view_action;
-        public  View  view;
+        public MyCustomTextView date_of_inspection, remark, observation, view_image, ins_result_tv_on_ff, view_action;
+        public View view;
         public RainbowTextView rainbowTextView;
-        private RelativeLayout add_action_layout;
+        private RelativeLayout add_action_layout, view_action_layout;
         private LinearLayout action_part_visible_layout;
 
         public MyViewHolder(View itemView) {
@@ -61,18 +62,18 @@ public class InspectionListAdapter extends RecyclerView.Adapter<InspectionListAd
             rainbowTextView = (RainbowTextView) itemView.findViewById(R.id.view_image);
 //            view_image = (MyCustomTextView) itemView.findViewById(R.id.view_image);
             add_action_layout = (RelativeLayout) itemView.findViewById(R.id.add_action_layout);
+            view_action_layout = (RelativeLayout) itemView.findViewById(R.id.view_action_layout);
             remark = (MyCustomTextView) itemView.findViewById(R.id.remark);
             observation = (MyCustomTextView) itemView.findViewById(R.id.observation);
             ins_result_tv_on_ff = (MyCustomTextView) itemView.findViewById(R.id.ins_result_tv_on_ff);
             view_action = (MyCustomTextView) itemView.findViewById(R.id.view_action);
-            view = (View)itemView.findViewById(R.id.view) ;
+            view = (View) itemView.findViewById(R.id.view);
+
 
             add_action_layout.setOnClickListener(this);
-
+            rainbowTextView.animateText(context.getString(R.string.view_image));
             if (prefManager.getLevels().equalsIgnoreCase("B")) {
-                rainbowTextView.animateText(context.getString(R.string.take_action));
-            } else {
-                rainbowTextView.animateText(context.getString(R.string.view_image));
+                view_action_layout.setBackgroundColor(Color.parseColor("#ECECEC"));
             }
         }
 
@@ -145,28 +146,57 @@ public class InspectionListAdapter extends RecyclerView.Adapter<InspectionListAd
             holder.ins_result_tv_on_ff.setText(inspectionlistvalues.get(position).getDetail());
 
         } else {
-            holder.ins_result_tv_on_ff.setVisibility(View.GONE);
-            holder.view.setVisibility(View.GONE);
-            RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
-                    ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-            params.addRule(RelativeLayout.CENTER_IN_PARENT);
-            holder.view_action.setPadding(20,20,20,20);
-            holder.view_action.setBackgroundResource(R.drawable.rectangle_shape_green);
-            holder.view_action.setLayoutParams(params);
 
+            holder.view_action_layout.setPadding(15, 15, 15, 15);
+            holder.view.setVisibility(View.GONE);
+
+            RelativeLayout.LayoutParams view_action_params = new RelativeLayout.LayoutParams(
+                    ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+            ViewGroup.LayoutParams params1 = (ViewGroup.LayoutParams) holder.view_action.getLayoutParams();
+            params1.width = 90;
+            params1.height = 35;
+            holder.view_action.setLayoutParams(params1);
+            holder.view_action.setBackgroundResource(R.drawable.add_button);
+            holder.view_action.setText("View Action");
+            view_action_params.addRule(RelativeLayout.ALIGN_PARENT_START);
+            holder.view_action.setPadding(15, 15, 15, 15);
+            holder.view_action.setLayoutParams(view_action_params);
+
+
+            RelativeLayout.LayoutParams ins_result_tv_on_ff_params = new RelativeLayout.LayoutParams(
+                    ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+            ViewGroup.LayoutParams params2 = (ViewGroup.LayoutParams) holder.ins_result_tv_on_ff.getLayoutParams();
+            params2.width = 90;
+            params2.height = 35;
+            holder.ins_result_tv_on_ff.setLayoutParams(params2);
+            holder.ins_result_tv_on_ff.setBackgroundResource(R.drawable.login_button);
+            holder.ins_result_tv_on_ff.setText("Take Action");
+            ins_result_tv_on_ff_params.addRule(RelativeLayout.ALIGN_PARENT_END);
+            holder.ins_result_tv_on_ff.setPadding(15, 15, 15, 15);
+            holder.ins_result_tv_on_ff.setLayoutParams(ins_result_tv_on_ff_params);
         }
         holder.rainbowTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!prefManager.getLevels().equalsIgnoreCase("B")) {
-                    imagePreviewScreen(position);
-                } else {
-//                    imagePreviewActionScreen(position);
-                    addActionScreen(position);
+                imagePreviewScreen(position);
 
-                }
+//                if (!prefManager.getLevels().equalsIgnoreCase("B")) {
+//                    imagePreviewScreen(position);
+//                } else {
+//                    imagePreviewActionScreen(position);
+////
+//
+//                }
             }
         });
+        if (prefManager.getLevels().equalsIgnoreCase("B")) {
+            holder.ins_result_tv_on_ff.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    addActionScreen(position);
+                }
+            });
+        }
 
         holder.view_action.setOnClickListener(new View.OnClickListener() {
             @Override

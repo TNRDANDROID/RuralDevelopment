@@ -51,8 +51,8 @@ public class ImagePreviewAdapter extends RecyclerView.Adapter<ImagePreviewAdapte
             this.itemView   = itemView;
             preview_image_view = (ImageView) itemView.findViewById(R.id.preview_image_view);
             description = (MyCustomTextView) itemView.findViewById(R.id.description);
-            checkbox        = (CheckBox) itemView.findViewById(R.id.checkBox);
-            checkbox.setClickable(false);
+//            checkbox        = (CheckBox) itemView.findViewById(R.id.checkBox);
+//            checkbox.setClickable(false);
 
         }
         public void setOnClickListener(View.OnClickListener onClickListener) {
@@ -65,31 +65,31 @@ public class ImagePreviewAdapter extends RecyclerView.Adapter<ImagePreviewAdapte
     public void onBindViewHolder(@NonNull final MyViewHolder holder, final int position) {
         holder.description.setText(imagePreviewlistvalues.get(position).getDescription());
         holder.preview_image_view.setImageBitmap(imagePreviewlistvalues.get(position).getImage());
-        holder.checkbox.setChecked(imagePreviewlistvalues.get(position).isSetItemSelected());
+//        holder.checkbox.setChecked(imagePreviewlistvalues.get(position).isSetItemSelected());
 
-        holder.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                holder.checkbox.setChecked(!(holder.checkbox.isChecked()));
-
-                if (holder.checkbox.isChecked()) {
-                    List<String> checked_value = new ArrayList<>();
-                    for(int i=0; i<imagePreviewlistvalues.size(); i++ ) {
-                        if(imagePreviewlistvalues.get(i).isSetItemSelected()) {
-//                            checked_value.add(imagePreviewlistvalues.get(i).getName());
-                        }
-                    }
-                    if(imagePreviewlistvalues.size() > 0){
-
-                    }
-                    //onItemClick.onItemCheck(currentItem);
-                    Utils.showAlert(context,"check");
-                } else {
-                    // onItemClick.onItemUncheck(currentItem);
-                    Utils.showAlert(context,"Notcheck");
-                }
-            }
-        });
+//        holder.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                holder.checkbox.setChecked(!(holder.checkbox.isChecked()));
+//
+//                if (holder.checkbox.isChecked()) {
+//                    List<String> checked_value = new ArrayList<>();
+//                    for(int i=0; i<imagePreviewlistvalues.size(); i++ ) {
+//                        if(imagePreviewlistvalues.get(i).isSetItemSelected()) {
+////                            checked_value.add(imagePreviewlistvalues.get(i).getName());
+//                        }
+//                    }
+//                    if(imagePreviewlistvalues.size() > 0){
+//
+//                    }
+//                    //onItemClick.onItemCheck(currentItem);
+//                    Utils.showAlert(context,"check");
+//                } else {
+//                    // onItemClick.onItemUncheck(currentItem);
+//                    Utils.showAlert(context,"Notcheck");
+//                }
+//            }
+//        });
 
     }
 

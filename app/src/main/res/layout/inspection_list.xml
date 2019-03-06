@@ -324,6 +324,7 @@
                             android:background="@color/dashboard_line_dark" />
 
                         <RelativeLayout
+                            android:id="@+id/view_action_layout"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
 

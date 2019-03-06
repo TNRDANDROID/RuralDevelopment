@@ -27,6 +27,7 @@ import com.nic.RuralInspection.Adapter.ImagePreviewAdapter;
 import com.nic.RuralInspection.DataBase.DBHelper;
 import com.nic.RuralInspection.Model.BlockListValue;
 import com.nic.RuralInspection.R;
+import com.nic.RuralInspection.Support.MyCustomTextView;
 import com.nic.RuralInspection.constant.AppConstant;
 import com.nic.RuralInspection.session.PrefManager;
 
@@ -45,6 +46,10 @@ public class ImagePreviewActionScreen extends AppCompatActivity implements View.
     private Button done;
     private RecyclerView image_preview_recyclerview;
     private RelativeLayout add_action_layout;
+    private ImageView back_img;
+    private MyCustomTextView title_tv;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,7 +66,7 @@ public class ImagePreviewActionScreen extends AppCompatActivity implements View.
         imagePreviewAdapter = new ImagePreviewAdapter(this, imagePreviewlistvalues);
         image_preview_recyclerview = (RecyclerView) findViewById(R.id.image_preview_action_recyclerview);
         home = (ImageView) findViewById(R.id.home);
-        done = (Button) findViewById(R.id.btn_save);
+//        done = (Button) findViewById(R.id.btn_save);
 
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
         image_preview_recyclerview.setLayoutManager(mLayoutManager);
@@ -70,10 +75,11 @@ public class ImagePreviewActionScreen extends AppCompatActivity implements View.
         image_preview_recyclerview.setNestedScrollingEnabled(false);
         image_preview_recyclerview.setFocusable(false);
         image_preview_recyclerview.setAdapter(imagePreviewAdapter);
-        done.setText("Take Action");
-        done.setBackgroundResource(R.drawable.login_button);
-        done.setOnClickListener(this);
-        home.setOnClickListener(this);
+        title_tv = (MyCustomTextView)findViewById(R.id.title_tv);
+        back_img = (ImageView) findViewById(R.id.backimg);
+        back_img.setOnClickListener(this);
+//        home.setOnClickListener(this);
+        title_tv.setText("View Inspected Image");
         retriveImageWithDescription();
     }
 
@@ -83,7 +89,7 @@ public class ImagePreviewActionScreen extends AppCompatActivity implements View.
         int inspectionId = Integer.parseInt(id);
 
 
-        String image_sql = "SELECT * FROM " + DBHelper.CAPTURED_PHOTO + " WHERE inspection_id = " + inspectionId;
+        String image_sql = "SELECT * FROM " + DBHelper.CAPTURED_PHOTO + " WHERE inspection_id = " + inspectionId+" and action_id is null ";
         Log.d("image_sql", image_sql);
         Cursor imageListPreview = getRawEvents(image_sql, null);
 
@@ -121,8 +127,8 @@ public class ImagePreviewActionScreen extends AppCompatActivity implements View.
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.btn_save:
-
+            case R.id.backimg:
+                onBackPress();
                 break;
         }
     }

@@ -345,6 +345,7 @@ public class PendingLayoutAdapter extends RecyclerView.Adapter<PendingLayoutAdap
         String action_id = String.valueOf(pendingListValues.get(position).getActionID());
 
         int sdsm = db.delete(DBHelper.INSPECTION_ACTION, "inspection_id=? and id=?", new String[]{inspection_id, action_id});
+        int sdsm1 = db.delete(DBHelper.CAPTURED_PHOTO, "inspection_id=? and action_id=?", new String[]{inspection_id, action_id});
         pendingListValues.remove(position);
         notifyItemRemoved(position);
         notifyItemChanged(position, pendingListValues.size());
@@ -363,6 +364,7 @@ public class PendingLayoutAdapter extends RecyclerView.Adapter<PendingLayoutAdap
         String inspection_id = String.valueOf(pendingListValues.get(position).getInspectionID());
 
         int sdsm = db.delete(DBHelper.INSPECTION_PENDING, "inspection_id=? and work_id=?", new String[]{inspection_id, work_id});
+        int sdsm1 = db.delete(DBHelper.CAPTURED_PHOTO, "inspection_id=? and work_id=?", new String[]{inspection_id, work_id});
         pendingListValues.remove(position);
         notifyItemRemoved(position);
         notifyItemChanged(position, pendingListValues.size());

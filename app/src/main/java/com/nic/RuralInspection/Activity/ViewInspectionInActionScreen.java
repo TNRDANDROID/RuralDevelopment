@@ -263,7 +263,7 @@ public class ViewInspectionInActionScreen extends AppCompatActivity implements V
                 }
             }
         }
-        String imagelist_sql = "select * from " + DBHelper.CAPTURED_PHOTO + " where inspection_id=" + inspection_id;
+        String imagelist_sql = "select * from " + DBHelper.CAPTURED_PHOTO + " where inspection_id=" + inspection_id+" and action_id is null ";
         Log.d("sql", imagelist_sql);
         Cursor imagelist = getRawEvents(imagelist_sql, null);
 

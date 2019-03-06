@@ -72,7 +72,7 @@ public class FullImageActivity extends AppCompatActivity implements View.OnClick
         int inspectionId = Integer.parseInt(id);
 
 
-        String image_sql = "SELECT * FROM " + DBHelper.CAPTURED_PHOTO + " WHERE inspection_id = " + inspectionId;
+        String image_sql = "SELECT * FROM " + DBHelper.CAPTURED_PHOTO + " WHERE inspection_id = " + inspectionId+" and action_id is null";
         Log.d("image_sql", image_sql);
         Cursor imageListPreview = getRawEvents(image_sql, null);
 
