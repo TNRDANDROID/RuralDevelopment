@@ -10,11 +10,10 @@
 
     <include
         android:id="@+id/toolbar"
-        layout="@layout/toolbar_with_back"
-        android:layout_width="wrap_content"
+        layout="@layout/toolbar"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_gravity="bottom" />
+        android:layout_alignParentTop="true" />
 
 
 

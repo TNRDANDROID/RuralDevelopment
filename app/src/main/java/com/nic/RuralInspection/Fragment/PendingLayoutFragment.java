@@ -11,12 +11,14 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import com.android.volley.VolleyError;
 import com.nic.RuralInspection.Activity.Dashboard;
 import com.nic.RuralInspection.Adapter.PendingLayoutAdapter;
 import com.nic.RuralInspection.DataBase.DBHelper;
+import com.nic.RuralInspection.Dialog.MyDialog;
 import com.nic.RuralInspection.Model.BlockListValue;
 import com.nic.RuralInspection.R;
 import com.nic.RuralInspection.Support.MyCustomLayoutManager;
@@ -49,6 +51,7 @@ public class PendingLayoutFragment extends Fragment implements View.OnClickListe
     private Context context;
     private static PendingLayoutAdapter pendingLayoutAdapter;
     private MyCustomTextView not_found_tv,title_tv;
+    private ImageView homeIcon;
 
 
     public PendingLayoutFragment() {
@@ -71,6 +74,8 @@ public class PendingLayoutFragment extends Fragment implements View.OnClickListe
         pending_recycler_view = (RecyclerView) view.findViewById(R.id.pending_recycler_view);
         not_found_tv = (MyCustomTextView) view.findViewById(R.id.not_found_tv);
         title_tv = (MyCustomTextView) view.findViewById(R.id.title_tv);
+        homeIcon = (ImageView) view.findViewById(R.id.home);
+        homeIcon.setOnClickListener(this);
         MyCustomLayoutManager mLayoutManager = new MyCustomLayoutManager(getActivity());
         pending_recycler_view.setLayoutManager(mLayoutManager);
         pendingLayoutAdapter = new PendingLayoutAdapter(getActivity(), pendingListValues,this );
@@ -201,9 +206,17 @@ public class PendingLayoutFragment extends Fragment implements View.OnClickListe
     }
     @Override
     public void onClick(View v) {
-
+        switch (v.getId()) {
+            case R.id.home:
+                 dashboard();
+                break;
+        }
     }
-
+public void dashboard(){
+    Intent intent = new Intent(getActivity(),Dashboard.class);
+    startActivity(intent);
+    getActivity().overridePendingTransition(R.anim.slide_enter, R.anim.slide_exit);
+}
 //    public void pending_Sync_Data() {
 //        try {
 //            new ApiService(getActivity()).makeJSONObjectRequest("pendingSaveData", Api.Method.POST, UrlGenerator.getInspectionServicesListUrl(), pendingLayoutAdapter.dataTobeSavedJsonParams(), "not cache",  this);

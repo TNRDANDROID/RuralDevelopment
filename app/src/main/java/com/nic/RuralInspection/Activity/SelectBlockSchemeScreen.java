@@ -223,17 +223,17 @@ public class SelectBlockSchemeScreen extends AppCompatActivity implements View.O
 
             }
         });
-        all_scheme.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked) {
-                    sp_scheme.setSelection(0);
-                    sp_scheme.setEnabled(false);
-                } else {
-                    sp_scheme.setEnabled(true);
-                }
-            }
-        });
+//        all_scheme.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+//            @Override
+//            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+//                if (isChecked) {
+//                    sp_scheme.setSelection(0);
+//                    sp_scheme.setEnabled(false);
+//                } else {
+//                    sp_scheme.setEnabled(true);
+//                }
+//            }
+//        });
         sp_financialYear.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -392,7 +392,7 @@ public class SelectBlockSchemeScreen extends AppCompatActivity implements View.O
 //            if (!"Select Block".equalsIgnoreCase(Block.get(sp_block.getSelectedItemPosition()).getBlockName()) || (all_block.isChecked())) {
             if (!"Select Block".equalsIgnoreCase(Block.get(sp_block.getSelectedItemPosition()).getBlockName())) {
                 if (!"Select Village".equalsIgnoreCase(Village.get(sp_village.getSelectedItemPosition()).getVillageListPvName())) {
-                    if (!"Select Scheme".equalsIgnoreCase(Scheme.get(sp_scheme.getSelectedItemPosition()).getSchemeName()) || (all_scheme.isChecked())) {
+                    if (!"Select Scheme".equalsIgnoreCase(Scheme.get(sp_scheme.getSelectedItemPosition()).getSchemeName())) {
                         if (Utils.isOnline()) {
                             getWorkListOptional();
                             getInspectionList_blockwise();
@@ -421,7 +421,7 @@ public class SelectBlockSchemeScreen extends AppCompatActivity implements View.O
         if (!"Select Financial year".equalsIgnoreCase(FinYearList.get(sp_financialYear.getSelectedItemPosition()).getFinancialYear())) {
 //            if (!"Select Block".equalsIgnoreCase(Block.get(sp_block.getSelectedItemPosition()).getBlockName()) || (all_block.isChecked())) {
             if (!"Select Village".equalsIgnoreCase(Village.get(sp_village.getSelectedItemPosition()).getVillageListPvName())) {
-                if (!"Select Scheme".equalsIgnoreCase(Scheme.get(sp_scheme.getSelectedItemPosition()).getSchemeName()) || (all_scheme.isChecked())) {
+                if (!"Select Scheme".equalsIgnoreCase(Scheme.get(sp_scheme.getSelectedItemPosition()).getSchemeName())) {
                     if (Utils.isOnline()) {
                         getWorkListOptional();
                         getInspectionList_blockwise();
