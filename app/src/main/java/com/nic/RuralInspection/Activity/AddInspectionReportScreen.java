@@ -314,7 +314,7 @@ public class AddInspectionReportScreen extends AppCompatActivity implements View
                 dataset.put(AppConstant.WORK_ID, work_id);
                 dataset.put(AppConstant.STAGE_OF_WORK_ON_INSPECTION, stage_of_work_on_inspection);
                 dataset.put(AppConstant.DATE_OF_INSPECTION, date_of_inspection);
-                dataset.put(AppConstant.INSPECTED_BY, inspected_by);
+               // dataset.put(AppConstant.INSPECTED_BY, inspected_by);
                 dataset.put(AppConstant.OBSERVATION, observation);
                 dataset.put(AppConstant.INSPECTION_REMARK, inspection_remark);
                 dataset.put(AppConstant.CREATED_DATE, created_date);
@@ -355,7 +355,7 @@ public class AddInspectionReportScreen extends AppCompatActivity implements View
             public void onClick(View v) {
                 int inspectionID = 0;
                 JSONArray imageJson = new JSONArray();
-           JSONArray imageArray = new JSONArray();
+
 
                 Cursor inpection_Cursor = getRawEvents("SELECT MAX(inspection_id) FROM " + DBHelper.INSPECTION_PENDING, null);
                 Log.d("cursor_count", String.valueOf(inpection_Cursor.getCount()));
@@ -370,7 +370,7 @@ public class AddInspectionReportScreen extends AppCompatActivity implements View
                 int childCount = mobileNumberLayout.getChildCount();
                 if (childCount > 0) {
                     for (int i = 0; i < childCount; i++) {
-
+                        JSONArray imageArray = new JSONArray();
 
                         View vv = mobileNumberLayout.getChildAt(i);
                         EditText myEditTextView = (EditText) vv.findViewById(R.id.description);
@@ -437,16 +437,18 @@ public class AddInspectionReportScreen extends AppCompatActivity implements View
                         dataset.put("image_details", imageJson);
 
                         Log.d("post_dataset_inspection", dataset.toString());
-                        String authKey = Utils.encrypt(prefManager.getUserPassKey(), getResources().getString(R.string.init_vector), dataset.toString());
+                     //   String authKey = Utils.encrypt(prefManager.getUserPassKey(), getResources().getString(R.string.init_vector), dataset.toString());
+//                        String authKey = dataset.toString();
 //                        int maxLogSize = 1000;
 //                        for(int i = 0; i <= authKey.length() / maxLogSize; i++) {
 //                            int start = i * maxLogSize;
 //                            int end = (i+1) * maxLogSize;
 //                            end = end > authKey.length() ? authKey.length() : end;
 //                            Log.v("to_send", authKey.substring(start, end));
-//                        }
-if(imageArray.length()> 1){
-                        sync_data();}
+//                     }
+                        if(imageJson.length()> 1){
+                            sync_data();
+                        }
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
