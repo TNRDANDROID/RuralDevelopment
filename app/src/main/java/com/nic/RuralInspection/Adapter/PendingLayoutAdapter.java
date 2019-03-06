@@ -247,7 +247,7 @@ public class PendingLayoutAdapter extends RecyclerView.Adapter<PendingLayoutAdap
             e.printStackTrace();
         }
 
-        String list_sql = "select * from " + DBHelper.IMAGE_GROUP_ID+" where action_id="+action_id;
+        String list_sql = "select * from " + DBHelper.IMAGE_GROUP_ID_OFFLINE+" where action_id="+action_id;
         Log.d("sql", list_sql);
         Cursor list = getRawEvents(list_sql, null);
 

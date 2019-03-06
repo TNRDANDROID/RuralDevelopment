@@ -268,7 +268,7 @@ public class ViewInspectionInActionScreen extends AppCompatActivity implements V
         Cursor imagelist = getRawEvents(imagelist_sql, null);
 
         if(Utils.isOnline()) {
-            db.delete(DBHelper.IMAGE_GROUP_ID,null,null);
+            db.delete(DBHelper.IMAGE_GROUP_ID_ONLINE,null,null);
         }
 
         if (imagelist.getCount() > 0) {
@@ -286,10 +286,15 @@ public class ViewInspectionInActionScreen extends AppCompatActivity implements V
             groupedValue.put("action_id",actionID);
             groupedValue.put("grouping", String.valueOf(group));
             Log.d("grouping",group.toString());
-            LoginScreen.db.insert(DBHelper.IMAGE_GROUP_ID,null,groupedValue);
+            if(Utils.isOnline()) {
+                LoginScreen.db.insert(DBHelper.IMAGE_GROUP_ID_ONLINE,null,groupedValue);
+            }else {
+                LoginScreen.db.insert(DBHelper.IMAGE_GROUP_ID_OFFLINE,null,groupedValue);
+            }
+
         }
 
-        String list_sql = "select * from " + DBHelper.IMAGE_GROUP_ID;
+        String list_sql = "select * from " + DBHelper.IMAGE_GROUP_ID_ONLINE;
         Log.d("sql", imagelist_sql);
         Cursor list = getRawEvents(list_sql, null);
 
@@ -355,8 +360,15 @@ public class ViewInspectionInActionScreen extends AppCompatActivity implements V
             public void onClick(View v) {
                 int image_group_id = 1;
                 JSONArray imageJson = new JSONArray();
+                Cursor image_Cursor;
 
-                Cursor image_Cursor = getRawEvents("SELECT MAX(id) FROM " + DBHelper.IMAGE_GROUP_ID, null);
+                if(Utils.isOnline()) {
+                    image_Cursor = getRawEvents("SELECT MAX(id) FROM " + DBHelper.IMAGE_GROUP_ID_ONLINE, null);
+                }else {
+                    image_Cursor = getRawEvents("SELECT MAX(id) FROM " + DBHelper.IMAGE_GROUP_ID_OFFLINE, null);
+                }
+
+
                 Log.d("cursor_count", String.valueOf(image_Cursor.getCount()));
                 if (image_Cursor.getCount() > 0) {
                     if (image_Cursor.moveToFirst()) {

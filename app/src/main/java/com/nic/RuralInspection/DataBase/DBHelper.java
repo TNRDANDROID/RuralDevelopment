@@ -20,7 +20,8 @@ public class DBHelper extends SQLiteOpenHelper {
     public static final String INSPECTION_PENDING = "inspection_pending";
     public static final String CAPTURED_PHOTO = "captured_photo";
     public static final String INSPECTION_ACTION = "inspection_action";
-    public static final String IMAGE_GROUP_ID = "image_grouping";
+    public static final String IMAGE_GROUP_ID_ONLINE = "image_grouping_online";
+    public static final String IMAGE_GROUP_ID_OFFLINE = "image_grouping_offline";
 
     private Context context;
 
@@ -134,7 +135,11 @@ public class DBHelper extends SQLiteOpenHelper {
                 "state_action TEXT," +
                 "sub_div_action TEXT)");
 
-        db.execSQL("CREATE TABLE " + IMAGE_GROUP_ID  + " ("
+        db.execSQL("CREATE TABLE " + IMAGE_GROUP_ID_ONLINE  + " ("
+                + "id INTEGER PRIMARY KEY AUTOINCREMENT," +
+                "action_id TEXT," +
+                "grouping TEXT)");
+        db.execSQL("CREATE TABLE " + IMAGE_GROUP_ID_OFFLINE  + " ("
                 + "id INTEGER PRIMARY KEY AUTOINCREMENT," +
                 "action_id TEXT," +
                 "grouping TEXT)");
@@ -155,7 +160,8 @@ public class DBHelper extends SQLiteOpenHelper {
             db.execSQL("DROP TABLE IF EXISTS " + INSPECTION);
             db.execSQL("DROP TABLE IF EXISTS " + CAPTURED_PHOTO);
             db.execSQL("DROP TABLE IF EXISTS " + INSPECTION_ACTION);
-            db.execSQL("DROP TABLE IF EXISTS " + IMAGE_GROUP_ID);
+            db.execSQL("DROP TABLE IF EXISTS " + IMAGE_GROUP_ID_OFFLINE);
+            db.execSQL("DROP TABLE IF EXISTS " + IMAGE_GROUP_ID_ONLINE);
             db.execSQL("DROP TABLE IF EXISTS " + INSPECTION_PENDING);
             onCreate(db);
         }
