@@ -90,8 +90,6 @@ public class AddInspectionReportScreen extends AppCompatActivity implements View
     private List<View> viewArrayList = new ArrayList<>();
     PrefManager prefManager;
 
-
-
     private static Context context;
 
     final int CAMERA_REQUEST = 1888;
