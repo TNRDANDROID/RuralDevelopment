@@ -83,7 +83,6 @@ public class NICApplication extends Application {
         }
 
         return mRequestQueue;
-        
     }
 
     public ImageLoader getImageLoader() {
