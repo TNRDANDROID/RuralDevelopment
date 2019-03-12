@@ -12,6 +12,7 @@ import com.android.volley.toolbox.HurlStack;
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.Volley;
 import com.nic.RuralInspection.R;
+import com.nic.RuralInspection.Utils.UrlGenerator;
 import com.nic.RuralInspection.api.LruBitmapCache;
 
 import java.io.FileNotFoundException;
@@ -142,7 +143,7 @@ public class NICApplication extends Application {
                 public boolean verify(String hostname, SSLSession session) {
 
                     Log.e("CipherUsed", session.getCipherSuite());
-                    return hostname.compareTo("www.tnrd.gov.in")==0; //The Hostname of your server
+                    return hostname.compareTo(UrlGenerator.getTnrdSiteUrl())==0; //The Hostname of your server
 
                 }
             };
