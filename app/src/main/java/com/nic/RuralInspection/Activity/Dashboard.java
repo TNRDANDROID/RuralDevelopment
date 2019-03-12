@@ -29,6 +29,7 @@ import com.android.volley.VolleyError;
 import com.nic.RuralInspection.DataBase.DBHelper;
 import com.nic.RuralInspection.Dialog.MyDialog;
 import com.nic.RuralInspection.Fragment.PendingLayoutFragment;
+import com.nic.RuralInspection.Helper.AppVersionHelper;
 import com.nic.RuralInspection.Model.BlockListValue;
 import com.nic.RuralInspection.R;
 import com.nic.RuralInspection.Support.MyCustomTextView;
@@ -54,7 +55,7 @@ import static com.nic.RuralInspection.Activity.LoginScreen.db;
  * Created by AchanthiSundar on 28-12-2018.
  */
 
-public class Dashboard extends AppCompatActivity implements Api.ServerResponseListener, View.OnClickListener, MyDialog.myOnClickListener {
+public class Dashboard extends AppCompatActivity implements Api.ServerResponseListener, View.OnClickListener, MyDialog.myOnClickListener,AppVersionHelper.myAppVersionInterface {
     private ImageView logout;
     private static LinearLayout uploadInspectionReport, block_user_layout, pending_upload_layout;
     private static PrefManager prefManager;
@@ -75,6 +76,9 @@ public class Dashboard extends AppCompatActivity implements Api.ServerResponseLi
         setContentView(R.layout.frame_layout_dashboard);
         if (mContent == null) {
             mContent = new PendingLayoutFragment();
+        }
+        if (Utils.isOnline()) {
+            checkAppVersion();
         }
         intializeUI();
 //        else {
@@ -115,7 +119,9 @@ public class Dashboard extends AppCompatActivity implements Api.ServerResponseLi
 
 
     }
-
+    private void checkAppVersion() {
+        new AppVersionHelper(this,Dashboard.this).callAppVersionCheckApi();
+    }
     private void getImei() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (checkSelfPermission(Manifest.permission.READ_PHONE_STATE)
@@ -627,4 +633,17 @@ public class Dashboard extends AppCompatActivity implements Api.ServerResponseLi
         return cursor;
     }
 
+    @Override
+    public void onAppVersionCallback(String value) {
+        try {
+
+            if (value.length() > 0 && "Update".equalsIgnoreCase(value)) {
+                startActivity(new Intent(this, AppVersionActivity.class));
+                finish();
+                 overridePendingTransition(R.anim.slide_in, R.anim.slide_out);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }

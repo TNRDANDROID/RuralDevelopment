@@ -1118,15 +1118,7 @@ public class Utils {
     }
 
 
-    public static JSONObject workListDistrictFinYearWiseJsonParams(Activity activity) throws JSONException {
-        prefManager = new PrefManager(activity);
-        JSONObject dataSet = new JSONObject();
-        dataSet.put(AppConstant.KEY_SERVICE_ID, AppConstant.KEY_WORK_LIST_DISTRICT_FINYEAR_WISE);
-        dataSet.put(AppConstant.DISTRICT_CODE, prefManager.getDistrictCode());
-        dataSet.put(AppConstant.FINANCIAL_YEAR, prefManager.getFinancialyearName());
-        Log.d("WorkListDistFinYearWise", "" + dataSet);
-        return dataSet;
-    }
+
 
 
     public static JSONObject villageListDistrictWiseJsonParams(Activity activity) throws JSONException {

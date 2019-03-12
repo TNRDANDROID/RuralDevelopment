@@ -31,12 +31,12 @@
         style="@style/font_circular_bold" />
     <ImageView
         android:id="@+id/logout"
-        android:layout_width="@dimen/_20sdp"
-        android:layout_height="@dimen/_20sdp"
+        android:layout_width="@dimen/_25sdp"
+        android:layout_height="@dimen/_25sdp"
         android:layout_gravity="end"
         android:layout_marginRight="@dimen/_5sdp"
         android:layout_centerInParent="true"
         android:layout_alignParentRight="true"
-        android:src="@drawable/ic_power_off_solid" />
+        android:src="@drawable/ic_signout" />
 
 </RelativeLayout>

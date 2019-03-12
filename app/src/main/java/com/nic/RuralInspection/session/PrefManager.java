@@ -23,6 +23,7 @@ public class PrefManager {
     int PRIVATE_MODE = 0;
 
     // Shared preferences file name
+    private static final String IS_FIRST_TIME_LAUNCH = "IsFirstTimeLaunch";
 
     private static final String APP_KEY = "AppKey";
     private static final String app_Version = "app_Version";
@@ -322,5 +323,24 @@ public class PrefManager {
         pref = _context.getSharedPreferences(AppConstant.PREF_NAME, PRIVATE_MODE);
         editor.clear();
         editor.apply();
+    }
+
+    public String getApp_Version() {
+        return pref.getString(app_Version, null);
+    }
+
+    public void setApp_Version(String appVersion) {
+        editor.putString(app_Version, appVersion);
+        editor.commit();
+    }
+
+    public void setFirstTimeLaunch(boolean isFirstTime) {
+        editor.putBoolean(IS_FIRST_TIME_LAUNCH, isFirstTime);
+        editor.commit();
+    }
+
+    public boolean isFirstTimeLaunch() {
+        return pref.getBoolean(IS_FIRST_TIME_LAUNCH, true);
+        //return true;
     }
 }

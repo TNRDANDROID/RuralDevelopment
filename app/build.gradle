@@ -1,4 +1,7 @@
 apply plugin: 'com.android.application'
+def keystorePropertiesFile = rootProject.file("keystore.properties")
+def keystoreProperties = new Properties()
+keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
 
 android {
     compileSdkVersion 28
@@ -11,12 +14,42 @@ android {
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
-    buildTypes {
+    signingConfigs {
         release {
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            keyAlias keystoreProperties['keyAlias']
+            keyPassword keystoreProperties['keyPassword']
+            storeFile file(keystoreProperties['storeFile'])
+            storePassword keystoreProperties['storePassword']
+            v2SigningEnabled false
         }
     }
+
+    applicationVariants.all { variant ->
+        variant.outputs.all {
+            def version = variant.versionName
+            def date = new Date()
+            def formattedDate = date.format('ddMMyy')
+            outputFileName = "RuralInspection_${variant.buildType.name}_v${version}_${formattedDate}.apk"
+        }
+    }
+
+    buildTypes {
+        debug {
+            debuggable false
+            minifyEnabled false
+            signingConfig signingConfigs.debug
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+        production {
+            debuggable false
+            minifyEnabled false
+            shrinkResources false
+            signingConfig signingConfigs.debug
+            proguardFiles getDefaultProguardFile('proguard-android.txt'),
+                    'proguard-rules.pro'
+        }
+    }
+
 }
 
 repositories {
@@ -35,8 +68,7 @@ dependencies {
     implementation 'com.google.code.gson:gson:2.6.2'
     implementation 'com.karumi:dexter:4.2.0'
     implementation files('libs/volley.jar')
-    implementation "com.hanks:htextview-rainbow:0.1.6"
-
+    implementation 'com.hanks:htextview-rainbow:0.1.6'
     android {
         useLibrary 'org.apache.http.legacy'
     }

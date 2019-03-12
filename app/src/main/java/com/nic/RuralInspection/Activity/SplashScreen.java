@@ -9,10 +9,13 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.android.volley.VolleyError;
+import com.nic.RuralInspection.Helper.AppVersionHelper;
 import com.nic.RuralInspection.R;
+import com.nic.RuralInspection.Utils.Utils;
 import com.nic.RuralInspection.api.Api;
 import com.nic.RuralInspection.api.ApiService;
 import com.nic.RuralInspection.api.ServerResponse;
+import com.nic.RuralInspection.session.PrefManager;
 
 import org.json.JSONObject;
 
@@ -22,16 +25,25 @@ import org.json.JSONObject;
  * Created by AchanthiSundar on 28-12-2018.
  */
 
-public class SplashScreen extends AppCompatActivity implements View.OnClickListener, Api.ServerResponseListener {
+public class SplashScreen extends AppCompatActivity implements View.OnClickListener, Api.ServerResponseListener,AppVersionHelper.myAppVersionInterface {
     private TextView textView;
     private Button button;
     private static int SPLASH_TIME_OUT = 2000;
+    private PrefManager prefManager;
+
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.splash_screen);
-        showSignInScreen();
+        prefManager = new PrefManager(this);
+        if(Utils.isOnline()){
+            checkAppVersion();
+        }else{
+            showSignInScreen();
+
+        }
     }
 
 
@@ -154,7 +166,21 @@ public class SplashScreen extends AppCompatActivity implements View.OnClickListe
         }, SPLASH_TIME_OUT);
     }
 
+    private void checkAppVersion() {
+        new AppVersionHelper(this, SplashScreen.this).callAppVersionCheckApi();
+    }
 
+    @Override
+    public void onAppVersionCallback(String value) {
+        if (value.length() > 0 && "Update".equalsIgnoreCase(value)) {
+            startActivity(new Intent(this, AppVersionActivity.class));
+            finish();
+            overridePendingTransition(R.anim.slide_in, R.anim.slide_out);
+        } else {
+                showSignInScreen();
+            }
+
+    }
 
 
     @Override

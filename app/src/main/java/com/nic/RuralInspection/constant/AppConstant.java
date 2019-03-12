@@ -9,6 +9,7 @@ public class AppConstant {
     public static String SDCARD_PATH = Environment.getExternalStorageDirectory().getAbsolutePath() + "/Rural Inspection";
     public static final String PREF_NAME = "NIC";
     public static String KEY_SERVICE_ID = "service_id";
+    public static String KEY_APP_CODE = "appcode";
     public static String KEY_ARGUMENTS = "arguments";
     public static String KEY_SERVICE_LIST = "service_list";
     public static String KEY_INSPECTION_LIST = "inspection_list";
@@ -116,5 +117,6 @@ public class AppConstant {
     public static String ACTION_REMARK = "action_remark";
     public static String DELETE_FLAG = "delete_flag";
     public static String KEY_HIGH_VALUE_PROJECT_ACTION_SAVE= "high_value_project_action_save";
+    public static String KEY_VERSION_CHECK= "version_check";
 
 }
