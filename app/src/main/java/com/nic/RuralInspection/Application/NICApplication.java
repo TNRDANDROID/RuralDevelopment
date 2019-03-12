@@ -143,7 +143,7 @@ public class NICApplication extends Application {
                 public boolean verify(String hostname, SSLSession session) {
 
                     Log.e("CipherUsed", session.getCipherSuite());
-                    return hostname.compareTo(UrlGenerator.getTnrdSiteUrl())==0; //The Hostname of your server
+                    return hostname.compareTo(UrlGenerator.getTnrdHostName())==0; //The Hostname of your server
 
                 }
             };

@@ -18,7 +18,7 @@ public class UrlGenerator {
         return "https://www.tnrd.gov.in/project/webservices_forms/inspection/inspection_services.php";
     }
 
-    public static String getTnrdSiteUrl() {
+    public static String getTnrdHostName() {
         return "www.tnrd.gov.in";
     }
 }
