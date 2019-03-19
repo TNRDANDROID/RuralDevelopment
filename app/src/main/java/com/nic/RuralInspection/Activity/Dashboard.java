@@ -184,7 +184,7 @@ public class Dashboard extends AppCompatActivity implements Api.ServerResponseLi
         } else if (prefManager.getLevels().equalsIgnoreCase("B")) {
             pendingList_sql = "select * from " + DBHelper.INSPECTION_ACTION + " WHERE id in (select action_id from captured_photo) and delete_flag = 0";
         }
-        Cursor pendingList = getRawEvents(pendingList_sql, null);
+        Cursor pendingList = getEvents(pendingList_sql, null);
         int count = pendingList.getCount();
         if (count > 0) {
             pending_upload_layout.setVisibility(View.VISIBLE);
@@ -641,7 +641,12 @@ public class Dashboard extends AppCompatActivity implements Api.ServerResponseLi
         overridePendingTransition(R.anim.slide_enter, R.anim.slide_exit);
     }
 
-    public static Cursor getRawEvents(String sql, String string) {
+    public static Cursor getEvents(String sql, String string) {
+        Cursor cursor = db.rawQuery(sql, null);
+        return cursor;
+    }
+
+    public Cursor getRawEvents(String sql, String string) {
         Cursor cursor = db.rawQuery(sql, null);
         return cursor;
     }
@@ -653,7 +658,7 @@ public class Dashboard extends AppCompatActivity implements Api.ServerResponseLi
             if (value.length() > 0 && "Update".equalsIgnoreCase(value)) {
                 startActivity(new Intent(this, AppVersionActivity.class));
                 finish();
-                 overridePendingTransition(R.anim.slide_in, R.anim.slide_out);
+                overridePendingTransition(R.anim.slide_in, R.anim.slide_out);
             }
         } catch (Exception e) {
             e.printStackTrace();

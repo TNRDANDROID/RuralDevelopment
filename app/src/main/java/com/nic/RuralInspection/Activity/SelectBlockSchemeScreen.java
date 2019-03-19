@@ -397,14 +397,15 @@ public class SelectBlockSchemeScreen extends AppCompatActivity implements View.O
             if (!"Select Block".equalsIgnoreCase(Block.get(sp_block.getSelectedItemPosition()).getBlockName())) {
                 if (!"Select Village".equalsIgnoreCase(Village.get(sp_village.getSelectedItemPosition()).getVillageListPvName())) {
                     if (!"Select Scheme".equalsIgnoreCase(Scheme.get(sp_scheme.getSelectedItemPosition()).getSchemeName())) {
-                        if (Utils.isOnline()) {
-                            getWorkListOptional();
-                            getInspectionList_blockwise();
-                            getInspectionList_Images_blockwise();
-                            getAction_ForInspection();
-                        } else {
-                            goto_next();
-                        }
+                        goto_next();
+//                        if (Utils.isOnline()) {
+//                            getWorkListOptional();
+//                            getInspectionList_blockwise();
+//                            getInspectionList_Images_blockwise();
+//                            getAction_ForInspection();
+//                        } else {
+//                            goto_next();
+//                        }
 
                     } else {
                         Utils.showAlert(this, "Select Scheme");
@@ -426,14 +427,15 @@ public class SelectBlockSchemeScreen extends AppCompatActivity implements View.O
 //            if (!"Select Block".equalsIgnoreCase(Block.get(sp_block.getSelectedItemPosition()).getBlockName()) || (all_block.isChecked())) {
             if (!"Select Village".equalsIgnoreCase(Village.get(sp_village.getSelectedItemPosition()).getVillageListPvName())) {
                 if (!"Select Scheme".equalsIgnoreCase(Scheme.get(sp_scheme.getSelectedItemPosition()).getSchemeName())) {
-                    if (Utils.isOnline()) {
-                        getWorkListOptional();
-                        getInspectionList_blockwise();
-                        getInspectionList_Images_blockwise();
-                        getAction_ForInspection();
-                    } else {
-                        goto_next();
-                    }
+                    goto_next();
+//                    if (Utils.isOnline()) {
+//                        getWorkListOptional();
+//                        getInspectionList_blockwise();
+//                        getInspectionList_Images_blockwise();
+//                        getAction_ForInspection();
+//                    } else {
+//                        goto_next();
+//                    }
 
                 } else {
                     Utils.showAlert(this, "Select Scheme");

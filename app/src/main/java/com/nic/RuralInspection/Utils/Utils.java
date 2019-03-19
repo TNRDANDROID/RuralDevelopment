@@ -1146,17 +1146,17 @@ public class Utils {
         JSONObject dataSet = new JSONObject();
         dataSet.put(AppConstant.KEY_SERVICE_ID, AppConstant.KEY_WORK_LIST_OPTIONAL);
         dataSet.put(AppConstant.DISTRICT_CODE, prefManager.getDistrictCode());
-        dataSet.put(AppConstant.FINANCIAL_YEAR, prefManager.getFinancialyearName());
+        dataSet.put(AppConstant.FINANCIAL_YEAR, prefManager.getFinYearJson());
         if (prefManager.getLevels().equalsIgnoreCase("B")) {
-            dataSet.put(AppConstant.BLOCK_CODE, prefManager.getBlockCode());
+            dataSet.put(AppConstant.BLOCK_CODE, prefManager.getBlockCodeJson());
 
         } else {
             if (!prefManager.getBlockName().equalsIgnoreCase("All")) {
-                dataSet.put(AppConstant.BLOCK_CODE, prefManager.getBlockCode());
+                dataSet.put(AppConstant.BLOCK_CODE, prefManager.getBlockCodeJson());
             }
         }
         if (!prefManager.getVillageListPvName().equalsIgnoreCase("All")) {
-            dataSet.put(AppConstant.PV_CODE, prefManager.getBlockCode());
+            dataSet.put(AppConstant.PV_CODE, prefManager.getKeySpinnerSelectedPVcode());
         }
         if (!prefManager.getSchemeName().equalsIgnoreCase("All")) {
             dataSet.put(AppConstant.SCHEME_ID, prefManager.getKeySpinnerSelectedSchemeSeqId());
@@ -1248,7 +1248,7 @@ public class Utils {
         if (prefManager.getLevels().equalsIgnoreCase("D")) {
             dataSet.put(AppConstant.KEY_SERVICE_ID, AppConstant.KEY_INSPECTION_LIST_DISTRICT_WISE_IMAGE);
             dataSet.put(AppConstant.DISTRICT_CODE, prefManager.getDistrictCode());
-            dataSet.put(AppConstant.BLOCK_CODE, prefManager.getBlockCode());
+            dataSet.put(AppConstant.BLOCK_CODE,prefManager.getBlockCodeJson());
 
         }else  if (prefManager.getLevels().equalsIgnoreCase("B")){
             dataSet.put(AppConstant.KEY_SERVICE_ID, AppConstant.KEY_INSPECTION_LIST_BLOCK_WISE_IMAGE_ACTION);
@@ -1262,7 +1262,7 @@ public class Utils {
         JSONObject dataSet = new JSONObject();
         dataSet.put(AppConstant.KEY_SERVICE_ID, AppConstant.KEY_INSPECTION_LIST_DISTRICT_WISE_ACTION);
         dataSet.put(AppConstant.DISTRICT_CODE, prefManager.getDistrictCode());
-        dataSet.put(AppConstant.BLOCK_CODE, prefManager.getBlockCode());
+        dataSet.put(AppConstant.BLOCK_CODE, prefManager.getBlockCodeJson());
         Log.d("object", "" + dataSet);
         return dataSet;
     }
