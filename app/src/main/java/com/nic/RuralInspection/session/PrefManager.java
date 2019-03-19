@@ -354,7 +354,7 @@ public class PrefManager {
         editor.commit();
     }
 
-    public String getBlockCodeJsonList() {
+    private String getBlockCodeJsonList() {
         return pref.getString(KEY_BLOCK_CODE_JSON, null);
     }
 
@@ -377,7 +377,7 @@ public class PrefManager {
         editor.commit();
     }
 
-    public String getFinYearJsonList() {
+    private String getFinYearJsonList() {
         return pref.getString(KEY_FIN_YEAR_JSON, null);
     }
 

@@ -240,17 +240,21 @@ public class SelectBlockSchemeScreen extends AppCompatActivity implements View.O
                 if (position > 0) {
                     pref_finYear = FinYearList.get(position).getFinancialYear();
                     prefManager.setFinancialyearName(pref_finYear);
-                    if (Utils.isOnline()) {
-                        try {
-                            db.delete(DBHelper.SCHEME_TABLE_NAME, null, null);
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                        getSchemeList();
-                    } else {
-                        selectFinancialYear();
-                        loadOfflineSchemeListDBValues();
-                    }
+                    getSchemeList();
+                    selectFinancialYear();
+                    loadOfflineSchemeListDBValues();
+//                    if (Utils.isOnline()) {
+//                        try {
+//                            db.delete(DBHelper.SCHEME_TABLE_NAME, null, null);
+//                        } catch (Exception e) {
+//                            e.printStackTrace();
+//                        }
+//                        getSchemeList();
+//                    } else {
+//                        getSchemeList();
+//                        selectFinancialYear();
+//                        loadOfflineSchemeListDBValues();
+//                    }
                 }
             }
 

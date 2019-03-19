@@ -681,7 +681,73 @@
                                                 android:textColor="@android:color/white" />
                                         </LinearLayout>
                                     </LinearLayout>
+                                    <View
+                                        android:id="@+id/scheme_view"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="0.5dp"
+                                        android:layout_gravity="bottom"
+                                        android:layout_marginLeft="15dp"
+                                        android:visibility="gone"
+                                        android:background="@color/dashboard_line_dark" />
 
+                                    <LinearLayout
+                                        android:id="@+id/select_scheme_layout"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:orientation="vertical"
+                                        android:paddingLeft="@dimen/padding"
+                                        android:visibility="gone">
+
+                                        <TableLayout
+                                            android:layout_width="match_parent"
+                                            android:layout_height="wrap_content">
+
+                                            <TableRow
+                                                android:layout_width="match_parent"
+                                                android:layout_height="wrap_content">
+
+                                                <com.nic.RuralInspection.Support.MyCustomTextView
+
+                                                    android:layout_width="match_parent"
+                                                    android:layout_height="wrap_content"
+                                                    android:gravity="end"
+                                                    android:padding="5sp"
+                                                    android:text="Selected Scheme"
+                                                    android:textColor="@android:color/black"
+                                                    android:textSize="18sp"
+                                                    customfontdemo:fontName="@string/font_circular_bold" />
+
+                                                <!--<com.nic.RuralInspection.Support.MyCustomTextView-->
+                                                <!--android:layout_width="0dp"-->
+                                                <!--android:layout_height="wrap_content"-->
+                                                <!--android:layout_weight=".10"-->
+                                                <!--android:gravity="center|left"-->
+                                                <!--android:paddingLeft="5dp"-->
+                                                <!--android:text=":"-->
+                                                <!--android:textColor="@android:color/black"-->
+                                                <!--android:textSize="18sp"-->
+                                                <!--customfontdemo:fontName="@string/font_normal" />-->
+
+                                                <com.nic.RuralInspection.Support.MyCustomTextView
+                                                    android:id="@+id/selected_scheme_tv"
+                                                    android:layout_width="0dp"
+                                                    android:layout_height="wrap_content"
+                                                    android:layout_weight="0.48"
+                                                    android:gravity="center|left"
+                                                    android:padding="10sp"
+                                                    android:text=""
+                                                    android:textColor="@android:color/black"
+                                                    android:textSize="18sp"
+                                                    customfontdemo:fontName="@string/font_circular_bold" />
+
+
+                                            </TableRow>
+
+
+
+                                        </TableLayout>
+
+                                    </LinearLayout>
 
                                 </LinearLayout>
                             </LinearLayout>

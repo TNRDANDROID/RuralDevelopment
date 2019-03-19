@@ -1232,7 +1232,7 @@ public class Utils {
         if (prefManager.getLevels().equalsIgnoreCase("D")) {
             dataSet.put(AppConstant.KEY_SERVICE_ID, AppConstant.KEY_INSPECTION_LIST_DISTRICT_WISE);
             dataSet.put(AppConstant.DISTRICT_CODE, prefManager.getDistrictCode());
-            dataSet.put(AppConstant.BLOCK_CODE, prefManager.getBlockCode());
+            dataSet.put(AppConstant.BLOCK_CODE, prefManager.getBlockCodeJson());
         }
         else  if (prefManager.getLevels().equalsIgnoreCase("B")){
         dataSet.put(AppConstant.KEY_SERVICE_ID, AppConstant.KEY_INSPECTION_LIST_BLOCK_WISE_ACTION);

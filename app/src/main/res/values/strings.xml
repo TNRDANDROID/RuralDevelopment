@@ -28,6 +28,7 @@
     <string name="finyear_dialog_title">Select Financial year</string>
     <string name="block_dialog_title">Select Block</string>
     <string name="village_dialog_title">Select Village</string>
+    <string name="scheme_dialog_title">Select Scheme</string>
     <string name="ok_label">OK</string>
     <string name="dismiss_label">Dismiss</string>
     <string name="clear_all_label">Clear all</string>
