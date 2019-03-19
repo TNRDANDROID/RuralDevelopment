@@ -2,9 +2,12 @@ package com.nic.RuralInspection.session;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.util.Log;
 
 
 import com.nic.RuralInspection.constant.AppConstant;
+
+import org.json.JSONArray;
 
 
 /**
@@ -53,6 +56,8 @@ public class PrefManager {
     private static final String KEY_ACTION_AMOUNT= "Action_Amount";
     private static final String KEY_ACTION_STAGE_LEVEL = "Action_Stage_Level";
     private static final String KEY_DELETE_ID = "deleteId";
+    private static final String KEY_BLOCK_CODE_JSON = "block_code_json";
+    private static final String KEY_FIN_YEAR_JSON = "block_code_json";
 
 
     private static final String IMEI = "imei";
@@ -342,5 +347,51 @@ public class PrefManager {
     public boolean isFirstTimeLaunch() {
         return pref.getBoolean(IS_FIRST_TIME_LAUNCH, true);
         //return true;
+    }
+
+    public void setBlockCodeJson(JSONArray jsonarray) {
+        editor.putString(KEY_BLOCK_CODE_JSON, jsonarray.toString());
+        editor.commit();
+    }
+
+    public String getBlockCodeJsonList() {
+        return pref.getString(KEY_BLOCK_CODE_JSON, null);
+    }
+
+    public JSONArray getBlockCodeJson() {
+        JSONArray jsonData = null;
+        String strJson = getBlockCodeJsonList();//second parameter is necessary ie.,Value to return if this preference does not exist.
+        try {
+            if (strJson != null) {
+                jsonData = new JSONArray(strJson);
+            }
+        } catch (Exception e) {
+
+        }
+        Log.d("prefBlockJson",""+jsonData);
+        return jsonData;
+    }
+
+    public void setFinYearJson(JSONArray jsonarray) {
+        editor.putString(KEY_FIN_YEAR_JSON, jsonarray.toString());
+        editor.commit();
+    }
+
+    public String getFinYearJsonList() {
+        return pref.getString(KEY_FIN_YEAR_JSON, null);
+    }
+
+    public JSONArray getFinYearJson() {
+        JSONArray jsonData = null;
+        String strJson = getFinYearJsonList();//second parameter is necessary ie.,Value to return if this preference does not exist.
+        try {
+            if (strJson != null) {
+                jsonData = new JSONArray(strJson);
+            }
+        } catch (Exception e) {
+
+        }
+        Log.d("prefJson",""+jsonData);
+        return jsonData;
     }
 }

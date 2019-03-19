@@ -18,4 +18,17 @@
     <string name="view_action">View Action</string>
     <string name="action_taken_tv">Action Taken Against Inspection Report for High Value Project</string>
     <string name="init_vector">2SN22SkJGDyOAXUU</string>
+    <string name="click_to_download_your_inspecting_block">Click to Download your Inspecting Block</string>
+    <string name="click_to_download_your_inspecting_financial_year">Click to Download your Inspecting Financial Year</string>
+    <string name="click_to_download_your_inspecting_scheme">Click to Download your Inspecting Scheme</string>
+    <string name="select_scheme">Select Scheme</string>
+    <string name="select_village">Select Village</string>
+    <string name="select_block">Select Block</string>
+    <string name="financial_year">Financial Year</string>
+    <string name="finyear_dialog_title">Select Financial year</string>
+    <string name="block_dialog_title">Select Block</string>
+    <string name="village_dialog_title">Select Village</string>
+    <string name="ok_label">OK</string>
+    <string name="dismiss_label">Dismiss</string>
+    <string name="clear_all_label">Clear all</string>
 </resources>
