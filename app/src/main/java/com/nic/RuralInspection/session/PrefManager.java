@@ -57,7 +57,9 @@ public class PrefManager {
     private static final String KEY_ACTION_STAGE_LEVEL = "Action_Stage_Level";
     private static final String KEY_DELETE_ID = "deleteId";
     private static final String KEY_BLOCK_CODE_JSON = "block_code_json";
-    private static final String KEY_FIN_YEAR_JSON = "block_code_json";
+    private static final String KEY_VILLAGE_CODE_JSON = "village_code_json";
+    private static final String KEY_SCHEME_SEQUENTIAL_ID_JSON = "SchemeSeqId_json";
+    private static final String KEY_FIN_YEAR_JSON = "fin_year_json";
 
 
     private static final String IMEI = "imei";
@@ -369,6 +371,52 @@ public class PrefManager {
 
         }
         Log.d("prefBlockJson",""+jsonData);
+        return jsonData;
+    }
+
+    public void setVillagePvCodeJson(JSONArray jsonarray) {
+        editor.putString(KEY_VILLAGE_CODE_JSON, jsonarray.toString());
+        editor.commit();
+    }
+
+    private String getVillagePvCodeJsonList() {
+        return pref.getString(KEY_VILLAGE_CODE_JSON, null);
+    }
+
+    public JSONArray getVillagePvCodeJson() {
+        JSONArray jsonData = null;
+        String strJson = getVillagePvCodeJsonList();//second parameter is necessary ie.,Value to return if this preference does not exist.
+        try {
+            if (strJson != null) {
+                jsonData = new JSONArray(strJson);
+            }
+        } catch (Exception e) {
+
+        }
+        Log.d("prefVillageJson",""+jsonData);
+        return jsonData;
+    }
+
+    public void setSchemeSeqIdJson(JSONArray jsonarray) {
+        editor.putString(KEY_SCHEME_SEQUENTIAL_ID_JSON, jsonarray.toString());
+        editor.commit();
+    }
+
+    private String getSchemeSeqIdJsonList() {
+        return pref.getString(KEY_SCHEME_SEQUENTIAL_ID_JSON, null);
+    }
+
+    public JSONArray getSchemeSeqIdJson() {
+        JSONArray jsonData = null;
+        String strJson = getSchemeSeqIdJsonList();//second parameter is necessary ie.,Value to return if this preference does not exist.
+        try {
+            if (strJson != null) {
+                jsonData = new JSONArray(strJson);
+            }
+        } catch (Exception e) {
+
+        }
+        Log.d("prefSchemeIDJson",""+jsonData);
         return jsonData;
     }
 

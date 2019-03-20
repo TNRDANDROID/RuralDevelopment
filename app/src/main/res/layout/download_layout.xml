@@ -29,60 +29,62 @@
             android:id="@+id/layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_24sdp"
+            android:layout_gravity="center"
             android:orientation="vertical">
 
-            <com.nic.RuralInspection.Support.MyCustomTextView
-                android:id="@+id/tv_create_alert_name_title"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/margin_left_20dp"
-                android:layout_marginTop="@dimen/_10sdp"
-                android:layout_marginRight="@dimen/margin_left_20dp"
-                android:text="Project Filter"
-                android:textColor="@android:color/black"
-                android:textSize="@dimen/_15sdp"
-                customfontdemo:fontName="@string/font_circular_bold" />
+            <!--<com.nic.RuralInspection.Support.MyCustomTextView-->
+                <!--android:id="@+id/tv_create_alert_name_title"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_marginLeft="@dimen/margin_left_20dp"-->
+                <!--android:layout_marginTop="@dimen/_10sdp"-->
+                <!--android:layout_marginRight="@dimen/margin_left_20dp"-->
+                <!--android:text="Project Filter"-->
+                <!--android:textColor="@android:color/black"-->
+                <!--android:textSize="@dimen/_15sdp"-->
+                <!--customfontdemo:fontName="@string/font_circular_bold" />-->
 
-            <RelativeLayout
+            <!--<RelativeLayout-->
 
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/_40sdp"
-                android:layout_marginLeft="@dimen/margin_left_20dp"
-                android:layout_marginTop="@dimen/_10sdp"
-                android:layout_marginRight="@dimen/margin_left_20dp"
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="@dimen/_40sdp"-->
+                <!--android:layout_marginLeft="@dimen/margin_left_20dp"-->
+                <!--android:layout_marginTop="@dimen/_10sdp"-->
+                <!--android:layout_marginRight="@dimen/margin_left_20dp"-->
 
-                android:gravity="center"
+                <!--android:gravity="center"-->
 
-                android:orientation="horizontal">
-
-
-                <CheckBox
-                    android:id="@+id/high_value_projects"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentStart="true"
-                    android:layout_centerInParent="true"
-
-                    android:checked="true"
-                    android:gravity="center"
-                    android:text="High Value Projects Only"
-                    android:textColor="@android:color/black"
-                    android:textSize="13sp" />
-
-                <CheckBox
-                    android:id="@+id/all_projects"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentEnd="true"
-                    android:layout_centerInParent="true"
-                    android:layout_marginRight="20dp"
-                    android:gravity="center"
-                    android:text="All Projects"
-                    android:textColor="@android:color/black"
-                    android:textSize="13sp" />
+                <!--android:orientation="horizontal">-->
 
 
-            </RelativeLayout>
+                <!--<CheckBox-->
+                    <!--android:id="@+id/high_value_projects"-->
+                    <!--android:layout_width="wrap_content"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:layout_alignParentStart="true"-->
+                    <!--android:layout_centerInParent="true"-->
+
+                    <!--android:checked="true"-->
+                    <!--android:gravity="center"-->
+                    <!--android:text="High Value Projects Only"-->
+                    <!--android:textColor="@android:color/black"-->
+                    <!--android:textSize="13sp" />-->
+
+                <!--<CheckBox-->
+                    <!--android:id="@+id/all_projects"-->
+                    <!--android:layout_width="wrap_content"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:layout_alignParentEnd="true"-->
+                    <!--android:layout_centerInParent="true"-->
+                    <!--android:layout_marginRight="20dp"-->
+                    <!--android:gravity="center"-->
+                    <!--android:text="All Projects"-->
+                    <!--android:textColor="@android:color/black"-->
+                    <!--android:textSize="13sp" />-->
+
+
+            <!--</RelativeLayout>-->
 
 
             <LinearLayout
@@ -796,6 +798,7 @@
                 android:layout_height="40dp"
                 android:layout_gravity="center"
                 android:layout_marginTop="@dimen/_75sdp"
+                android:layout_marginBottom="@dimen/_75sdp"
 
                 android:background="@drawable/login_button"
                 android:text="Download"
@@ -805,6 +808,19 @@
         </LinearLayout>
 
     </ScrollView>
+    <com.nic.RuralInspection.Support.MyCustomTextView
+        android:id="@+id/textView1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:padding="@dimen/_10sdp"
+        android:text="Sofware Designed &amp; Developed by NIC"
+        android:textAlignment="center"
+        android:textColor="@android:color/black"
+        android:textSize="@dimen/_15sdp"
+        android:textStyle="bold"
+        customfontdemo:fontName="@string/font_circular_medium" />
 
 
 </RelativeLayout>

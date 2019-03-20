@@ -1148,19 +1148,14 @@ public class Utils {
         dataSet.put(AppConstant.DISTRICT_CODE, prefManager.getDistrictCode());
         dataSet.put(AppConstant.FINANCIAL_YEAR, prefManager.getFinYearJson());
         if (prefManager.getLevels().equalsIgnoreCase("B")) {
-            dataSet.put(AppConstant.BLOCK_CODE, prefManager.getBlockCodeJson());
+            dataSet.put(AppConstant.BLOCK_CODE, prefManager.getBlockCode());
 
         } else {
-            if (!prefManager.getBlockName().equalsIgnoreCase("All")) {
-                dataSet.put(AppConstant.BLOCK_CODE, prefManager.getBlockCodeJson());
-            }
+            dataSet.put(AppConstant.BLOCK_CODE, prefManager.getBlockCodeJson());
+
         }
-        if (!prefManager.getVillageListPvName().equalsIgnoreCase("All")) {
-            dataSet.put(AppConstant.PV_CODE, prefManager.getKeySpinnerSelectedPVcode());
-        }
-        if (!prefManager.getSchemeName().equalsIgnoreCase("All")) {
-            dataSet.put(AppConstant.SCHEME_ID, prefManager.getKeySpinnerSelectedSchemeSeqId());
-        }
+            dataSet.put(AppConstant.PV_CODE, prefManager.getVillagePvCodeJson());
+            dataSet.put(AppConstant.SCHEME_ID, prefManager.getSchemeSeqIdJson());
         Log.d("habitationListDist", "" + dataSet);
         return dataSet;
     }

@@ -215,6 +215,7 @@ public class SelectBlockSchemeScreen extends AppCompatActivity implements View.O
                     pref_Scheme = Scheme.get(position).getSchemeName();
                     prefManager.setSchemeName(pref_Scheme);
                     prefManager.setKeySpinnerSelectedSchemeSeqId(Scheme.get(position).getSchemeID());
+                    Log.d("SchemeIDDD",""+(Scheme.get(position).getSchemeID()));
                 }
             }
 
@@ -241,8 +242,10 @@ public class SelectBlockSchemeScreen extends AppCompatActivity implements View.O
                     pref_finYear = FinYearList.get(position).getFinancialYear();
                     prefManager.setFinancialyearName(pref_finYear);
                     getSchemeList();
-                    selectFinancialYear();
-                    loadOfflineSchemeListDBValues();
+                    if(!Utils.isOnline()){
+                        selectFinancialYear();
+                        loadOfflineSchemeListDBValues();
+                    }
 //                    if (Utils.isOnline()) {
 //                        try {
 //                            db.delete(DBHelper.SCHEME_TABLE_NAME, null, null);
