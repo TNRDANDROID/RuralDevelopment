@@ -36,20 +36,20 @@ public class DBHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
 
         db.execSQL("CREATE TABLE " + BLOCK_TABLE_NAME + " ("
-                + "dcode varchar(4)," +
-                "bcode varchar(4)," +
+                + "dcode INTEGER," +
+                "bcode INTEGER," +
                 "bname varchar(32))");
 
         db.execSQL("CREATE TABLE " + VILLAGE_TABLE_NAME  + " ("
-                + "dcode varchar(4)," +
-                "bcode varchar(4)," +
-                "pvcode varchar(4)," +
+                + "dcode INTEGER," +
+                "bcode INTEGER," +
+                "pvcode INTEGER," +
                 "pvname varchar(32))");
 
         db.execSQL("CREATE TABLE " + SCHEME_TABLE_NAME + " ("
                 + "scheme_name varchar(32)," +
                 "fin_year  varchar(32),"+
-                "scheme_seq_id varchar(4))");
+                "scheme_seq_id INTEGER)");
 
         db.execSQL("CREATE TABLE " + OBSERVATION_TABLE + " ("
                 + "id INTEGER," +
