@@ -376,7 +376,7 @@ public class DownloadActivity extends AppCompatActivity implements Api.ServerRes
         Cursor VillageList = getRawEvents(villageSql, null);
         Village.clear();
         final ArrayList<String> myVillageList = new ArrayList<String>();
-        final ArrayList<String> myVillageCodelist = new ArrayList<String>();
+        final ArrayList<JSONArray> myVillageCodelist = new ArrayList<JSONArray>();
 
 
         final boolean[] villageCheckedItems;
@@ -402,11 +402,15 @@ public class DownloadActivity extends AppCompatActivity implements Api.ServerRes
         }
         for (int i = 0; i < Village.size(); i++) {
             myVillageList.add(Village.get(i).getVillageListPvName());
-            myVillageCodelist.add(Village.get(i).getVillageListPvCode());
+            JSONArray jsonArray = new JSONArray();
+            jsonArray.put(Village.get(i).getVillageListBlockCode());
+            jsonArray.put(Village.get(i).getVillageListPvCode());
+
+            myVillageCodelist.add(jsonArray);
         }
 
         villageStrings = myVillageList.toArray(new String[myVillageList.size()]);
-        villageCodeStrings = myVillageCodelist.toArray(new String[myVillageCodelist.size()]);
+       // villageCodeStrings = myVillageCodelist.toArray(new String[myVillageCodelist.size()]);
         villageCheckedItems = new boolean[villageStrings.length];
         AlertDialog.Builder mBuilder = new AlertDialog.Builder(DownloadActivity.this);
         mBuilder.setTitle(R.string.village_dialog_title);
@@ -423,7 +427,7 @@ public class DownloadActivity extends AppCompatActivity implements Api.ServerRes
                 JSONArray villageCodeJsonArray = new JSONArray();
 
                 for (int i = 0; i < mVillageItems.size(); i++) {
-                    villageCodeJsonArray.put(villageCodeStrings[mVillageItems.get(i)]);
+                    villageCodeJsonArray.put(myVillageCodelist.get(mVillageItems.get(i)));
                 }
                 prefManager.setVillagePvCodeJson(villageCodeJsonArray);
                 Log.d("villagecode", "" + villageCodeJsonArray);
