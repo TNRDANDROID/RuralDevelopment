@@ -399,7 +399,8 @@ public class SelectBlockSchemeScreen extends AppCompatActivity implements View.O
 
     public void loadOfflineBlockListDBValues() {
 
-        Cursor BlockList = getRawEvents("SELECT * FROM " + BLOCK_TABLE_NAME, null);
+        Cursor BlockList = getRawEvents("select  bcode from "+DBHelper.WORK_LIST_OPTIONAL+" group by bcode", null);
+       // Cursor BlockList = getRawEvents("SELECT * FROM " + BLOCK_TABLE_NAME, null);
         Block.clear();
         BlockListValue blockListValue = new BlockListValue();
         blockListValue.setBlockName("Select Block");
@@ -451,6 +452,7 @@ public class SelectBlockSchemeScreen extends AppCompatActivity implements View.O
 
     public void loadOfflineSchemeListDBValues(String fin_Year) {
         String query = "SELECT * FROM " + DBHelper.SCHEME_TABLE_NAME + " Where fin_year = '" + fin_Year + "'";
+       // String query = "select scheme_name,scheme_seq_id,fin_year from (select  scheme_id from "+DBHelper.WORK_LIST_OPTIONAL+" group by scheme_id)a left join (select * from "+DBHelper.SCHEME_TABLE_NAME+")b on a.scheme_id = b.scheme_seq_id";
         Cursor SchemeList = getRawEvents(query, null);
         Log.d("SchemeQuery", "" + query);
 
@@ -478,7 +480,8 @@ public class SelectBlockSchemeScreen extends AppCompatActivity implements View.O
 
     public void loadOfflineFinYearListDBValues() {
 
-        Cursor FinYear = getRawEvents("SELECT fin_year FROM " + DBHelper.FINANCIAL_YEAR_TABLE_NAME, null);
+        //Cursor FinYear = getRawEvents("SELECT fin_year FROM " + DBHelper.FINANCIAL_YEAR_TABLE_NAME, null);
+        Cursor FinYear = getRawEvents("select  fin_year from "+DBHelper.WORK_LIST_OPTIONAL+" group by fin_year", null);
 
         BlockListValue finYearListValue = new BlockListValue();
         finYearListValue.setFinancialYear("Select Financial year");
