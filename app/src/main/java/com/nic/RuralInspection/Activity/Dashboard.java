@@ -57,7 +57,7 @@ import static com.nic.RuralInspection.Activity.LoginScreen.db;
 
 public class Dashboard extends AppCompatActivity implements Api.ServerResponseListener, View.OnClickListener, MyDialog.myOnClickListener,AppVersionHelper.myAppVersionInterface {
     private ImageView logout;
-    private static LinearLayout uploadInspectionReport, block_user_layout, pending_upload_layout,demo_layout;
+    private static LinearLayout uploadInspectionReport, block_user_layout, pending_upload_layout,download_layout;
     private static PrefManager prefManager;
     private ProgressHUD progressHUD;
     private static MyCustomTextView district_tv, block_user_tv, upload_inspection_report_tv, count_tv, title_tv;
@@ -92,7 +92,7 @@ public class Dashboard extends AppCompatActivity implements Api.ServerResponseLi
         uploadInspectionReport = (LinearLayout) findViewById(R.id.upload_inspection_report);
         pending_upload_layout = (LinearLayout) findViewById(R.id.pending_upload_layout);
         block_user_layout = (LinearLayout) findViewById(R.id.block_user_layout);
-        demo_layout = (LinearLayout) findViewById(R.id.demo_layout);
+        download_layout = (LinearLayout) findViewById(R.id.download_layout);
         block_user_tv = (MyCustomTextView) findViewById(R.id.block_user_tv);
         upload_inspection_report_tv = (MyCustomTextView) findViewById(R.id.upload_inspection_report_tv);
         count_tv = (MyCustomTextView) findViewById(R.id.count_tv);
@@ -100,7 +100,7 @@ public class Dashboard extends AppCompatActivity implements Api.ServerResponseLi
         title_tv = (MyCustomTextView) findViewById(R.id.title_tv);
         uploadInspectionReport.setOnClickListener(this);
         pending_upload_layout.setOnClickListener(this);
-        demo_layout.setOnClickListener(this);
+        download_layout.setOnClickListener(this);
         logout.setOnClickListener(this);
         title_tv.setText("Dashboard");
         district_tv.setText(prefManager.getDistrictName());
@@ -117,6 +117,8 @@ public class Dashboard extends AppCompatActivity implements Api.ServerResponseLi
             if (toCheck.getCount() < 1) {
                 fetchAllResponseFromApi();
             }
+        }else{
+            download_layout.setVisibility(View.GONE);
         }
 
 
@@ -166,13 +168,14 @@ public class Dashboard extends AppCompatActivity implements Api.ServerResponseLi
     public void fetchAllResponseFromApi() {
         getStageList();
         getObservationList();
+        getBlockList();
         // getServiceList();
         // getInspectionServiceList();
-        if (prefManager.getLevels().equalsIgnoreCase("D")) {
-            getBlockList();
-        } else {
-//            block_layout.setVisibility(View.GONE);
-        }
+//        if (prefManager.getLevels().equalsIgnoreCase("D")) {
+//            getBlockList();
+//        } else {
+//          block_layout.setVisibility(View.GONE);
+//        }
         getVillageList();
         getFinYearList();
     }
@@ -300,7 +303,7 @@ public class Dashboard extends AppCompatActivity implements Api.ServerResponseLi
 //                pendingLyoutScreen();
                 openPendingLayoutFragment();
                 break;
-            case R.id.demo_layout:
+            case R.id.download_layout:
 //                pendingLyoutScreen();
                 downloadScreen();
                 break;

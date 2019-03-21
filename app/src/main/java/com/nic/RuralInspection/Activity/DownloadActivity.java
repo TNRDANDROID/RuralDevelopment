@@ -65,22 +65,29 @@ public class DownloadActivity extends AppCompatActivity implements Api.ServerRes
     private List<BlockListValue> Village = new ArrayList<>();
     private List<BlockListValue> Scheme = new ArrayList<>();
     private List<BlockListValue> FinYearList = new ArrayList<>();
-    private LinearLayout select_fin_year_layout, select_block_layout, select_village_layout, select_scheme_layout;
+    private LinearLayout select_fin_year_layout, select_block_layout, select_village_layout, select_scheme_layout,block_hide_layout;
     private View view;
     final ArrayList<Integer> mVillageItems = new ArrayList<>();
     final ArrayList<Integer> mUserItems = new ArrayList<>();
     final ArrayList<Integer> mFinYearItems = new ArrayList<>();
     final ArrayList<Integer> mSchemeItems = new ArrayList<>();
-    //    final ArrayList<String> mySchemelist = new ArrayList<String>();/*It is Temporarly hide scheme is empty in the multiple choice dialog to unhide */
-    String[] blockStrings = null;
-    String[] blockCodeStrings = null;
-    String[] villageStrings = null;
-    String[] villageCodeStrings = null;
-    String[] schemeStrings = null;
-    String[] schemeCodeStrings = null;
-    String[] finyearStrings = null;
+//        final ArrayList<String> mySchemelist = new ArrayList<String>();
+
+    /*It is Temporarly hide scheme is empty in the multiple choice dialog to unhide */
+    String[] blockStrings;
+    String[] blockCodeStrings;
+    String[] villageStrings;
+    String[] villageCodeStrings;
+    String[] schemeStrings;
+    String[] schemeCodeStrings;
+    String[] finyearStrings;
+    String[] errorSoon;
     boolean[] checkedItems;
     boolean[] schemeCheckedItems;
+    boolean workListInsert = false;
+    boolean inspectionListInsert = false;
+    boolean inspectionListImagesInsert = false;
+    boolean inspectionListActionInsert = false;
     String pref_Block, pref_Village, pref_Scheme, pref_finYear;
     private ProgressHUD progressHUD;
     private JSONArray updatedJsonArray;
@@ -100,6 +107,7 @@ public class DownloadActivity extends AppCompatActivity implements Api.ServerRes
         select_block_layout = (LinearLayout) findViewById(R.id.select_block_layout);
         select_village_layout = (LinearLayout) findViewById(R.id.select_village_layout);
         select_scheme_layout = (LinearLayout) findViewById(R.id.select_scheme_layout);
+        block_hide_layout = (LinearLayout) findViewById(R.id.block_hide_layout);
         done = (Button) findViewById(R.id.btn_download);
         btn_view_finyear = (Button) findViewById(R.id.btn_view_finyear);
         btn_view_block = (Button) findViewById(R.id.btn_view_block);
@@ -123,6 +131,9 @@ public class DownloadActivity extends AppCompatActivity implements Api.ServerRes
         done.setOnClickListener(this);
 
 //        home.setOnClickListener(this);
+        if (prefManager.getLevels().equalsIgnoreCase("B")) {
+            block_hide_layout.setVisibility(View.GONE);
+        }
 
     }
 
@@ -166,22 +177,27 @@ public class DownloadActivity extends AppCompatActivity implements Api.ServerRes
         }
 
         finyearStrings = myFinYearlist.toArray(new String[myFinYearlist.size()]);
-        FinYearcheckedItems = new boolean[finyearStrings.length];
+        FinYearcheckedItems = new boolean[myFinYearlist.size()];
         AlertDialog.Builder mBuilder = new AlertDialog.Builder(DownloadActivity.this);
         mBuilder.setTitle(R.string.finyear_dialog_title);
         mBuilder.setMultiChoiceItems(finyearStrings, FinYearcheckedItems, new DialogInterface.OnMultiChoiceClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int position, boolean isChecked) {
                 if (isChecked) {
-                    JSONArray finyearJsonArray = new JSONArray();
                     if (!mFinYearItems.contains(position)) {
                         mFinYearItems.add(position);
 
                     }
-                    prefManager.setFinYearJson(finyearJsonArray);
-                    Log.d("FinYearArray", "" + finyearJsonArray);
+
                 } else if (mFinYearItems.contains(position)) {
                     mFinYearItems.remove(Integer.valueOf(position));
+                }
+                JSONArray finyearJsonArray = new JSONArray();
+
+                for (int i = 0; i < mFinYearItems.size(); i++) {
+                    finyearJsonArray.put(finyearStrings[mFinYearItems.get(i)]);
+                    prefManager.setFinYearJson(finyearJsonArray);
+                    Log.d("FinYearArray", "" + finyearJsonArray);
                 }
             }
         });
@@ -273,7 +289,7 @@ public class DownloadActivity extends AppCompatActivity implements Api.ServerRes
     public void showMultipleBlock(ArrayList<String> myBlockList, ArrayList<String> myBlockCodeList) {
         blockStrings = myBlockList.toArray(new String[myBlockList.size()]);
         blockCodeStrings = myBlockCodeList.toArray(new String[myBlockCodeList.size()]);
-        checkedItems = new boolean[myBlockList.size()];
+        checkedItems = new boolean[blockStrings.length];
         AlertDialog.Builder mBuilder = new AlertDialog.Builder(DownloadActivity.this);
         mBuilder.setTitle(R.string.block_dialog_title);
         mBuilder.setMultiChoiceItems(blockStrings, checkedItems, new DialogInterface.OnMultiChoiceClickListener() {
@@ -342,9 +358,20 @@ public class DownloadActivity extends AppCompatActivity implements Api.ServerRes
         mDialog.show();
     }
 
-    public void loadOfflineVillgeListDBValues(JSONArray filterVillage) {
+    public void loadOfflineVillgeListDBValues() {
 
-        String villageSql = "SELECT * FROM " + DBHelper.VILLAGE_TABLE_NAME + " WHERE bcode in" + filterVillage.toString().replace("[", "(").replace("]", ")") + " order by bcode";
+//        String villageSql = "SELECT * FROM " + DBHelper.VILLAGE_TABLE_NAME + " WHERE bcode in" + filterVillage.toString().replace("[", "(").replace("]", ")") + " order by bcode";
+        String villageSql = null;
+
+        if (prefManager.getLevels().equalsIgnoreCase("D")){
+            JSONArray filterVillage = prefManager.getBlockCodeJson();
+            villageSql = "SELECT * FROM " + DBHelper.VILLAGE_TABLE_NAME + " WHERE bcode in" + filterVillage.toString().replace("[", "(").replace("]", ")") + " order by bcode";
+        }
+        else if (prefManager.getLevels().equalsIgnoreCase("B")){
+            String filterVillage = prefManager.getBlockCode();
+            villageSql = "SELECT * FROM " + DBHelper.VILLAGE_TABLE_NAME + " WHERE bcode ="+filterVillage;
+        }
+
         Log.d("villageSql", "" + villageSql);
         Cursor VillageList = getRawEvents(villageSql, null);
         Village.clear();
@@ -473,7 +500,7 @@ public class DownloadActivity extends AppCompatActivity implements Api.ServerRes
                 loadOfflineBlockListDBValues();
                 break;
             case R.id.btn_view_village:
-                loadOfflineVillgeListDBValues(prefManager.getBlockCodeJson());
+                loadOfflineVillgeListDBValues();
                 break;
             case R.id.btn_view_scheme:
                 clicked = true;
@@ -490,28 +517,56 @@ public class DownloadActivity extends AppCompatActivity implements Api.ServerRes
 
     public void download() {
         if (Utils.isOnline()) {
-            if (!selected_finyear_tv.getText().equals("")) {
-                if (!selected_block_tv.getText().equals("")) {
-                    if (!selected_village_tv.getText().equals("")) {
-                        if (!selected_scheme_tv.getText().equals("")) {
-                            getWorkListOptional();
-                            getInspectionList_blockwise();
-                            getInspectionList_Images_blockwise();
-                            getAction_ForInspection();
-                        } else {
-                            Utils.showAlert(this, "Select Scheme");
-                        }
-                    } else {
-                        Utils.showAlert(this, "Select Village");
-                    }
-                } else {
-                    Utils.showAlert(this, "Select Block");
-                }
+            if (!prefManager.getLevels().equalsIgnoreCase("B")) {
+                projectListScreenDistrictUser();
             } else {
-                Utils.showAlert(this, "Select Financial year");
+                projectListScreenBlockUser();
             }
         } else {
             Utils.showAlert(this, getResources().getString(R.string.no_internet));
+        }
+    }
+
+    public void projectListScreenDistrictUser() {
+        if (!selected_finyear_tv.getText().equals("")) {
+            if (!selected_block_tv.getText().equals("")) {
+                if (!selected_village_tv.getText().equals("")) {
+                    if (!selected_scheme_tv.getText().equals("")) {
+                        getWorkListOptional();
+                        getInspectionList_blockwise();
+                        getInspectionList_Images_blockwise();
+                        getAction_ForInspection();
+                    } else {
+                        Utils.showAlert(this, "Select Scheme");
+                    }
+                } else {
+                    Utils.showAlert(this, "Select Village");
+                }
+            } else {
+                Utils.showAlert(this, "Select Block");
+            }
+        } else {
+            Utils.showAlert(this, "Select Financial year");
+        }
+    }
+
+    public void projectListScreenBlockUser() {
+        if (!selected_finyear_tv.getText().equals("")) {
+            if (!selected_village_tv.getText().equals("")) {
+                if (!selected_scheme_tv.getText().equals("")) {
+                    getWorkListOptional();
+                    getInspectionList_blockwise();
+                    getInspectionList_Images_blockwise();
+                    getAction_ForInspection();
+                } else {
+                    Utils.showAlert(this, "Select Scheme");
+                }
+            } else {
+                Utils.showAlert(this, "Select Village");
+            }
+
+        } else {
+            Utils.showAlert(this, "Select Financial year");
         }
     }
 
@@ -621,8 +676,9 @@ public class DownloadActivity extends AppCompatActivity implements Api.ServerRes
                 JSONObject jsonObject = new JSONObject(responseDecryptedKey);
                 if (jsonObject.getString("STATUS").equalsIgnoreCase("OK") && jsonObject.getString("RESPONSE").equalsIgnoreCase("OK")) {
                     workListOptionalS(jsonObject.getJSONArray(AppConstant.JSON_DATA));
+//                    Utils.showAlert(this, "Your Data will be Downloaded");
                 } else if (jsonObject.getString("STATUS").equalsIgnoreCase("OK") && jsonObject.getString("RESPONSE").equalsIgnoreCase("NO_RECORD")) {
-                    Utils.showAlert(this, "No Projects Found!");
+                    Utils.showAlert(this, "No Projects Found! for your selected items");
                 }
                 Log.d("responseWorkList", "" + jsonObject.getJSONArray(AppConstant.JSON_DATA));
 
@@ -825,6 +881,7 @@ public class DownloadActivity extends AppCompatActivity implements Api.ServerRes
             updatedJsonArray = new JSONArray();
             updatedJsonArray = jsonArray;
             if (jsonArray.length() > 0) {
+                workListInsert = true;
                 for (int i = 0; i < jsonArray.length(); i++) {
                     String dcode = jsonArray.getJSONObject(i).getString(AppConstant.DISTRICT_CODE);
                     String SelectedBlockCode = jsonArray.getJSONObject(i).getString(AppConstant.BLOCK_CODE);
@@ -857,6 +914,7 @@ public class DownloadActivity extends AppCompatActivity implements Api.ServerRes
 
                     LoginScreen.db.insert(DBHelper.WORK_LIST_OPTIONAL, null, workListOptional);
                 }
+
             } else {
                 Utils.showAlert(this, "No Record Found for Corrsponding Financial Year");
             }
@@ -881,6 +939,7 @@ public class DownloadActivity extends AppCompatActivity implements Api.ServerRes
             updatedJsonArray = new JSONArray();
             updatedJsonArray = jsonArray;
             if (jsonArray.length() > 0) {
+                inspectionListInsert = true;
                 for (int i = 0; i < jsonArray.length(); i++) {
                     String workID = jsonArray.getJSONObject(i).getString(AppConstant.WORK_ID);
                     String id = jsonArray.getJSONObject(i).getString("id");
@@ -905,6 +964,8 @@ public class DownloadActivity extends AppCompatActivity implements Api.ServerRes
 
                     LoginScreen.db.insert(DBHelper.INSPECTION, null, getInspectionList);
                 }
+
+
             } else {
                 Utils.showAlert(this, "No Record Found!");
             }
@@ -929,6 +990,7 @@ public class DownloadActivity extends AppCompatActivity implements Api.ServerRes
             updatedJsonArray = new JSONArray();
             updatedJsonArray = jsonArray;
             if (jsonArray.length() > 0) {
+                inspectionListImagesInsert = true;
                 for (int i = 0; i < jsonArray.length(); i++) {
                     String inspection_id = jsonArray.getJSONObject(i).getString(AppConstant.INSPECTION_ID);
                     String image = jsonArray.getJSONObject(i).getString(AppConstant.IMAGE);
@@ -944,6 +1006,7 @@ public class DownloadActivity extends AppCompatActivity implements Api.ServerRes
 
                     LoginScreen.db.insert(DBHelper.CAPTURED_PHOTO, null, Imageist);
                 }
+
             } else {
                 Utils.showAlert(this, "No Record Found");
             }
@@ -965,6 +1028,7 @@ public class DownloadActivity extends AppCompatActivity implements Api.ServerRes
             updatedJsonArray = new JSONArray();
             updatedJsonArray = jsonArray;
             if (jsonArray.length() > 0) {
+                inspectionListActionInsert = true;
                 for (int i = 0; i < jsonArray.length(); i++) {
                     String workID = jsonArray.getJSONObject(i).getString(AppConstant.WORK_ID);
                     String id = jsonArray.getJSONObject(i).getString("id");
@@ -991,6 +1055,8 @@ public class DownloadActivity extends AppCompatActivity implements Api.ServerRes
 
                     LoginScreen.db.insert(DBHelper.INSPECTION_ACTION, null, ActionList);
                 }
+
+                callAlert();
             } else {
                 Utils.showAlert(this, "No Record Found!");
             }
@@ -1003,6 +1069,15 @@ public class DownloadActivity extends AppCompatActivity implements Api.ServerRes
 
     }
 
+    public void callAlert() {
+        if (workListInsert && inspectionListInsert && inspectionListImagesInsert && inspectionListActionInsert) {
+            Utils.showAlert(this, "Your Data Will be Downloaded Sucessfully!");
+            workListInsert = false;
+            inspectionListInsert = false;
+            inspectionListImagesInsert = false;
+            inspectionListActionInsert = false;
+        }
+    }
 
     @Override
     public void OnError(VolleyError volleyError) {
