@@ -1073,7 +1073,7 @@ public class DownloadActivity extends AppCompatActivity implements Api.ServerRes
     }
 
     public void callAlert() {
-        if (workListInsert && inspectionListInsert && inspectionListImagesInsert && inspectionListActionInsert) {
+        if (workListInsert || inspectionListInsert || inspectionListImagesInsert || inspectionListActionInsert) {
             Utils.showAlert(this, "Your Data Will be Downloaded Sucessfully!");
             workListInsert = false;
             inspectionListInsert = false;

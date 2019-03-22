@@ -446,7 +446,7 @@ public class AddInspectionReportScreen extends AppCompatActivity implements View
 //                            end = end > authKey.length() ? authKey.length() : end;
 //                            Log.v("to_send", authKey.substring(start, end));
 //                     }
-                        if(imageJson.length()> 1){
+                        if(imageJson.length()>0){
                             sync_data();
                         }
                     } catch (JSONException e) {
