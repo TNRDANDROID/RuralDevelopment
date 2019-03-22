@@ -83,7 +83,9 @@ public class DownloadActivity extends AppCompatActivity implements Api.ServerRes
     String[] schemeCodeStrings;
     String[] finyearStrings;
     String[] errorSoon;
-    boolean[] checkedItems;
+    boolean[] blockcheckedItems;
+    boolean[] FinYearcheckedItems;
+    boolean[] villageCheckedItems;
     boolean[] schemeCheckedItems;
     boolean workListInsert = false;
     boolean inspectionListInsert = false;
@@ -93,6 +95,8 @@ public class DownloadActivity extends AppCompatActivity implements Api.ServerRes
     private ProgressHUD progressHUD;
     private JSONArray updatedJsonArray;
     boolean clicked = false;
+    ArrayList<JSONArray> myVillageCodelist;
+
 
 
     @Override
@@ -135,29 +139,19 @@ public class DownloadActivity extends AppCompatActivity implements Api.ServerRes
         if (prefManager.getLevels().equalsIgnoreCase("B")) {
             block_hide_layout.setVisibility(View.GONE);
         }
-
-    }
-
-    public void loadOfflineDBValues() {
-        if (prefManager.getLevels().equalsIgnoreCase("D")) {
-            loadOfflineBlockListDBValues();
-        } /*else {
-            block_layout.setVisibility(View.GONE);
-        }*/
-//        if (!prefManager.getLevels().equalsIgnoreCase("B")) {
-//            loadOfflineVillgeListDBValues();
-//        }
         loadOfflineFinYearListDBValues();
-//        if (!Utils.isOnline()) {
-//            loadOfflineSchemeListDBValues();
-//        }
+        loadOfflineBlockListDBValues();
+        if (prefManager.getLevels().equalsIgnoreCase("B")) {
+            loadOfflineVillgeListDBValues();
+        }
+
     }
 
     public void loadOfflineFinYearListDBValues() {
         Cursor FinYear = getRawEvents("SELECT fin_year FROM " + DBHelper.FINANCIAL_YEAR_TABLE_NAME, null);
         FinYearList.clear();
         final ArrayList<String> myFinYearlist = new ArrayList<String>();
-        final boolean[] FinYearcheckedItems;
+
 
         if (FinYear.getCount() > 0) {
             if (FinYear.moveToFirst()) {
@@ -176,9 +170,11 @@ public class DownloadActivity extends AppCompatActivity implements Api.ServerRes
             myFinYearlist.add(FinYearList.get(i).getFinancialYear());
 
         }
-
-        finyearStrings = myFinYearlist.toArray(new String[myFinYearlist.size()]);
-        FinYearcheckedItems = new boolean[myFinYearlist.size()];
+        String[] mStringArray = new String[myFinYearlist.size()];
+        finyearStrings = myFinYearlist.toArray(mStringArray);
+        FinYearcheckedItems = new boolean[finyearStrings.length];
+    }
+    public void finYearCheckbox(){
         AlertDialog.Builder mBuilder = new AlertDialog.Builder(DownloadActivity.this);
         mBuilder.setTitle(R.string.finyear_dialog_title);
         mBuilder.setMultiChoiceItems(finyearStrings, FinYearcheckedItems, new DialogInterface.OnMultiChoiceClickListener() {
@@ -189,7 +185,6 @@ public class DownloadActivity extends AppCompatActivity implements Api.ServerRes
                         mFinYearItems.add(position);
 
                     }
-
                 } else if (mFinYearItems.contains(position)) {
                     mFinYearItems.remove(Integer.valueOf(position));
                 }
@@ -199,24 +194,29 @@ public class DownloadActivity extends AppCompatActivity implements Api.ServerRes
                     finyearJsonArray.put(finyearStrings[mFinYearItems.get(i)]);
                     prefManager.setFinYearJson(finyearJsonArray);
                     Log.d("FinYearArray", "" + finyearJsonArray);
+                    loadOfflineSchemeListDBValues();
                 }
             }
         });
 
         mBuilder.setCancelable(false);
-        final String[] finalFinYearStrings = finyearStrings;
+        //   final String[] finalFinYearStrings = finyearStrings;
         mBuilder.setPositiveButton(R.string.ok_label, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int which) {
                 String item = "";
 
                 for (int i = 0; i < mFinYearItems.size(); i++) {
-                    item = item + finalFinYearStrings[mFinYearItems.get(i)];
+                    item = item + finyearStrings[mFinYearItems.get(i)];
                     if (i != mFinYearItems.size() - 1) {
                         item = item + ", ";
                     }
                 }
-                select_fin_year_layout.setVisibility(View.VISIBLE);
+                if(mFinYearItems.size() > 0){
+                    select_fin_year_layout.setVisibility(View.VISIBLE);
+                }else {
+                    select_fin_year_layout.setVisibility(View.GONE);
+                }
                 selected_finyear_tv.setText(item);
                 if (Utils.isOnline()) {
                     try {
@@ -283,17 +283,18 @@ public class DownloadActivity extends AppCompatActivity implements Api.ServerRes
             myBlockList.add(Block.get(i).getBlockName());
             myBlockCodeList.add(Block.get(i).getBlockCode());
         }
-        showMultipleBlock(myBlockList, myBlockCodeList);
+
+        blockStrings = myBlockList.toArray(new String[myBlockList.size()]);
+        blockCodeStrings = myBlockCodeList.toArray(new String[myBlockCodeList.size()]);
+        blockcheckedItems= new boolean[blockStrings.length];
 
     }
 
-    public void showMultipleBlock(ArrayList<String> myBlockList, ArrayList<String> myBlockCodeList) {
-        blockStrings = myBlockList.toArray(new String[myBlockList.size()]);
-        blockCodeStrings = myBlockCodeList.toArray(new String[myBlockCodeList.size()]);
-        checkedItems = new boolean[blockStrings.length];
+    public void blockCheckbox() {
+
         AlertDialog.Builder mBuilder = new AlertDialog.Builder(DownloadActivity.this);
         mBuilder.setTitle(R.string.block_dialog_title);
-        mBuilder.setMultiChoiceItems(blockStrings, checkedItems, new DialogInterface.OnMultiChoiceClickListener() {
+        mBuilder.setMultiChoiceItems(blockStrings, blockcheckedItems, new DialogInterface.OnMultiChoiceClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int position, boolean isChecked) {
                 if (isChecked) {
@@ -313,6 +314,8 @@ public class DownloadActivity extends AppCompatActivity implements Api.ServerRes
                 prefManager.setBlockCodeJson(blockCodeJsonArray);
                 Log.d("blockcode", "" + blockCodeJsonArray);
 
+                loadOfflineVillgeListDBValues();
+
             }
         });
 
@@ -330,8 +333,11 @@ public class DownloadActivity extends AppCompatActivity implements Api.ServerRes
 
                     }
                 }
-//                loadOfflineVillgeListDBValues(prefManager.getBlockCodeJson());
-                select_block_layout.setVisibility(View.VISIBLE);
+                if(mUserItems.size() > 0) {
+                    select_block_layout.setVisibility(View.VISIBLE);
+                }else {
+                    select_block_layout.setVisibility(View.GONE);
+                }
                 selected_block_tv.setText(item);
             }
         });
@@ -346,8 +352,8 @@ public class DownloadActivity extends AppCompatActivity implements Api.ServerRes
         mBuilder.setNeutralButton(R.string.clear_all_label, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int which) {
-                for (int i = 0; i < checkedItems.length; i++) {
-                    checkedItems[i] = false;
+                for (int i = 0; i < blockcheckedItems.length; i++) {
+                    blockcheckedItems[i] = false;
                     mUserItems.clear();
                     selected_block_tv.setText("");
                     select_block_layout.setVisibility(View.GONE);
@@ -377,10 +383,8 @@ public class DownloadActivity extends AppCompatActivity implements Api.ServerRes
         Cursor VillageList = getRawEvents(villageSql, null);
         Village.clear();
         final ArrayList<String> myVillageList = new ArrayList<String>();
-        final ArrayList<JSONArray> myVillageCodelist = new ArrayList<JSONArray>();
+         myVillageCodelist = new ArrayList<JSONArray>();
 
-
-        final boolean[] villageCheckedItems;
 
 
         if (VillageList.getCount() > 0) {
@@ -413,6 +417,9 @@ public class DownloadActivity extends AppCompatActivity implements Api.ServerRes
         villageStrings = myVillageList.toArray(new String[myVillageList.size()]);
        // villageCodeStrings = myVillageCodelist.toArray(new String[myVillageCodelist.size()]);
         villageCheckedItems = new boolean[villageStrings.length];
+    }
+
+    public void villageCheckbox() {
         AlertDialog.Builder mBuilder = new AlertDialog.Builder(DownloadActivity.this);
         mBuilder.setTitle(R.string.village_dialog_title);
         mBuilder.setMultiChoiceItems(villageStrings, villageCheckedItems, new DialogInterface.OnMultiChoiceClickListener() {
@@ -441,18 +448,21 @@ public class DownloadActivity extends AppCompatActivity implements Api.ServerRes
         });
 
         mBuilder.setCancelable(false);
-        final String[] finalvillageStrings = villageStrings;
         mBuilder.setPositiveButton(R.string.ok_label, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int which) {
                 String item = "";
                 for (int i = 0; i < mVillageItems.size(); i++) {
-                    item = item + finalvillageStrings[mVillageItems.get(i)];
+                    item = item + villageStrings[mVillageItems.get(i)];
                     if (i != mVillageItems.size() - 1) {
                         item = item + ", ";
                     }
                 }
-                select_village_layout.setVisibility(View.VISIBLE);
+                if(mVillageItems.size() > 0) {
+                    select_village_layout.setVisibility(View.VISIBLE);
+                }else {
+                    select_village_layout.setVisibility(View.GONE);
+                }
                 selected_village_tv.setText(item);
             }
         });
@@ -477,7 +487,14 @@ public class DownloadActivity extends AppCompatActivity implements Api.ServerRes
         });
 
         AlertDialog mDialog = mBuilder.create();
-        mDialog.show();
+        if(mUserItems.size() > 0) {
+            mDialog.show();
+        }
+        else {
+            Utils.showAlert(this,"Please Select Block!");
+            select_village_layout.setVisibility(View.GONE);
+        }
+
     }
 
     public void selectFinancialYear() {
@@ -499,17 +516,16 @@ public class DownloadActivity extends AppCompatActivity implements Api.ServerRes
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.btn_view_finyear:
-                loadOfflineFinYearListDBValues();
+                finYearCheckbox();
                 break;
             case R.id.btn_view_block:
-                loadOfflineBlockListDBValues();
+                blockCheckbox();
                 break;
             case R.id.btn_view_village:
-                loadOfflineVillgeListDBValues();
+                villageCheckbox();;
                 break;
             case R.id.btn_view_scheme:
-                clicked = true;
-                loadOfflineSchemeListDBValues();
+                schemeCheckbox();
                 break;
             case R.id.btn_download:
                 download();
@@ -797,16 +813,13 @@ public class DownloadActivity extends AppCompatActivity implements Api.ServerRes
             mySchemelist.add(Scheme.get(i).getSchemeName());
             mySchemeCodelist.add(Scheme.get(i).getSchemeSequentialID());
         }
-        if (clicked) {
-            showMultipleSchemes(mySchemelist, mySchemeCodelist);
-        }
-    }
-
-    public void showMultipleSchemes(ArrayList<String> mySchemelist, ArrayList<String> mySchemeCodelist) {
-        clicked = false;
         schemeStrings = mySchemelist.toArray(new String[mySchemelist.size()]);
         schemeCodeStrings = mySchemeCodelist.toArray(new String[mySchemeCodelist.size()]);
         schemeCheckedItems = new boolean[schemeStrings.length];
+    }
+
+    public void schemeCheckbox() {
+
         AlertDialog.Builder mBuilder = new AlertDialog.Builder(DownloadActivity.this);
         mBuilder.setTitle(R.string.scheme_dialog_title);
         mBuilder.setMultiChoiceItems(schemeStrings, schemeCheckedItems, new DialogInterface.OnMultiChoiceClickListener() {
@@ -847,7 +860,9 @@ public class DownloadActivity extends AppCompatActivity implements Api.ServerRes
                         item = item + ", ";
                     }
                 }
-                select_scheme_layout.setVisibility(View.VISIBLE);
+                if(mSchemeItems.size() > 0) {
+                    select_scheme_layout.setVisibility(View.VISIBLE);
+                }
                 view.setVisibility(View.VISIBLE);
                 selected_scheme_tv.setText(item);
             }
