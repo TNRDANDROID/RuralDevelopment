@@ -1,5 +1,6 @@
 package com.nic.RuralInspection.Fragment;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
@@ -16,6 +17,8 @@ import android.widget.LinearLayout;
 
 import com.android.volley.VolleyError;
 import com.nic.RuralInspection.Activity.Dashboard;
+import com.nic.RuralInspection.Activity.DownloadActivity;
+import com.nic.RuralInspection.Activity.LoginScreen;
 import com.nic.RuralInspection.Adapter.PendingLayoutAdapter;
 import com.nic.RuralInspection.DataBase.DBHelper;
 import com.nic.RuralInspection.Dialog.MyDialog;
@@ -260,6 +263,9 @@ public void dashboard(){
                         db.delete(DBHelper.INSPECTION_ACTION,"id=?",new String[] {prefManager.getKeyDeleteId()});
                         retrievePendingdata_Action();
                     }
+                    getInspectionList_blockwise();
+                    getInspectionList_Images_blockwise();
+                    getAction_ForInspection();
 
                     pendingLayoutAdapter.notifyDataSetChanged();
 
@@ -270,6 +276,44 @@ public void dashboard(){
             Dashboard.getPendingCount();
             if(pendingLayoutAdapter.getPendingSize() <1){
                 Dashboard.hidePending();
+            }
+            if ("InspectionListBlockWise".equals(urlType) && responseObj != null) {
+                String key = responseObj.getString(AppConstant.ENCODE_DATA);
+                String responseDecryptedKey = Utils.decrypt(prefManager.getUserPassKey(), key);
+                JSONObject jsonObject = new JSONObject(responseDecryptedKey);
+                if (jsonObject.getString("STATUS").equalsIgnoreCase("OK") && jsonObject.getString("RESPONSE").equalsIgnoreCase("OK")) {
+                    Insert_inspectionList(jsonObject.getJSONArray(AppConstant.JSON_DATA));
+                } else if (jsonObject.getString("STATUS").equalsIgnoreCase("OK") && jsonObject.getString("RESPONSE").equalsIgnoreCase("NO_RECORD")) {
+                    // Utils.showAlert(this, "No Record Found");
+                }
+                Log.d("InspectionListBlockWise", "" + jsonObject.getJSONArray(AppConstant.JSON_DATA));
+
+            }
+            if ("InspectionListBlockWise_Images".equals(urlType) && responseObj != null) {
+                String key = responseObj.getString(AppConstant.ENCODE_DATA);
+                String responseDecryptedKey = Utils.decrypt(prefManager.getUserPassKey(), key);
+                JSONObject jsonObject = new JSONObject(responseDecryptedKey);
+                if (jsonObject.getString("STATUS").equalsIgnoreCase("OK") && jsonObject.getString("RESPONSE").equalsIgnoreCase("OK")) {
+                    Insert_inspectionList_Images(jsonObject.getJSONArray(AppConstant.JSON_DATA));
+                } else if (jsonObject.getString("STATUS").equalsIgnoreCase("OK") && jsonObject.getString("RESPONSE").equalsIgnoreCase("NO_RECORD")) {
+                    // Utils.showAlert(this, "No Record Found");
+                    Log.d("responseInspect_Action", jsonObject.getString("MESSAGE"));
+                }
+                Log.d("response_Images", "" + jsonObject.getJSONArray(AppConstant.JSON_DATA));
+
+            }
+            if ("InspectionListBlockWise_Action".equals(urlType) && responseObj != null) {
+                String key = responseObj.getString(AppConstant.ENCODE_DATA);
+                String responseDecryptedKey = Utils.decrypt(prefManager.getUserPassKey(), key);
+                JSONObject jsonObject = new JSONObject(responseDecryptedKey);
+                if (jsonObject.getString("STATUS").equalsIgnoreCase("OK") && jsonObject.getString("RESPONSE").equalsIgnoreCase("OK")) {
+                    Insert_inspectionList_Action(jsonObject.getJSONArray(AppConstant.JSON_DATA));
+                } else if (jsonObject.getString("STATUS").equalsIgnoreCase("OK") && jsonObject.getString("RESPONSE").equalsIgnoreCase("NO_RECORD")) {
+                    // Utils.showAlert(this, "No Record Found");
+                    Log.d("responseInspect_Action", jsonObject.getString("MESSAGE"));
+                }
+                Log.d("responseInspect_Action", "" + jsonObject.getJSONArray(AppConstant.JSON_DATA));
+
             }
 
         } catch (JSONException e) {
@@ -285,5 +329,188 @@ public void dashboard(){
     @Override
     public void OnError(VolleyError volleyError) {
 
+    }
+
+    public void getInspectionList_blockwise() {
+        try {
+            new ApiService(this.context).makeJSONObjectRequest("InspectionListBlockWise", Api.Method.POST, UrlGenerator.getInspectionServicesListUrl(), InspectionListBlockwiseJsonParams(), "not cache", this);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void getInspectionList_Images_blockwise() {
+        try {
+            new ApiService(this.context).makeJSONObjectRequest("InspectionListBlockWise_Images", Api.Method.POST, UrlGenerator.getInspectionServicesListUrl(), InspectionListImageJsonParams(), "not cache", this);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void getAction_ForInspection() {
+        try {
+            new ApiService(this.context).makeJSONObjectRequest("InspectionListBlockWise_Action", Api.Method.POST, UrlGenerator.getInspectionServicesListUrl(), InspectionListActionJsonParams(), "not cache", this);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public JSONObject InspectionListBlockwiseJsonParams() throws JSONException {
+        String authKey = Utils.encrypt(prefManager.getUserPassKey(), getResources().getString(R.string.init_vector), Utils.InspectionListblockWise(getActivity()).toString());
+        JSONObject dataSet = new JSONObject();
+        dataSet.put(AppConstant.KEY_USER_NAME, prefManager.getUserName());
+        dataSet.put(AppConstant.DATA_CONTENT, authKey);
+        Log.d("InspectionList", "" + authKey);
+        return dataSet;
+    }
+
+    public JSONObject InspectionListImageJsonParams() throws JSONException {
+        String authKey = Utils.encrypt(prefManager.getUserPassKey(), getResources().getString(R.string.init_vector), Utils.InspectionList_Image(getActivity()).toString());
+        JSONObject dataSet = new JSONObject();
+        dataSet.put(AppConstant.KEY_USER_NAME, prefManager.getUserName());
+        dataSet.put(AppConstant.DATA_CONTENT, authKey);
+        Log.d("InspectionList_Image", "" + authKey);
+        return dataSet;
+    }
+
+    public JSONObject InspectionListActionJsonParams() throws JSONException {
+        String authKey = Utils.encrypt(prefManager.getUserPassKey(), getResources().getString(R.string.init_vector), Utils.InspectionList_Action(getActivity()).toString());
+        JSONObject dataSet = new JSONObject();
+        dataSet.put(AppConstant.KEY_USER_NAME, prefManager.getUserName());
+        dataSet.put(AppConstant.DATA_CONTENT, authKey);
+        Log.d("InspectionList_Action", "" + authKey);
+        return dataSet;
+    }
+
+    private void Insert_inspectionList(JSONArray jsonArray) {
+        try {
+            //db.rawQuery("DELETE FROM "+DBHelper.INSPECTION+" WHERE delete_flag =1",null);
+            db.delete(DBHelper.INSPECTION, null, null);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        try {
+            if (jsonArray.length() > 0) {
+                for (int i = 0; i < jsonArray.length(); i++) {
+                    String workID = jsonArray.getJSONObject(i).getString(AppConstant.WORK_ID);
+                    String id = jsonArray.getJSONObject(i).getString("id");
+                    String stageOfWorkOnInspection = jsonArray.getJSONObject(i).getString(AppConstant.STAGE_OF_WORK_ON_INSPECTION);
+                    String dateOfInspection = jsonArray.getJSONObject(i).getString(AppConstant.DATE_OF_INSPECTION);
+                    String inspectedBy = jsonArray.getJSONObject(i).getString(AppConstant.INSPECTED_BY);
+                    String observation = jsonArray.getJSONObject(i).getString(AppConstant.OBSERVATION);
+                    String inspectionRemark = jsonArray.getJSONObject(i).getString(AppConstant.INSPECTION_REMARK);
+
+
+                    ContentValues getInspectionList = new ContentValues();
+
+                    getInspectionList.put(AppConstant.WORK_ID, workID);
+                    getInspectionList.put("id", id);
+                    getInspectionList.put(AppConstant.STAGE_OF_WORK_ON_INSPECTION, stageOfWorkOnInspection);
+                    getInspectionList.put(AppConstant.DATE_OF_INSPECTION, dateOfInspection);
+                    getInspectionList.put(AppConstant.INSPECTED_BY, inspectedBy);
+                    getInspectionList.put(AppConstant.OBSERVATION, observation);
+                    getInspectionList.put(AppConstant.INSPECTION_REMARK, inspectionRemark);
+                    getInspectionList.put("delete_flag", 1);
+
+
+                    LoginScreen.db.insert(DBHelper.INSPECTION, null, getInspectionList);
+                }
+
+
+            } else {
+                Utils.showAlert(this.context, "No Record Found!");
+            }
+
+        } catch (JSONException j) {
+            j.printStackTrace();
+        } catch (ArrayIndexOutOfBoundsException a) {
+            a.printStackTrace();
+        }
+
+    }
+
+
+    private void Insert_inspectionList_Images(JSONArray jsonArray) {
+        try {
+            // db.delete(DBHelper.CAPTURED_PHOTO, null, null);
+            db.execSQL(String.format("DELETE FROM " + DBHelper.CAPTURED_PHOTO + " WHERE pending_flag IS NULL OR trim(pending_flag) = '';", null));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        try {
+            if (jsonArray.length() > 0) {
+                for (int i = 0; i < jsonArray.length(); i++) {
+                    String inspection_id = jsonArray.getJSONObject(i).getString(AppConstant.INSPECTION_ID);
+                    String image = jsonArray.getJSONObject(i).getString(AppConstant.IMAGE);
+                    String image_description = jsonArray.getJSONObject(i).getString("image_description");
+                    String image_id = jsonArray.getJSONObject(i).getString(AppConstant.IMAGE_ID);
+
+
+                    ContentValues Imageist = new ContentValues();
+                    Imageist.put(AppConstant.IMAGE_ID, image_id);
+                    Imageist.put(AppConstant.INSPECTION_ID, inspection_id);
+                    Imageist.put(AppConstant.IMAGE, image);
+                    Imageist.put(AppConstant.DESCRIPTION, image_description);
+
+                    LoginScreen.db.insert(DBHelper.CAPTURED_PHOTO, null, Imageist);
+                }
+
+            } else {
+                Utils.showAlert(this.context, "No Record Found");
+            }
+
+        } catch (JSONException j) {
+            j.printStackTrace();
+        } catch (ArrayIndexOutOfBoundsException a) {
+            a.printStackTrace();
+        }
+    }
+
+    private void Insert_inspectionList_Action(JSONArray jsonArray) {
+        try {
+            db.execSQL(String.format("DELETE FROM " + DBHelper.INSPECTION_ACTION + " WHERE delete_flag=1;", null));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        try {
+            updatedJsonArray = new JSONArray();
+            updatedJsonArray = jsonArray;
+            if (jsonArray.length() > 0) {
+                for (int i = 0; i < jsonArray.length(); i++) {
+                    String workID = jsonArray.getJSONObject(i).getString(AppConstant.WORK_ID);
+                    String id = jsonArray.getJSONObject(i).getString("id");
+                    String inspection_id = jsonArray.getJSONObject(i).getString(AppConstant.INSPECTION_ID);
+                    String date_of_action = jsonArray.getJSONObject(i).getString(AppConstant.DATE_OF_ACTION);
+                    String action_taken = jsonArray.getJSONObject(i).getString(AppConstant.ACTION_TAKEN);
+                    String action_remark = jsonArray.getJSONObject(i).getString(AppConstant.ACTION_REMARK);
+                    String dist_action = jsonArray.getJSONObject(i).getString(AppConstant.DISTRICT_ACTION);
+                    String state_action = jsonArray.getJSONObject(i).getString(AppConstant.STATE_ACTION);
+                    String sub_div_action = jsonArray.getJSONObject(i).getString(AppConstant.SUB_DIV_ACTION);
+
+                    ContentValues ActionList = new ContentValues();
+
+                    ActionList.put(AppConstant.WORK_ID, workID);
+                    //   ActionList.put("id", id);
+                    ActionList.put(AppConstant.INSPECTION_ID, inspection_id);
+                    ActionList.put(AppConstant.DATE_OF_ACTION, date_of_action);
+                    ActionList.put(AppConstant.ACTION_TAKEN, action_taken);
+                    ActionList.put(AppConstant.ACTION_REMARK, action_remark);
+                    ActionList.put(AppConstant.DISTRICT_ACTION, dist_action);
+                    ActionList.put(AppConstant.STATE_ACTION, state_action);
+                    ActionList.put(AppConstant.SUB_DIV_ACTION, sub_div_action);
+                    ActionList.put(AppConstant.DELETE_FLAG, "1");
+
+                    LoginScreen.db.insert(DBHelper.INSPECTION_ACTION, null, ActionList);
+                }
+
+            } else {
+                Utils.showAlert(this.context, "No Record Found!");
+            }
+
+        } catch (JSONException j) {
+            j.printStackTrace();
+        } catch (ArrayIndexOutOfBoundsException a) {
+            a.printStackTrace();
+        }
     }
 }

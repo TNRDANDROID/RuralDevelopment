@@ -218,6 +218,7 @@ public class PendingLayoutAdapter extends RecyclerView.Adapter<PendingLayoutAdap
         }
         if (Utils.isOnline()) {
             pendingLayoutFragment.pending_Sync_Data(dataset);
+
         } else {
             Utils.showAlert(context, "Turn On Mobile Data To Upload");
         }

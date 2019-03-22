@@ -2,6 +2,7 @@ package com.nic.RuralInspection.Activity;
 
 import android.app.Activity;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -940,8 +941,6 @@ public class DownloadActivity extends AppCompatActivity implements Api.ServerRes
             e.printStackTrace();
         }
         try {
-            updatedJsonArray = new JSONArray();
-            updatedJsonArray = jsonArray;
             if (jsonArray.length() > 0) {
                 inspectionListInsert = true;
                 for (int i = 0; i < jsonArray.length(); i++) {

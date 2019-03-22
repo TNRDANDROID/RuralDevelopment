@@ -452,8 +452,8 @@ public class SelectBlockSchemeScreen extends AppCompatActivity implements View.O
     }
 
     public void loadOfflineSchemeListDBValues(String fin_Year) {
-        String query = "SELECT * FROM " + DBHelper.SCHEME_TABLE_NAME + " Where fin_year = '" + fin_Year + "'";
-       // String query = "select scheme_name,scheme_seq_id,fin_year from (select  scheme_id from "+DBHelper.WORK_LIST_OPTIONAL+" group by scheme_id)a left join (select * from "+DBHelper.SCHEME_TABLE_NAME+")b on a.scheme_id = b.scheme_seq_id";
+      //  String query = "SELECT * FROM " + DBHelper.SCHEME_TABLE_NAME + " Where fin_year = '" + fin_Year + "'";
+        String query = "select b.scheme_seq_id as scheme_seq_id,b.scheme_name as scheme_name,b.fin_year as fin_year from (SELECT * FROM "+DBHelper.WORK_LIST_OPTIONAL+"  group by scheme_id)a left join (select * from "+DBHelper.SCHEME_TABLE_NAME+")b on a.scheme_id = b.scheme_seq_id and a.fin_year = b.fin_year  where b.fin_year = '" + fin_Year + "'";
         Cursor SchemeList = getRawEvents(query, null);
         Log.d("SchemeQuery", "" + query);
 
