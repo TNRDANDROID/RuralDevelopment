@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">RuralInspection</string>
+    <string name="app_name">Rural Work Inspection</string>
     <string name="hint_password">Password</string>
     <string name="hint_username">UserName</string>
     <string name="btn_login">Login</string>
