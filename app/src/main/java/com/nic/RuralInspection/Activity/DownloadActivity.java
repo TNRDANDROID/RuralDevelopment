@@ -194,7 +194,6 @@ public class DownloadActivity extends AppCompatActivity implements Api.ServerRes
                     finyearJsonArray.put(finyearStrings[mFinYearItems.get(i)]);
                     prefManager.setFinYearJson(finyearJsonArray);
                     Log.d("FinYearArray", "" + finyearJsonArray);
-                    loadOfflineSchemeListDBValues();
                 }
             }
         });
@@ -226,7 +225,6 @@ public class DownloadActivity extends AppCompatActivity implements Api.ServerRes
                     }
                     getSchemeList();
                 } else {
-                    selectFinancialYear();
                     loadOfflineSchemeListDBValues();
                 }
 
@@ -689,7 +687,14 @@ public class DownloadActivity extends AppCompatActivity implements Api.ServerRes
                 if (jsonObject.getString("STATUS").equalsIgnoreCase("OK") && jsonObject.getString("RESPONSE").equalsIgnoreCase("OK")) {
                     loadSchemeList(jsonObject.getJSONArray(AppConstant.JSON_DATA));
                 }
-                Log.d("schemeAll", "" + responseDecryptedSchemeKey);
+               // Log.d("schemeAll", "" + responseDecryptedSchemeKey);
+//                int maxLogSize = 1000;
+//                        for(int i = 0; i <= responseDecryptedSchemeKey.length() / maxLogSize; i++) {
+//                            int start = i * maxLogSize;
+//                            int end = (i+1) * maxLogSize;
+//                            end = end > responseDecryptedSchemeKey.length() ? responseDecryptedSchemeKey.length() : end;
+//                            Log.v("schemeAll", responseDecryptedSchemeKey.substring(start, end));
+//                     }
             }
             if ("WorkListOptional".equals(urlType) && responseObj != null) {
                 String key = responseObj.getString(AppConstant.ENCODE_DATA);
@@ -862,6 +867,8 @@ public class DownloadActivity extends AppCompatActivity implements Api.ServerRes
                 }
                 if(mSchemeItems.size() > 0) {
                     select_scheme_layout.setVisibility(View.VISIBLE);
+                }else {
+                    select_scheme_layout.setVisibility(View.GONE);
                 }
                 view.setVisibility(View.VISIBLE);
                 selected_scheme_tv.setText(item);
@@ -888,7 +895,14 @@ public class DownloadActivity extends AppCompatActivity implements Api.ServerRes
             }
         });
         AlertDialog mDialog = mBuilder.create();
-        mDialog.show();
+        if(mFinYearItems.size() > 0) {
+            mDialog.show();
+        }
+        else {
+            Utils.showAlert(this,"Please Select Financial Year!");
+            select_scheme_layout.setVisibility(View.GONE);
+        }
+
     }
 
     private void workListOptionalS(JSONArray jsonArray) {
@@ -1088,7 +1102,7 @@ public class DownloadActivity extends AppCompatActivity implements Api.ServerRes
     }
 
     public void callAlert() {
-        if (workListInsert || inspectionListInsert || inspectionListImagesInsert || inspectionListActionInsert) {
+        if (workListInsert) {
             Utils.showAlert(this, "Your Data Will be Downloaded Sucessfully!");
             workListInsert = false;
             inspectionListInsert = false;

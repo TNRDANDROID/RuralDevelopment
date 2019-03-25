@@ -216,7 +216,7 @@ public class SelectBlockSchemeScreen extends AppCompatActivity implements View.O
         }
     }
 
-    public void checkdata_offline() {
+    public void checkdata_offline() { // In order to check worklist available for processing inspection or action based on login
 
         Cursor worklist = getRawEvents("SELECT * FROM " + DBHelper.WORK_LIST_OPTIONAL, null);
         if (worklist.getCount() > 0) {
@@ -261,7 +261,6 @@ public class SelectBlockSchemeScreen extends AppCompatActivity implements View.O
         String villageSql = "select b.dcode as dcode,b.bcode as bcode,b.pvcode as pvcode,b.pvname as pvname from (select pvcode,bcode from "+DBHelper.WORK_LIST_OPTIONAL+" group by pvcode)a left outer join (select * from "+DBHelper.VILLAGE_TABLE_NAME+" )b on a.pvcode = b.pvcode and a.bcode = b.bcode where a.bcode =" + filterVillage;
         Log.d("villageSql", "" + villageSql);
         Cursor VillageList = getRawEvents(villageSql, null);
-        Log.d("villagelistincur", "" + VillageList);
         Village.clear();
         BlockListValue villageListValue = new BlockListValue();
         villageListValue.setVillageListPvName("Select Village");
