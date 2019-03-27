@@ -222,8 +222,9 @@ public class DownloadActivity extends AppCompatActivity implements Api.ServerRes
                         db.delete(DBHelper.SCHEME_TABLE_NAME, null, null);
                     } catch (Exception e) {
                         e.printStackTrace();
+                    }if(mFinYearItems.size() > 0) {
+                        getSchemeList();
                     }
-                    getSchemeList();
                 } else {
                     loadOfflineSchemeListDBValues();
                 }
@@ -704,6 +705,7 @@ public class DownloadActivity extends AppCompatActivity implements Api.ServerRes
                     workListOptionalS(jsonObject.getJSONArray(AppConstant.JSON_DATA));
 //                    Utils.showAlert(this, "Your Data will be Downloaded");
                 } else if (jsonObject.getString("STATUS").equalsIgnoreCase("OK") && jsonObject.getString("RESPONSE").equalsIgnoreCase("NO_RECORD")) {
+                    workListInsert = false;
                     Utils.showAlert(this, "No Projects Found! for your selected items");
                 }
                 Log.d("responseWorkList", "" + jsonObject.getJSONArray(AppConstant.JSON_DATA));
@@ -1102,7 +1104,7 @@ public class DownloadActivity extends AppCompatActivity implements Api.ServerRes
     }
 
     public void callAlert() {
-        if (workListInsert || inspectionListInsert || inspectionListImagesInsert || inspectionListActionInsert) {
+        if (workListInsert) {
             Utils.showAlert(this, "Your Data Will be Downloaded Sucessfully!");
             workListInsert = false;
             inspectionListInsert = false;

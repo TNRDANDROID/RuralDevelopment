@@ -118,7 +118,13 @@ public class Dashboard extends AppCompatActivity implements Api.ServerResponseLi
                 fetchAllResponseFromApi();
             }
         }else{
-            download_layout.setVisibility(View.GONE);
+            Cursor toCheck = getRawEvents("SELECT * FROM " + DBHelper.FINANCIAL_YEAR_TABLE_NAME, null);
+            if (toCheck.getCount() < 1){
+                download_layout.setVisibility(View.GONE);
+            }
+            else {
+                download_layout.setVisibility(View.VISIBLE);
+            }
         }
 
 
@@ -305,7 +311,11 @@ public class Dashboard extends AppCompatActivity implements Api.ServerResponseLi
                 break;
             case R.id.download_layout:
 //                pendingLyoutScreen();
-                downloadScreen();
+                if(Utils.isOnline()) {
+                    downloadScreen();
+                }else{
+                    Utils.showAlert(this,getResources().getString(R.string.no_internet));
+                }
                 break;
         }
 

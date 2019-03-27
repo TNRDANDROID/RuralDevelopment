@@ -470,11 +470,11 @@ public class AddInspectionReportScreen extends AppCompatActivity implements View
         btnAddMobile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (imageView.getDrawable() != null) {
+                if (imageView.getDrawable() != null && viewArrayList.size()>0) {
                     dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
                     updateView(AddInspectionReportScreen.this, mobileNumberLayout, "", type);
                 } else {
-                    Utils.showAlert(AddInspectionReportScreen.this, "Capture Image!");
+                    Utils.showAlert(AddInspectionReportScreen.this, "First Capture Image then add another Image!");
                 }
             }
         });
@@ -877,7 +877,7 @@ public class AddInspectionReportScreen extends AppCompatActivity implements View
                         getInspectionList_blockwise();
                         getInspectionList_Images_blockwise();
                         getAction_ForInspection();
-                        Utils.showAlert(this, "Saved");
+                        Utils.showAlert(AddInspectionReportScreen.this, "Saved");
                         finish();
                     }
                     Log.d("saved_response", "" + responseDecryptedBlockKey);
