@@ -29,7 +29,7 @@ android {
             def version = variant.versionName
             def date = new Date()
             def formattedDate = date.format('ddMMyy')
-            outputFileName = "RuralInspection_${variant.buildType.name}_v${version}_${formattedDate}.apk"
+            outputFileName = "RuralWorkInspection_${variant.buildType.name}_v${version}_${formattedDate}.apk"
         }
     }
 
