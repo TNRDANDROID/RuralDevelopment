@@ -486,7 +486,7 @@ public class DownloadActivity extends AppCompatActivity implements Api.ServerRes
         });
 
         AlertDialog mDialog = mBuilder.create();
-        if(mUserItems.size() > 0) {
+        if(mUserItems.size() > 0 || prefManager.getLevels().equalsIgnoreCase("B")) {/*Used for Block level Login*/
             mDialog.show();
         }
         else {
@@ -950,6 +950,7 @@ public class DownloadActivity extends AppCompatActivity implements Api.ServerRes
 
                     LoginScreen.db.insert(DBHelper.WORK_LIST_OPTIONAL, null, workListOptional);
                 }
+                callAlert();
 
             } else {
                 Utils.showAlert(this, "No Record Found for Corrsponding Financial Year");
@@ -1090,7 +1091,6 @@ public class DownloadActivity extends AppCompatActivity implements Api.ServerRes
                     LoginScreen.db.insert(DBHelper.INSPECTION_ACTION, null, ActionList);
                 }
 
-                callAlert();
             } else {
                 Utils.showAlert(this, "No Record Found!");
             }
