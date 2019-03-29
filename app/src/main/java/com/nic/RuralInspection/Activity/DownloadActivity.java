@@ -1,33 +1,27 @@
 package com.nic.RuralInspection.Activity;
 
 import android.app.Activity;
+import android.app.DatePickerDialog;
+import android.app.Dialog;
 import android.content.ContentValues;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.Button;
-import android.widget.CheckBox;
-import android.widget.CompoundButton;
+import android.widget.DatePicker;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RadioGroup;
-import android.widget.RelativeLayout;
-import android.widget.Spinner;
 
 import com.android.volley.VolleyError;
-import com.google.gson.JsonObject;
-import com.nic.RuralInspection.Adapter.CommonAdapter;
 import com.nic.RuralInspection.DataBase.DBHelper;
 import com.nic.RuralInspection.Model.BlockListValue;
 import com.nic.RuralInspection.R;
-import com.nic.RuralInspection.Support.MultiSelectionSpinner;
 import com.nic.RuralInspection.Support.MyCustomTextView;
 import com.nic.RuralInspection.Support.ProgressHUD;
 import com.nic.RuralInspection.Utils.UrlGenerator;
@@ -42,23 +36,21 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.lang.reflect.Array;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Calendar;
 import java.util.List;
-import java.util.PriorityQueue;
 
 import static com.nic.RuralInspection.Activity.LoginScreen.db;
 import static com.nic.RuralInspection.DataBase.DBHelper.BLOCK_TABLE_NAME;
 import static com.nic.RuralInspection.DataBase.DBHelper.SCHEME_TABLE_NAME;
-import static com.nic.RuralInspection.DataBase.DBHelper.VILLAGE_TABLE_NAME;
 
-public class DownloadActivity extends AppCompatActivity implements Api.ServerResponseListener, View.OnClickListener, MultiSelectionSpinner.MultiSpinnerListener {
+public class DownloadActivity extends AppCompatActivity implements Api.ServerResponseListener, View.OnClickListener {
     private Button done, btn_view_finyear, btn_view_block, btn_view_village, btn_view_scheme;
 
 
-    private MyCustomTextView title_tv, selected_finyear_tv, selected_block_tv, selected_village_tv, selected_scheme_tv;
-
+    public MyCustomTextView title_tv, selected_finyear_tv, selected_block_tv, selected_village_tv, selected_scheme_tv;
+    public static MyCustomTextView start_date_tv, end_date_tv;
     private PrefManager prefManager;
 
     private ImageView back_img;
@@ -66,7 +58,7 @@ public class DownloadActivity extends AppCompatActivity implements Api.ServerRes
     private List<BlockListValue> Village = new ArrayList<>();
     private List<BlockListValue> Scheme = new ArrayList<>();
     private List<BlockListValue> FinYearList = new ArrayList<>();
-    private LinearLayout select_fin_year_layout, select_block_layout, select_village_layout, select_scheme_layout,block_hide_layout;
+    public LinearLayout select_fin_year_layout, select_block_layout, select_village_layout, select_scheme_layout, block_hide_layout, download_values_inspection_layout, download_values_action_layout, start_date_layout, end_date_layout;
     private View view;
     final ArrayList<Integer> mVillageItems = new ArrayList<>();
     final ArrayList<Integer> mUserItems = new ArrayList<>();
@@ -96,13 +88,14 @@ public class DownloadActivity extends AppCompatActivity implements Api.ServerRes
     private JSONArray updatedJsonArray;
     boolean clicked = false;
     ArrayList<JSONArray> myVillageCodelist;
+    static Calendar c = Calendar.getInstance();
 
 
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.download_layout);
+        setContentView(R.layout.download_parent_layout);
         intializeUI();
     }
 
@@ -113,6 +106,10 @@ public class DownloadActivity extends AppCompatActivity implements Api.ServerRes
         select_village_layout = (LinearLayout) findViewById(R.id.select_village_layout);
         select_scheme_layout = (LinearLayout) findViewById(R.id.select_scheme_layout);
         block_hide_layout = (LinearLayout) findViewById(R.id.block_hide_layout);
+        download_values_inspection_layout = (LinearLayout) findViewById(R.id.download_values_inspection_layout);
+        download_values_action_layout = (LinearLayout) findViewById(R.id.download_values_action_layout);
+        start_date_layout = (LinearLayout) findViewById(R.id.start_date_layout);
+        end_date_layout = (LinearLayout) findViewById(R.id.end_date_layout);
         done = (Button) findViewById(R.id.btn_download);
         btn_view_finyear = (Button) findViewById(R.id.btn_view_finyear);
         btn_view_block = (Button) findViewById(R.id.btn_view_block);
@@ -124,6 +121,8 @@ public class DownloadActivity extends AppCompatActivity implements Api.ServerRes
         selected_block_tv = (MyCustomTextView) findViewById(R.id.selected_block_tv);
         selected_village_tv = (MyCustomTextView) findViewById(R.id.selected_village_tv);
         selected_scheme_tv = (MyCustomTextView) findViewById(R.id.selected_scheme_tv);
+        start_date_tv = (MyCustomTextView) findViewById(R.id.start_date_tv);
+        end_date_tv = (MyCustomTextView) findViewById(R.id.end_date_tv);
         view = (View) findViewById(R.id.scheme_view);
         back_img.setOnClickListener(this);
         done.setOnClickListener(this);
@@ -133,11 +132,18 @@ public class DownloadActivity extends AppCompatActivity implements Api.ServerRes
         btn_view_block.setOnClickListener(this);
         btn_view_village.setOnClickListener(this);
         btn_view_scheme.setOnClickListener(this);
+        start_date_layout.setOnClickListener(this);
+        end_date_layout.setOnClickListener(this);
         done.setOnClickListener(this);
 
 //        home.setOnClickListener(this);
         if (prefManager.getLevels().equalsIgnoreCase("B")) {
             block_hide_layout.setVisibility(View.GONE);
+            download_values_action_layout.setVisibility(View.VISIBLE);
+            download_values_inspection_layout.setVisibility(View.GONE);
+        } else {
+            download_values_action_layout.setVisibility(View.GONE);
+            download_values_inspection_layout.setVisibility(View.VISIBLE);
         }
         loadOfflineFinYearListDBValues();
         loadOfflineBlockListDBValues();
@@ -532,6 +538,12 @@ public class DownloadActivity extends AppCompatActivity implements Api.ServerRes
             case R.id.backimg:
                 onBackPress();
                 break;
+            case R.id.start_date_layout:
+                showStartDatePickerDialog();
+                break;
+            case R.id.end_date_layout:
+                showEndDatePickerDialog();
+                break;
         }
     }
 
@@ -571,22 +583,18 @@ public class DownloadActivity extends AppCompatActivity implements Api.ServerRes
     }
 
     public void projectListScreenBlockUser() {
-        if (!selected_finyear_tv.getText().equals("")) {
-            if (!selected_village_tv.getText().equals("")) {
-                if (!selected_scheme_tv.getText().equals("")) {
+        if (!start_date_tv.getText().equals("")) {
+            if (!end_date_tv.getText().equals("")) {
                     getWorkListOptional();
                     getInspectionList_blockwise();
                     getInspectionList_Images_blockwise();
                     getAction_ForInspection();
-                } else {
-                    Utils.showAlert(this, "Select Scheme");
-                }
-            } else {
-                Utils.showAlert(this, "Select Village");
-            }
 
+            } else {
+                Utils.showAlert(this, "Select To Date");
+            }
         } else {
-            Utils.showAlert(this, "Select Financial year");
+            Utils.showAlert(this, "Select From Date");
         }
     }
 
@@ -1136,8 +1144,65 @@ public class DownloadActivity extends AppCompatActivity implements Api.ServerRes
         return cursor;
     }
 
-    @Override
-    public void onItemsSelected(boolean[] selected) {
 
+
+    public void showStartDatePickerDialog() {
+        DialogFragment newFragment = new fromDatePickerFragment();
+        newFragment.show(getSupportFragmentManager(), "datePicker");
+
+    }
+
+    public void showEndDatePickerDialog() {
+        DialogFragment newFragment = new toDatePickerFragment();
+        newFragment.show(getSupportFragmentManager(), "datePicker");
+    }
+
+    public static class fromDatePickerFragment extends DialogFragment implements
+            DatePickerDialog.OnDateSetListener {
+        @Override
+        public Dialog onCreateDialog(Bundle savedInstanceState) {
+            // Use the current date as the default date in the picker
+            Calendar cldr = Calendar.getInstance();
+            int day = cldr.get(Calendar.DAY_OF_MONTH);
+            int month = cldr.get(Calendar.MONTH);
+            int year = cldr.get(Calendar.YEAR);
+            DatePickerDialog datePickerDialog;
+            datePickerDialog = new DatePickerDialog(getActivity(), this, year,
+                    month, day);
+            cldr.set(year,month,day);
+            return datePickerDialog;
+        }
+
+        public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+            // Do something with the date chosen by the user
+            start_date_tv.setText(dayOfMonth + "-" + (monthOfYear + 1) + "-" + year);
+            Log.d("startdate", "" + dayOfMonth + "/" + (monthOfYear + 1) + "/" + year);
+        }
+
+    }
+
+    public static class toDatePickerFragment extends DialogFragment implements
+            DatePickerDialog.OnDateSetListener {
+//         Calendar startDateCalendar=Calendar.getInstance();
+        @Override
+        public Dialog onCreateDialog(Bundle savedInstanceState) {
+            // Use the current date as the default date in the picker
+            String getfromdate = start_date_tv.getText().toString().trim();
+            String getfrom[] = getfromdate.split("-");
+            int year, month, day;
+            year = Integer.parseInt(getfrom[2]);
+            month = Integer.parseInt(getfrom[1]);
+            day = Integer.parseInt(getfrom[0]);
+
+            c.set(year, month, day + 1);
+            DatePickerDialog datePickerDialog = new DatePickerDialog(getActivity(), this, year, month, day);
+            datePickerDialog.getDatePicker().setMinDate(c.getTimeInMillis());
+            return datePickerDialog;
+        }
+
+        public void onDateSet(DatePicker view, int year, int month, int day) {
+
+            end_date_tv.setText(day + "-" + month + "-" + year);
+        }
     }
 }

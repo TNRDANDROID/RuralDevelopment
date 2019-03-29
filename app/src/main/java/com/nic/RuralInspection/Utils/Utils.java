@@ -1152,10 +1152,9 @@ public class Utils {
 
         } else {
             dataSet.put(AppConstant.BLOCK_CODE, prefManager.getBlockCodeJson());
-
-        }
             dataSet.put(AppConstant.PV_CODE, prefManager.getVillagePvCodeJson());
             dataSet.put(AppConstant.SCHEME_ID, prefManager.getSchemeSeqIdJson());
+        }
         Log.d("habitationListDist", "" + dataSet);
         return dataSet;
     }

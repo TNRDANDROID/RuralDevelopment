@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FFFFFF"
+    xmlns:customfontdemo="http://schemas.android.com/apk/res-auto">
+
+
+    <include
+        layout="@layout/download_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+
+    <com.nic.RuralInspection.Support.MyCustomTextView
+        android:id="@+id/textView1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="125dp"
+        android:padding="@dimen/_6sdp"
+        android:text="Sofware Designed &amp; Developed by NIC"
+        android:textAlignment="center"
+        android:textColor="@android:color/black"
+        android:textSize="@dimen/_15sdp"
+        android:textStyle="bold"
+        customfontdemo:fontName="@string/font_circular_medium" />
+
+
+</RelativeLayout>

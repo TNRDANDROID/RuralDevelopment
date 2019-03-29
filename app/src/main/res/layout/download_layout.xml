@@ -34,62 +34,61 @@
             android:orientation="vertical">
 
             <!--<com.nic.RuralInspection.Support.MyCustomTextView-->
-                <!--android:id="@+id/tv_create_alert_name_title"-->
-                <!--android:layout_width="match_parent"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:layout_marginLeft="@dimen/margin_left_20dp"-->
-                <!--android:layout_marginTop="@dimen/_10sdp"-->
-                <!--android:layout_marginRight="@dimen/margin_left_20dp"-->
-                <!--android:text="Project Filter"-->
-                <!--android:textColor="@android:color/black"-->
-                <!--android:textSize="@dimen/_15sdp"-->
-                <!--customfontdemo:fontName="@string/font_circular_bold" />-->
+            <!--android:id="@+id/tv_create_alert_name_title"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_marginLeft="@dimen/margin_left_20dp"-->
+            <!--android:layout_marginTop="@dimen/_10sdp"-->
+            <!--android:layout_marginRight="@dimen/margin_left_20dp"-->
+            <!--android:text="Project Filter"-->
+            <!--android:textColor="@android:color/black"-->
+            <!--android:textSize="@dimen/_15sdp"-->
+            <!--customfontdemo:fontName="@string/font_circular_bold" />-->
 
             <!--<RelativeLayout-->
 
-                <!--android:layout_width="match_parent"-->
-                <!--android:layout_height="@dimen/_40sdp"-->
-                <!--android:layout_marginLeft="@dimen/margin_left_20dp"-->
-                <!--android:layout_marginTop="@dimen/_10sdp"-->
-                <!--android:layout_marginRight="@dimen/margin_left_20dp"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="@dimen/_40sdp"-->
+            <!--android:layout_marginLeft="@dimen/margin_left_20dp"-->
+            <!--android:layout_marginTop="@dimen/_10sdp"-->
+            <!--android:layout_marginRight="@dimen/margin_left_20dp"-->
 
-                <!--android:gravity="center"-->
+            <!--android:gravity="center"-->
 
-                <!--android:orientation="horizontal">-->
+            <!--android:orientation="horizontal">-->
 
 
-                <!--<CheckBox-->
-                    <!--android:id="@+id/high_value_projects"-->
-                    <!--android:layout_width="wrap_content"-->
-                    <!--android:layout_height="wrap_content"-->
-                    <!--android:layout_alignParentStart="true"-->
-                    <!--android:layout_centerInParent="true"-->
+            <!--<CheckBox-->
+            <!--android:id="@+id/high_value_projects"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_alignParentStart="true"-->
+            <!--android:layout_centerInParent="true"-->
 
-                    <!--android:checked="true"-->
-                    <!--android:gravity="center"-->
-                    <!--android:text="High Value Projects Only"-->
-                    <!--android:textColor="@android:color/black"-->
-                    <!--android:textSize="13sp" />-->
+            <!--android:checked="true"-->
+            <!--android:gravity="center"-->
+            <!--android:text="High Value Projects Only"-->
+            <!--android:textColor="@android:color/black"-->
+            <!--android:textSize="13sp" />-->
 
-                <!--<CheckBox-->
-                    <!--android:id="@+id/all_projects"-->
-                    <!--android:layout_width="wrap_content"-->
-                    <!--android:layout_height="wrap_content"-->
-                    <!--android:layout_alignParentEnd="true"-->
-                    <!--android:layout_centerInParent="true"-->
-                    <!--android:layout_marginRight="20dp"-->
-                    <!--android:gravity="center"-->
-                    <!--android:text="All Projects"-->
-                    <!--android:textColor="@android:color/black"-->
-                    <!--android:textSize="13sp" />-->
+            <!--<CheckBox-->
+            <!--android:id="@+id/all_projects"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_alignParentEnd="true"-->
+            <!--android:layout_centerInParent="true"-->
+            <!--android:layout_marginRight="20dp"-->
+            <!--android:gravity="center"-->
+            <!--android:text="All Projects"-->
+            <!--android:textColor="@android:color/black"-->
+            <!--android:textSize="13sp" />-->
 
 
             <!--</RelativeLayout>-->
 
 
             <LinearLayout
-
-
+                android:id="@+id/download_values_inspection_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
@@ -254,7 +253,6 @@
                                     </LinearLayout>
 
 
-
                                     <View
                                         android:layout_width="match_parent"
                                         android:layout_height="0.5dp"
@@ -291,15 +289,15 @@
                                                     customfontdemo:fontName="@string/font_circular_bold" />
 
                                                 <!--<com.nic.RuralInspection.Support.MyCustomTextView-->
-                                                    <!--android:layout_width="0dp"-->
-                                                    <!--android:layout_height="wrap_content"-->
-                                                    <!--android:layout_weight=".10"-->
-                                                    <!--android:gravity="center|left"-->
-                                                    <!--android:paddingLeft="5dp"-->
-                                                    <!--android:text=":"-->
-                                                    <!--android:textColor="@android:color/black"-->
-                                                    <!--android:textSize="18sp"-->
-                                                    <!--customfontdemo:fontName="@string/font_normal" />-->
+                                                <!--android:layout_width="0dp"-->
+                                                <!--android:layout_height="wrap_content"-->
+                                                <!--android:layout_weight=".10"-->
+                                                <!--android:gravity="center|left"-->
+                                                <!--android:paddingLeft="5dp"-->
+                                                <!--android:text=":"-->
+                                                <!--android:textColor="@android:color/black"-->
+                                                <!--android:textSize="18sp"-->
+                                                <!--customfontdemo:fontName="@string/font_normal" />-->
 
                                                 <com.nic.RuralInspection.Support.MyCustomTextView
                                                     android:id="@+id/selected_finyear_tv"
@@ -314,9 +312,7 @@
                                                     customfontdemo:fontName="@string/font_circular_bold" />
 
 
-
                                             </TableRow>
-
 
 
                                         </TableLayout>
@@ -434,15 +430,15 @@
 
 
                                                 <!--<com.nic.RuralInspection.Support.MyCustomTextView-->
-                                                    <!--android:layout_width="0dp"-->
-                                                    <!--android:layout_height="wrap_content"-->
-                                                    <!--android:layout_weight=".10"-->
-                                                    <!--android:gravity="center|left"-->
-                                                    <!--android:paddingLeft="5dp"-->
-                                                    <!--android:text=":"-->
-                                                    <!--android:textColor="@android:color/black"-->
-                                                    <!--android:textSize="18sp"-->
-                                                    <!--customfontdemo:fontName="@string/font_normal" />-->
+                                                <!--android:layout_width="0dp"-->
+                                                <!--android:layout_height="wrap_content"-->
+                                                <!--android:layout_weight=".10"-->
+                                                <!--android:gravity="center|left"-->
+                                                <!--android:paddingLeft="5dp"-->
+                                                <!--android:text=":"-->
+                                                <!--android:textColor="@android:color/black"-->
+                                                <!--android:textSize="18sp"-->
+                                                <!--customfontdemo:fontName="@string/font_normal" />-->
 
                                                 <com.nic.RuralInspection.Support.MyCustomTextView
                                                     android:id="@+id/selected_block_tv"
@@ -458,7 +454,6 @@
 
 
                                             </TableRow>
-
 
 
                                         </TableLayout>
@@ -577,15 +572,15 @@
                                                     customfontdemo:fontName="@string/font_circular_bold" />
 
                                                 <!--<com.nic.RuralInspection.Support.MyCustomTextView-->
-                                                    <!--android:layout_width="0dp"-->
-                                                    <!--android:layout_height="wrap_content"-->
-                                                    <!--android:layout_weight=".10"-->
-                                                    <!--android:gravity="center|left"-->
-                                                    <!--android:paddingLeft="5dp"-->
-                                                    <!--android:text=":"-->
-                                                    <!--android:textColor="@android:color/black"-->
-                                                    <!--android:textSize="18sp"-->
-                                                    <!--customfontdemo:fontName="@string/font_normal" />-->
+                                                <!--android:layout_width="0dp"-->
+                                                <!--android:layout_height="wrap_content"-->
+                                                <!--android:layout_weight=".10"-->
+                                                <!--android:gravity="center|left"-->
+                                                <!--android:paddingLeft="5dp"-->
+                                                <!--android:text=":"-->
+                                                <!--android:textColor="@android:color/black"-->
+                                                <!--android:textSize="18sp"-->
+                                                <!--customfontdemo:fontName="@string/font_normal" />-->
 
                                                 <com.nic.RuralInspection.Support.MyCustomTextView
                                                     android:id="@+id/selected_village_tv"
@@ -603,7 +598,6 @@
                                             </TableRow>
 
 
-
                                         </TableLayout>
 
                                         <View
@@ -613,7 +607,7 @@
                                             android:layout_gravity="bottom"
                                             android:layout_marginLeft="15dp"
                                             android:background="@color/dashboard_line_dark"
-                                            android:visibility="gone"/>
+                                            android:visibility="gone" />
 
                                     </LinearLayout>
 
@@ -686,14 +680,15 @@
                                                 android:textColor="@android:color/white" />
                                         </LinearLayout>
                                     </LinearLayout>
+
                                     <View
                                         android:id="@+id/scheme_view"
                                         android:layout_width="match_parent"
                                         android:layout_height="0.5dp"
                                         android:layout_gravity="bottom"
                                         android:layout_marginLeft="15dp"
-                                        android:visibility="gone"
-                                        android:background="@color/dashboard_line_dark" />
+                                        android:background="@color/dashboard_line_dark"
+                                        android:visibility="gone" />
 
                                     <LinearLayout
                                         android:id="@+id/select_scheme_layout"
@@ -749,7 +744,6 @@
                                             </TableRow>
 
 
-
                                         </TableLayout>
 
                                     </LinearLayout>
@@ -793,14 +787,249 @@
                 </RelativeLayout>
             </LinearLayout>
 
+            <LinearLayout
+                android:id="@+id/download_values_action_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <RelativeLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+
+                    <com.nic.RuralInspection.Support.MyCustomTextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentStart="true"
+
+                        android:layout_margin="@dimen/_10sdp"
+                        android:text="From Date"
+                        android:textColor="@android:color/black"
+                        android:textSize="@dimen/_15sdp"
+                        android:visibility="visible"
+                        customfontdemo:fontName="@string/font_circular_bold" />
+
+                    <com.nic.RuralInspection.Support.MyCustomTextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
+                        android:layout_margin="@dimen/_10sdp"
+                        android:text="To Date"
+                        android:textColor="@android:color/black"
+                        android:textSize="@dimen/_15sdp"
+                        android:visibility="visible"
+                        customfontdemo:fontName="@string/font_circular_bold" />
+
+
+                </RelativeLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    android:background="@drawable/header_bg"
+                    android:orientation="horizontal">
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <RelativeLayout
+                            android:id="@+id/audit_datepicker_header_layout"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+
+
+                            android:orientation="horizontal">
+
+                            <android.support.v7.widget.CardView xmlns:card_view="http://schemas.android.com/apk/res-auto"
+
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_centerInParent="true"
+                                android:layout_gravity=""
+                                android:layout_marginLeft="10dp"
+                                android:layout_marginRight="10dp"
+                                android:layout_marginBottom="15dp"
+                                card_view:cardCornerRadius="5dp"
+                                card_view:cardElevation="5dp">
+
+                                <LinearLayout
+                                    android:id="@+id/start_date_layout"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content">
+
+                                    <com.nic.RuralInspection.Support.MyCustomTextView
+                                        android:id="@+id/start_date_tv"
+                                        style="@style/Toolbar.TitleText"
+                                        android:layout_width="0dp"
+                                        android:layout_height="match_parent"
+                                        android:layout_weight="0.9"
+                                        android:ellipsize="marquee"
+                                        android:focusable="true"
+                                        android:focusableInTouchMode="true"
+                                        android:textAlignment="center"
+                                        android:paddingTop="8dp"
+                                        android:text=""
+                                        android:textColor="@android:color/black"
+                                        android:textSize="@dimen/menu_title_size"
+                                        customfontdemo:fontName="@string/font_normal" />
+
+                                    <com.nic.RuralInspection.Support.MyCustomTextView
+                                        style="@style/Toolbar.TitleText"
+                                        android:layout_width="35dp"
+                                        android:layout_height="35dp"
+                                        android:layout_marginRight="10dp"
+                                        android:background="@drawable/datepicker_icon"
+                                        android:focusable="true"
+                                        android:focusableInTouchMode="true"
+                                        android:paddingTop="7dp"
+                                        android:textSize="@dimen/menu_title_size"
+                                        customfontdemo:fontName="@string/font_normal" />
+                                </LinearLayout>
+                            </android.support.v7.widget.CardView>
+
+                        </RelativeLayout>
+                    </LinearLayout>
+
+                    <View
+                        android:layout_width="1dp"
+                        android:layout_height="match_parent"
+                        android:background="@android:color/black" />
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <RelativeLayout
+
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+
+
+                            android:orientation="horizontal">
+
+                            <android.support.v7.widget.CardView xmlns:card_view="http://schemas.android.com/apk/res-auto"
+
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_centerInParent="true"
+                                android:layout_gravity=""
+                                android:layout_marginLeft="10dp"
+                                android:layout_marginRight="10dp"
+                                android:layout_marginBottom="15dp"
+                                card_view:cardCornerRadius="5dp"
+                                card_view:cardElevation="5dp">
+
+                                <LinearLayout
+                                    android:id="@+id/end_date_layout"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content">
+
+                                    <com.nic.RuralInspection.Support.MyCustomTextView
+                                        android:id="@+id/end_date_tv"
+                                        style="@style/Toolbar.TitleText"
+                                        android:layout_width="0dp"
+                                        android:layout_height="match_parent"
+                                        android:layout_weight="0.9"
+                                        android:ellipsize="marquee"
+                                        android:focusable="true"
+                                        android:focusableInTouchMode="true"
+                                        android:textAlignment="center"
+                                        android:paddingTop="8dp"
+                                        android:text=""
+                                        android:textColor="@android:color/black"
+                                        android:textSize="@dimen/menu_title_size"
+                                        customfontdemo:fontName="@string/font_normal" />
+
+                                    <com.nic.RuralInspection.Support.MyCustomTextView
+                                        style="@style/Toolbar.TitleText"
+                                        android:layout_width="35dp"
+                                        android:layout_height="35dp"
+                                        android:layout_marginRight="10dp"
+                                        android:background="@drawable/datepicker_icon"
+                                        android:focusable="true"
+                                        android:focusableInTouchMode="true"
+                                        android:paddingTop="7dp"
+                                        android:textSize="@dimen/menu_title_size"
+                                        customfontdemo:fontName="@string/font_normal" />
+                                </LinearLayout>
+                            </android.support.v7.widget.CardView>
+
+                        </RelativeLayout>
+                    </LinearLayout>
+
+                </LinearLayout>
+
+                <com.nic.RuralInspection.Support.MyCustomTextView
+
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/margin_left_20dp"
+                    android:layout_marginTop="@dimen/padding"
+                    android:layout_marginRight="@dimen/margin_left_20dp"
+                    android:text="Select Inspected Officers"
+                    android:textColor="@android:color/black"
+                    android:textSize="@dimen/_15sdp"
+                    android:visibility="visible"
+                    customfontdemo:fontName="@string/font_circular_bold" />
+
+
+                <RelativeLayout
+                    android:id="@+id/fin_year_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/header"
+
+                    android:layout_marginLeft="@dimen/_10sdp"
+                    android:layout_marginTop="@dimen/_10sdp"
+                    android:layout_marginRight="@dimen/_10sdp"
+                    android:layout_marginBottom="@dimen/_10sdp"
+
+                    android:background="@drawable/rectangle_box"
+                    android:orientation="vertical"
+                    android:visibility="visible">
+
+                    <com.nic.RuralInspection.Support.MyCustomTextView
+
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentStart="true"
+                        android:layout_centerInParent="true"
+                        android:layout_marginLeft="15dp"
+
+                        android:textColor="@android:color/black"
+                        android:textSize="@dimen/_15sdp"
+                        android:visibility="visible"
+                        customfontdemo:fontName="@string/font_normal" />
+
+                    <Spinner
+                        android:id="@+id/financialYear"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
+                        android:layout_centerInParent="true"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginRight="10dp"
+                        android:gravity="center" />
+
+                </RelativeLayout>
+
+
+            </LinearLayout>
+
             <Button
                 android:id="@+id/btn_download"
                 android:layout_width="120dp"
                 android:layout_height="40dp"
                 android:layout_gravity="center"
-                android:layout_marginTop="@dimen/_30sdp"
-                android:layout_marginBottom="@dimen/_30sdp"
-
+                android:layout_marginTop="@dimen/_20sdp"
+                android:layout_marginBottom="@dimen/_20sdp"
                 android:background="@drawable/login_button"
                 android:text="Download"
                 android:textAllCaps="true"
@@ -809,19 +1038,6 @@
         </LinearLayout>
 
     </ScrollView>
-    <com.nic.RuralInspection.Support.MyCustomTextView
-        android:id="@+id/textView1"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:padding="@dimen/_10sdp"
-        android:text="Sofware Designed &amp; Developed by NIC"
-        android:textAlignment="center"
-        android:textColor="@android:color/black"
-        android:textSize="@dimen/_15sdp"
-        android:textStyle="bold"
-        customfontdemo:fontName="@string/font_circular_medium" />
 
 
 </RelativeLayout>
