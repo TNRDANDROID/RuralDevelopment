@@ -5,6 +5,7 @@ import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.content.ContentValues;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -52,7 +53,7 @@ public class DownloadActivity extends AppCompatActivity implements Api.ServerRes
     public static MyCustomTextView start_date_tv, end_date_tv;
     private PrefManager prefManager;
 
-    private ImageView back_img;
+    private ImageView back_img,homeimg;
     private List<BlockListValue> Block = new ArrayList<>();
     private List<BlockListValue> Village = new ArrayList<>();
     private List<BlockListValue> Scheme = new ArrayList<>();
@@ -99,6 +100,7 @@ public class DownloadActivity extends AppCompatActivity implements Api.ServerRes
 
     public void intializeUI() {
         prefManager = new PrefManager(this);
+        homeimg = (ImageView) findViewById(R.id.homeimg);
         select_fin_year_layout = (LinearLayout) findViewById(R.id.select_fin_year_layout);
         select_block_layout = (LinearLayout) findViewById(R.id.select_block_layout);
         select_village_layout = (LinearLayout) findViewById(R.id.select_village_layout);
@@ -123,6 +125,7 @@ public class DownloadActivity extends AppCompatActivity implements Api.ServerRes
         end_date_tv = (MyCustomTextView) findViewById(R.id.end_date_tv);
         view = (View) findViewById(R.id.scheme_view);
         back_img.setOnClickListener(this);
+        homeimg.setOnClickListener(this);
         done.setOnClickListener(this);
         title_tv.setText("Download");
 
@@ -541,6 +544,9 @@ public class DownloadActivity extends AppCompatActivity implements Api.ServerRes
                 break;
             case R.id.end_date_layout:
                 showEndDatePickerDialog();
+                break;
+            case R.id.homeimg:
+                dashboard();
                 break;
         }
     }
@@ -1142,7 +1148,13 @@ public class DownloadActivity extends AppCompatActivity implements Api.ServerRes
         return cursor;
     }
 
-
+    public void dashboard() {
+        Intent intent = new Intent(this, Dashboard.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(intent);
+        super.onBackPressed();
+        overridePendingTransition(R.anim.slide_enter, R.anim.slide_exit);
+    }
 
     public void showStartDatePickerDialog() {
         DialogFragment newFragment = new fromDatePickerFragment();
