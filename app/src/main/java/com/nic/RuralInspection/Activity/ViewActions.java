@@ -2,6 +2,7 @@ package com.nic.RuralInspection.Activity;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -40,7 +41,7 @@ public class ViewActions extends AppCompatActivity implements View.OnClickListen
     private static ViewActionAdapter viewActionAdapter;
     private RecyclerView viewActionRecycleView;
     private PrefManager prefManager;
-    private ImageView back_img;
+    private ImageView back_img,homeimg;
     private ArrayList<BlockListValue> actionListValues = new ArrayList<>();
     private static Context context;
     private MyCustomTextView not_found_tv,title_tv;
@@ -59,7 +60,9 @@ public class ViewActions extends AppCompatActivity implements View.OnClickListen
         not_found_tv = (MyCustomTextView) findViewById(R.id.not_found_tv);
         title_tv = (MyCustomTextView) findViewById(R.id.title_tv);
         back_img = (ImageView) findViewById(R.id.backimg);
+        back_img = (ImageView) findViewById(R.id.homeimg);
         back_img.setOnClickListener(this);
+      //  homeimg.setOnClickListener(this);
 
         viewActionAdapter = new ViewActionAdapter(this, actionListValues);
 
@@ -77,10 +80,23 @@ public class ViewActions extends AppCompatActivity implements View.OnClickListen
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.backimg:
+            case R.id.backimg :
                 onBackPress();
                 break;
+            case R.id.homeimg :
+                dashboard();
+                break;
+
         }
+    }
+
+    public void dashboard() {
+        Intent intent = new Intent(this, Dashboard.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(intent);
+        finish();
+        super.onBackPressed();
+        overridePendingTransition(R.anim.slide_enter, R.anim.slide_exit);
     }
 
     private void retrieveActiondata() {

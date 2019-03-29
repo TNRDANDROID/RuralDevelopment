@@ -68,7 +68,7 @@ public class SelectBlockSchemeScreen extends AppCompatActivity implements View.O
     private List<BlockListValue> Scheme = new ArrayList<>();
     private List<BlockListValue> FinYearList = new ArrayList<>();
     private ProgressHUD progressHUD;
-    private ImageView back_img;
+    private ImageView back_img,homeimg;
 
     String pref_Block, pref_Village, pref_Scheme, pref_finYear;
 
@@ -92,7 +92,7 @@ public class SelectBlockSchemeScreen extends AppCompatActivity implements View.O
 
     public void intializeUI() {
         prefManager = new PrefManager(this);
-//        home = (ImageView) findViewById(R.id.home);
+        homeimg = (ImageView) findViewById(R.id.homeimg);
         done = (Button) findViewById(R.id.btn_save);
         high_value_projects = (CheckBox) findViewById(R.id.high_value_projects);
         all_projects = (CheckBox) findViewById(R.id.all_projects);
@@ -110,7 +110,7 @@ public class SelectBlockSchemeScreen extends AppCompatActivity implements View.O
         title_tv.setText("WorkList Filter");
 
         done.setOnClickListener(this);
-//        home.setOnClickListener(this);
+        homeimg.setOnClickListener(this);
 
         high_value_projects.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -290,7 +290,7 @@ public class SelectBlockSchemeScreen extends AppCompatActivity implements View.O
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.home:
+            case R.id.homeimg:
                 dashboard();
                 break;
             case R.id.btn_save:

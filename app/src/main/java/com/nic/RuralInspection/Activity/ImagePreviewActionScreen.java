@@ -65,7 +65,7 @@ public class ImagePreviewActionScreen extends AppCompatActivity implements View.
         imagePreviewlistvalues = new ArrayList<>();
         imagePreviewAdapter = new ImagePreviewAdapter(this, imagePreviewlistvalues);
         image_preview_recyclerview = (RecyclerView) findViewById(R.id.image_preview_action_recyclerview);
-        home = (ImageView) findViewById(R.id.home);
+        home = (ImageView) findViewById(R.id.homeimg);
 //        done = (Button) findViewById(R.id.btn_save);
 
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
@@ -78,7 +78,7 @@ public class ImagePreviewActionScreen extends AppCompatActivity implements View.
         title_tv = (MyCustomTextView)findViewById(R.id.title_tv);
         back_img = (ImageView) findViewById(R.id.backimg);
         back_img.setOnClickListener(this);
-//        home.setOnClickListener(this);
+        home.setOnClickListener(this);
         title_tv.setText("View Inspected Image");
         retriveImageWithDescription();
     }
@@ -130,7 +130,19 @@ public class ImagePreviewActionScreen extends AppCompatActivity implements View.
             case R.id.backimg:
                 onBackPress();
                 break;
+            case  R.id.homeimg:
+                dashboard();
+                break;
+
         }
+    }
+    public void dashboard() {
+        Intent intent = new Intent(this, Dashboard.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(intent);
+        finish();
+        super.onBackPressed();
+        overridePendingTransition(R.anim.slide_enter, R.anim.slide_exit);
     }
 
     @Override

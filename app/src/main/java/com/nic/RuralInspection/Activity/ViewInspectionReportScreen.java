@@ -3,6 +3,7 @@ package com.nic.RuralInspection.Activity;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -70,7 +71,7 @@ public class ViewInspectionReportScreen extends AppCompatActivity implements Vie
     public static final String VIDEO_EXTENSION = "mp4";
 
     private static String imageStoragePath;
-    private ImageView back_img;
+    private ImageView back_img,homeimg;
     private MyCustomTextView district_tv, scheme_name_tv, block_name_tv, block_user_tv, village_name_tv, fin_year_tv, title_tv;
     private MyCustomTextView projectName, amountTv, levelTv;
     private LinearLayout village_layout, block_layout;
@@ -111,6 +112,7 @@ public class ViewInspectionReportScreen extends AppCompatActivity implements Vie
         scrollView = (ScrollView) findViewById(R.id.scroll_view);
 //        action_tv = (MyCustomTextView) findViewById(R.id.action_tv);
         back_img = (ImageView) findViewById(R.id.backimg);
+        homeimg = (ImageView) findViewById(R.id.homeimg);
         inspectionListRecyclerView = (RecyclerView) findViewById(R.id.image_list_with_description);
 
         district_tv.setText(prefManager.getDistrictName());
@@ -123,6 +125,7 @@ public class ViewInspectionReportScreen extends AppCompatActivity implements Vie
         levelTv.setText(getIntent().getStringExtra(AppConstant.WORK_SATGE_NAME));
 
         back_img.setOnClickListener(this);
+        homeimg.setOnClickListener(this);
 //        action_tv.setOnClickListener(this);
         // imageAdapter = new ImageDescriptionAdapter(this,imagelistValues );
 
@@ -258,7 +261,20 @@ public class ViewInspectionReportScreen extends AppCompatActivity implements Vie
             case R.id.backimg:
                 onBackPress();
                 break;
+
+                case R.id.homeimg :
+                    dashboard();
+                    break;
         }
+    }
+
+    public void dashboard() {
+        Intent intent = new Intent(this, Dashboard.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(intent);
+        finish();
+        super.onBackPressed();
+        overridePendingTransition(R.anim.slide_enter, R.anim.slide_exit);
     }
 
     private final void focusOnView(final ScrollView your_scrollview, final MyCustomTextView your_EditBox) {

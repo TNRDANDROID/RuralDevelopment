@@ -119,7 +119,7 @@ public class AddInspectionReportScreen extends AppCompatActivity implements View
     private Spinner sp_observation, sp_stage;
     private List<BlockListValue> stageListValues = new ArrayList<>();
     private List<BlockListValue> observationList = new ArrayList<>();
-    private ImageView back_img;
+    private ImageView back_img,homeimg,home;
     LocationManager mlocManager = null;
     LocationListener mlocListener;
     public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
@@ -132,7 +132,6 @@ public class AddInspectionReportScreen extends AppCompatActivity implements View
     EditText remarkTv;
     static JSONObject dataset;
     private JSONArray updatedJsonArray;
-    private Dashboard dashboard = new Dashboard();
     private SelectBlockSchemeScreen selectBlockSchemeScreen = new SelectBlockSchemeScreen();
 
 
@@ -165,7 +164,9 @@ public class AddInspectionReportScreen extends AppCompatActivity implements View
         remarkTv = (EditText) findViewById(R.id.remark);
 
         back_img = (ImageView) findViewById(R.id.backimg);
+        homeimg = (ImageView) findViewById(R.id.homeimg);
         back_img.setOnClickListener(this);
+        homeimg.setOnClickListener(this);
 
         take_photo.setOnClickListener(this);
 
@@ -212,7 +213,22 @@ public class AddInspectionReportScreen extends AppCompatActivity implements View
             case R.id.backimg:
                 onBackPress();
                 break;
+            case R.id.homeimg:
+                dashboard();
+                break;
+            case R.id.home :
+                dashboard();
+                break;
         }
+    }
+
+    public void dashboard() {
+        Intent intent = new Intent(this, Dashboard.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(intent);
+        finish();
+        super.onBackPressed();
+        overridePendingTransition(R.anim.slide_enter, R.anim.slide_exit);
     }
 
     public void viewStage() {
@@ -331,6 +347,8 @@ public class AddInspectionReportScreen extends AppCompatActivity implements View
                 R.style.AppTheme);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.setContentView(R.layout.add_photo);
+        home = (ImageView)dialog.findViewById(R.id.home);
+        home.setOnClickListener(this);
         dialog.setCanceledOnTouchOutside(false);
         dialog.setCancelable(false);
         dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);

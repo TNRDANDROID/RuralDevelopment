@@ -2,6 +2,7 @@ package com.nic.RuralInspection.Activity;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -48,7 +49,7 @@ public class ImagePreviewScreen extends AppCompatActivity implements View.OnClic
     private ImageDescriptionAdapter imageDescriptionAdapter;
     private MyCustomTextView title_tv;
     private List<BlockListValue> imagelistvalues;
-    private ImageView back_img;
+    private ImageView back_img,homeimg;
 
 
     @Override
@@ -66,7 +67,9 @@ public class ImagePreviewScreen extends AppCompatActivity implements View.OnClic
         image_preview_recyclerview = (RecyclerView) findViewById(R.id.image_preview_recyclerview);
         title_tv = (MyCustomTextView)findViewById(R.id.title_tv);
         back_img = (ImageView) findViewById(R.id.backimg);
+        homeimg = (ImageView) findViewById(R.id.homeimg);
         back_img.setOnClickListener(this);
+        homeimg.setOnClickListener(this);
 
 
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
@@ -129,7 +132,20 @@ public class ImagePreviewScreen extends AppCompatActivity implements View.OnClic
             case R.id.backimg:
                 onBackPress();
                 break;
+
+            case R.id.homeimg :
+                dashboard();
+                break;
+
         }
+    }
+    public void dashboard() {
+        Intent intent = new Intent(this, Dashboard.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(intent);
+        finish();
+        super.onBackPressed();
+        overridePendingTransition(R.anim.slide_enter, R.anim.slide_exit);
     }
 
     @Override

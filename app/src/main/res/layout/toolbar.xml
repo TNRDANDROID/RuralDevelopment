@@ -18,7 +18,8 @@
         android:layout_centerInParent="true"
         android:layout_alignParentStart="true"
         android:padding="@dimen/_7sdp"
-        android:src="@mipmap/dashboard_icon"/>
+        android:src="@mipmap/dashboard_icon"
+        android:visibility="gone"/>
 
     <com.nic.RuralInspection.Support.MyCustomTextView
         android:id="@+id/title_tv"
