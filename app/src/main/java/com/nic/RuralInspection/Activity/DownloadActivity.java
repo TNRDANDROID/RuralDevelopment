@@ -36,7 +36,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -88,7 +87,6 @@ public class DownloadActivity extends AppCompatActivity implements Api.ServerRes
     private JSONArray updatedJsonArray;
     boolean clicked = false;
     ArrayList<JSONArray> myVillageCodelist;
-    static Calendar c = Calendar.getInstance();
 
 
 
@@ -1159,10 +1157,11 @@ public class DownloadActivity extends AppCompatActivity implements Api.ServerRes
 
     public static class fromDatePickerFragment extends DialogFragment implements
             DatePickerDialog.OnDateSetListener {
+        static Calendar cldr = Calendar.getInstance();
         @Override
         public Dialog onCreateDialog(Bundle savedInstanceState) {
             // Use the current date as the default date in the picker
-            Calendar cldr = Calendar.getInstance();
+
             int day = cldr.get(Calendar.DAY_OF_MONTH);
             int month = cldr.get(Calendar.MONTH);
             int year = cldr.get(Calendar.YEAR);
@@ -1176,6 +1175,9 @@ public class DownloadActivity extends AppCompatActivity implements Api.ServerRes
         public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
             // Do something with the date chosen by the user
             start_date_tv.setText(dayOfMonth + "-" + (monthOfYear + 1) + "-" + year);
+            cldr.set(Calendar.YEAR, year);
+            cldr.set(Calendar.MONTH, (monthOfYear));
+            cldr.set(Calendar.DAY_OF_MONTH, dayOfMonth);
             Log.d("startdate", "" + dayOfMonth + "/" + (monthOfYear + 1) + "/" + year);
         }
 
@@ -1183,7 +1185,7 @@ public class DownloadActivity extends AppCompatActivity implements Api.ServerRes
 
     public static class toDatePickerFragment extends DialogFragment implements
             DatePickerDialog.OnDateSetListener {
-//         Calendar startDateCalendar=Calendar.getInstance();
+
         @Override
         public Dialog onCreateDialog(Bundle savedInstanceState) {
             // Use the current date as the default date in the picker
@@ -1193,16 +1195,19 @@ public class DownloadActivity extends AppCompatActivity implements Api.ServerRes
             year = Integer.parseInt(getfrom[2]);
             month = Integer.parseInt(getfrom[1]);
             day = Integer.parseInt(getfrom[0]);
-
-            c.set(year, month, day + 1);
-            DatePickerDialog datePickerDialog = new DatePickerDialog(getActivity(), this, year, month, day);
+            Calendar c = Calendar.getInstance();
+            c.set(year, (month - 1), day + 1);
+            DatePickerDialog datePickerDialog = new DatePickerDialog(getActivity(), this, year, (month - 1), day);
             datePickerDialog.getDatePicker().setMinDate(c.getTimeInMillis());
             return datePickerDialog;
         }
 
         public void onDateSet(DatePicker view, int year, int month, int day) {
-
-            end_date_tv.setText(day + "-" + month + "-" + year);
+            end_date_tv.setText(day + "-" + (month + 1) + "-" + year);
+            Calendar c = Calendar.getInstance();
+            c.set(Calendar.YEAR, year);
+            c.set(Calendar.MONTH, (month - 1));
+            c.set(Calendar.DAY_OF_MONTH, (day + 1));
         }
     }
 }
