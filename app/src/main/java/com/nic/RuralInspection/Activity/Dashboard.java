@@ -108,7 +108,6 @@ public class Dashboard extends AppCompatActivity implements Api.ServerResponseLi
             block_user_layout.setVisibility(View.VISIBLE);
             block_user_tv.setText(prefManager.getBlockName());
             upload_inspection_report_tv.setText(getResources().getString(R.string.action_taken_tv));
-            getInspectedOfficersName();
         }
         getPendingCount();
         if (Utils.isOnline()) {
@@ -185,6 +184,7 @@ public class Dashboard extends AppCompatActivity implements Api.ServerResponseLi
 //        }
         getVillageList();
         getFinYearList();
+        getInspectedOfficersName();
     }
 
     public static void getPendingCount() {
@@ -244,6 +244,14 @@ public class Dashboard extends AppCompatActivity implements Api.ServerResponseLi
     public void getObservationList() {
         try {
             new ApiService(this).makeJSONObjectRequest("ObservationList", Api.Method.POST, UrlGenerator.getInspectionServicesListUrl(), ObservationListJsonParams(), "not cache", this);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void getInspectedOfficersName() {
+        try {
+            new ApiService(this).makeJSONObjectRequest("InspectedOfficers", Api.Method.POST, UrlGenerator.getInspectionServicesListUrl(), inspectedOfficersJsonParams(), "not cache", this);
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -356,13 +364,7 @@ public class Dashboard extends AppCompatActivity implements Api.ServerResponseLi
         }
     }
 
-    public void getInspectedOfficersName() {
-        try {
-            new ApiService(this).makeJSONObjectRequest("InspectedOfficers", Api.Method.POST, UrlGenerator.getInspectionServicesListUrl(), inspectedOfficersJsonParams(), "not cache", this);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-    }
+
 
 
     public JSONObject serviceListJsonParams() throws JSONException {
