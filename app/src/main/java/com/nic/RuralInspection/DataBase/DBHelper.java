@@ -91,6 +91,8 @@ public class DBHelper extends SQLiteOpenHelper {
                 "inspected_by TEXT," +
                 "observation TEXT," +
                 "inspection_remark TEXT," +
+                "name TEXT," +
+                "desig_name TEXT," +
                 "created_date TEXT," +
                 "imei_no TEXT," +
                 "delete_flag INTEGER," +

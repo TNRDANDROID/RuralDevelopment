@@ -1202,7 +1202,9 @@ public class Utils {
         JSONObject dataSet = new JSONObject();
         dataSet.put(AppConstant.KEY_SERVICE_ID, AppConstant.KEY_SCHEME_LIST_DISTRICT_FINYEAR_WISE);
         dataSet.put(AppConstant.DISTRICT_CODE, prefManager.getDistrictCode());
-        dataSet.put(AppConstant.FIN_YEAR,prefManager.getFinYearJson());
+        if(prefManager.getLevels().equalsIgnoreCase("D")){
+            dataSet.put(AppConstant.FIN_YEAR,prefManager.getFinYearJson());
+        }
         Log.d("objectFinYear", "" + dataSet);
         return dataSet;
     }

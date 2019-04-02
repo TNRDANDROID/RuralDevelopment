@@ -965,6 +965,8 @@ public class AddInspectionReportScreen extends AppCompatActivity implements View
                     String inspectedBy = jsonArray.getJSONObject(i).getString(AppConstant.INSPECTED_BY);
                     String observation = jsonArray.getJSONObject(i).getString(AppConstant.OBSERVATION);
                     String inspectionRemark = jsonArray.getJSONObject(i).getString(AppConstant.INSPECTION_REMARK);
+                    String inspectedOffName = jsonArray.getJSONObject(i).getString(AppConstant.INSPECTED_USER_NAME);
+                    String inspectedDesignation = jsonArray.getJSONObject(i).getString(AppConstant.INSPECTED_DESIGATION_NAME);
 
 
                     ContentValues getInspectionList = new ContentValues();
@@ -976,6 +978,8 @@ public class AddInspectionReportScreen extends AppCompatActivity implements View
                     getInspectionList.put(AppConstant.INSPECTED_BY, inspectedBy);
                     getInspectionList.put(AppConstant.OBSERVATION, observation);
                     getInspectionList.put(AppConstant.INSPECTION_REMARK, inspectionRemark);
+                    getInspectionList.put(AppConstant.INSPECTED_USER_NAME, inspectedOffName);
+                    getInspectionList.put(AppConstant.INSPECTED_DESIGATION_NAME, inspectedDesignation);
                     getInspectionList.put("delete_flag", 1);
 
 

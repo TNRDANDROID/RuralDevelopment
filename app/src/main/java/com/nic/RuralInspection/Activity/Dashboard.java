@@ -2,7 +2,6 @@ package com.nic.RuralInspection.Activity;
 
 import android.Manifest;
 import android.app.Activity;
-
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
@@ -13,7 +12,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -126,7 +124,9 @@ public class Dashboard extends AppCompatActivity implements Api.ServerResponseLi
                 download_layout.setVisibility(View.VISIBLE);
             }
         }
-
+        if (prefManager.getLevels().equalsIgnoreCase("B")) {
+            getSchemeList();
+        }
 
     }
     private void checkAppVersion() {
@@ -257,6 +257,14 @@ public class Dashboard extends AppCompatActivity implements Api.ServerResponseLi
         }
     }
 
+    public void getSchemeList() {
+        try {
+            new ApiService(this).makeJSONObjectRequest("SchemeList", Api.Method.POST, UrlGenerator.getServicesListUrl(), schemeListJsonParams(), "not cache", this);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
     public JSONObject blockListJsonParams() throws JSONException {
         String authKey = Utils.encrypt(prefManager.getUserPassKey(), getResources().getString(R.string.init_vector), Utils.blockListDistrictWiseJsonParams(this).toString());
         JSONObject dataSet = new JSONObject();
@@ -301,6 +309,24 @@ public class Dashboard extends AppCompatActivity implements Api.ServerResponseLi
         dataSet.put(AppConstant.KEY_USER_NAME, prefManager.getUserName());
         dataSet.put(AppConstant.DATA_CONTENT, authKey);
         Log.d("ObservationList", "" + authKey);
+        return dataSet;
+    }
+
+    public JSONObject inspectedOfficersJsonParams() throws JSONException {
+        String authKey = Utils.encrypt(prefManager.getUserPassKey(), getResources().getString(R.string.init_vector), Utils.getInspectedOfficers(this).toString());
+        JSONObject dataSet = new JSONObject();
+        dataSet.put(AppConstant.KEY_USER_NAME, prefManager.getUserName());
+        dataSet.put(AppConstant.DATA_CONTENT, authKey);
+        Log.d("inspectedOfficersName", "" + authKey);
+        return dataSet;
+    }
+
+    public JSONObject schemeListJsonParams() throws JSONException {
+        String authKey = Utils.encrypt(prefManager.getUserPassKey(), getResources().getString(R.string.init_vector), Utils.schemeListDistrictWiseJsonParams(this).toString());
+        JSONObject dataSet = new JSONObject();
+        dataSet.put(AppConstant.KEY_USER_NAME, prefManager.getUserName());
+        dataSet.put(AppConstant.DATA_CONTENT, authKey);
+        Log.d("schemeList", "" + authKey);
         return dataSet;
     }
 
@@ -385,14 +411,6 @@ public class Dashboard extends AppCompatActivity implements Api.ServerResponseLi
         return dataSet;
     }
 
-    public JSONObject inspectedOfficersJsonParams() throws JSONException {
-        String authKey = Utils.encrypt(prefManager.getUserPassKey(), getResources().getString(R.string.init_vector), Utils.getInspectedOfficers(this).toString());
-        JSONObject dataSet = new JSONObject();
-        dataSet.put(AppConstant.KEY_USER_NAME, prefManager.getUserName());
-        dataSet.put(AppConstant.DATA_CONTENT, authKey);
-        Log.d("inspectedOfficersName", "" + authKey);
-        return dataSet;
-    }
 
     public void selectBlockSchemeScreen() {
         Intent intent = new Intent(this, SelectBlockSchemeScreen.class);
@@ -449,6 +467,14 @@ public class Dashboard extends AppCompatActivity implements Api.ServerResponseLi
                     Log.d("BlockList", "" + responseDecryptedBlockKey);
                 }
 
+            }
+            if ("SchemeList".equals(urlType) && responseObj != null) {
+                String key = responseObj.getString(AppConstant.ENCODE_DATA);
+                String responseDecryptedSchemeKey = Utils.decrypt(prefManager.getUserPassKey(), key);
+                JSONObject jsonObject = new JSONObject(responseDecryptedSchemeKey);
+                if (jsonObject.getString("STATUS").equalsIgnoreCase("OK") && jsonObject.getString("RESPONSE").equalsIgnoreCase("OK")) {
+                    loadSchemeList(jsonObject.getJSONArray(AppConstant.JSON_DATA));
+                }
             }
 
             if ("VillageList".equals(urlType) && responseObj != null) {
@@ -531,6 +557,41 @@ public class Dashboard extends AppCompatActivity implements Api.ServerResponseLi
         }
     }
 
+    private void loadSchemeList(JSONArray jsonArray) {
+        try {
+            db.delete(DBHelper.SCHEME_TABLE_NAME, null, null);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        progressHUD = ProgressHUD.show(this, "Downloading...", true, false, null);
+
+        try {
+            updatedJsonArray = new JSONArray();
+            updatedJsonArray = jsonArray;
+
+            for (int i = 0; i < jsonArray.length(); i++) {
+                String schemeSequentialID = jsonArray.getJSONObject(i).getString(AppConstant.SCHEME_SEQUENTIAL_ID);
+                String schemeName = jsonArray.getJSONObject(i).getString(AppConstant.SCHEME_NAME);
+                String fin_year = jsonArray.getJSONObject(i).getString(AppConstant.FINANCIAL_YEAR);
+
+                ContentValues schemeListLocalDbValues = new ContentValues();
+                schemeListLocalDbValues.put(AppConstant.SCHEME_SEQUENTIAL_ID, schemeSequentialID);
+                schemeListLocalDbValues.put(AppConstant.SCHEME_NAME, schemeName);
+                schemeListLocalDbValues.put(AppConstant.FINANCIAL_YEAR, fin_year);
+
+                LoginScreen.db.insert(DBHelper.SCHEME_TABLE_NAME, null, schemeListLocalDbValues);
+                Log.d("LocalDBSchemeList", "" + schemeListLocalDbValues);
+
+            }
+        } catch (JSONException j) {
+            j.printStackTrace();
+        } catch (ArrayIndexOutOfBoundsException a) {
+            a.printStackTrace();
+        }
+        if (progressHUD != null) {
+            progressHUD.cancel();
+        }
+    }
 
     private void loadVillageList(JSONArray jsonArray) {
         progressHUD = ProgressHUD.show(this, "Loading...", true, false, null);

@@ -49,7 +49,7 @@ public class InspectionListAdapter extends RecyclerView.Adapter<InspectionListAd
 
 
     public class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        public MyCustomTextView date_of_inspection, remark, observation, view_image, ins_result_tv_on_ff, view_action;
+        public MyCustomTextView date_of_inspection, remark, observation, view_image, ins_result_tv_on_ff, view_action,inspected_by_tv,designation_tv;
         public View view;
         public RainbowTextView rainbowTextView;
         private RelativeLayout add_action_layout, view_action_layout;
@@ -65,6 +65,8 @@ public class InspectionListAdapter extends RecyclerView.Adapter<InspectionListAd
             view_action_layout = (RelativeLayout) itemView.findViewById(R.id.view_action_layout);
             remark = (MyCustomTextView) itemView.findViewById(R.id.remark);
             observation = (MyCustomTextView) itemView.findViewById(R.id.observation);
+            inspected_by_tv = (MyCustomTextView) itemView.findViewById(R.id.inspected_by_tv);
+            designation_tv = (MyCustomTextView) itemView.findViewById(R.id.designation_tv);
             ins_result_tv_on_ff = (MyCustomTextView) itemView.findViewById(R.id.ins_result_tv_on_ff);
             view_action = (MyCustomTextView) itemView.findViewById(R.id.view_action);
             view = (View) itemView.findViewById(R.id.view);
@@ -142,6 +144,8 @@ public class InspectionListAdapter extends RecyclerView.Adapter<InspectionListAd
         holder.date_of_inspection.setText(inspectionlistvalues.get(position).getDate_of_inspection());
         holder.remark.setText(inspectionlistvalues.get(position).getInspection_remark());
         holder.observation.setText(inspectionlistvalues.get(position).getObservation());
+        holder.inspected_by_tv.setText(inspectionlistvalues.get(position).getInspectedOffName());
+        holder.designation_tv.setText(inspectionlistvalues.get(position).getInspectedOffDesignName());
         if (!prefManager.getLevels().equalsIgnoreCase("B")) {
             holder.ins_result_tv_on_ff.setText(inspectionlistvalues.get(position).getDetail());
 
