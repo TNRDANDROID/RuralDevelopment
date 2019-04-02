@@ -42,6 +42,7 @@ public class AppConstant {
     public static String N_YEAR = "nyear";
     public static String FIN_YEAR = "finyear";
     public static String IMAGE_GROUP_ID = "image_group_id";
+    public static String KEY_INSPECTED_USER_LIST = "inspected_user_list";
 
     public static String DISTRICT_CODE = "dcode";
     public static String BLOCK_CODE = "bcode";
@@ -51,6 +52,12 @@ public class AppConstant {
     public static String PV_NAME = "pvname";
     public static String LEVELS = "levels";
     public static String SCHEME_SEQUENTIAL_ID = "scheme_seq_id";
+    public static String INSPECTED_USER_ID = "inspection_user_id";
+    public static String INSPECTED_USER_NAME = "name";
+    public static String INSPECTED_DESIGATION_NAME = "desig_name";
+    public static String START_DATE = "from_date";
+    public static String END_DATE = "to_date";
+    public static String KEY_WORK_LIST_OPTIONAL_ACTION = "work_list_optional_action";
 
 
     public static String SCHEME_NAME = "scheme_name";

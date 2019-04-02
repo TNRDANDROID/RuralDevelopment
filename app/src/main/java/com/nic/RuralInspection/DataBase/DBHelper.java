@@ -22,6 +22,7 @@ public class DBHelper extends SQLiteOpenHelper {
     public static final String INSPECTION_ACTION = "inspection_action";
     public static final String IMAGE_GROUP_ID_ONLINE = "image_grouping_online";
     public static final String IMAGE_GROUP_ID_OFFLINE = "image_grouping_offline";
+    public static final String INSPECTED_OFFICER_LIST = "inspected_officers_list";
 
     private Context context;
 
@@ -144,6 +145,11 @@ public class DBHelper extends SQLiteOpenHelper {
                 "action_id TEXT," +
                 "grouping TEXT)");
 
+        db.execSQL("CREATE TABLE " + INSPECTED_OFFICER_LIST  + " ("
+                + "inspection_user_id INTEGER ," +
+                "name TEXT," +
+                "desig_name TEXT)");
+
     }
 
     @Override
@@ -163,6 +169,7 @@ public class DBHelper extends SQLiteOpenHelper {
             db.execSQL("DROP TABLE IF EXISTS " + IMAGE_GROUP_ID_OFFLINE);
             db.execSQL("DROP TABLE IF EXISTS " + IMAGE_GROUP_ID_ONLINE);
             db.execSQL("DROP TABLE IF EXISTS " + INSPECTION_PENDING);
+            db.execSQL("DROP TABLE IF EXISTS " + INSPECTED_OFFICER_LIST);
             onCreate(db);
         }
     }

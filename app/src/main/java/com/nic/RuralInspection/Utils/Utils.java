@@ -1144,26 +1144,35 @@ public class Utils {
     public static JSONObject workListOptional(Activity activity) throws JSONException {
         prefManager = new PrefManager(activity);
         JSONObject dataSet = new JSONObject();
-        dataSet.put(AppConstant.KEY_SERVICE_ID, AppConstant.KEY_WORK_LIST_OPTIONAL);
-        dataSet.put(AppConstant.DISTRICT_CODE, prefManager.getDistrictCode());
-        dataSet.put(AppConstant.FINANCIAL_YEAR, prefManager.getFinYearJson());
+        if (prefManager.getLevels().equalsIgnoreCase("D")) {
+            dataSet.put(AppConstant.KEY_SERVICE_ID, AppConstant.KEY_WORK_LIST_OPTIONAL);
+
+        } else if (prefManager.getLevels().equalsIgnoreCase("B")) {
+            dataSet.put(AppConstant.KEY_SERVICE_ID, AppConstant.KEY_WORK_LIST_OPTIONAL_ACTION);
+        }
+
         if (prefManager.getLevels().equalsIgnoreCase("B")) {
             dataSet.put(AppConstant.BLOCK_CODE, prefManager.getBlockCode());
+            dataSet.put(AppConstant.START_DATE,prefManager.getKeyStartDate());
+            dataSet.put(AppConstant.END_DATE,prefManager.getKeyEndDate());
+            dataSet.put(AppConstant.INSPECTED_BY,prefManager.getInspectedOfficersCodeJson());
 
-        } else {
+        } else if (prefManager.getLevels().equalsIgnoreCase("D")) {
             dataSet.put(AppConstant.BLOCK_CODE, prefManager.getBlockCodeJson());
             dataSet.put(AppConstant.PV_CODE, prefManager.getVillagePvCodeJson());
             dataSet.put(AppConstant.SCHEME_ID, prefManager.getSchemeSeqIdJson());
+            dataSet.put(AppConstant.DISTRICT_CODE, prefManager.getDistrictCode());
+            dataSet.put(AppConstant.FINANCIAL_YEAR, prefManager.getFinYearJson());
         }
         Log.d("habitationListDist", "" + dataSet);
         return dataSet;
     }
 
 
-    public static JSONObject habitationListDistrictBlockWiseJsonParams() throws JSONException {
+    public static JSONObject getInspectedOfficers(Activity activity) throws JSONException {
         JSONObject dataSet = new JSONObject();
-        dataSet.put(AppConstant.KEY_SERVICE_ID, AppConstant.KEY_HABITATION_LIST_DISTRICT_BLOCK_WISE);
-        Log.d("habitListDistBloc", "" + dataSet);
+        dataSet.put(AppConstant.KEY_SERVICE_ID, AppConstant.KEY_INSPECTED_USER_LIST);
+        Log.d("InspectedOfficers", "" + dataSet);
         return dataSet;
     }
 

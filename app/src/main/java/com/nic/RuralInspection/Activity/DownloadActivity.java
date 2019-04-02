@@ -37,38 +37,45 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
 import static com.nic.RuralInspection.Activity.LoginScreen.db;
 import static com.nic.RuralInspection.DataBase.DBHelper.BLOCK_TABLE_NAME;
+import static com.nic.RuralInspection.DataBase.DBHelper.INSPECTED_OFFICER_LIST;
 import static com.nic.RuralInspection.DataBase.DBHelper.SCHEME_TABLE_NAME;
 
 public class DownloadActivity extends AppCompatActivity implements Api.ServerResponseListener, View.OnClickListener {
-    private Button done, btn_view_finyear, btn_view_block, btn_view_village, btn_view_scheme;
+    private Button done, btn_view_finyear, btn_view_block, btn_view_village, btn_view_scheme, btn_view_inspected_officers;
 
 
-    public MyCustomTextView title_tv, selected_finyear_tv, selected_block_tv, selected_village_tv, selected_scheme_tv;
+    public MyCustomTextView title_tv, selected_finyear_tv, selected_block_tv, selected_village_tv, selected_scheme_tv, selected_officers_tv;
     public static MyCustomTextView start_date_tv, end_date_tv;
-    private PrefManager prefManager;
+    private static PrefManager prefManager;
 
     private ImageView back_img,homeimg;
     private List<BlockListValue> Block = new ArrayList<>();
     private List<BlockListValue> Village = new ArrayList<>();
     private List<BlockListValue> Scheme = new ArrayList<>();
     private List<BlockListValue> FinYearList = new ArrayList<>();
-    public LinearLayout select_fin_year_layout, select_block_layout, select_village_layout, select_scheme_layout, block_hide_layout, download_values_inspection_layout, download_values_action_layout, start_date_layout, end_date_layout;
+    private List<BlockListValue> InspectedOfficersList = new ArrayList<>();
+    public LinearLayout select_fin_year_layout, select_block_layout, select_village_layout, select_scheme_layout, block_hide_layout, download_values_inspection_layout, download_values_action_layout, start_date_layout, end_date_layout, select_officers_layout;
     private View view;
     final ArrayList<Integer> mVillageItems = new ArrayList<>();
     final ArrayList<Integer> mUserItems = new ArrayList<>();
+    final ArrayList<Integer> mInspectedOfficersItems = new ArrayList<>();
     final ArrayList<Integer> mFinYearItems = new ArrayList<>();
     final ArrayList<Integer> mSchemeItems = new ArrayList<>();
 //        final ArrayList<String> mySchemelist = new ArrayList<String>();
 
     /*It is Temporarly hide scheme is empty in the multiple choice dialog to unhide */
     String[] blockStrings;
+    String[] inspectedOfficersStrings;
     String[] blockCodeStrings;
+    String[] inspectedOfficersCodeStrings;
     String[] villageStrings;
     String[] villageCodeStrings;
     String[] schemeStrings;
@@ -76,6 +83,7 @@ public class DownloadActivity extends AppCompatActivity implements Api.ServerRes
     String[] finyearStrings;
     String[] errorSoon;
     boolean[] blockcheckedItems;
+    boolean[] inspectedOfficerscheckedItems;
     boolean[] FinYearcheckedItems;
     boolean[] villageCheckedItems;
     boolean[] schemeCheckedItems;
@@ -103,6 +111,7 @@ public class DownloadActivity extends AppCompatActivity implements Api.ServerRes
         homeimg = (ImageView) findViewById(R.id.homeimg);
         select_fin_year_layout = (LinearLayout) findViewById(R.id.select_fin_year_layout);
         select_block_layout = (LinearLayout) findViewById(R.id.select_block_layout);
+        select_officers_layout = (LinearLayout) findViewById(R.id.select_officers_layout);
         select_village_layout = (LinearLayout) findViewById(R.id.select_village_layout);
         select_scheme_layout = (LinearLayout) findViewById(R.id.select_scheme_layout);
         block_hide_layout = (LinearLayout) findViewById(R.id.block_hide_layout);
@@ -113,12 +122,14 @@ public class DownloadActivity extends AppCompatActivity implements Api.ServerRes
         done = (Button) findViewById(R.id.btn_download);
         btn_view_finyear = (Button) findViewById(R.id.btn_view_finyear);
         btn_view_block = (Button) findViewById(R.id.btn_view_block);
+        btn_view_inspected_officers = (Button) findViewById(R.id.btn_view_inspected_officers);
         btn_view_village = (Button) findViewById(R.id.btn_view_village);
         btn_view_scheme = (Button) findViewById(R.id.btn_view_scheme);
         back_img = (ImageView) findViewById(R.id.backimg);
         title_tv = (MyCustomTextView) findViewById(R.id.title_tv);
         selected_finyear_tv = (MyCustomTextView) findViewById(R.id.selected_finyear_tv);
         selected_block_tv = (MyCustomTextView) findViewById(R.id.selected_block_tv);
+        selected_officers_tv = (MyCustomTextView) findViewById(R.id.selected_officers_tv);
         selected_village_tv = (MyCustomTextView) findViewById(R.id.selected_village_tv);
         selected_scheme_tv = (MyCustomTextView) findViewById(R.id.selected_scheme_tv);
         start_date_tv = (MyCustomTextView) findViewById(R.id.start_date_tv);
@@ -135,6 +146,7 @@ public class DownloadActivity extends AppCompatActivity implements Api.ServerRes
         btn_view_scheme.setOnClickListener(this);
         start_date_layout.setOnClickListener(this);
         end_date_layout.setOnClickListener(this);
+        btn_view_inspected_officers.setOnClickListener(this);
         done.setOnClickListener(this);
 
 //        home.setOnClickListener(this);
@@ -148,6 +160,7 @@ public class DownloadActivity extends AppCompatActivity implements Api.ServerRes
         }
         loadOfflineFinYearListDBValues();
         loadOfflineBlockListDBValues();
+        loadOfflineInspectedOfficersDBValues();
         if (prefManager.getLevels().equalsIgnoreCase("B")) {
             loadOfflineVillgeListDBValues();
         }
@@ -371,6 +384,108 @@ public class DownloadActivity extends AppCompatActivity implements Api.ServerRes
         mDialog.show();
     }
 
+    public void loadOfflineInspectedOfficersDBValues() {
+        Cursor InspectedofficersList = getRawEvents("SELECT * FROM " + INSPECTED_OFFICER_LIST, null);
+        InspectedOfficersList.clear();
+        final ArrayList<String> myInspectedofficersList = new ArrayList<String>();
+        final ArrayList<String> myInspectedofficersListCodeList = new ArrayList<String>();
+
+        if (InspectedofficersList.getCount() > 0) {
+            if (InspectedofficersList.moveToFirst()) {
+                do {
+                    BlockListValue inspectedOfficersDetails = new BlockListValue();
+                    String inspectedOffUserId = InspectedofficersList.getString(InspectedofficersList.getColumnIndexOrThrow(AppConstant.INSPECTED_USER_ID));
+                    String inspectedOffName = InspectedofficersList.getString(InspectedofficersList.getColumnIndexOrThrow(AppConstant.INSPECTED_USER_NAME));
+                    String inspectedOffDesignName = InspectedofficersList.getString(InspectedofficersList.getColumnIndexOrThrow(AppConstant.INSPECTED_DESIGATION_NAME));
+                    inspectedOfficersDetails.setInspectedOffUserId(inspectedOffUserId);
+                    inspectedOfficersDetails.setInspectedOffName(inspectedOffName);
+                    inspectedOfficersDetails.setInspectedOffDesignName(inspectedOffDesignName);
+                    InspectedOfficersList.add(inspectedOfficersDetails);
+                } while (InspectedofficersList.moveToNext());
+            }
+        }
+        for (int i = 0; i < InspectedOfficersList.size(); i++) {
+            myInspectedofficersList.add(InspectedOfficersList.get(i).getInspectedOffName() + " - " + InspectedOfficersList.get(i).getInspectedOffDesignName());
+            myInspectedofficersListCodeList.add(InspectedOfficersList.get(i).getInspectedOffUserId());
+        }
+
+        inspectedOfficersStrings = myInspectedofficersList.toArray(new String[myInspectedofficersList.size()]);
+        inspectedOfficersCodeStrings = myInspectedofficersListCodeList.toArray(new String[myInspectedofficersListCodeList.size()]);
+        inspectedOfficerscheckedItems = new boolean[inspectedOfficersStrings.length];
+
+    }
+
+    public void inspectedOfficersCheckBox() {
+
+        AlertDialog.Builder mBuilder = new AlertDialog.Builder(DownloadActivity.this);
+        mBuilder.setTitle(R.string.inspected_officers_title);
+        mBuilder.setMultiChoiceItems(inspectedOfficersStrings, inspectedOfficerscheckedItems, new DialogInterface.OnMultiChoiceClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int position, boolean isChecked) {
+                if (isChecked) {
+
+
+                    if (!mInspectedOfficersItems.contains(position)) {
+                        mInspectedOfficersItems.add(position);
+                    }
+                } else if (mInspectedOfficersItems.contains(position)) {
+                    mInspectedOfficersItems.remove(Integer.valueOf(position));
+                }
+                JSONArray inspectedOfficersJsonArray = new JSONArray();
+
+                for (int i = 0; i < mInspectedOfficersItems.size(); i++) {
+                    inspectedOfficersJsonArray.put(inspectedOfficersCodeStrings[mInspectedOfficersItems.get(i)]);
+                }
+                prefManager.setInspectedOfficersCodeJson(inspectedOfficersJsonArray);
+                Log.d("inspectedOfficers", "" + inspectedOfficersJsonArray);
+
+
+            }
+        });
+
+        mBuilder.setCancelable(false);
+
+        mBuilder.setPositiveButton(R.string.ok_label, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int which) {
+                String item = "";
+                for (int i = 0; i < mInspectedOfficersItems.size(); i++) {
+                    item = item + inspectedOfficersStrings[mInspectedOfficersItems.get(i)];
+                    if (i != mInspectedOfficersItems.size() - 1) {
+                        item = item + ", ";
+                    }
+                }
+                if (mInspectedOfficersItems.size() > 0) {
+                    select_officers_layout.setVisibility(View.VISIBLE);
+                } else {
+                    select_officers_layout.setVisibility(View.GONE);
+                }
+                selected_officers_tv.setText(item);
+            }
+        });
+
+        mBuilder.setNegativeButton(R.string.dismiss_label, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                dialogInterface.dismiss();
+            }
+        });
+
+        mBuilder.setNeutralButton(R.string.clear_all_label, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int which) {
+                for (int i = 0; i < inspectedOfficerscheckedItems.length; i++) {
+                    inspectedOfficerscheckedItems[i] = false;
+                    mInspectedOfficersItems.clear();
+                    selected_officers_tv.setText("");
+                    select_officers_layout.setVisibility(View.GONE);
+                }
+            }
+        });
+
+        AlertDialog mDialog = mBuilder.create();
+        mDialog.show();
+    }
     public void loadOfflineVillgeListDBValues() {
 
 //        String villageSql = "SELECT * FROM " + DBHelper.VILLAGE_TABLE_NAME + " WHERE bcode in" + filterVillage.toString().replace("[", "(").replace("]", ")") + " order by bcode";
@@ -528,7 +643,7 @@ public class DownloadActivity extends AppCompatActivity implements Api.ServerRes
                 blockCheckbox();
                 break;
             case R.id.btn_view_village:
-                villageCheckbox();;
+                villageCheckbox();
                 break;
             case R.id.btn_view_scheme:
                 schemeCheckbox();
@@ -547,6 +662,9 @@ public class DownloadActivity extends AppCompatActivity implements Api.ServerRes
                 break;
             case R.id.homeimg:
                 dashboard();
+                break;
+            case R.id.btn_view_inspected_officers:
+                inspectedOfficersCheckBox();
                 break;
         }
     }
@@ -587,19 +705,48 @@ public class DownloadActivity extends AppCompatActivity implements Api.ServerRes
     }
 
     public void projectListScreenBlockUser() {
-        if (!start_date_tv.getText().equals("")) {
-            if (!end_date_tv.getText().equals("")) {
-                    getWorkListOptional();
-                    getInspectionList_blockwise();
-                    getInspectionList_Images_blockwise();
-                    getAction_ForInspection();
+        String start_date = (String) start_date_tv.getText();
+        String end_date = (String) end_date_tv.getText();
+        if (!start_date.equals("")) {
+            if (!end_date.equals("")) {
+                if (!selected_officers_tv.getText().equals("")) {
+                    if (CheckDates(start_date, end_date)) {
+                        getWorkListOptional();
+                        getInspectionList_blockwise();
+                        getInspectionList_Images_blockwise();
+                        getAction_ForInspection();
+                    } else {
+                        Utils.showAlert(this, "End Date should be greater than start date");
+                    }
 
+                } else {
+                    Utils.showAlert(this, "Select Inspected Officers!");
+                }
             } else {
-                Utils.showAlert(this, "Select To Date");
+                Utils.showAlert(this, "Select End Date");
             }
         } else {
-            Utils.showAlert(this, "Select From Date");
+            Utils.showAlert(this, "Select Start Date");
         }
+    }
+
+
+    public static boolean CheckDates(String d1, String d2) {
+        SimpleDateFormat dfDate = new SimpleDateFormat("dd-MM-yyyy");
+        boolean b = false;
+        try {
+            if (dfDate.parse(d1).before(dfDate.parse(d2))) {
+                b = true;//If start date is before end date
+            } else if (dfDate.parse(d1).equals(dfDate.parse(d2))) {
+                b = true;//If two dates are equal
+            } else {
+                b = false; //If start date is after the end date
+            }
+        } catch (ParseException e) {
+// TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        return b;
     }
 
     public void getSchemeList() {
@@ -641,6 +788,7 @@ public class DownloadActivity extends AppCompatActivity implements Api.ServerRes
             e.printStackTrace();
         }
     }
+
 
     public JSONObject schemeListJsonParams() throws JSONException {
         String authKey = Utils.encrypt(prefManager.getUserPassKey(), getResources().getString(R.string.init_vector), Utils.schemeListDistrictWiseJsonParams(this).toString());
@@ -761,6 +909,7 @@ public class DownloadActivity extends AppCompatActivity implements Api.ServerRes
                 Log.d("responseInspect_Action", "" + jsonObject.getJSONArray(AppConstant.JSON_DATA));
 
             }
+
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -802,6 +951,7 @@ public class DownloadActivity extends AppCompatActivity implements Api.ServerRes
             progressHUD.cancel();
         }
     }
+
 
     public void loadOfflineSchemeListDBValues() {
         String query = "SELECT * FROM " + DBHelper.SCHEME_TABLE_NAME + " Where fin_year in " + prefManager.getFinYearJson().toString().replace("[", "(").replace("]", ")") + " order by fin_year";
@@ -1187,6 +1337,8 @@ public class DownloadActivity extends AppCompatActivity implements Api.ServerRes
         public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
             // Do something with the date chosen by the user
             start_date_tv.setText(dayOfMonth + "-" + (monthOfYear + 1) + "-" + year);
+            String start_date = year+"-"+monthOfYear+"-"+dayOfMonth;
+            prefManager.setKeyStartDate(start_date);
             cldr.set(Calendar.YEAR, year);
             cldr.set(Calendar.MONTH, (monthOfYear));
             cldr.set(Calendar.DAY_OF_MONTH, dayOfMonth);
@@ -1216,6 +1368,8 @@ public class DownloadActivity extends AppCompatActivity implements Api.ServerRes
 
         public void onDateSet(DatePicker view, int year, int month, int day) {
             end_date_tv.setText(day + "-" + (month + 1) + "-" + year);
+            String end_date = year+"-"+(month+1)+"-"+day;
+            prefManager.setKeyEndDate(end_date);
             Calendar c = Calendar.getInstance();
             c.set(Calendar.YEAR, year);
             c.set(Calendar.MONTH, (month - 1));

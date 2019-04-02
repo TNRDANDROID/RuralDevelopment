@@ -108,6 +108,7 @@ public class Dashboard extends AppCompatActivity implements Api.ServerResponseLi
             block_user_layout.setVisibility(View.VISIBLE);
             block_user_tv.setText(prefManager.getBlockName());
             upload_inspection_report_tv.setText(getResources().getString(R.string.action_taken_tv));
+            getInspectedOfficersName();
         }
         getPendingCount();
         if (Utils.isOnline()) {
@@ -355,6 +356,14 @@ public class Dashboard extends AppCompatActivity implements Api.ServerResponseLi
         }
     }
 
+    public void getInspectedOfficersName() {
+        try {
+            new ApiService(this).makeJSONObjectRequest("InspectedOfficers", Api.Method.POST, UrlGenerator.getInspectionServicesListUrl(), inspectedOfficersJsonParams(), "not cache", this);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
 
     public JSONObject serviceListJsonParams() throws JSONException {
         String authKey = Utils.encrypt(prefManager.getUserPassKey(), getResources().getString(R.string.init_vector), Utils.serviceListJsonParams().toString());
@@ -371,6 +380,15 @@ public class Dashboard extends AppCompatActivity implements Api.ServerResponseLi
         dataSet.put(AppConstant.KEY_USER_NAME, prefManager.getUserName());
         dataSet.put(AppConstant.DATA_CONTENT, authKey);
         Log.d("inspectionservicelist", "" + authKey);
+        return dataSet;
+    }
+
+    public JSONObject inspectedOfficersJsonParams() throws JSONException {
+        String authKey = Utils.encrypt(prefManager.getUserPassKey(), getResources().getString(R.string.init_vector), Utils.getInspectedOfficers(this).toString());
+        JSONObject dataSet = new JSONObject();
+        dataSet.put(AppConstant.KEY_USER_NAME, prefManager.getUserName());
+        dataSet.put(AppConstant.DATA_CONTENT, authKey);
+        Log.d("inspectedOfficersName", "" + authKey);
         return dataSet;
     }
 
@@ -467,6 +485,15 @@ public class Dashboard extends AppCompatActivity implements Api.ServerResponseLi
                     loadObservationList(jsonObject.getJSONArray(AppConstant.JSON_DATA));
                 }
                 Log.d("ResObservationList", "" + responseDecryptedKey);
+            }
+            if ("InspectedOfficers".equals(urlType) && responseObj != null) {
+                String key = responseObj.getString(AppConstant.ENCODE_DATA);
+                String responseDecryptedSchemeKey = Utils.decrypt(prefManager.getUserPassKey(), key);
+                JSONObject jsonObject = new JSONObject(responseDecryptedSchemeKey);
+                if (jsonObject.getString("STATUS").equalsIgnoreCase("OK") && jsonObject.getString("RESPONSE").equalsIgnoreCase("OK")) {
+                    loadInspectedOfficersName(jsonObject.getJSONArray(AppConstant.JSON_DATA));
+                    Log.d("InspectedOfficers", "" + jsonObject.getJSONArray(AppConstant.JSON_DATA));
+                }
             }
         } catch (JSONException e) {
             e.printStackTrace();
@@ -632,6 +659,42 @@ public class Dashboard extends AppCompatActivity implements Api.ServerResponseLi
             }, 4000);
 
 
+        } catch (JSONException j) {
+            j.printStackTrace();
+        } catch (ArrayIndexOutOfBoundsException a) {
+            a.printStackTrace();
+        }
+        if (progressHUD != null) {
+            progressHUD.cancel();
+        }
+    }
+
+    private void loadInspectedOfficersName(JSONArray jsonArray) {
+        try {
+            db.delete(DBHelper.INSPECTED_OFFICER_LIST, null, null);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        progressHUD = ProgressHUD.show(this, "Downloading...", true, false, null);
+
+        try {
+            updatedJsonArray = new JSONArray();
+            updatedJsonArray = jsonArray;
+
+            for (int i = 0; i < jsonArray.length(); i++) {
+                String inspected_UserName = jsonArray.getJSONObject(i).getString(AppConstant.INSPECTED_USER_NAME);
+                String inspected_UserId = jsonArray.getJSONObject(i).getString(AppConstant.INSPECTED_USER_ID);
+                String inspected_DesigName = jsonArray.getJSONObject(i).getString(AppConstant.INSPECTED_DESIGATION_NAME);
+
+                ContentValues inspectedOfficerDetails = new ContentValues();
+                inspectedOfficerDetails.put(AppConstant.INSPECTED_USER_ID, inspected_UserId);
+                inspectedOfficerDetails.put(AppConstant.INSPECTED_USER_NAME, inspected_UserName);
+                inspectedOfficerDetails.put(AppConstant.INSPECTED_DESIGATION_NAME, inspected_DesigName);
+
+                LoginScreen.db.insert(DBHelper.INSPECTED_OFFICER_LIST, null, inspectedOfficerDetails);
+                Log.d("DBInspectedOfficersList", "" + inspectedOfficerDetails);
+
+            }
         } catch (JSONException j) {
             j.printStackTrace();
         } catch (ArrayIndexOutOfBoundsException a) {

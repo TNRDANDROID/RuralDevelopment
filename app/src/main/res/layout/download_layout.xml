@@ -920,7 +920,6 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:layout_centerInParent="true"
-                                android:layout_gravity=""
                                 android:layout_marginLeft="10dp"
                                 android:layout_marginRight="10dp"
                                 android:layout_marginBottom="15dp"
@@ -967,59 +966,139 @@
 
                 </LinearLayout>
 
-                <com.nic.RuralInspection.Support.MyCustomTextView
-
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="@dimen/margin_left_20dp"
-                    android:layout_marginTop="@dimen/padding"
-                    android:layout_marginRight="@dimen/margin_left_20dp"
-                    android:text="Select Inspected Officers"
-                    android:textColor="@android:color/black"
-                    android:textSize="@dimen/_15sdp"
-                    android:visibility="visible"
-                    customfontdemo:fontName="@string/font_circular_bold" />
+                    android:layout_marginTop="@dimen/_15sdp"
+                    android:orientation="horizontal">
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="8"
+                        android:gravity="center_vertical|end"
+                        android:orientation="vertical">
+
+                        <com.nic.RuralInspection.Support.MyCustomTextView
+
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+
+                            android:paddingLeft="@dimen/_5sdp"
+                            android:text="Select Inspected Officers"
+                            android:textAlignment="center"
+                            android:textColor="#000"
+                            android:textSize="18sp"
+                            customfontdemo:fontName="@string/font_circular_book" />
+
+                    </LinearLayout>
 
 
-                <RelativeLayout
-                    android:id="@+id/fin_year_layout"
-                    android:layout_width="match_parent"
-                    android:layout_height="@dimen/header"
-
-                    android:layout_marginLeft="@dimen/_10sdp"
-                    android:layout_marginTop="@dimen/_10sdp"
-                    android:layout_marginRight="@dimen/_10sdp"
-                    android:layout_marginBottom="@dimen/_10sdp"
-
-                    android:background="@drawable/rectangle_box"
-                    android:orientation="vertical"
-                    android:visibility="visible">
-
-                    <com.nic.RuralInspection.Support.MyCustomTextView
-
+                    <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_alignParentStart="true"
-                        android:layout_centerInParent="true"
-                        android:layout_marginLeft="15dp"
+                        android:gravity="center_horizontal"
+                        android:orientation="vertical">
 
-                        android:textColor="@android:color/black"
-                        android:textSize="@dimen/_15sdp"
-                        android:visibility="visible"
-                        customfontdemo:fontName="@string/font_normal" />
+                        <com.nic.RuralInspection.Support.MyCustomTextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:padding="10dp"
+                            android:text=":"
+                            android:textColor="#000"
+                            android:textSize="18sp"
+                            customfontdemo:fontName="@string/font_circular_book" />
 
-                    <Spinner
-                        android:id="@+id/financialYear"
-                        android:layout_width="match_parent"
+                    </LinearLayout>
+
+
+                    <LinearLayout
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_alignParentEnd="true"
-                        android:layout_centerInParent="true"
-                        android:layout_marginLeft="10dp"
-                        android:layout_marginRight="10dp"
-                        android:gravity="center" />
+                        android:layout_weight="8"
+                        android:gravity="start"
+                        android:orientation="vertical">
 
-                </RelativeLayout>
+                        <Button
+                            android:id="@+id/btn_view_inspected_officers"
+                            android:layout_width="90dp"
+                            android:layout_height="30dp"
 
+                            android:layout_margin="8dp"
+                            android:background="@drawable/add_button"
+                            android:text="Select"
+                            android:textAllCaps="true"
+                            android:textColor="@android:color/white" />
+                    </LinearLayout>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/select_officers_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:paddingLeft="@dimen/padding"
+                    android:visibility="gone">
+
+                    <TableLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <TableRow
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content">
+
+                            <com.nic.RuralInspection.Support.MyCustomTextView
+
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+
+                                android:gravity="end"
+                                android:padding="5sp"
+                                android:text="Selected Officers"
+                                android:textColor="@android:color/black"
+                                android:textSize="18sp"
+                                customfontdemo:fontName="@string/font_circular_bold" />
+
+
+                            <!--<com.nic.RuralInspection.Support.MyCustomTextView-->
+                            <!--android:layout_width="0dp"-->
+                            <!--android:layout_height="wrap_content"-->
+                            <!--android:layout_weight=".10"-->
+                            <!--android:gravity="center|left"-->
+                            <!--android:paddingLeft="5dp"-->
+                            <!--android:text=":"-->
+                            <!--android:textColor="@android:color/black"-->
+                            <!--android:textSize="18sp"-->
+                            <!--customfontdemo:fontName="@string/font_normal" />-->
+
+                            <com.nic.RuralInspection.Support.MyCustomTextView
+                                android:id="@+id/selected_officers_tv"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="0.48"
+                                android:gravity="center|left"
+                                android:padding="10sp"
+                                android:text=""
+                                android:textColor="@android:color/black"
+                                android:textSize="18sp"
+                                customfontdemo:fontName="@string/font_circular_bold" />
+
+
+                        </TableRow>
+
+
+                    </TableLayout>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="0.1dp"
+                        android:layout_gravity="bottom"
+                        android:layout_marginLeft="15dp"
+                        android:background="@color/dashboard_line_dark" />
+
+                </LinearLayout>
 
             </LinearLayout>
 

@@ -52,6 +52,33 @@ public class BlockListValue {
     private String OnlineInspectID;
     private String detail;
     private int ActionID;
+    private String inspectedOffUserId;
+    private String inspectedOffName;
+    private String inspectedOffDesignName;
+
+    public String getInspectedOffUserId() {
+        return inspectedOffUserId;
+    }
+
+    public void setInspectedOffUserId(String inspectedOffUserId) {
+        this.inspectedOffUserId = inspectedOffUserId;
+    }
+
+    public String getInspectedOffName() {
+        return inspectedOffName;
+    }
+
+    public void setInspectedOffName(String inspectedOffName) {
+        this.inspectedOffName = inspectedOffName;
+    }
+
+    public String getInspectedOffDesignName() {
+        return inspectedOffDesignName;
+    }
+
+    public void setInspectedOffDesignName(String inspectedOffDesignName) {
+        this.inspectedOffDesignName = inspectedOffDesignName;
+    }
 
     public int getActionID() {
         return ActionID;
