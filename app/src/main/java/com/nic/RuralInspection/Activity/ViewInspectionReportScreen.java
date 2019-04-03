@@ -163,7 +163,7 @@ public class ViewInspectionReportScreen extends AppCompatActivity implements Vie
 
         // String inspection_sql = "select * from (select * from "+DBHelper.INSPECTION+" WHERE work_id="+workId+")a left join (select * from captured_photo)b on a.inspection_id=b.inspection_id and a.work_id=b.work_id group by a.inspection_id";
         //String inspection_sql = "select a.inspection_id as inspection_id,a.id as id,a.work_id as work_id,a.date_of_inspection as date_of_inspection,a.inspection_remark as inspection_remark,b.observation as observation from(select * from INSPECTION WHERE id in (select inspection_id from captured_photo))a left join (select * from observation)b on a.observation = b.id where work_id ="+workId ;
-        String inspection_sql = "select a.inspection_id as inspection_id,a.id as id,a.work_id as work_id,a.date_of_inspection as date_of_inspection,a.inspection_remark as inspection_remark,b.observation as observation,c.dist_action as dist_action,c.state_action as state_action,c.sub_div_action as sub_div_action from(select * from INSPECTION WHERE id in (select inspection_id from captured_photo))a left join (select * from observation)b on a.observation = b.id left join (select * from inspection_action) c on a.inspection_id = c.inspection_id where a.work_id =" + workId;
+        String inspection_sql = "select a.inspection_id as inspection_id,a.id as id,a.work_id as work_id,a.date_of_inspection as date_of_inspection,a.inspection_remark as inspection_remark,b.observation as observation,c.dist_action as dist_action,c.state_action as state_action,c.sub_div_action as sub_div_action,a.name as inspected_officer,a.desig_name as designation from(select * from INSPECTION WHERE id in (select inspection_id from captured_photo))a left join (select * from observation)b on a.observation = b.id left join (select * from inspection_action) c on a.inspection_id = c.inspection_id where a.work_id =" + workId;
         Log.d("inspection_sql", inspection_sql);
         Cursor inspectionList = getRawEvents(inspection_sql, null);
 
@@ -178,6 +178,8 @@ public class ViewInspectionReportScreen extends AppCompatActivity implements Vie
                     String dist_action = inspectionList.getString(inspectionList.getColumnIndexOrThrow(AppConstant.DISTRICT_ACTION));
                     String state_action = inspectionList.getString(inspectionList.getColumnIndexOrThrow(AppConstant.STATE_ACTION));
                     String sub_div_action = inspectionList.getString(inspectionList.getColumnIndexOrThrow(AppConstant.SUB_DIV_ACTION));
+                    String inspected_officer = inspectionList.getString(inspectionList.getColumnIndexOrThrow("inspected_officer"));
+                    String designation = inspectionList.getString(inspectionList.getColumnIndexOrThrow("designation"));
                     int inspection_id = inspectionList.getInt(inspectionList.getColumnIndexOrThrow(AppConstant.INSPECTION_ID));
 
                     BlockListValue inspectionValue = new BlockListValue();
@@ -189,6 +191,8 @@ public class ViewInspectionReportScreen extends AppCompatActivity implements Vie
                     inspectionValue.setInspectionID(inspection_id);
                     inspectionValue.setOnlineInspectID(id);
                     inspectionValue.setDetail("Online");
+                    inspectionValue.setInspectedOffName(inspected_officer);
+                    inspectionValue.setInspectedOffDesignName(designation);
 
                     if (dist_action == null && state_action == null && sub_div_action == null) {
                         inspectionValue.setActionresult("NO Action Taken Yet");

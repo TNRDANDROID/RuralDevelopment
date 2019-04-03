@@ -378,7 +378,7 @@
                                 android:orientation="vertical">
 
                                 <com.nic.RuralInspection.Support.MyCustomTextView
-                                    android:id="@+id/designation_tv"
+                                    android:id="@+id/inspected_by_tv"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
                                     android:padding="10dp"
@@ -451,7 +451,7 @@
                                 android:orientation="vertical">
 
                                 <com.nic.RuralInspection.Support.MyCustomTextView
-                                    android:id="@+id/inspected_by_tv"
+                                    android:id="@+id/designation_tv"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
                                     android:padding="10dp"

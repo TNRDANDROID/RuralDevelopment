@@ -53,8 +53,6 @@ public class AppConstant {
     public static String LEVELS = "levels";
     public static String SCHEME_SEQUENTIAL_ID = "scheme_seq_id";
     public static String INSPECTED_USER_ID = "inspection_user_id";
-    public static String INSPECTED_USER_NAME = "name";
-    public static String INSPECTED_DESIGATION_NAME = "desig_name";
     public static String START_DATE = "from_date";
     public static String END_DATE = "to_date";
     public static String KEY_WORK_LIST_OPTIONAL_ACTION = "work_list_optional_action";
@@ -99,6 +97,8 @@ public class AppConstant {
     public static String CREATED_DATE = "created_date";
     public static String CREATED_IMEI_NO = "imei_no";
     public static String CREATED_USER_NAME = "created_username";
+    public static String INSPECTED_USER_NAME = "name";
+    public static String INSPECTED_DESIGATION_NAME = "desig_name";
 
     //Inspection table
 
