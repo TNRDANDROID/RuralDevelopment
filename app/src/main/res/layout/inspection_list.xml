@@ -314,14 +314,14 @@
                                     customfontdemo:fontName="@string/font_circular_book" />
                             </LinearLayout>
                         </LinearLayout>
-
                         <View
-                            android:id="@+id/view"
                             android:layout_width="match_parent"
                             android:layout_height="0.5dp"
                             android:layout_gravity="bottom"
                             android:layout_marginLeft="15dp"
                             android:background="@color/dashboard_line_dark" />
+
+
 
 
                         <LinearLayout
@@ -464,6 +464,7 @@
                         </LinearLayout>
 
                         <View
+                            android:id="@+id/view"
                             android:layout_width="match_parent"
                             android:layout_height="0.5dp"
                             android:layout_gravity="bottom"

@@ -402,15 +402,6 @@ public class Dashboard extends AppCompatActivity implements Api.ServerResponseLi
         return dataSet;
     }
 
-    public JSONObject inspectionServiceListJsonParams() throws JSONException {
-        String authKey = Utils.encrypt(prefManager.getUserPassKey(), getResources().getString(R.string.init_vector), Utils.inspectionServiceListJsonParams().toString());
-        JSONObject dataSet = new JSONObject();
-        dataSet.put(AppConstant.KEY_USER_NAME, prefManager.getUserName());
-        dataSet.put(AppConstant.DATA_CONTENT, authKey);
-        Log.d("inspectionservicelist", "" + authKey);
-        return dataSet;
-    }
-
 
     public void selectBlockSchemeScreen() {
         Intent intent = new Intent(this, SelectBlockSchemeScreen.class);

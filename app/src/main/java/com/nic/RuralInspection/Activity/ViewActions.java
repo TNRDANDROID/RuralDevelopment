@@ -60,9 +60,9 @@ public class ViewActions extends AppCompatActivity implements View.OnClickListen
         not_found_tv = (MyCustomTextView) findViewById(R.id.not_found_tv);
         title_tv = (MyCustomTextView) findViewById(R.id.title_tv);
         back_img = (ImageView) findViewById(R.id.backimg);
-        back_img = (ImageView) findViewById(R.id.homeimg);
+        homeimg = (ImageView) findViewById(R.id.homeimg);
         back_img.setOnClickListener(this);
-      //  homeimg.setOnClickListener(this);
+        homeimg.setOnClickListener(this);
 
         viewActionAdapter = new ViewActionAdapter(this, actionListValues);
 

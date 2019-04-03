@@ -5,8 +5,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -14,7 +12,6 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
@@ -23,7 +20,6 @@ import android.widget.ScrollView;
 
 import com.nic.RuralInspection.Adapter.ImageDescriptionAdapter;
 import com.nic.RuralInspection.Adapter.InspectionListAdapter;
-import com.nic.RuralInspection.Adapter.ProjectListAdapter;
 import com.nic.RuralInspection.DataBase.DBHelper;
 import com.nic.RuralInspection.Model.BlockListValue;
 import com.nic.RuralInspection.R;
@@ -31,7 +27,6 @@ import com.nic.RuralInspection.Support.MyCustomTextView;
 import com.nic.RuralInspection.constant.AppConstant;
 import com.nic.RuralInspection.session.PrefManager;
 
-import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -259,16 +254,12 @@ public class ViewInspectionReportScreen extends AppCompatActivity implements Vie
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-          //  case R.id.action_tv:
-//                imageWithDescription(action_tv, "mobile", scrollView);
-           //     break;
             case R.id.backimg:
                 onBackPress();
                 break;
-
-                case R.id.homeimg :
-                    dashboard();
-                    break;
+            case R.id.homeimg :
+                dashboard();
+                break;
         }
     }
 
