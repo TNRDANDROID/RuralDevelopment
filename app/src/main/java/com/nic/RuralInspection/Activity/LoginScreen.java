@@ -257,7 +257,8 @@ public class LoginScreen extends AppCompatActivity implements View.OnClickListen
                         prefManager.setBlockName(jsonObject.get(AppConstant.BLOCK_NAME));
                         prefManager.setPvName(jsonObject.get(AppConstant.PV_NAME));
                         prefManager.setLevels(jsonObject.get(AppConstant.LEVELS));
-                        Log.d("userdata", "" + prefManager.getDistrictCode() + prefManager.getBlockCode() + prefManager.getPvCode() + prefManager.getDistrictName() + prefManager.getBlockName() + prefManager.getPvName() + prefManager.getLevels());
+                        prefManager.setInspectedOfficerName(jsonObject.get(AppConstant.INSPECTED_USER_NAME));
+                        Log.d("userdata", "" + prefManager.getDistrictCode() + prefManager.getBlockCode() + prefManager.getPvCode() + prefManager.getDistrictName() + prefManager.getBlockName() + prefManager.getPvName() + prefManager.getLevels()+prefManager.getInspectedOfficerName());
                         prefManager.setUserPassKey(decryptedKey);
                         showHomeScreen();
                     } else {

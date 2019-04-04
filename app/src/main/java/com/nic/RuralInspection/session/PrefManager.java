@@ -44,6 +44,8 @@ public class PrefManager {
     private static final String KEY_PV_NAME = "Pv_Name";
     private static final String KEY_VILLAGE_LIST_PV_NAME = "Village_List_Pv_Name";
     private static final String KEY_LEVELS = "Levels";
+    private static final String KEY_INSPECTED_OFFICER_NAME = "InspectedOfficerName";
+    private static final String KEY_INSPECTED_OFFICER_DESIGNATION = "InspectedOfficerDesignation";
     private static final String SERVICE_AUTH_KEY = "service_auth_key";
     private static final String KEY_SPINNER_SELECTED_BLOCKCODE = "spinner_selected_block_code";
     private static final String KEY_SPINNER_SELECTED_PVCODE = "spinner_selected_pv_code";
@@ -239,6 +241,25 @@ public class PrefManager {
         return pref.getString(KEY_LEVELS, null);
     }
 
+    public Object setInspectedOfficerName(Object key) {
+        editor.putString(KEY_INSPECTED_OFFICER_NAME, String.valueOf(key));
+        editor.commit();
+        return key;
+    }
+
+    public String getInspectedOfficerName() {
+        return pref.getString(KEY_INSPECTED_OFFICER_NAME, null);
+    }
+
+    public Object setInspectedOfficerDesignation(Object key) {
+        editor.putString(KEY_INSPECTED_OFFICER_DESIGNATION, String.valueOf(key));
+        editor.commit();
+        return key;
+    }
+
+    public String getInspectedOfficerDesignation() {
+        return pref.getString(KEY_INSPECTED_OFFICER_DESIGNATION, null);
+    }
 
     public void setKeySpinnerSelectedBlockcode(String userName) {
         editor.putString(KEY_SPINNER_SELECTED_BLOCKCODE, userName);

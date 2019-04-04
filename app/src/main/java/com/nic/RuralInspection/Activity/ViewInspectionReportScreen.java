@@ -242,7 +242,8 @@ public class ViewInspectionReportScreen extends AppCompatActivity implements Vie
                     inspectionValue.setInspectionID(inspection_id);
                     inspectionValue.setOnlineInspectID(String.valueOf(inspection_id));
                     inspectionValue.setDetail("Offline");
-
+                    inspectionValue.setInspectedOffName(prefManager.getInspectedOfficerName());
+                    inspectionValue.setInspectedOffDesignName(prefManager.getInspectedOfficerDesignation());
                     inspectionlistvalues.add(inspectionValue);
 
 
