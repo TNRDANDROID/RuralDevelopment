@@ -395,7 +395,7 @@ public void dashboard(){
                     String workID = jsonArray.getJSONObject(i).getString(AppConstant.WORK_ID);
                     String id = jsonArray.getJSONObject(i).getString("id");
                     String stageOfWorkOnInspection = jsonArray.getJSONObject(i).getString(AppConstant.STAGE_OF_WORK_ON_INSPECTION);
-                    String dateOfInspection = jsonArray.getJSONObject(i).getString(AppConstant.DATE_OF_INSPECTION);
+                    String dateOfInspection = Utils.formatDate(jsonArray.getJSONObject(i).getString(AppConstant.DATE_OF_INSPECTION));
                     String inspectedBy = jsonArray.getJSONObject(i).getString(AppConstant.INSPECTED_BY);
                     String observation = jsonArray.getJSONObject(i).getString(AppConstant.OBSERVATION);
                     String inspectionRemark = jsonArray.getJSONObject(i).getString(AppConstant.INSPECTION_REMARK);

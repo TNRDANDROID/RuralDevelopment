@@ -1090,7 +1090,7 @@ public class Utils {
     }
 
 
-    public static JSONObject districtListJsonParams() throws JSONException {
+    public static JSONObject districtListJsonParams(Activity activity) throws JSONException {
         JSONObject dataSet = new JSONObject();
         dataSet.put(AppConstant.KEY_SERVICE_ID, AppConstant.KEY_DISTRICT_LIST_ALL);
         Log.d("districtList", "" + dataSet);
@@ -1270,5 +1270,24 @@ public class Utils {
         dataSet.put(AppConstant.BLOCK_CODE, prefManager.getBlockCodeJson());
         Log.d("object", "" + dataSet);
         return dataSet;
+    }
+
+    public static String formatDate (String date){
+        String initDateFormat = "yyyy-MM-dd";
+        String endDateFormat = "dd-MM-yyyy";
+
+        String parsedDate = null;
+
+        try {
+            Date initDate = new SimpleDateFormat(initDateFormat).parse(date);
+            SimpleDateFormat formatter = new SimpleDateFormat(endDateFormat);
+            parsedDate = formatter.format(initDate);
+
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+
+        return parsedDate;
     }
 }

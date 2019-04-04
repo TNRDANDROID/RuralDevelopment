@@ -59,18 +59,19 @@ public class SelectBlockSchemeScreen extends AppCompatActivity implements View.O
     private Button done;
     private RadioGroup radioGroup;
     CheckBox all_block, all_village, all_scheme, high_value_projects, all_projects;
-    private Spinner sp_block, sp_village, sp_scheme, sp_financialYear;
+    private Spinner sp_block,sp_district, sp_village, sp_scheme, sp_financialYear;
     private MyCustomTextView title_tv;
     private LinearLayout block_layout;
     private PrefManager prefManager;
     private List<BlockListValue> Block = new ArrayList<>();
+    private List<BlockListValue> District = new ArrayList<>();
     private List<BlockListValue> Village = new ArrayList<>();
     private List<BlockListValue> Scheme = new ArrayList<>();
     private List<BlockListValue> FinYearList = new ArrayList<>();
     private ProgressHUD progressHUD;
     private ImageView back_img,homeimg;
 
-    String pref_Block, pref_Village, pref_Scheme, pref_finYear;
+    String pref_Block,pref_district, pref_Village, pref_Scheme, pref_finYear;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -97,6 +98,7 @@ public class SelectBlockSchemeScreen extends AppCompatActivity implements View.O
         high_value_projects = (CheckBox) findViewById(R.id.high_value_projects);
         all_projects = (CheckBox) findViewById(R.id.all_projects);
         sp_block = (Spinner) findViewById(R.id.block);
+        sp_district = (Spinner) findViewById(R.id.district);
         sp_village = (Spinner) findViewById(R.id.village);
         sp_scheme = (Spinner) findViewById(R.id.scheme);
         sp_financialYear = (Spinner) findViewById(R.id.financialYear);
@@ -131,6 +133,27 @@ public class SelectBlockSchemeScreen extends AppCompatActivity implements View.O
                 } else {
                     high_value_projects.setChecked(true);
                 }
+
+            }
+        });
+
+        sp_district.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                if (position == 0) {
+
+//                    prefManager.setBlockName("All");
+//                    loadOfflineVillgeListDBValues();
+                } else {
+
+                    pref_district = District.get(position).getDistrictName();
+                    prefManager.setDistrictName(pref_district);
+
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
 
             }
         });

@@ -55,6 +55,15 @@ public class BlockListValue {
     private String inspectedOffUserId;
     private String inspectedOffName;
     private String inspectedOffDesignName;
+    private String districtName;
+
+    public String getDistrictName() {
+        return districtName;
+    }
+
+    public void setDistrictName(String districtName) {
+        this.districtName = districtName;
+    }
 
     public String getInspectedOffUserId() {
         return inspectedOffUserId;

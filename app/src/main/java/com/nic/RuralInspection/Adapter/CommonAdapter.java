@@ -7,10 +7,8 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
-
 import com.nic.RuralInspection.Model.BlockListValue;
 import com.nic.RuralInspection.R;
-import com.nic.RuralInspection.Utils.FontCache;
 
 import java.util.List;
 
@@ -52,7 +50,9 @@ public class CommonAdapter extends BaseAdapter {
         View view = inflater.inflate(R.layout.spinner_value, parent, false);
         TextView tv_type = (TextView) view.findViewById(R.id.spinner_list_value);
         BlockListValue BlockListValue = BlockList.get(position);
-        if(type.equalsIgnoreCase("BlockList")) {
+        if(type.equalsIgnoreCase("DistrictList")) {
+            tv_type.setText(BlockListValue.getDistrictName());
+        } else if (type.equalsIgnoreCase("BlockList")) {
             tv_type.setText(BlockListValue.getBlockName());
         }else if(type.equalsIgnoreCase("VillageList")){
             tv_type.setText(BlockListValue.getVillageListPvName());

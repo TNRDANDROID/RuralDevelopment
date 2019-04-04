@@ -159,7 +159,52 @@
                 android:layout_gravity="center"
                 android:orientation="vertical">
 
+            <LinearLayout
+                android:id="@+id/state_user_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="gone">
+
                 <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:padding="@dimen/_5sdp">
+
+                    <com.nic.RuralInspection.Support.MyCustomTextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:paddingLeft="5dp"
+                        android:paddingRight="5dp"
+                        android:text="State:"
+                        android:textAlignment="center"
+                        android:textColor="#FF0000"
+                        android:textSize="18sp"
+                        android:textStyle="normal"
+                        customfontdemo:fontName="@string/font_normal" />
+
+                    <com.nic.RuralInspection.Support.MyCustomTextView
+                        android:id="@+id/state_tv"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="left"
+                        android:paddingLeft="5dp"
+                        android:paddingRight="5dp"
+                        android:text="Tamilnadu"
+                        android:textColor="#FF0000"
+                        android:textSize="18sp"
+                        android:textStyle="normal"
+                        customfontdemo:fontName="@string/font_normal" />
+
+
+                </LinearLayout>
+            </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/district_user_layout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">

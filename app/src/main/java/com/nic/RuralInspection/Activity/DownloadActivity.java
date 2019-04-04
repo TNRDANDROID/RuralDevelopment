@@ -45,25 +45,28 @@ import java.util.List;
 
 import static com.nic.RuralInspection.Activity.LoginScreen.db;
 import static com.nic.RuralInspection.DataBase.DBHelper.BLOCK_TABLE_NAME;
+import static com.nic.RuralInspection.DataBase.DBHelper.DISTRICT_TABLE_NAME;
 import static com.nic.RuralInspection.DataBase.DBHelper.INSPECTED_OFFICER_LIST;
 import static com.nic.RuralInspection.DataBase.DBHelper.SCHEME_TABLE_NAME;
 
 public class DownloadActivity extends AppCompatActivity implements Api.ServerResponseListener, View.OnClickListener {
-    private Button done, btn_view_finyear, btn_view_block, btn_view_village, btn_view_scheme, btn_view_inspected_officers;
+    private Button done, btn_view_finyear,btn_view_district, btn_view_block, btn_view_village, btn_view_scheme, btn_view_inspected_officers;
 
 
-    public MyCustomTextView title_tv, selected_finyear_tv, selected_block_tv, selected_village_tv, selected_scheme_tv, selected_officers_tv;
+    public MyCustomTextView title_tv, selected_finyear_tv, selected_district_tv, selected_block_tv, selected_village_tv, selected_scheme_tv, selected_officers_tv;
     public static MyCustomTextView start_date_tv, end_date_tv;
     private static PrefManager prefManager;
 
     private ImageView back_img,homeimg;
+    private List<BlockListValue> District = new ArrayList<>();
     private List<BlockListValue> Block = new ArrayList<>();
     private List<BlockListValue> Village = new ArrayList<>();
     private List<BlockListValue> Scheme = new ArrayList<>();
     private List<BlockListValue> FinYearList = new ArrayList<>();
     private List<BlockListValue> InspectedOfficersList = new ArrayList<>();
-    public LinearLayout select_fin_year_layout, select_block_layout, select_village_layout, select_scheme_layout, block_hide_layout, download_values_inspection_layout, download_values_action_layout, start_date_layout, end_date_layout, select_officers_layout;
+    public LinearLayout select_fin_year_layout,select_district_layout, select_block_layout, select_village_layout, select_scheme_layout, block_hide_layout,district_hide_layout, download_values_inspection_layout, download_values_action_layout, start_date_layout, end_date_layout, select_officers_layout;
     private View view;
+    final ArrayList<Integer> mDistrictItems = new ArrayList<>();
     final ArrayList<Integer> mVillageItems = new ArrayList<>();
     final ArrayList<Integer> mUserItems = new ArrayList<>();
     final ArrayList<Integer> mInspectedOfficersItems = new ArrayList<>();
@@ -72,16 +75,18 @@ public class DownloadActivity extends AppCompatActivity implements Api.ServerRes
 //        final ArrayList<String> mySchemelist = new ArrayList<String>();
 
     /*It is Temporarly hide scheme is empty in the multiple choice dialog to unhide */
+    String[] districtStrings;
+    String[] districtCodeStrings;
     String[] blockStrings;
-    String[] inspectedOfficersStrings;
     String[] blockCodeStrings;
+    String[] inspectedOfficersStrings;
     String[] inspectedOfficersCodeStrings;
     String[] villageStrings;
     String[] villageCodeStrings;
     String[] schemeStrings;
     String[] schemeCodeStrings;
     String[] finyearStrings;
-    String[] errorSoon;
+    boolean[] districtcheckedItems;
     boolean[] blockcheckedItems;
     boolean[] inspectedOfficerscheckedItems;
     boolean[] FinYearcheckedItems;
@@ -111,16 +116,19 @@ public class DownloadActivity extends AppCompatActivity implements Api.ServerRes
         homeimg = (ImageView) findViewById(R.id.homeimg);
         select_fin_year_layout = (LinearLayout) findViewById(R.id.select_fin_year_layout);
         select_block_layout = (LinearLayout) findViewById(R.id.select_block_layout);
+        select_district_layout = (LinearLayout) findViewById(R.id.select_district_layout);
         select_officers_layout = (LinearLayout) findViewById(R.id.select_officers_layout);
         select_village_layout = (LinearLayout) findViewById(R.id.select_village_layout);
         select_scheme_layout = (LinearLayout) findViewById(R.id.select_scheme_layout);
         block_hide_layout = (LinearLayout) findViewById(R.id.block_hide_layout);
+        district_hide_layout = (LinearLayout) findViewById(R.id.district_hide_layout);
         download_values_inspection_layout = (LinearLayout) findViewById(R.id.download_values_inspection_layout);
         download_values_action_layout = (LinearLayout) findViewById(R.id.download_values_action_layout);
         start_date_layout = (LinearLayout) findViewById(R.id.start_date_layout);
         end_date_layout = (LinearLayout) findViewById(R.id.end_date_layout);
         done = (Button) findViewById(R.id.btn_download);
         btn_view_finyear = (Button) findViewById(R.id.btn_view_finyear);
+        btn_view_district = (Button) findViewById(R.id.btn_view_district);
         btn_view_block = (Button) findViewById(R.id.btn_view_block);
         btn_view_inspected_officers = (Button) findViewById(R.id.btn_view_inspected_officers);
         btn_view_village = (Button) findViewById(R.id.btn_view_village);
@@ -128,6 +136,7 @@ public class DownloadActivity extends AppCompatActivity implements Api.ServerRes
         back_img = (ImageView) findViewById(R.id.backimg);
         title_tv = (MyCustomTextView) findViewById(R.id.title_tv);
         selected_finyear_tv = (MyCustomTextView) findViewById(R.id.selected_finyear_tv);
+        selected_district_tv = (MyCustomTextView) findViewById(R.id.selected_district_tv);
         selected_block_tv = (MyCustomTextView) findViewById(R.id.selected_block_tv);
         selected_officers_tv = (MyCustomTextView) findViewById(R.id.selected_officers_tv);
         selected_village_tv = (MyCustomTextView) findViewById(R.id.selected_village_tv);
@@ -141,6 +150,7 @@ public class DownloadActivity extends AppCompatActivity implements Api.ServerRes
         title_tv.setText("Download");
 
         btn_view_finyear.setOnClickListener(this);
+        btn_view_district.setOnClickListener(this);
         btn_view_block.setOnClickListener(this);
         btn_view_village.setOnClickListener(this);
         btn_view_scheme.setOnClickListener(this);
@@ -152,6 +162,7 @@ public class DownloadActivity extends AppCompatActivity implements Api.ServerRes
 //        home.setOnClickListener(this);
         if (prefManager.getLevels().equalsIgnoreCase("B")) {
             block_hide_layout.setVisibility(View.GONE);
+            district_hide_layout.setVisibility(View.GONE);
             download_values_action_layout.setVisibility(View.VISIBLE);
             download_values_inspection_layout.setVisibility(View.GONE);
         } else {
@@ -163,6 +174,9 @@ public class DownloadActivity extends AppCompatActivity implements Api.ServerRes
         loadOfflineInspectedOfficersDBValues();
         if (prefManager.getLevels().equalsIgnoreCase("B")) {
             loadOfflineVillgeListDBValues();
+        }
+        if(prefManager.getLevels().equalsIgnoreCase("S")){
+            loadOfflineDistrictListDBValues();
         }
 
     }
@@ -276,7 +290,109 @@ public class DownloadActivity extends AppCompatActivity implements Api.ServerRes
         mDialog.show();
 
     }
+    public void loadOfflineDistrictListDBValues() {
 
+        Cursor DistrictList = getRawEvents("SELECT * FROM " + DISTRICT_TABLE_NAME, null);
+        District.clear();
+        final ArrayList<String> myDistrictList = new ArrayList<String>();
+        final ArrayList<String> myDistrictCodeList = new ArrayList<String>();
+        if (DistrictList.getCount() > 0) {
+            if (DistrictList.moveToFirst()) {
+                do {
+                    BlockListValue districtList = new BlockListValue();
+                    String districtCode = DistrictList.getString(DistrictList.getColumnIndexOrThrow(AppConstant.DISTRICT_CODE));
+                    String districtName= DistrictList.getString(DistrictList.getColumnIndexOrThrow(AppConstant.DISTRICT_NAME));
+                    districtList.setDistictCode(districtCode);
+                    districtList.setDistictCode(districtName);
+                    District.add(districtList);
+                } while (DistrictList.moveToNext());
+            }
+        }
+        for (int i = 0; i < District.size(); i++) {
+            myDistrictList.add(District.get(i).getDistrictName());
+            myDistrictCodeList.add(District.get(i).getDistictCode());
+        }
+
+        districtStrings = myDistrictList.toArray(new String[myDistrictList.size()]);
+        districtCodeStrings = myDistrictCodeList.toArray(new String[myDistrictCodeList.size()]);
+        districtcheckedItems= new boolean[districtStrings.length];
+
+    }
+
+    public void  districtCheckbox() {
+
+        AlertDialog.Builder mBuilder = new AlertDialog.Builder(DownloadActivity.this);
+        mBuilder.setTitle(R.string.district_dialog_title);
+        mBuilder.setMultiChoiceItems(districtStrings, districtcheckedItems, new DialogInterface.OnMultiChoiceClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int position, boolean isChecked) {
+                if (isChecked) {
+
+
+                    if (!mDistrictItems.contains(position)) {
+                        mDistrictItems.add(position);
+                    }
+                } else if (mDistrictItems.contains(position)) {
+                    mDistrictItems.remove(Integer.valueOf(position));
+                }
+                JSONArray blockCodeJsonArray = new JSONArray();
+
+                for (int i = 0; i < mDistrictItems.size(); i++) {
+                    blockCodeJsonArray.put(districtCodeStrings[mDistrictItems.get(i)]);
+                }
+                prefManager.setBlockCodeJson(blockCodeJsonArray);
+                Log.d("districtcode", "" + blockCodeJsonArray);
+
+                loadOfflineBlockListDBValues();
+
+            }
+        });
+
+        mBuilder.setCancelable(false);
+
+        mBuilder.setPositiveButton(R.string.ok_label, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int which) {
+                String item = "";
+                for (int i = 0; i < mDistrictItems.size(); i++) {
+                    item = item + districtStrings[mDistrictItems.get(i)];
+                    if (i != mDistrictItems.size() - 1) {
+                        item = item + ", ";
+
+
+                    }
+                }
+                if(mDistrictItems.size() > 0) {
+                    select_district_layout.setVisibility(View.VISIBLE);
+                }else {
+                    select_district_layout.setVisibility(View.GONE);
+                }
+                selected_district_tv.setText(item);
+            }
+        });
+
+        mBuilder.setNegativeButton(R.string.dismiss_label, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                dialogInterface.dismiss();
+            }
+        });
+
+        mBuilder.setNeutralButton(R.string.clear_all_label, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int which) {
+                for (int i = 0; i < districtcheckedItems.length; i++) {
+                    districtcheckedItems[i] = false;
+                    mDistrictItems.clear();
+                    selected_district_tv.setText("");
+                    select_district_layout.setVisibility(View.GONE);
+                }
+            }
+        });
+
+        AlertDialog mDialog = mBuilder.create();
+        mDialog.show();
+    }
 
     public void loadOfflineBlockListDBValues() {
 
@@ -638,6 +754,9 @@ public class DownloadActivity extends AppCompatActivity implements Api.ServerRes
         switch (v.getId()) {
             case R.id.btn_view_finyear:
                 finYearCheckbox();
+                break;
+            case R.id.btn_view_district:
+                districtCheckbox();
                 break;
             case R.id.btn_view_block:
                 blockCheckbox();
@@ -1141,7 +1260,7 @@ public class DownloadActivity extends AppCompatActivity implements Api.ServerRes
                     String workID = jsonArray.getJSONObject(i).getString(AppConstant.WORK_ID);
                     String id = jsonArray.getJSONObject(i).getString("id");
                     String stageOfWorkOnInspection = jsonArray.getJSONObject(i).getString(AppConstant.STAGE_OF_WORK_ON_INSPECTION);
-                    String dateOfInspection = jsonArray.getJSONObject(i).getString(AppConstant.DATE_OF_INSPECTION);
+                    String dateOfInspection = Utils.formatDate(jsonArray.getJSONObject(i).getString(AppConstant.DATE_OF_INSPECTION));
                     String inspectedBy = jsonArray.getJSONObject(i).getString(AppConstant.INSPECTED_BY);
                     String observation = jsonArray.getJSONObject(i).getString(AppConstant.OBSERVATION);
                     String inspectionRemark = jsonArray.getJSONObject(i).getString(AppConstant.INSPECTION_REMARK);

@@ -327,6 +327,145 @@
                                     </LinearLayout>
 
                                     <LinearLayout
+                                        android:id="@+id/district_hide_layout"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:orientation="horizontal">
+
+                                        <LinearLayout
+                                            android:layout_width="0dp"
+                                            android:layout_height="match_parent"
+                                            android:layout_weight="8"
+                                            android:gravity="center_vertical|end"
+                                            android:orientation="vertical">
+
+                                            <com.nic.RuralInspection.Support.MyCustomTextView
+
+                                                android:layout_width="130dp"
+                                                android:layout_height="wrap_content"
+
+                                                android:paddingLeft="@dimen/_5sdp"
+                                                android:text="Select District"
+                                                android:textAlignment="center"
+                                                android:textColor="#000"
+                                                android:textSize="18sp"
+                                                customfontdemo:fontName="@string/font_circular_book" />
+
+                                        </LinearLayout>
+
+
+                                        <LinearLayout
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:gravity="center_horizontal"
+                                            android:orientation="vertical">
+
+                                            <com.nic.RuralInspection.Support.MyCustomTextView
+                                                android:layout_width="wrap_content"
+                                                android:layout_height="wrap_content"
+                                                android:padding="10dp"
+                                                android:text=":"
+                                                android:textColor="#000"
+                                                android:textSize="18sp"
+                                                customfontdemo:fontName="@string/font_circular_book" />
+
+                                        </LinearLayout>
+
+
+                                        <LinearLayout
+                                            android:layout_width="0dp"
+                                            android:layout_height="wrap_content"
+                                            android:layout_weight="8"
+                                            android:gravity="start"
+                                            android:orientation="vertical">
+
+                                            <Button
+                                                android:id="@+id/btn_view_district"
+                                                android:layout_width="90dp"
+                                                android:layout_height="30dp"
+
+                                                android:layout_margin="8dp"
+                                                android:background="@drawable/add_button"
+                                                android:text="Select"
+                                                android:textAllCaps="true"
+                                                android:textColor="@android:color/white" />
+                                        </LinearLayout>
+                                    </LinearLayout>
+
+                                    <View
+                                        android:layout_width="match_parent"
+                                        android:layout_height="0.5dp"
+                                        android:layout_gravity="bottom"
+                                        android:layout_marginLeft="15dp"
+                                        android:background="@color/dashboard_line_dark" />
+
+                                    <LinearLayout
+                                        android:id="@+id/select_district_layout"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:orientation="vertical"
+                                        android:paddingLeft="@dimen/padding"
+                                        android:visibility="gone">
+
+                                        <TableLayout
+                                            android:layout_width="match_parent"
+                                            android:layout_height="wrap_content">
+
+                                            <TableRow
+                                                android:layout_width="match_parent"
+                                                android:layout_height="wrap_content">
+
+                                                <com.nic.RuralInspection.Support.MyCustomTextView
+                                                    android:layout_width="match_parent"
+                                                    android:layout_height="wrap_content"
+
+                                                    android:gravity="end"
+                                                    android:padding="5sp"
+                                                    android:text="Selected District"
+                                                    android:textColor="@android:color/black"
+                                                    android:textSize="18sp"
+                                                    customfontdemo:fontName="@string/font_circular_bold" />
+
+
+                                                <!--<com.nic.RuralInspection.Support.MyCustomTextView-->
+                                                <!--android:layout_width="0dp"-->
+                                                <!--android:layout_height="wrap_content"-->
+                                                <!--android:layout_weight=".10"-->
+                                                <!--android:gravity="center|left"-->
+                                                <!--android:paddingLeft="5dp"-->
+                                                <!--android:text=":"-->
+                                                <!--android:textColor="@android:color/black"-->
+                                                <!--android:textSize="18sp"-->
+                                                <!--customfontdemo:fontName="@string/font_normal" />-->
+
+                                                <com.nic.RuralInspection.Support.MyCustomTextView
+                                                    android:id="@+id/selected_district_tv"
+                                                    android:layout_width="0dp"
+                                                    android:layout_height="wrap_content"
+                                                    android:layout_weight="0.48"
+                                                    android:gravity="center|left"
+                                                    android:padding="10sp"
+                                                    android:text=""
+                                                    android:textColor="@android:color/black"
+                                                    android:textSize="18sp"
+                                                    customfontdemo:fontName="@string/font_circular_bold" />
+
+
+                                            </TableRow>
+
+
+                                        </TableLayout>
+
+                                        <View
+                                            android:layout_width="match_parent"
+                                            android:layout_height="0.1dp"
+                                            android:layout_gravity="bottom"
+                                            android:layout_marginLeft="15dp"
+                                            android:background="@color/dashboard_line_dark" />
+
+                                    </LinearLayout>
+
+                                    <LinearLayout
                                         android:id="@+id/block_hide_layout"
                                         android:layout_width="match_parent"
                                         android:layout_height="wrap_content"

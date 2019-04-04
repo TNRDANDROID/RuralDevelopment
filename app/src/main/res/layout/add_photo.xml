@@ -6,7 +6,28 @@
     android:background="#FFF"
     android:orientation="vertical">
 
-    <include layout="@layout/toolbar" />
+    <RelativeLayout
+        android:id="@+id/cancel_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/colorPrimaryDark"
+        android:minHeight="?actionBarSize">
+
+
+
+        <com.nic.RuralInspection.Support.MyCustomTextView
+            android:id="@+id/tv_save_cancel"
+            android:layout_width="70dp"
+            android:layout_height="30dp"
+            android:layout_alignParentRight="true"
+            android:layout_centerInParent="true"
+            android:layout_marginRight="@dimen/margin"
+            android:background="@drawable/white_bg"
+            android:gravity="center"
+            android:text="Close"
+            android:textColor="@android:color/black"
+            customfontdemo:fontName="@string/font_medium" />
+    </RelativeLayout>
 
     <com.nic.RuralInspection.Support.MyCustomTextView
         android:id="@+id/tv_create_asset_title"

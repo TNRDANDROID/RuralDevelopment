@@ -347,8 +347,6 @@ public class AddInspectionReportScreen extends AppCompatActivity implements View
                 R.style.AppTheme);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.setContentView(R.layout.add_photo);
-        home = (ImageView)dialog.findViewById(R.id.home);
-        home.setOnClickListener(this);
         dialog.setCanceledOnTouchOutside(false);
         dialog.setCancelable(false);
         dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
@@ -361,7 +359,13 @@ public class AddInspectionReportScreen extends AppCompatActivity implements View
 
 
         final LinearLayout mobileNumberLayout = (LinearLayout) dialog.findViewById(R.id.mobile_number_layout);
-
+        MyCustomTextView cancel = (MyCustomTextView) dialog.findViewById(R.id.tv_save_cancel);
+        cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
         Button done = (Button) dialog.findViewById(R.id.btn_save_inspection);
         done.setGravity(Gravity.CENTER);
         done.setVisibility(View.VISIBLE);
@@ -961,7 +965,7 @@ public class AddInspectionReportScreen extends AppCompatActivity implements View
                     String workID = jsonArray.getJSONObject(i).getString(AppConstant.WORK_ID);
                     String id = jsonArray.getJSONObject(i).getString("id");
                     String stageOfWorkOnInspection = jsonArray.getJSONObject(i).getString(AppConstant.STAGE_OF_WORK_ON_INSPECTION);
-                    String dateOfInspection = jsonArray.getJSONObject(i).getString(AppConstant.DATE_OF_INSPECTION);
+                    String dateOfInspection = Utils.formatDate(jsonArray.getJSONObject(i).getString(AppConstant.DATE_OF_INSPECTION));
                     String inspectedBy = jsonArray.getJSONObject(i).getString(AppConstant.INSPECTED_BY);
                     String observation = jsonArray.getJSONObject(i).getString(AppConstant.OBSERVATION);
                     String inspectionRemark = jsonArray.getJSONObject(i).getString(AppConstant.INSPECTION_REMARK);

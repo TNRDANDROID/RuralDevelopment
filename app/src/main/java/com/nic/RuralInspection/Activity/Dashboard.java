@@ -175,6 +175,7 @@ public class Dashboard extends AppCompatActivity implements Api.ServerResponseLi
         getStageList();
         getObservationList();
         getBlockList();
+        getDistrictList();
         // getServiceList();
         // getInspectionServiceList();
 //        if (prefManager.getLevels().equalsIgnoreCase("D")) {
@@ -206,7 +207,13 @@ public class Dashboard extends AppCompatActivity implements Api.ServerResponseLi
         pending_upload_layout.setVisibility(View.GONE);
     }
 
-
+    public void getDistrictList() {
+        try {
+            new ApiService(this).makeJSONObjectRequest("DistrictList", Api.Method.POST, UrlGenerator.getServicesListUrl(), districtListJsonParams(), "not cache", this);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
     public void getBlockList() {
         try {
             new ApiService(this).makeJSONObjectRequest("BlockList", Api.Method.POST, UrlGenerator.getServicesListUrl(), blockListJsonParams(), "not cache", this);
@@ -263,6 +270,14 @@ public class Dashboard extends AppCompatActivity implements Api.ServerResponseLi
         } catch (JSONException e) {
             e.printStackTrace();
         }
+    }
+    public JSONObject districtListJsonParams() throws JSONException {
+        String authKey = Utils.encrypt(prefManager.getUserPassKey(), getResources().getString(R.string.init_vector), Utils.districtListJsonParams(this).toString());
+        JSONObject dataSet = new JSONObject();
+        dataSet.put(AppConstant.KEY_USER_NAME, prefManager.getUserName());
+        dataSet.put(AppConstant.DATA_CONTENT, authKey);
+        Log.d("districtList", "" + authKey);
+        return dataSet;
     }
 
     public JSONObject blockListJsonParams() throws JSONException {
@@ -459,6 +474,15 @@ public class Dashboard extends AppCompatActivity implements Api.ServerResponseLi
                 }
 
             }
+            if ("DistrictList".equals(urlType) && responseObj != null) {
+                String key = responseObj.getString(AppConstant.ENCODE_DATA);
+                String responseDecryptedBlockKey = Utils.decrypt(prefManager.getUserPassKey(), key);
+                JSONObject jsonObject = new JSONObject(responseDecryptedBlockKey);
+                if (jsonObject.getString("STATUS").equalsIgnoreCase("OK") && jsonObject.getString("RESPONSE").equalsIgnoreCase("OK")) {
+                    loadDistrictList(jsonObject.getJSONArray(AppConstant.JSON_DATA));
+                }
+                Log.d("DistrictList", "" + responseDecryptedBlockKey);
+            }
             if ("SchemeList".equals(urlType) && responseObj != null) {
                 String key = responseObj.getString(AppConstant.ENCODE_DATA);
                 String responseDecryptedSchemeKey = Utils.decrypt(prefManager.getUserPassKey(), key);
@@ -536,6 +560,33 @@ public class Dashboard extends AppCompatActivity implements Api.ServerResponseLi
 
                 LoginScreen.db.insert(DBHelper.BLOCK_TABLE_NAME, null, blockListValues);
                 Log.d("LocalDBblockList", "" + blockListValues);
+
+            }
+        } catch (JSONException j) {
+            j.printStackTrace();
+        } catch (ArrayIndexOutOfBoundsException a) {
+            a.printStackTrace();
+        }
+        if (progressHUD != null) {
+            progressHUD.cancel();
+        }
+    }
+
+    private void loadDistrictList(JSONArray jsonArray) {
+        progressHUD = ProgressHUD.show(this, "Loading...", true, false, null);
+        try {
+            updatedJsonArray = new JSONArray();
+            updatedJsonArray = jsonArray;
+            for (int i = 0; i < jsonArray.length(); i++) {
+                String districtCode = jsonArray.getJSONObject(i).getString(AppConstant.DISTRICT_CODE);
+                String districtName = jsonArray.getJSONObject(i).getString(AppConstant.DISTRICT_NAME);
+
+                ContentValues districtListValues = new ContentValues();
+                districtListValues.put(AppConstant.DISTRICT_CODE, districtCode);
+                districtListValues.put(AppConstant.DISTRICT_NAME, districtName);
+
+                LoginScreen.db.insert(DBHelper.DISTRICT_TABLE_NAME, null, districtListValues);
+                Log.d("LocalDBblockList", "" + districtListValues);
 
             }
         } catch (JSONException j) {

@@ -1,6 +1,5 @@
 package com.nic.RuralInspection.DataBase;
 
-import android.content.ContentValues;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
@@ -9,6 +8,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "RuralInspection";
     private static final int DATABASE_VERSION = 1;
+    public static final String DISTRICT_TABLE_NAME = "DistrictList";
     public static final String BLOCK_TABLE_NAME = "BlockList";
     public static final String SCHEME_TABLE_NAME = "SchemeList";
     public static final String FINANCIAL_YEAR_TABLE_NAME = "FinancialYear";
@@ -35,6 +35,9 @@ public class DBHelper extends SQLiteOpenHelper {
     //creating tables
     @Override
     public void onCreate(SQLiteDatabase db) {
+        db.execSQL("CREATE TABLE " + DISTRICT_TABLE_NAME + " ("
+                + "dcode INTEGER," +
+                "bname TEXT)");
 
         db.execSQL("CREATE TABLE " + BLOCK_TABLE_NAME + " ("
                 + "dcode INTEGER," +
