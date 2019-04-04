@@ -111,7 +111,7 @@ public class ViewActions extends AppCompatActivity implements View.OnClickListen
         if (actionList.getCount() > 0) {
             if (actionList.moveToFirst()) {
                 do {
-                    String date_of_action = actionList.getString(actionList.getColumnIndexOrThrow(AppConstant.DATE_OF_ACTION));
+                    String date_of_action = Utils.formatDate(actionList.getString(actionList.getColumnIndexOrThrow(AppConstant.DATE_OF_ACTION)));
                     String action_remark = actionList.getString(actionList.getColumnIndexOrThrow(AppConstant.ACTION_REMARK));
                     String dist_action = actionList.getString(actionList.getColumnIndexOrThrow(AppConstant.DISTRICT_ACTION));
                     String state_action = actionList.getString(actionList.getColumnIndexOrThrow(AppConstant.STATE_ACTION));

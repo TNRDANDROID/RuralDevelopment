@@ -64,9 +64,9 @@ public class PendingLayoutAdapter extends RecyclerView.Adapter<PendingLayoutAdap
         }
 
         if (prefManager.getLevels().equalsIgnoreCase("D")) {
-            holder.pend_inspected_date.setText(pendingListValues.get(position).getDate_of_inspection());
+            holder.pend_inspected_date.setText(Utils.formatDate(pendingListValues.get(position).getDate_of_inspection()));
         }else if(prefManager.getLevels().equalsIgnoreCase("B")){
-            holder.pend_inspected_date.setText(pendingListValues.get(position).getDate_of_Action());
+            holder.pend_inspected_date.setText(Utils.formatDate(pendingListValues.get(position).getDate_of_Action()));
         }
 
         if (prefManager.getLevels().equalsIgnoreCase("D")) {
