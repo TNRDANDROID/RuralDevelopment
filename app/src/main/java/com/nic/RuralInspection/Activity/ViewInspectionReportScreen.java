@@ -24,6 +24,7 @@ import com.nic.RuralInspection.DataBase.DBHelper;
 import com.nic.RuralInspection.Model.BlockListValue;
 import com.nic.RuralInspection.R;
 import com.nic.RuralInspection.Support.MyCustomTextView;
+import com.nic.RuralInspection.Utils.Utils;
 import com.nic.RuralInspection.constant.AppConstant;
 import com.nic.RuralInspection.session.PrefManager;
 
@@ -158,7 +159,7 @@ public class ViewInspectionReportScreen extends AppCompatActivity implements Vie
 
         // String inspection_sql = "select * from (select * from "+DBHelper.INSPECTION+" WHERE work_id="+workId+")a left join (select * from captured_photo)b on a.inspection_id=b.inspection_id and a.work_id=b.work_id group by a.inspection_id";
         //String inspection_sql = "select a.inspection_id as inspection_id,a.id as id,a.work_id as work_id,a.date_of_inspection as date_of_inspection,a.inspection_remark as inspection_remark,b.observation as observation from(select * from INSPECTION WHERE id in (select inspection_id from captured_photo))a left join (select * from observation)b on a.observation = b.id where work_id ="+workId ;
-        String inspection_sql = "select a.inspection_id as inspection_id,a.id as id,a.work_id as work_id,a.date_of_inspection as date_of_inspection,a.inspection_remark as inspection_remark,b.observation as observation,c.dist_action as dist_action,c.state_action as state_action,c.sub_div_action as sub_div_action,a.name as inspected_officer,a.desig_name as designation from(select * from INSPECTION WHERE id in (select inspection_id from captured_photo))a left join (select * from observation)b on a.observation = b.id left join (select * from inspection_action) c on a.inspection_id = c.inspection_id where a.work_id =" + workId;
+        String inspection_sql = "select a.inspection_id as inspection_id,a.id as id,a.work_id as work_id,a.date_of_inspection as date_of_inspection,a.inspection_remark as inspection_remark,b.observation as observation,a.name as inspected_officer,a.desig_name as designation from(select * from INSPECTION WHERE id in (select inspection_id from captured_photo))a left join (select * from observation)b on a.observation = b.id  where a.work_id =" + workId;
         Log.d("inspection_sql", inspection_sql);
         Cursor inspectionList = getRawEvents(inspection_sql, null);
 
@@ -170,9 +171,9 @@ public class ViewInspectionReportScreen extends AppCompatActivity implements Vie
                     String date_of_inspection = inspectionList.getString(inspectionList.getColumnIndexOrThrow(AppConstant.DATE_OF_INSPECTION));
                     String inspection_remark = inspectionList.getString(inspectionList.getColumnIndexOrThrow(AppConstant.INSPECTION_REMARK));
                     String observation = inspectionList.getString(inspectionList.getColumnIndexOrThrow(AppConstant.OBSERVATION));
-                    String dist_action = inspectionList.getString(inspectionList.getColumnIndexOrThrow(AppConstant.DISTRICT_ACTION));
-                    String state_action = inspectionList.getString(inspectionList.getColumnIndexOrThrow(AppConstant.STATE_ACTION));
-                    String sub_div_action = inspectionList.getString(inspectionList.getColumnIndexOrThrow(AppConstant.SUB_DIV_ACTION));
+//                    String dist_action = inspectionList.getString(inspectionList.getColumnIndexOrThrow(AppConstant.DISTRICT_ACTION));
+//                    String state_action = inspectionList.getString(inspectionList.getColumnIndexOrThrow(AppConstant.STATE_ACTION));
+//                    String sub_div_action = inspectionList.getString(inspectionList.getColumnIndexOrThrow(AppConstant.SUB_DIV_ACTION));
                     String inspected_officer = inspectionList.getString(inspectionList.getColumnIndexOrThrow("inspected_officer"));
                     String designation = inspectionList.getString(inspectionList.getColumnIndexOrThrow("designation"));
                     int inspection_id = inspectionList.getInt(inspectionList.getColumnIndexOrThrow(AppConstant.INSPECTION_ID));
@@ -189,13 +190,13 @@ public class ViewInspectionReportScreen extends AppCompatActivity implements Vie
                     inspectionValue.setInspectedOffName(inspected_officer);
                     inspectionValue.setInspectedOffDesignName(designation);
 
-                    if (dist_action == null && state_action == null && sub_div_action == null) {
-                        inspectionValue.setActionresult("NO Action Taken Yet");
-                    } else if (dist_action == "1" && state_action == "1" && sub_div_action == "1") {
-                        inspectionValue.setActionresult("Accepted");
-                    } else {
-                        inspectionValue.setActionresult("Pending");
-                    }
+//                    if (dist_action == null && state_action == null && sub_div_action == null) {
+//                        inspectionValue.setActionresult("NO Action Taken Yet");
+//                    } else if (dist_action == "1" && state_action == "1" && sub_div_action == "1") {
+//                        inspectionValue.setActionresult("Accepted");
+//                    } else {
+//                        inspectionValue.setActionresult("Pending");
+//                    }
 
 
                     inspectionlistvalues.add(inspectionValue);
@@ -213,7 +214,8 @@ public class ViewInspectionReportScreen extends AppCompatActivity implements Vie
 
     private void retrievePendingdata() {
 
-        String pendingList_sql = "select * from(select * from " + DBHelper.INSPECTION_PENDING + " WHERE inspection_id in (select inspection_id from " + DBHelper.CAPTURED_PHOTO + "))a left join (select * from " + DBHelper.OBSERVATION_TABLE + ")b on a.observation = b.id where delete_flag = 0";
+        String workId = getIntent().getStringExtra(AppConstant.WORK_ID);
+        String pendingList_sql = "select * from(select * from " + DBHelper.INSPECTION_PENDING + " WHERE inspection_id in (select inspection_id from " + DBHelper.CAPTURED_PHOTO + "))a left join (select * from " + DBHelper.OBSERVATION_TABLE + ")b on a.observation = b.id where delete_flag = 0 and work_id ="+workId;
         Log.d("sql", pendingList_sql);
         Cursor pendingList = getRawEvents(pendingList_sql, null);
 
@@ -224,7 +226,7 @@ public class ViewInspectionReportScreen extends AppCompatActivity implements Vie
                     int inspection_id = pendingList.getInt(pendingList.getColumnIndexOrThrow(AppConstant.INSPECTION_ID));
                     String stage_of_work_on_inspection = pendingList.getString(pendingList.getColumnIndexOrThrow(AppConstant.STAGE_OF_WORK_ON_INSPECTION));
                     String stage_of_work_on_inspection_name = pendingList.getString(pendingList.getColumnIndexOrThrow(AppConstant.STAGE_OF_WORK_ON_INSPECTION_NAME));
-                    String date_of_inspection = pendingList.getString(pendingList.getColumnIndexOrThrow(AppConstant.DATE_OF_INSPECTION));
+                    String date_of_inspection = Utils.formatDate(pendingList.getString(pendingList.getColumnIndexOrThrow(AppConstant.DATE_OF_INSPECTION)));
                     int observation = pendingList.getInt(pendingList.getColumnIndexOrThrow(AppConstant.OBSERVATION_ID));
                     String inspection_remark = pendingList.getString(pendingList.getColumnIndexOrThrow(AppConstant.INSPECTION_REMARK));
                     String created_date = pendingList.getString(pendingList.getColumnIndexOrThrow(AppConstant.CREATED_DATE));
