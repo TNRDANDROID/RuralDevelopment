@@ -170,13 +170,16 @@ public class DownloadActivity extends AppCompatActivity implements Api.ServerRes
             download_values_inspection_layout.setVisibility(View.VISIBLE);
         }
         loadOfflineFinYearListDBValues();
-        loadOfflineBlockListDBValues();
+
         loadOfflineInspectedOfficersDBValues();
         if (prefManager.getLevels().equalsIgnoreCase("B")) {
             loadOfflineVillgeListDBValues();
         }
         if(prefManager.getLevels().equalsIgnoreCase("S")){
             loadOfflineDistrictListDBValues();
+        }
+        if (prefManager.getLevels().equalsIgnoreCase("D")) {
+            loadOfflineBlockListDBValues();
         }
 
     }
@@ -396,7 +399,17 @@ public class DownloadActivity extends AppCompatActivity implements Api.ServerRes
 
     public void loadOfflineBlockListDBValues() {
 
-        Cursor BlockList = getRawEvents("SELECT * FROM " + BLOCK_TABLE_NAME, null);
+        String blockSql = null;
+        if (prefManager.getLevels().equalsIgnoreCase("S")){
+          //  JSONArray filterBlock = prefManager.getDistrictCodeJson();
+            //blockSql = "SELECT * FROM " + DBHelper.BLOCK_TABLE_NAME + " WHERE dcode in" + filterBlock.toString().replace("[", "(").replace("]", ")") + " order by dcode";
+        }
+        else if (prefManager.getLevels().equalsIgnoreCase("D")){
+            String filterBlock = prefManager.getDistrictCode();
+            blockSql = "SELECT * FROM "+BLOCK_TABLE_NAME;
+        }
+
+        Cursor BlockList = getRawEvents(blockSql, null);
         Block.clear();
         final ArrayList<String> myBlockList = new ArrayList<String>();
         final ArrayList<String> myBlockCodeList = new ArrayList<String>();
@@ -609,11 +622,11 @@ public class DownloadActivity extends AppCompatActivity implements Api.ServerRes
 
         if (prefManager.getLevels().equalsIgnoreCase("D")){
             JSONArray filterVillage = prefManager.getBlockCodeJson();
-            villageSql = "SELECT * FROM " + DBHelper.VILLAGE_TABLE_NAME + " WHERE bcode in" + filterVillage.toString().replace("[", "(").replace("]", ")") + " order by bcode";
+            villageSql = "SELECT * FROM " + DBHelper.VILLAGE_TABLE_NAME + " WHERE bcode in" + filterVillage.toString().replace("[", "(").replace("]", ")") + " order by pvname asc";
         }
         else if (prefManager.getLevels().equalsIgnoreCase("B")){
             String filterVillage = prefManager.getBlockCode();
-            villageSql = "SELECT * FROM " + DBHelper.VILLAGE_TABLE_NAME + " WHERE bcode ="+filterVillage;
+            villageSql = "SELECT * FROM " + DBHelper.VILLAGE_TABLE_NAME + " WHERE bcode ="+filterVillage+ " order by pvname asc";
         }
 
         Log.d("villageSql", "" + villageSql);
@@ -1073,7 +1086,7 @@ public class DownloadActivity extends AppCompatActivity implements Api.ServerRes
 
 
     public void loadOfflineSchemeListDBValues() {
-        String query = "SELECT * FROM " + DBHelper.SCHEME_TABLE_NAME + " Where fin_year in " + prefManager.getFinYearJson().toString().replace("[", "(").replace("]", ")") + " order by fin_year";
+        String query = "SELECT distinct scheme_name,scheme_seq_id FROM " + DBHelper.SCHEME_TABLE_NAME + " Where fin_year in " + prefManager.getFinYearJson().toString().replace("[", "(").replace("]", ")") + " order by LTRIM(scheme_name) asc";
         Cursor SchemeList = getRawEvents(query, null);
         Log.d("SchemeQuery", "" + query);
 
@@ -1088,10 +1101,10 @@ public class DownloadActivity extends AppCompatActivity implements Api.ServerRes
                     BlockListValue schemeList = new BlockListValue();
                     String schemeSequentialID = SchemeList.getString(SchemeList.getColumnIndexOrThrow(AppConstant.SCHEME_SEQUENTIAL_ID));
                     String schemeName = SchemeList.getString(SchemeList.getColumnIndexOrThrow(AppConstant.SCHEME_NAME));
-                    String fin_year = SchemeList.getString(SchemeList.getColumnIndexOrThrow(AppConstant.FINANCIAL_YEAR));
+                  //  String fin_year = SchemeList.getString(SchemeList.getColumnIndexOrThrow(AppConstant.FINANCIAL_YEAR));
                     schemeList.setSchemeSequentialID(schemeSequentialID);
                     schemeList.setSchemeName(schemeName);
-                    schemeList.setFinancialYear(fin_year);
+                   // schemeList.setFinancialYear(fin_year);
                     Scheme.add(schemeList);
 
                 } while (SchemeList.moveToNext());

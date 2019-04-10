@@ -105,7 +105,7 @@ public class ViewActions extends AppCompatActivity implements View.OnClickListen
         String inspection_id = getIntent().getStringExtra(AppConstant.INSPECTION_ID);
 
         String actionList_sql = "select * from inspection_action where inspection_id ="+inspection_id+" and work_id ="+work_id;
-        Log.d("sql", actionList_sql);
+        Log.d("actionList_sql", actionList_sql);
         Cursor actionList = getRawEvents(actionList_sql, null);
 
         if (actionList.getCount() > 0) {

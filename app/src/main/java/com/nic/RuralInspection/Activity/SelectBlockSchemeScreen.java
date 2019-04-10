@@ -317,11 +317,18 @@ public class SelectBlockSchemeScreen extends AppCompatActivity implements View.O
                 dashboard();
                 break;
             case R.id.btn_save:
-                    if (!prefManager.getLevels().equalsIgnoreCase("B")) {
-                        projectListScreenDistrictUser();
-                    } else {
+               if (prefManager.getLevels().equalsIgnoreCase("S")){
+                    projectListScreenStateUser();
+               }
+               else if (prefManager.getLevels().equalsIgnoreCase("SD")) {
+                  // projectListScreenSubDivisionUser();
+               }
+                else if (prefManager.getLevels().equalsIgnoreCase("D")) {
+                   projectListScreenDistrictUser();
+                }
+               else if (prefManager.getLevels().equalsIgnoreCase("B")){
                         projectListScreenBlockUser();
-                    }
+               }
                 break;
             case R.id.backimg:
                 onBackPress();
@@ -337,6 +344,10 @@ public class SelectBlockSchemeScreen extends AppCompatActivity implements View.O
         finish();
         super.onBackPressed();
         overridePendingTransition(R.anim.slide_enter, R.anim.slide_exit);
+    }
+
+    public void projectListScreenStateUser(){
+
     }
 
     public void projectListScreenDistrictUser() {
@@ -447,7 +458,7 @@ public class SelectBlockSchemeScreen extends AppCompatActivity implements View.O
 
     public void loadOfflineVillgeListDBValues() {
 
-        Cursor VillageList = getRawEvents("SELECT * FROM " + VILLAGE_TABLE_NAME, null);
+        Cursor VillageList = getRawEvents("SELECT * FROM " + VILLAGE_TABLE_NAME +" order by pvname asc", null);
         Village.clear();
         BlockListValue villageListValue = new BlockListValue();
         villageListValue.setVillageListPvName("Select Village");

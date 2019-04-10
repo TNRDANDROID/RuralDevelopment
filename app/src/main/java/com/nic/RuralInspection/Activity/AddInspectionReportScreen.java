@@ -10,6 +10,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Typeface;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
@@ -85,7 +86,7 @@ import static com.nic.RuralInspection.Activity.LoginScreen.db;
 public class AddInspectionReportScreen extends AppCompatActivity implements View.OnClickListener, Api.ServerResponseListener {
 
     private ScrollView scrollView;
-    private MyCustomTextView take_photo;
+    private MyCustomTextView take_photo,submit;
     private MyCustomTextView district_tv, scheme_name_tv, block_name_tv, fin_year_tv, title_tv;
     private List<View> viewArrayList = new ArrayList<>();
     PrefManager prefManager;
@@ -128,12 +129,13 @@ public class AddInspectionReportScreen extends AppCompatActivity implements View
     static ArrayList<String> latitude = new ArrayList<String>();
     static ArrayList<String> longitude = new ArrayList<String>();
     String offlatTextValue, offlanTextValue;
-    String work_id;
+    static String work_id;
     EditText remarkTv;
     static JSONObject dataset;
     private JSONArray updatedJsonArray;
     private SelectBlockSchemeScreen selectBlockSchemeScreen = new SelectBlockSchemeScreen();
-
+    static int inspectionID = 0;
+    private List<BlockListValue> imagelistvalues = new ArrayList<>();
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -148,6 +150,7 @@ public class AddInspectionReportScreen extends AppCompatActivity implements View
     public void intializeUI() {
         scrollView = (ScrollView) findViewById(R.id.scroll_view);
         take_photo = (MyCustomTextView) findViewById(R.id.take_photo);
+        submit = (MyCustomTextView) findViewById(R.id.submit);
         prefManager = new PrefManager(this);
 
         district_tv = (MyCustomTextView) findViewById(R.id.district_tv);
@@ -169,6 +172,7 @@ public class AddInspectionReportScreen extends AppCompatActivity implements View
         homeimg.setOnClickListener(this);
 
         take_photo.setOnClickListener(this);
+        submit.setOnClickListener(this);
 
         district_tv.setText(prefManager.getDistrictName());
         scheme_name_tv.setText(prefManager.getSchemeName());
@@ -199,16 +203,7 @@ public class AddInspectionReportScreen extends AppCompatActivity implements View
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.take_photo:
-                if (!"Select Stage of Work".equalsIgnoreCase(stageListValues.get(sp_stage.getSelectedItemPosition()).getWorkStageName())) {
-                    if (!"Select Observation".equalsIgnoreCase(observationList.get(sp_observation.getSelectedItemPosition()).getObservationName())) {
-                        imageWithDescription(take_photo, "mobile", scrollView);
-                    } else {
-                        Utils.showAlert(this, "Select Observation");
-                    }
-                } else {
-                    Utils.showAlert(this, "Select Stage of Work");
-                }
-
+                imageWithDescription(take_photo, "mobile", scrollView);
                 break;
             case R.id.backimg:
                 onBackPress();
@@ -218,6 +213,17 @@ public class AddInspectionReportScreen extends AppCompatActivity implements View
                 break;
             case R.id.home :
                 dashboard();
+                break;
+            case R.id.submit :
+                if (!"Select Stage of Work".equalsIgnoreCase(stageListValues.get(sp_stage.getSelectedItemPosition()).getWorkStageName())) {
+                    if (!"Select Observation".equalsIgnoreCase(observationList.get(sp_observation.getSelectedItemPosition()).getObservationName())) {
+                        submit();
+                    } else {
+                        Utils.showAlert(this, "Select Observation");
+                    }
+                } else {
+                    Utils.showAlert(this, "Select Stage of Work");
+                }
                 break;
         }
     }
@@ -292,6 +298,7 @@ public class AddInspectionReportScreen extends AppCompatActivity implements View
         sp_observation.setAdapter(new CommonAdapter(this, observationList, "ObservationList"));
 
     }
+
 
     public void imageWithDescription(final MyCustomTextView action_tv, final String type, final ScrollView scrollView) {
         dataset = new JSONObject();
@@ -375,7 +382,6 @@ public class AddInspectionReportScreen extends AppCompatActivity implements View
 
             @Override
             public void onClick(View v) {
-                int inspectionID = 0;
                 JSONArray imageJson = new JSONArray();
 
 
@@ -424,27 +430,26 @@ public class AddInspectionReportScreen extends AppCompatActivity implements View
 
                         // Toast.makeText(getApplicationContext(),str,Toast.LENGTH_LONG).show();
 
+                        ContentValues imageValue = new ContentValues();
+
+                        imageValue.put(AppConstant.INSPECTION_ID, inspectionID);
+                        imageValue.put(AppConstant.WORK_ID, work_id);
+                        imageValue.put(AppConstant.LATITUDE, offlatTextValue);
+                        imageValue.put(AppConstant.LONGITUDE, offlanTextValue);
+                        imageValue.put(AppConstant.IMAGE, image_str.trim());
+                        imageValue.put(AppConstant.DESCRIPTION, description);
+                        imageValue.put("pending_flag", 1);
+
                         if (!Utils.isOnline()) {
-
-                            ContentValues imageValue = new ContentValues();
-
-                            imageValue.put(AppConstant.INSPECTION_ID, inspectionID);
-                            imageValue.put(AppConstant.WORK_ID, work_id);
-                            imageValue.put(AppConstant.LATITUDE, offlatTextValue);
-                            imageValue.put(AppConstant.LONGITUDE, offlanTextValue);
-                            imageValue.put(AppConstant.IMAGE, image_str.trim());
-                            imageValue.put(AppConstant.DESCRIPTION, description);
-                            imageValue.put("pending_flag", 1);
-
                             long rowInserted = LoginScreen.db.insert(DBHelper.CAPTURED_PHOTO, null, imageValue);
 
-                            if (rowInserted != -1) {
-                                Toast.makeText(AddInspectionReportScreen.this, "New Inspection added", Toast.LENGTH_SHORT).show();
-                                Dashboard.getPendingCount();
-                                finish();
-                            } else {
-                                Toast.makeText(AddInspectionReportScreen.this, "Something wrong", Toast.LENGTH_SHORT).show();
-                            }
+//                            if (rowInserted != -1) {
+//                                Toast.makeText(AddInspectionReportScreen.this, "New Inspection added", Toast.LENGTH_SHORT).show();
+//                                Dashboard.getPendingCount();
+//                               finish();
+//                            } else {
+//                                Toast.makeText(AddInspectionReportScreen.this, "Something wrong", Toast.LENGTH_SHORT).show();
+//                            }
                         } else {
                             imageArray.put(i);
                             imageArray.put(work_id);
@@ -454,6 +459,8 @@ public class AddInspectionReportScreen extends AppCompatActivity implements View
                             imageArray.put(description);
                             imageJson.put(imageArray);
                         }
+
+                        long localImageInserted = LoginScreen.db.insert(DBHelper.LOCAL_IMAGE, null, imageValue);
                     }
                     try {
                         dataset.put("image_details", imageJson);
@@ -468,9 +475,6 @@ public class AddInspectionReportScreen extends AppCompatActivity implements View
 //                            end = end > authKey.length() ? authKey.length() : end;
 //                            Log.v("to_send", authKey.substring(start, end));
 //                     }
-                        if(imageJson.length()>0){
-                            sync_data();
-                        }
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
@@ -501,14 +505,53 @@ public class AddInspectionReportScreen extends AppCompatActivity implements View
             }
         });
         if (!values.isEmpty()) {
-            if (values.contains(",")) {
-                String[] mobileOrEmail = values.split(",");
-                for (int i = 0; i < mobileOrEmail.length; i++) {
-                    if (viewArrayList.size() < 5) {
-                        updateView(this, mobileNumberLayout, mobileOrEmail[i], type);
-                    }
+
+            Cursor imageList = getRawEvents("SELECT * FROM " + DBHelper.LOCAL_IMAGE +" WHERE work_id="+work_id, null);
+
+            if (imageList.getCount() > 0) {
+                imagelistvalues.clear();
+                int i =0;
+
+                if (imageList.moveToFirst()) {
+                    do {
+                        String work_id = imageList.getString(imageList.getColumnIndexOrThrow(AppConstant.WORK_ID));
+                        String latitude = imageList.getString(imageList.getColumnIndexOrThrow(AppConstant.LATITUDE));
+                        String longitude = imageList.getString(imageList.getColumnIndexOrThrow(AppConstant.LONGITUDE));
+                        String description = imageList.getString(imageList.getColumnIndexOrThrow(AppConstant.DESCRIPTION));
+
+                        byte[] photo = imageList.getBlob(imageList.getColumnIndexOrThrow(AppConstant.IMAGE));
+                        byte[] decodedString = Base64.decode(photo, Base64.DEFAULT);
+                        Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+
+                        //  byte[] image =  imageListPreview.getBlob(imageListPreview.getColumnIndexOrThrow(AppConstant.IMAGE));
+
+
+                        BlockListValue imageValue = new BlockListValue();
+
+                        imageValue.setWorkID(work_id);
+                        imageValue.setLatitude(latitude);
+                        imageValue.setLongitude(longitude);
+                        imageValue.setDescription(description);
+                        imageValue.setImage(decodedByte);
+
+                        imagelistvalues.add(imageValue);
+                        updateView(this, mobileNumberLayout,String.valueOf(i), "localImage");
+                        i++;
+                    } while (imageList.moveToNext());
                 }
-            } else {
+
+            }
+
+
+//            if (values.contains(",")) {
+//                String[] mobileOrEmail = values.split(",");
+//                for (int i = 0; i < mobileOrEmail.length; i++) {
+//                    if (viewArrayList.size() < 5) {
+//                        updateView(this, mobileNumberLayout, mobileOrEmail[i], type);
+//                    }
+//                }
+//            }
+            else {
                 if (viewArrayList.size() < 5) {
                     updateView(this, mobileNumberLayout, values, type);
                 }
@@ -516,6 +559,50 @@ public class AddInspectionReportScreen extends AppCompatActivity implements View
         } else {
             updateView(this, mobileNumberLayout, values, type);
         }
+    }
+
+    public  void  submit() {
+        try {
+            db.delete(DBHelper.LOCAL_IMAGE, null, null);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        String stage_of_work_on_inspection = stageListValues.get(sp_stage.getSelectedItemPosition()).getWorkStageCode();
+        String stage_of_work_on_inspection_name = stageListValues.get(sp_stage.getSelectedItemPosition()).getWorkStageName();
+        int observation = observationList.get(sp_observation.getSelectedItemPosition()).getObservationID();
+        String inspection_remark = remarkTv.getText().toString();
+
+        if (!Utils.isOnline()) {
+            ContentValues inspectionValue = new ContentValues();
+            inspectionValue.put(AppConstant.WORK_ID, work_id);
+            inspectionValue.put(AppConstant.STAGE_OF_WORK_ON_INSPECTION, stage_of_work_on_inspection);
+            inspectionValue.put(AppConstant.STAGE_OF_WORK_ON_INSPECTION_NAME, stage_of_work_on_inspection_name);
+            inspectionValue.put(AppConstant.OBSERVATION, observation);
+            inspectionValue.put(AppConstant.INSPECTION_REMARK, inspection_remark);
+
+            long rowUpdated = LoginScreen.db.update(DBHelper.INSPECTION_PENDING, inspectionValue, "work_id  = ? AND delete_flag = ? and inspection_id = ?", new String[]{work_id,"0", String.valueOf(inspectionID) });
+
+            if (rowUpdated != -1) {
+                Toast.makeText(AddInspectionReportScreen.this, "New Inspection added", Toast.LENGTH_SHORT).show();
+                Dashboard.getPendingCount();
+               finish();
+            } else {
+                Toast.makeText(AddInspectionReportScreen.this, "Something wrong", Toast.LENGTH_SHORT).show();
+            }
+
+           // db.rawQuery("UPDATE "+DBHelper.INSPECTION_PENDING+" SET (stage_of_work_on_inspection, stage_of_work_on_inspection_name, observation,inspection_remark) = ('"+stage_of_work_on_inspection+"', '"+stage_of_work_on_inspection_name+"', '"+observation+"', '"+inspection_remark+"')  WHERE delete_flag=0 and inspection_id = "+inspectionID+" and work_id ="+work_id, null);
+        } else {
+            try {
+
+                dataset.put(AppConstant.STAGE_OF_WORK_ON_INSPECTION, stage_of_work_on_inspection);
+                dataset.put(AppConstant.OBSERVATION, observation);
+                dataset.put(AppConstant.INSPECTION_REMARK, inspection_remark);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+        }
+            sync_data();
     }
 
     private final void focusOnView(final ScrollView your_scrollview, final MyCustomTextView your_EditBox) {
@@ -543,6 +630,7 @@ public class AddInspectionReportScreen extends AppCompatActivity implements View
         if ("Mobile".equalsIgnoreCase(type)) {
 
             if (!values.isEmpty()) {
+
                 if (values.length() > 0 && values.contains("-")) {
                     String[] mobile = values.split("-");
                     if (mobile.length == 2) {
@@ -553,6 +641,17 @@ public class AddInspectionReportScreen extends AppCompatActivity implements View
                 } /*else {
                     myEditTextView.setText(values);
                 }*/
+            }
+        }
+        if ("localImage".equalsIgnoreCase(type)) {
+            int i = Integer.parseInt(values);
+            if (!values.isEmpty()) {
+                myEditTextView.setText(imagelistvalues.get(i).getDescription());
+
+                image_view_preview.setVisibility(View.GONE);
+                imageView.setVisibility(View.VISIBLE);
+                imageView.setImageBitmap(imagelistvalues.get(i).getImage());
+
             }
         }
         imageView_close.setOnClickListener(new View.OnClickListener() {

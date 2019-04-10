@@ -19,6 +19,7 @@ public class DBHelper extends SQLiteOpenHelper {
     public static final String INSPECTION = "inspection";
     public static final String INSPECTION_PENDING = "inspection_pending";
     public static final String CAPTURED_PHOTO = "captured_photo";
+    public static final String LOCAL_IMAGE = "local_image";
     public static final String INSPECTION_ACTION = "inspection_action";
     public static final String IMAGE_GROUP_ID_ONLINE = "image_grouping_online";
     public static final String IMAGE_GROUP_ID_OFFLINE = "image_grouping_offline";
@@ -37,7 +38,7 @@ public class DBHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         db.execSQL("CREATE TABLE " + DISTRICT_TABLE_NAME + " ("
                 + "dcode INTEGER," +
-                "bname TEXT)");
+                "dname TEXT)");
 
         db.execSQL("CREATE TABLE " + BLOCK_TABLE_NAME + " ("
                 + "dcode INTEGER," +
@@ -117,6 +118,18 @@ public class DBHelper extends SQLiteOpenHelper {
                 "created_username TEXT)");
 
         db.execSQL("CREATE TABLE "+ CAPTURED_PHOTO + "("
+                + "id INTEGER," +
+                "inspection_id INTEGER," +
+                "pending_flag INTEGER," +
+                "action_id INTEGER," +
+                "image_group_id INTEGER," +
+                "work_id TEXT," +
+                "latitude TEXT," +
+                "longitude TEXT," +
+                "image blob,"+
+                "description TEXT)");
+
+        db.execSQL("CREATE TABLE "+ LOCAL_IMAGE + "("
                 + "id INTEGER," +
                 "inspection_id INTEGER," +
                 "pending_flag INTEGER," +
