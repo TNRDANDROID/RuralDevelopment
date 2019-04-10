@@ -822,6 +822,7 @@ public class DownloadActivity extends AppCompatActivity implements Api.ServerRes
                         getInspectionList_blockwise();
                         getInspectionList_Images_blockwise();
                         getAction_ForInspection();
+                        getActionImages();
                     } else {
                         Utils.showAlert(this, "Select Scheme");
                     }
@@ -847,6 +848,7 @@ public class DownloadActivity extends AppCompatActivity implements Api.ServerRes
                         getInspectionList_blockwise();
                         getInspectionList_Images_blockwise();
                         getAction_ForInspection();
+                        getActionImages();
                     } else {
                         Utils.showAlert(this, "End Date should be greater than start date");
                     }
@@ -921,6 +923,14 @@ public class DownloadActivity extends AppCompatActivity implements Api.ServerRes
         }
     }
 
+    public void getActionImages() {
+        try {
+            new ApiService(this).makeJSONObjectRequest("ActionImages", Api.Method.POST, UrlGenerator.getInspectionServicesListUrl(), ActionImagesJsonParams(), "not cache", this);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
 
     public JSONObject schemeListJsonParams() throws JSONException {
         String authKey = Utils.encrypt(prefManager.getUserPassKey(), getResources().getString(R.string.init_vector), Utils.schemeListDistrictWiseJsonParams(this).toString());
@@ -964,6 +974,15 @@ public class DownloadActivity extends AppCompatActivity implements Api.ServerRes
         dataSet.put(AppConstant.KEY_USER_NAME, prefManager.getUserName());
         dataSet.put(AppConstant.DATA_CONTENT, authKey);
         Log.d("InspectionList_Action", "" + authKey);
+        return dataSet;
+    }
+
+    public JSONObject ActionImagesJsonParams() throws JSONException {
+        String authKey = Utils.encrypt(prefManager.getUserPassKey(), getResources().getString(R.string.init_vector), Utils.ActionImages(this).toString());
+        JSONObject dataSet = new JSONObject();
+        dataSet.put(AppConstant.KEY_USER_NAME, prefManager.getUserName());
+        dataSet.put(AppConstant.DATA_CONTENT, authKey);
+        Log.d("Action_Images", "" + authKey);
         return dataSet;
     }
 
@@ -1039,6 +1058,20 @@ public class DownloadActivity extends AppCompatActivity implements Api.ServerRes
                     Log.d("responseInspect_Action", jsonObject.getString("MESSAGE"));
                 }
                 Log.d("responseInspect_Action", "" + jsonObject.getJSONArray(AppConstant.JSON_DATA));
+
+            }
+
+            if ("ActionImages".equals(urlType) && responseObj != null) {
+                String key = responseObj.getString(AppConstant.ENCODE_DATA);
+                String responseDecryptedKey = Utils.decrypt(prefManager.getUserPassKey(), key);
+                JSONObject jsonObject = new JSONObject(responseDecryptedKey);
+                if (jsonObject.getString("STATUS").equalsIgnoreCase("OK") && jsonObject.getString("RESPONSE").equalsIgnoreCase("OK")) {
+
+                } else if (jsonObject.getString("STATUS").equalsIgnoreCase("OK") && jsonObject.getString("RESPONSE").equalsIgnoreCase("NO_RECORD")) {
+                    // Utils.showAlert(this, "No Record Found");
+                    Log.d("ActionImages", jsonObject.getString("MESSAGE"));
+                }
+                Log.d("ActionImages", "" + jsonObject.getJSONArray(AppConstant.JSON_DATA));
 
             }
 

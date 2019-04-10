@@ -46,7 +46,7 @@ public class FullImageAdapter extends RecyclerView.Adapter<FullImageAdapter.MyVi
         public MyViewHolder(View itemView) {
             super(itemView);
             preview_Full_imageview = (ImageView) itemView.findViewById(R.id.preview_Full_imageview);
-//            description = (MyCustomTextView) itemView.findViewById(R.id.description);
+            description = (MyCustomTextView) itemView.findViewById(R.id.description);
 
 
         }
@@ -56,7 +56,7 @@ public class FullImageAdapter extends RecyclerView.Adapter<FullImageAdapter.MyVi
 
     @Override
     public void onBindViewHolder(@NonNull final MyViewHolder holder, final int position) {
-//        holder.description.setText(imagePreviewlistvalues.get(position).getDescription());
+        holder.description.setText(imagePreviewlistvalues.get(position).getDescription());
         holder.preview_Full_imageview.setImageBitmap(imagePreviewlistvalues.get(position).getImage());
 
 

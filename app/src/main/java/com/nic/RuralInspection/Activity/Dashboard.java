@@ -15,6 +15,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.CardView;
 import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -55,7 +56,8 @@ import static com.nic.RuralInspection.Activity.LoginScreen.db;
 
 public class Dashboard extends AppCompatActivity implements Api.ServerResponseListener, View.OnClickListener, MyDialog.myOnClickListener,AppVersionHelper.myAppVersionInterface {
     private ImageView logout;
-    private static LinearLayout uploadInspectionReport, block_user_layout, pending_upload_layout,download_layout;
+    private static LinearLayout  block_user_layout, pending_upload_layout,download_layout;
+    private CardView uploadInspectionReport;
     private static PrefManager prefManager;
     private ProgressHUD progressHUD;
     private static MyCustomTextView district_tv, block_user_tv, upload_inspection_report_tv, count_tv, title_tv;
@@ -87,7 +89,7 @@ public class Dashboard extends AppCompatActivity implements Api.ServerResponseLi
     private void intializeUI() {
         prefManager = new PrefManager(this);
         logout = (ImageView) findViewById(R.id.logout);
-        uploadInspectionReport = (LinearLayout) findViewById(R.id.upload_inspection_report);
+        uploadInspectionReport = (CardView) findViewById(R.id.upload_inspection_report);
         pending_upload_layout = (LinearLayout) findViewById(R.id.pending_upload_layout);
         block_user_layout = (LinearLayout) findViewById(R.id.block_user_layout);
         download_layout = (LinearLayout) findViewById(R.id.download_layout);
@@ -191,7 +193,7 @@ public class Dashboard extends AppCompatActivity implements Api.ServerResponseLi
     public static void getPendingCount() {
         String pendingList_sql = "";
         if (prefManager.getLevels().equalsIgnoreCase("D")) {
-            pendingList_sql = "select * from(select * from " + DBHelper.INSPECTION_PENDING + " WHERE inspection_id in (select inspection_id from captured_photo))a left join (select * from observation)b on a.observation = b.id where delete_flag = 0";
+            pendingList_sql = "select * from(select * from " + DBHelper.INSPECTION_PENDING + " WHERE inspection_id in (select inspection_id from captured_photo))a left join (select * from observation)b on a.observation = b.id where delete_flag = 0 and inspection_remark != ''";
         } else if (prefManager.getLevels().equalsIgnoreCase("B")) {
             pendingList_sql = "select * from " + DBHelper.INSPECTION_ACTION + " WHERE id in (select action_id from captured_photo) and delete_flag = 0";
         }

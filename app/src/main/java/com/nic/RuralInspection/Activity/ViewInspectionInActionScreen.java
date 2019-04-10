@@ -45,9 +45,7 @@ import com.karumi.dexter.MultiplePermissionsReport;
 import com.karumi.dexter.PermissionToken;
 import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
-import com.nic.RuralInspection.Adapter.AddActionAdapter;
 import com.nic.RuralInspection.DataBase.DBHelper;
-import com.nic.RuralInspection.Model.BlockListValue;
 import com.nic.RuralInspection.R;
 import com.nic.RuralInspection.Support.MyCustomTextView;
 import com.nic.RuralInspection.Support.MyLocationListener;
@@ -69,10 +67,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 import static android.Manifest.permission.ACCESS_FINE_LOCATION;
 import static android.Manifest.permission.CAMERA;
@@ -115,7 +111,6 @@ public class ViewInspectionInActionScreen extends AppCompatActivity implements V
     private MyCustomTextView district_tv, scheme_name_tv, block_name_tv, block_user_tv, village_name_tv, fin_year_tv, take_photo, title_tv;
     private MyCustomTextView projectName, amountTv, levelTv, inspected_date, remark, observation;
     private LinearLayout village_layout, block_layout;
-    private AddActionAdapter addActionAdapter;
     private RecyclerView imageRecyclerView, inspectionListRecyclerView;
     PrefManager prefManager;
     EditText remark_action_tv;
@@ -177,14 +172,6 @@ public class ViewInspectionInActionScreen extends AppCompatActivity implements V
         back_img.setOnClickListener(this);
         take_photo.setOnClickListener(this);
 
-//        addActionAdapter = new AddActionAdapter(this, actionlistvalues);
-//
-//        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
-//        inspectionListRecyclerView.setLayoutManager(mLayoutManager);
-//        inspectionListRecyclerView.setItemAnimator(new DefaultItemAnimator());
-//        inspectionListRecyclerView.setHasFixedSize(true);
-//        inspectionListRecyclerView.setFocusable(false);
-//        inspectionListRecyclerView.setNestedScrollingEnabled(false);
 
         if (prefManager.getLevels().equalsIgnoreCase("B")) {
             village_layout.setVisibility(View.VISIBLE);
@@ -193,7 +180,6 @@ public class ViewInspectionInActionScreen extends AppCompatActivity implements V
             block_user_tv.setText(prefManager.getBlockName());
         }
 
-//        inspectionListRecyclerView.setAdapter(addActionAdapter);
 
     }
 

@@ -101,13 +101,16 @@ public class AppConstant {
     public static String INSPECTED_DESIGATION_NAME = "desig_name";
 
     //Inspection table
-
+            /*Imspection List District and block*/
     public static String KEY_INSPECTION_LIST_DISTRICT_WISE = "high_value_project_inspection_block_wise";
-    public static String KEY_INSPECTION_LIST_BLOCK_WISE_ACTION = "action_high_value_project_inspection_block_wise";
+    public static String KEY_INSPECTION_LIST_BLOCK_WISE = "action_high_value_project_inspection_block_wise";
+            /*Inspection Save*/
     public static String KEY_HIGH_VALUE_PROJECT_INSPECTION_SAVE= "high_value_project_inspection_save";
+            /*Inspected Images District and block*/
     public static String KEY_INSPECTION_LIST_DISTRICT_WISE_IMAGE = "high_value_project_inspection_images_block_wise";
-    public static String KEY_INSPECTION_LIST_DISTRICT_WISE_ACTION = "high_value_project_action_block_wise";
     public static String KEY_INSPECTION_LIST_BLOCK_WISE_IMAGE_ACTION = "action_high_value_project_inspection_images_block_wise";
+            /*View Action*/
+    public static String KEY_INSPECTION_LIST_DISTRICT_WISE_ACTION = "high_value_project_action_block_wise";
 
     //Observation Table
 
@@ -125,5 +128,7 @@ public class AppConstant {
     public static String DELETE_FLAG = "delete_flag";
     public static String KEY_HIGH_VALUE_PROJECT_ACTION_SAVE= "high_value_project_action_save";
     public static String KEY_VERSION_CHECK= "version_check";
+
+    public static String KEY_BLOCK_ACTION_IMAGES = "high_value_project_insp_img_group_action_images_block_wise";
 
 }

@@ -1,18 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
     xmlns:customfontdemo="http://schemas.android.com/tools"
-    android:background="@android:color/transparent"
-    tools:context="com.nic.RuralInspection.Activity.FullImageActivity">
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
 
     <android.support.v7.widget.CardView xmlns:card_view="http://schemas.android.com/apk/res-auto"
         android:id="@+id/district_card"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/toolbar"
+        android:layout_centerInParent="true"
         android:layout_centerHorizontal="true"
-        android:layout_alignParentStart="true"
         android:layout_margin="15dp"
         android:layout_marginTop="15dp"
 
@@ -33,12 +33,10 @@
                 android:orientation="vertical">
 
                 <ImageView
-                    android:id="@+id/preview_Full_imageview"
+                    android:id="@+id/preview_action_image_view"
                     android:layout_width="match_parent"
                     android:layout_height="450dp"
-                    android:scaleType="fitXY"
-                    />
-
+                    android:scaleType="fitXY" />
 
                 <!--<LinearLayout-->
                 <!--android:layout_width="wrap_content"-->
@@ -66,9 +64,7 @@
                 android:layout_height="0.5dp"
                 android:layout_gravity="bottom"
                 android:layout_marginLeft="15dp"
-                android:layout_marginRight="15dp"
                 android:background="@color/dashboard_line_dark" />
-
 
 
                 <LinearLayout
@@ -79,17 +75,17 @@
 
 
                     <com.nic.RuralInspection.Support.MyCustomTextView
-                        android:id="@+id/description"
+                        android:id="@+id/action_description"
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
-                        android:lines="5"
-                        android:gravity="top"
-                        android:layout_marginTop="10dip"
                         android:layout_marginLeft="10dip"
-                        android:textSize="15sp"
+                        android:layout_marginTop="10dip"
                         android:layout_marginRight="10dip"
-                        android:textColor="@android:color/black"
                         android:background="@drawable/gray_background"
+                        android:gravity="top"
+                        android:lines="5"
+                        android:textColor="@android:color/black"
+                        android:textSize="15sp"
                         customfontdemo:fontName="@string/font_circular_book" />
                 </LinearLayout>
 
@@ -100,12 +96,5 @@
 
     </android.support.v7.widget.CardView>
 
-    <!--<ImageView-->
-        <!--android:id="@+id/preview_Full_imageview"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="match_parent"-->
-        <!--android:layout_below="@id/toolbar"-->
-        <!--android:layout_marginTop="10dp"-->
-        <!--/>-->
 
 </RelativeLayout>

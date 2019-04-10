@@ -18,7 +18,6 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="125dp"
         android:padding="@dimen/_6sdp"
         android:text="Sofware Designed &amp; Developed by NIC"
         android:textAlignment="center"

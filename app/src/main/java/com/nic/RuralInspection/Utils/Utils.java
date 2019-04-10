@@ -68,7 +68,7 @@ import com.nic.RuralInspection.session.PrefManager;
 
 public class Utils {
 
-    private static final String SHARED_PREFERENCE_UTILS = "Nimble";
+    private static final String SHARED_PREFERENCE_UTILS = "NIC";
     private static final int SECONDS_IN_A_MINUTE = 60;
     private static final int MINUTES_IN_AN_HOUR = 60;
     private static SharedPreferences sharedPreferences;
@@ -1240,7 +1240,7 @@ public class Utils {
             dataSet.put(AppConstant.BLOCK_CODE, prefManager.getBlockCodeJson());
         }
         else  if (prefManager.getLevels().equalsIgnoreCase("B")){
-        dataSet.put(AppConstant.KEY_SERVICE_ID, AppConstant.KEY_INSPECTION_LIST_BLOCK_WISE_ACTION);
+        dataSet.put(AppConstant.KEY_SERVICE_ID, AppConstant.KEY_INSPECTION_LIST_BLOCK_WISE);
         }
 
 
@@ -1268,6 +1268,16 @@ public class Utils {
         dataSet.put(AppConstant.KEY_SERVICE_ID, AppConstant.KEY_INSPECTION_LIST_DISTRICT_WISE_ACTION);
         dataSet.put(AppConstant.DISTRICT_CODE, prefManager.getDistrictCode());
         dataSet.put(AppConstant.BLOCK_CODE, prefManager.getBlockCodeJson());
+        Log.d("object", "" + dataSet);
+        return dataSet;
+    }
+
+    public static JSONObject ActionImages(Activity activity) throws JSONException {
+        prefManager = new PrefManager(activity);
+        JSONObject dataSet = new JSONObject();
+        dataSet.put(AppConstant.KEY_SERVICE_ID, AppConstant.KEY_BLOCK_ACTION_IMAGES);
+        dataSet.put(AppConstant.DISTRICT_CODE, prefManager.getDistrictCode());
+        dataSet.put(AppConstant.BLOCK_CODE, prefManager.getBlockCode());
         Log.d("object", "" + dataSet);
         return dataSet;
     }
