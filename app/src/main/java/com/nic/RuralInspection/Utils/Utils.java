@@ -1277,7 +1277,11 @@ public class Utils {
         JSONObject dataSet = new JSONObject();
         dataSet.put(AppConstant.KEY_SERVICE_ID, AppConstant.KEY_BLOCK_ACTION_IMAGES);
         dataSet.put(AppConstant.DISTRICT_CODE, prefManager.getDistrictCode());
-        dataSet.put(AppConstant.BLOCK_CODE, prefManager.getBlockCode());
+        if(prefManager.getLevels().equalsIgnoreCase("D")){
+            dataSet.put(AppConstant.BLOCK_CODE,prefManager.getBlockCodeJson());
+        }else {
+            dataSet.put(AppConstant.BLOCK_CODE, prefManager.getBlockCode());
+        }
         Log.d("object", "" + dataSet);
         return dataSet;
     }
