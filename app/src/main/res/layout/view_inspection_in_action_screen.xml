@@ -1051,11 +1051,10 @@
                                                         android:layout_below="@+id/remark_title"
                                                         android:background="@drawable/rectangle_box"
                                                         android:gravity="top|left"
-                                                        android:inputType="textMultiLine"
                                                         android:hint="Enter Remarks"
+                                                        android:inputType="textMultiLine"
                                                         android:lines="5"
                                                         android:maxLines="5"
-                                                        android:minLines="3"
                                                         android:padding="10dp"
                                                         android:scrollbars="vertical" />
                                                 </LinearLayout>
