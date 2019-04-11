@@ -990,6 +990,23 @@
                                             </LinearLayout>
                                         </LinearLayout>
 
+                                        <com.nic.RuralInspection.Support.MyCustomTextView
+                                            android:id="@+id/take_photo"
+                                            android:layout_width="match_parent"
+                                            android:layout_height="wrap_content"
+                                            android:layout_gravity="center_horizontal"
+                                            android:layout_marginLeft="@dimen/margin"
+                                            android:layout_marginTop="@dimen/margin"
+                                            android:layout_marginRight="@dimen/margin"
+                                            android:layout_marginBottom="@dimen/margin"
+                                            android:background="@drawable/rectangle_shape_green"
+                                            android:padding="15dp"
+                                            android:text="Take Photo"
+                                            android:textAlignment="center"
+                                            android:textAllCaps="false"
+                                            android:textColor="@android:color/white"
+                                            android:textSize="@dimen/menu_title_size" />
+
                                         <LinearLayout
                                             android:id="@+id/action_part_visible_layout"
                                             android:layout_width="match_parent"
@@ -1046,21 +1063,21 @@
                                             </RelativeLayout>
 
                                             <com.nic.RuralInspection.Support.MyCustomTextView
-                                                android:id="@+id/take_photo"
+                                                android:id="@+id/submit"
                                                 android:layout_width="match_parent"
                                                 android:layout_height="wrap_content"
                                                 android:layout_gravity="center_horizontal"
-                                                android:layout_marginLeft="@dimen/margin"
+                                                android:layout_marginLeft="@dimen/_75sdp"
                                                 android:layout_marginTop="@dimen/margin"
-                                                android:layout_marginRight="@dimen/margin"
+                                                android:layout_marginRight="@dimen/_75sdp"
                                                 android:layout_marginBottom="@dimen/margin"
                                                 android:background="@drawable/login_button"
                                                 android:padding="15dp"
-                                                android:text="Take Photo"
+                                                android:text="SUBMIT"
                                                 android:textAlignment="center"
                                                 android:textAllCaps="false"
                                                 android:textColor="@android:color/white"
-                                                android:textSize="@dimen/menu_title_size" />
+                                                android:textSize="@dimen/_15sdp" />
 
                                         </LinearLayout>
 

@@ -1246,6 +1246,7 @@
                 android:layout_width="120dp"
                 android:layout_height="40dp"
                 android:layout_gravity="center"
+                android:layout_marginTop="@dimen/_15sdp"
                 android:layout_marginBottom="@dimen/_50sdp"
                 android:background="@drawable/login_button"
                 android:text="Download"

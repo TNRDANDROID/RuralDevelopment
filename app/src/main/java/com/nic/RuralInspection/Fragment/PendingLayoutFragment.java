@@ -96,7 +96,7 @@ public class PendingLayoutFragment extends Fragment implements View.OnClickListe
     public void retrievePendingdata_Inspection() {
         pendingListValues.clear();
         String pendingList_sql = "select * from(select * from "+DBHelper.INSPECTION_PENDING +" WHERE inspection_id in (select inspection_id from "+DBHelper.CAPTURED_PHOTO+"))a left join (select * from "+DBHelper.OBSERVATION_TABLE+")b on a.observation = b.id where delete_flag = 0 and inspection_remark != ''";
-        Log.d("sql", pendingList_sql);
+        Log.d("pendingList_sql", pendingList_sql);
         Cursor pendingList = getRawEvents(pendingList_sql, null);
 
         if (pendingList.getCount() > 0) {
@@ -147,7 +147,8 @@ public class PendingLayoutFragment extends Fragment implements View.OnClickListe
 
     public void retrievePendingdata_Action() {
         pendingListValues.clear();
-        String pendingList_sql = "select * from " + DBHelper.INSPECTION_ACTION + " WHERE id in (select action_id from captured_photo) and delete_flag = 0";
+        String pendingList_sql = "select * from " + DBHelper.INSPECTION_ACTION + " WHERE id in (select action_id from captured_photo) and delete_flag = 0 and action_remark != ''";
+        Log.d("pendingList_sql", pendingList_sql);
         Cursor pendingList = getRawEvents(pendingList_sql, null);
 
         if (pendingList.getCount() > 0) {
@@ -482,7 +483,8 @@ public void dashboard(){
             if (jsonArray.length() > 0) {
                 for (int i = 0; i < jsonArray.length(); i++) {
                     String workID = jsonArray.getJSONObject(i).getString(AppConstant.WORK_ID);
-                    String id = jsonArray.getJSONObject(i).getString("id");
+                    //  String id = jsonArray.getJSONObject(i).getString("id");
+                    String onlineaction_id = jsonArray.getJSONObject(i).getString("id");
                     String inspection_id = jsonArray.getJSONObject(i).getString(AppConstant.INSPECTION_ID);
                     String date_of_action = jsonArray.getJSONObject(i).getString(AppConstant.DATE_OF_ACTION);
                     String action_taken = jsonArray.getJSONObject(i).getString(AppConstant.ACTION_TAKEN);
@@ -490,15 +492,20 @@ public void dashboard(){
                     String dist_action = jsonArray.getJSONObject(i).getString(AppConstant.DISTRICT_ACTION);
                     String state_action = jsonArray.getJSONObject(i).getString(AppConstant.STATE_ACTION);
                     String sub_div_action = jsonArray.getJSONObject(i).getString(AppConstant.SUB_DIV_ACTION);
+                    String action_taken_officer = jsonArray.getJSONObject(i).getString(AppConstant.ACTION_TAKEN_OFFICER);
+                    String action_taken_officer_desig = jsonArray.getJSONObject(i).getString(AppConstant.ACTION_TAKEN_OFFICER_DESIGNATION);
 
                     ContentValues ActionList = new ContentValues();
 
                     ActionList.put(AppConstant.WORK_ID, workID);
+                    ActionList.put(AppConstant.ACTION_ID, onlineaction_id);
                     //   ActionList.put("id", id);
                     ActionList.put(AppConstant.INSPECTION_ID, inspection_id);
                     ActionList.put(AppConstant.DATE_OF_ACTION, date_of_action);
                     ActionList.put(AppConstant.ACTION_TAKEN, action_taken);
                     ActionList.put(AppConstant.ACTION_REMARK, action_remark);
+                    ActionList.put(AppConstant.ACTION_TAKEN_OFFICER, action_taken_officer);
+                    ActionList.put(AppConstant.ACTION_TAKEN_OFFICER_DESIGNATION, action_taken_officer_desig);
                     ActionList.put(AppConstant.DISTRICT_ACTION, dist_action);
                     ActionList.put(AppConstant.STATE_ACTION, state_action);
                     ActionList.put(AppConstant.SUB_DIV_ACTION, sub_div_action);
@@ -516,5 +523,6 @@ public void dashboard(){
         } catch (ArrayIndexOutOfBoundsException a) {
             a.printStackTrace();
         }
+
     }
 }

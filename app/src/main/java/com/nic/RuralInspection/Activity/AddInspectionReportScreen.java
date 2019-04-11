@@ -443,6 +443,7 @@ public class AddInspectionReportScreen extends AppCompatActivity implements View
                         imageValue.put(AppConstant.IMAGE, image_str.trim());
                         imageValue.put(AppConstant.DESCRIPTION, description);
                         imageValue.put("pending_flag", 1);
+                        imageValue.put("level", "D");
 
                         if (!Utils.isOnline()) {
                             long rowInserted = LoginScreen.db.insert(DBHelper.CAPTURED_PHOTO, null, imageValue);
@@ -510,7 +511,7 @@ public class AddInspectionReportScreen extends AppCompatActivity implements View
         });
         if (!values.isEmpty()) {
 
-            Cursor imageList = getRawEvents("SELECT * FROM " + DBHelper.LOCAL_IMAGE +" WHERE work_id="+work_id, null);
+            Cursor imageList = getRawEvents("SELECT * FROM " + DBHelper.LOCAL_IMAGE +" WHERE level='D' and work_id="+work_id, null);
 
             if (imageList.getCount() > 0) {
                 imagelistvalues.clear();
@@ -543,7 +544,11 @@ public class AddInspectionReportScreen extends AppCompatActivity implements View
                         i++;
                     } while (imageList.moveToNext());
                 }
-
+                try {
+                    db.delete(DBHelper.LOCAL_IMAGE, null, null);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
 
 
@@ -1054,15 +1059,12 @@ public class AddInspectionReportScreen extends AppCompatActivity implements View
 
     private void Insert_inspectionList(JSONArray jsonArray) {
         try {
-            //db.delete(DBHelper.INSPECTION, "delete_flag = ?", whereArgs);
-            //db.rawQuery("DELETE FROM inspection WHERE delete_flag!=0",null);
+            //db.rawQuery("DELETE FROM "+DBHelper.INSPECTION+" WHERE delete_flag =1",null);
             db.delete(DBHelper.INSPECTION, null, null);
         } catch (Exception e) {
             e.printStackTrace();
         }
         try {
-            updatedJsonArray = new JSONArray();
-            updatedJsonArray = jsonArray;
             if (jsonArray.length() > 0) {
                 for (int i = 0; i < jsonArray.length(); i++) {
                     String workID = jsonArray.getJSONObject(i).getString(AppConstant.WORK_ID);
@@ -1072,8 +1074,9 @@ public class AddInspectionReportScreen extends AppCompatActivity implements View
                     String inspectedBy = jsonArray.getJSONObject(i).getString(AppConstant.INSPECTED_BY);
                     String observation = jsonArray.getJSONObject(i).getString(AppConstant.OBSERVATION);
                     String inspectionRemark = jsonArray.getJSONObject(i).getString(AppConstant.INSPECTION_REMARK);
-                    String inspectedOffName = jsonArray.getJSONObject(i).getString(AppConstant.INSPECTED_USER_NAME);
-                    String inspectedDesignation = jsonArray.getJSONObject(i).getString(AppConstant.INSPECTED_DESIGATION_NAME);
+                    String inspected_officer = jsonArray.getJSONObject(i).getString(AppConstant.INSPECTED_USER_NAME);
+                    String designation = jsonArray.getJSONObject(i).getString(AppConstant.INSPECTED_DESIGATION_NAME);
+
 
 
                     ContentValues getInspectionList = new ContentValues();
@@ -1085,13 +1088,15 @@ public class AddInspectionReportScreen extends AppCompatActivity implements View
                     getInspectionList.put(AppConstant.INSPECTED_BY, inspectedBy);
                     getInspectionList.put(AppConstant.OBSERVATION, observation);
                     getInspectionList.put(AppConstant.INSPECTION_REMARK, inspectionRemark);
-                    getInspectionList.put(AppConstant.INSPECTED_USER_NAME, inspectedOffName);
-                    getInspectionList.put(AppConstant.INSPECTED_DESIGATION_NAME, inspectedDesignation);
+                    getInspectionList.put(AppConstant.INSPECTED_USER_NAME, inspected_officer);
+                    getInspectionList.put(AppConstant.INSPECTED_DESIGATION_NAME, designation);
                     getInspectionList.put("delete_flag", 1);
 
 
                     LoginScreen.db.insert(DBHelper.INSPECTION, null, getInspectionList);
                 }
+
+
             } else {
                 Utils.showAlert(this, "No Record Found!");
             }
@@ -1141,7 +1146,7 @@ public class AddInspectionReportScreen extends AppCompatActivity implements View
 
     private void Insert_inspectionList_Action(JSONArray jsonArray) {
         try {
-            db.execSQL(String.format("DELETE FROM "+DBHelper.INSPECTION_ACTION+" WHERE delete_flag=1;", null));
+            db.execSQL(String.format("DELETE FROM " + DBHelper.INSPECTION_ACTION + " WHERE delete_flag=1;", null));
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -1151,7 +1156,8 @@ public class AddInspectionReportScreen extends AppCompatActivity implements View
             if (jsonArray.length() > 0) {
                 for (int i = 0; i < jsonArray.length(); i++) {
                     String workID = jsonArray.getJSONObject(i).getString(AppConstant.WORK_ID);
-                    String id = jsonArray.getJSONObject(i).getString("id");
+                    //  String id = jsonArray.getJSONObject(i).getString("id");
+                    String onlineaction_id = jsonArray.getJSONObject(i).getString("id");
                     String inspection_id = jsonArray.getJSONObject(i).getString(AppConstant.INSPECTION_ID);
                     String date_of_action = jsonArray.getJSONObject(i).getString(AppConstant.DATE_OF_ACTION);
                     String action_taken = jsonArray.getJSONObject(i).getString(AppConstant.ACTION_TAKEN);
@@ -1159,15 +1165,20 @@ public class AddInspectionReportScreen extends AppCompatActivity implements View
                     String dist_action = jsonArray.getJSONObject(i).getString(AppConstant.DISTRICT_ACTION);
                     String state_action = jsonArray.getJSONObject(i).getString(AppConstant.STATE_ACTION);
                     String sub_div_action = jsonArray.getJSONObject(i).getString(AppConstant.SUB_DIV_ACTION);
+                    String action_taken_officer = jsonArray.getJSONObject(i).getString(AppConstant.ACTION_TAKEN_OFFICER);
+                    String action_taken_officer_desig = jsonArray.getJSONObject(i).getString(AppConstant.ACTION_TAKEN_OFFICER_DESIGNATION);
 
                     ContentValues ActionList = new ContentValues();
 
                     ActionList.put(AppConstant.WORK_ID, workID);
+                    ActionList.put(AppConstant.ACTION_ID, onlineaction_id);
                     //   ActionList.put("id", id);
                     ActionList.put(AppConstant.INSPECTION_ID, inspection_id);
                     ActionList.put(AppConstant.DATE_OF_ACTION, date_of_action);
                     ActionList.put(AppConstant.ACTION_TAKEN, action_taken);
                     ActionList.put(AppConstant.ACTION_REMARK, action_remark);
+                    ActionList.put(AppConstant.ACTION_TAKEN_OFFICER, action_taken_officer);
+                    ActionList.put(AppConstant.ACTION_TAKEN_OFFICER_DESIGNATION, action_taken_officer_desig);
                     ActionList.put(AppConstant.DISTRICT_ACTION, dist_action);
                     ActionList.put(AppConstant.STATE_ACTION, state_action);
                     ActionList.put(AppConstant.SUB_DIV_ACTION, sub_div_action);
@@ -1175,6 +1186,7 @@ public class AddInspectionReportScreen extends AppCompatActivity implements View
 
                     LoginScreen.db.insert(DBHelper.INSPECTION_ACTION, null, ActionList);
                 }
+
             } else {
                 Utils.showAlert(this, "No Record Found!");
             }

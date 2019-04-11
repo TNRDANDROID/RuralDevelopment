@@ -120,11 +120,14 @@ public class AppConstant {
     //Inspection Action Table
 
     public static String DISTRICT_ACTION = "dist_action";
+    public static String ACTION_ID = "action_id";
     public static String STATE_ACTION = "state_action";
     public static String SUB_DIV_ACTION = "sub_div_action";
     public static String DATE_OF_ACTION = "date_of_action";
     public static String ACTION_TAKEN = "action_taken";
     public static String ACTION_REMARK = "action_remark";
+    public static String ACTION_TAKEN_OFFICER = "name";
+    public static String ACTION_TAKEN_OFFICER_DESIGNATION = "desig_name";
     public static String DELETE_FLAG = "delete_flag";
     public static String KEY_HIGH_VALUE_PROJECT_ACTION_SAVE= "high_value_project_action_save";
     public static String KEY_VERSION_CHECK= "version_check";

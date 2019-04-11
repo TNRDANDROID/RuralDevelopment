@@ -61,7 +61,7 @@ public class SelectBlockSchemeScreen extends AppCompatActivity implements View.O
     CheckBox all_block, all_village, all_scheme, high_value_projects, all_projects;
     private Spinner sp_block,sp_district, sp_village, sp_scheme, sp_financialYear;
     private MyCustomTextView title_tv;
-    private LinearLayout block_layout;
+    private LinearLayout block_layout,district_layout;
     private PrefManager prefManager;
     private List<BlockListValue> Block = new ArrayList<>();
     private List<BlockListValue> District = new ArrayList<>();
@@ -106,10 +106,17 @@ public class SelectBlockSchemeScreen extends AppCompatActivity implements View.O
         all_village = (CheckBox) findViewById(R.id.all_village);
         all_scheme = (CheckBox) findViewById(R.id.all_scheme);
         block_layout = (LinearLayout) findViewById(R.id.block_layout);
+        district_layout = (LinearLayout) findViewById(R.id.District_layout);
         back_img = (ImageView) findViewById(R.id.backimg);
         title_tv = (MyCustomTextView) findViewById(R.id.title_tv);
         back_img.setOnClickListener(this);
         title_tv.setText("WorkList Filter");
+
+        if(prefManager.getLevels().equalsIgnoreCase("S")) {
+            district_layout.setVisibility(View.VISIBLE);
+        }else {
+            district_layout.setVisibility(View.GONE);
+        }
 
         done.setOnClickListener(this);
         homeimg.setOnClickListener(this);

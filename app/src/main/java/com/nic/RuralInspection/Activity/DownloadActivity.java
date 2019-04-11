@@ -159,10 +159,15 @@ public class DownloadActivity extends AppCompatActivity implements Api.ServerRes
         btn_view_inspected_officers.setOnClickListener(this);
         done.setOnClickListener(this);
 
+        if (prefManager.getLevels().equalsIgnoreCase("S")) {
+            district_hide_layout.setVisibility(View.VISIBLE);
+        }else {
+            district_hide_layout.setVisibility(View.GONE);
+        }
+
 //        home.setOnClickListener(this);
         if (prefManager.getLevels().equalsIgnoreCase("B")) {
             block_hide_layout.setVisibility(View.GONE);
-            district_hide_layout.setVisibility(View.GONE);
             download_values_action_layout.setVisibility(View.VISIBLE);
             download_values_inspection_layout.setVisibility(View.GONE);
         } else {
@@ -402,11 +407,11 @@ public class DownloadActivity extends AppCompatActivity implements Api.ServerRes
         String blockSql = null;
         if (prefManager.getLevels().equalsIgnoreCase("S")){
           //  JSONArray filterBlock = prefManager.getDistrictCodeJson();
-            //blockSql = "SELECT * FROM " + DBHelper.BLOCK_TABLE_NAME + " WHERE dcode in" + filterBlock.toString().replace("[", "(").replace("]", ")") + " order by dcode";
+            //blockSql = "SELECT * FROM " + DBHelper.BLOCK_TABLE_NAME + " WHERE dcode in" + filterBlock.toString().replace("[", "(").replace("]", ")") + " order by dname";
         }
         else if (prefManager.getLevels().equalsIgnoreCase("D")){
             String filterBlock = prefManager.getDistrictCode();
-            blockSql = "SELECT * FROM "+BLOCK_TABLE_NAME;
+            blockSql = "SELECT * FROM "+BLOCK_TABLE_NAME+" order by bname";
         }
 
         Cursor BlockList = getRawEvents(blockSql, null);
@@ -1398,7 +1403,8 @@ public class DownloadActivity extends AppCompatActivity implements Api.ServerRes
                 inspectionListActionInsert = true;
                 for (int i = 0; i < jsonArray.length(); i++) {
                     String workID = jsonArray.getJSONObject(i).getString(AppConstant.WORK_ID);
-                    String id = jsonArray.getJSONObject(i).getString("id");
+                  //  String id = jsonArray.getJSONObject(i).getString("id");
+                    String onlineaction_id = jsonArray.getJSONObject(i).getString("id");
                     String inspection_id = jsonArray.getJSONObject(i).getString(AppConstant.INSPECTION_ID);
                     String date_of_action = jsonArray.getJSONObject(i).getString(AppConstant.DATE_OF_ACTION);
                     String action_taken = jsonArray.getJSONObject(i).getString(AppConstant.ACTION_TAKEN);
@@ -1406,15 +1412,20 @@ public class DownloadActivity extends AppCompatActivity implements Api.ServerRes
                     String dist_action = jsonArray.getJSONObject(i).getString(AppConstant.DISTRICT_ACTION);
                     String state_action = jsonArray.getJSONObject(i).getString(AppConstant.STATE_ACTION);
                     String sub_div_action = jsonArray.getJSONObject(i).getString(AppConstant.SUB_DIV_ACTION);
+                    String action_taken_officer = jsonArray.getJSONObject(i).getString(AppConstant.ACTION_TAKEN_OFFICER);
+                    String action_taken_officer_desig = jsonArray.getJSONObject(i).getString(AppConstant.ACTION_TAKEN_OFFICER_DESIGNATION);
 
                     ContentValues ActionList = new ContentValues();
 
                     ActionList.put(AppConstant.WORK_ID, workID);
+                    ActionList.put(AppConstant.ACTION_ID, onlineaction_id);
                     //   ActionList.put("id", id);
                     ActionList.put(AppConstant.INSPECTION_ID, inspection_id);
                     ActionList.put(AppConstant.DATE_OF_ACTION, date_of_action);
                     ActionList.put(AppConstant.ACTION_TAKEN, action_taken);
                     ActionList.put(AppConstant.ACTION_REMARK, action_remark);
+                    ActionList.put(AppConstant.ACTION_TAKEN_OFFICER, action_taken_officer);
+                    ActionList.put(AppConstant.ACTION_TAKEN_OFFICER_DESIGNATION, action_taken_officer_desig);
                     ActionList.put(AppConstant.DISTRICT_ACTION, dist_action);
                     ActionList.put(AppConstant.STATE_ACTION, state_action);
                     ActionList.put(AppConstant.SUB_DIV_ACTION, sub_div_action);

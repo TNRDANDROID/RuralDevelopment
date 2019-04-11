@@ -55,6 +55,8 @@ public class BlockListValue {
     private String inspectedOffUserId;
     private String inspectedOffName;
     private String inspectedOffDesignName;
+    private String ActionOffName;
+    private String ActionOffDesignName;
     private String districtName;
 
     public String getDistrictName() {
@@ -88,6 +90,21 @@ public class BlockListValue {
     public void setInspectedOffDesignName(String inspectedOffDesignName) {
         this.inspectedOffDesignName = inspectedOffDesignName;
     }
+    public String getActionOffName() {
+        return ActionOffName;
+    }
+
+    public void setActionOffName(String actionOffName) {
+        this.ActionOffName = actionOffName;
+    }
+    public String getActionOffDesignName() {
+        return ActionOffDesignName;
+    }
+
+    public void setActionOffDesignName(String actionOffDesignName) {
+        this.ActionOffDesignName = actionOffDesignName;
+    }
+
 
     public int getActionID() {
         return ActionID;

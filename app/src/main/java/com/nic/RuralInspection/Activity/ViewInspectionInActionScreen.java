@@ -10,6 +10,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Typeface;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
@@ -26,6 +27,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.text.method.ScrollingMovementMethod;
 import android.util.Base64;
 import android.util.Log;
 import android.view.Gravity;
@@ -37,6 +39,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
+import android.widget.Scroller;
 import android.widget.Toast;
 
 import com.android.volley.VolleyError;
@@ -46,6 +49,7 @@ import com.karumi.dexter.PermissionToken;
 import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
 import com.nic.RuralInspection.DataBase.DBHelper;
+import com.nic.RuralInspection.Model.BlockListValue;
 import com.nic.RuralInspection.R;
 import com.nic.RuralInspection.Support.MyCustomTextView;
 import com.nic.RuralInspection.Support.MyLocationListener;
@@ -105,10 +109,14 @@ public class ViewInspectionInActionScreen extends AppCompatActivity implements V
     LocationManager mlocManager = null;
     LocationListener mlocListener;
 
+    static int actionID = 0;
+    static String inspection_id;
+    private List<BlockListValue> imagelistvalues = new ArrayList<>();
+
 
     private static String imageStoragePath;
     private ImageView back_img, image_view_preview;
-    private MyCustomTextView district_tv, scheme_name_tv, block_name_tv, block_user_tv, village_name_tv, fin_year_tv, take_photo, title_tv;
+    private MyCustomTextView district_tv, scheme_name_tv, block_name_tv, block_user_tv, village_name_tv, fin_year_tv, take_photo, title_tv,submit;
     private MyCustomTextView projectName, amountTv, levelTv, inspected_date, remark, observation;
     private LinearLayout village_layout, block_layout;
     private RecyclerView imageRecyclerView, inspectionListRecyclerView;
@@ -148,10 +156,14 @@ public class ViewInspectionInActionScreen extends AppCompatActivity implements V
         amountTv = (MyCustomTextView) findViewById(R.id.amount_tv);
         levelTv = (MyCustomTextView) findViewById(R.id.level_tv);
         take_photo = (MyCustomTextView) findViewById(R.id.take_photo);
+        submit = (MyCustomTextView) findViewById(R.id.submit);
         inspected_date = (MyCustomTextView) findViewById(R.id.action_inspected_date);
         remark = (MyCustomTextView) findViewById(R.id.action_remark);
         observation = (MyCustomTextView) findViewById(R.id.action_observation);
         remark_action_tv = (EditText) findViewById(R.id.remark_action_tv);
+        remark_action_tv.setScroller(new Scroller(this));
+        remark_action_tv.setVerticalScrollBarEnabled(true);
+        remark_action_tv.setMovementMethod(new ScrollingMovementMethod());
 
         scrollView = (ScrollView) findViewById(R.id.scroll_view);
 //        action_tv = (MyCustomTextView) findViewById(R.id.action_tv);
@@ -171,6 +183,7 @@ public class ViewInspectionInActionScreen extends AppCompatActivity implements V
         title_tv.setText("Take Action");
         back_img.setOnClickListener(this);
         take_photo.setOnClickListener(this);
+        submit.setOnClickListener(this);
 
 
         if (prefManager.getLevels().equalsIgnoreCase("B")) {
@@ -186,9 +199,9 @@ public class ViewInspectionInActionScreen extends AppCompatActivity implements V
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.take_photo:
+            case R.id.submit:
                 if (!remark_action_tv.getText().toString().isEmpty()) {
-                    imageWithDescription(take_photo, "mobile", scrollView);
+                    submit();
                 } else {
                     Utils.showAlert(this, "Enter Remark");
                 }
@@ -196,6 +209,10 @@ public class ViewInspectionInActionScreen extends AppCompatActivity implements V
                 break;
             case R.id.backimg:
                 onBackPress();
+                break;
+
+            case R.id.take_photo:
+                imageWithDescription(take_photo, "mobile", scrollView);
                 break;
         }
     }
@@ -207,7 +224,7 @@ public class ViewInspectionInActionScreen extends AppCompatActivity implements V
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 
         work_id = getIntent().getStringExtra(AppConstant.WORK_ID);
-        final String inspection_id = getIntent().getStringExtra(AppConstant.INSPECTION_ID);
+        inspection_id = getIntent().getStringExtra(AppConstant.INSPECTION_ID);
 
         String date_of_action = sdf.format(new Date());
         String action_remark = remark_action_tv.getText().toString();
@@ -218,6 +235,9 @@ public class ViewInspectionInActionScreen extends AppCompatActivity implements V
             actionValue.put(AppConstant.INSPECTION_ID, inspection_id);
             actionValue.put(AppConstant.DATE_OF_ACTION, date_of_action);
             actionValue.put(AppConstant.ACTION_REMARK, action_remark);
+            actionValue.put(AppConstant.DATE_OF_ACTION, date_of_action);
+            actionValue.put(AppConstant.ACTION_TAKEN_OFFICER_DESIGNATION, prefManager.getInspectedOfficerDesignation());
+            actionValue.put(AppConstant.ACTION_TAKEN_OFFICER,prefManager.getInspectedOfficerName());
             actionValue.put(AppConstant.DELETE_FLAG, 0);
 
             long rowInserted = LoginScreen.db.insert(DBHelper.INSPECTION_ACTION, null, actionValue);
@@ -235,7 +255,7 @@ public class ViewInspectionInActionScreen extends AppCompatActivity implements V
             }
 
         }
-        int actionID = 0;
+
 
         if (!Utils.isOnline()) {
             Cursor action_Cursor = getRawEvents("SELECT MAX(id) FROM " + DBHelper.INSPECTION_ACTION, null);
@@ -398,30 +418,30 @@ public class ViewInspectionInActionScreen extends AppCompatActivity implements V
                         }
 
                         // Toast.makeText(getApplicationContext(),str,Toast.LENGTH_LONG).show();
+                        ContentValues imageValue = new ContentValues();
+
+                        imageValue.put(AppConstant.INSPECTION_ID, inspection_id);
+                        imageValue.put(AppConstant.WORK_ID, work_id);
+                        imageValue.put(AppConstant.LATITUDE, offlatTextValue);
+                        imageValue.put(AppConstant.LONGITUDE, offlanTextValue);
+                        imageValue.put(AppConstant.IMAGE, image_str.trim());
+                        imageValue.put(AppConstant.DESCRIPTION, description);
+                        imageValue.put("action_id", finalActionID);
+                        imageValue.put("image_group_id", image_group_id);
+                        imageValue.put("pending_flag", 1);
+                        imageValue.put("level", "B");
 
                         if (!Utils.isOnline()) {
 
-                            ContentValues imageValue = new ContentValues();
-
-                            imageValue.put(AppConstant.INSPECTION_ID, inspection_id);
-                            imageValue.put(AppConstant.WORK_ID, work_id);
-                            imageValue.put(AppConstant.LATITUDE, offlatTextValue);
-                            imageValue.put(AppConstant.LONGITUDE, offlanTextValue);
-                            imageValue.put(AppConstant.IMAGE, image_str.trim());
-                            imageValue.put(AppConstant.DESCRIPTION, description);
-                            imageValue.put("action_id", finalActionID);
-                            imageValue.put("image_group_id", image_group_id);
-                            imageValue.put("pending_flag", 1);
-
                             long rowInserted = LoginScreen.db.insert(DBHelper.CAPTURED_PHOTO, null, imageValue);
 
-                            if (rowInserted != -1) {
-                                Toast.makeText(ViewInspectionInActionScreen.this, "New Action added", Toast.LENGTH_SHORT).show();
-                                Dashboard.getPendingCount();
-                                finish();
-                            } else {
-                                Toast.makeText(ViewInspectionInActionScreen.this, "Something wrong", Toast.LENGTH_SHORT).show();
-                            }
+//                            if (rowInserted != -1) {
+//                                Toast.makeText(ViewInspectionInActionScreen.this, "New Action added", Toast.LENGTH_SHORT).show();
+//                                Dashboard.getPendingCount();
+//                                finish();
+//                            } else {
+//                                Toast.makeText(ViewInspectionInActionScreen.this, "Something wrong", Toast.LENGTH_SHORT).show();
+//                            }
                         } else {
                             imageArray.put(work_id);
                             imageArray.put(image_group_id);
@@ -431,6 +451,7 @@ public class ViewInspectionInActionScreen extends AppCompatActivity implements V
                             imageArray.put(description);
                             imageJson.put(imageArray);
                         }
+                        long localImageInserted = LoginScreen.db.insert(DBHelper.LOCAL_IMAGE, null, imageValue);
                     }
                     try {
                         dataset.put("image_details", imageJson);
@@ -446,7 +467,6 @@ public class ViewInspectionInActionScreen extends AppCompatActivity implements V
                             Log.v("to_send", authKey.substring(start, end));
                         }
 
-                        sync_data();
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
@@ -477,14 +497,57 @@ public class ViewInspectionInActionScreen extends AppCompatActivity implements V
             }
         });
         if (!values.isEmpty()) {
-            if (values.contains(",")) {
-                String[] mobileOrEmail = values.split(",");
-                for (int i = 0; i < mobileOrEmail.length; i++) {
-                    if (viewArrayList.size() < 5) {
-                        updateView(this, mobileNumberLayout, mobileOrEmail[i], type);
-                    }
+
+            Cursor imageList = getRawEvents("SELECT * FROM " + DBHelper.LOCAL_IMAGE +" WHERE level='B' and work_id="+work_id, null);
+
+            if (imageList.getCount() > 0) {
+                imagelistvalues.clear();
+                int i =0;
+
+                if (imageList.moveToFirst()) {
+                    do {
+                        String work_id = imageList.getString(imageList.getColumnIndexOrThrow(AppConstant.WORK_ID));
+                        String latitude = imageList.getString(imageList.getColumnIndexOrThrow(AppConstant.LATITUDE));
+                        String longitude = imageList.getString(imageList.getColumnIndexOrThrow(AppConstant.LONGITUDE));
+                        String description = imageList.getString(imageList.getColumnIndexOrThrow(AppConstant.DESCRIPTION));
+
+                        byte[] photo = imageList.getBlob(imageList.getColumnIndexOrThrow(AppConstant.IMAGE));
+                        byte[] decodedString = Base64.decode(photo, Base64.DEFAULT);
+                        Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+
+                        //  byte[] image =  imageListPreview.getBlob(imageListPreview.getColumnIndexOrThrow(AppConstant.IMAGE));
+
+
+                        BlockListValue imageValue = new BlockListValue();
+
+                        imageValue.setWorkID(work_id);
+                        imageValue.setLatitude(latitude);
+                        imageValue.setLongitude(longitude);
+                        imageValue.setDescription(description);
+                        imageValue.setImage(decodedByte);
+
+                        imagelistvalues.add(imageValue);
+                        updateView(this, mobileNumberLayout,String.valueOf(i), "localImage");
+                        i++;
+                    } while (imageList.moveToNext());
                 }
-            } else {
+                try {
+                    db.delete(DBHelper.LOCAL_IMAGE, null, null);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+
+
+//            if (values.contains(",")) {
+//                String[] mobileOrEmail = values.split(",");
+//                for (int i = 0; i < mobileOrEmail.length; i++) {
+//                    if (viewArrayList.size() < 5) {
+//                        updateView(this, mobileNumberLayout, mobileOrEmail[i], type);
+//                    }
+//                }
+//            }
+            else {
                 if (viewArrayList.size() < 5) {
                     updateView(this, mobileNumberLayout, values, type);
                 }
@@ -492,6 +555,44 @@ public class ViewInspectionInActionScreen extends AppCompatActivity implements V
         } else {
             updateView(this, mobileNumberLayout, values, type);
         }
+    }
+
+    public  void  submit() {
+        try {
+            db.delete(DBHelper.LOCAL_IMAGE, null, null);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        String action_remark = remark_action_tv.getText().toString();
+
+        if (!Utils.isOnline()) {
+            ContentValues actionValue = new ContentValues();
+            actionValue.put(AppConstant.WORK_ID, work_id);
+            actionValue.put(AppConstant.INSPECTION_ID, inspection_id);
+            actionValue.put(AppConstant.ACTION_REMARK, action_remark);
+
+
+            long rowUpdated = LoginScreen.db.update(DBHelper.INSPECTION_ACTION, actionValue, "work_id  = ? AND delete_flag = ? and id = ? and inspection_id =?", new String[]{work_id,"0", String.valueOf(actionID),inspection_id });
+
+            if (rowUpdated != -1) {
+                Toast.makeText(ViewInspectionInActionScreen.this, "New Action added", Toast.LENGTH_SHORT).show();
+                Dashboard.getPendingCount();
+                finish();
+            } else {
+                Toast.makeText(ViewInspectionInActionScreen.this, "Something wrong", Toast.LENGTH_SHORT).show();
+            }
+
+            // db.rawQuery("UPDATE "+DBHelper.INSPECTION_PENDING+" SET (stage_of_work_on_inspection, stage_of_work_on_inspection_name, observation,inspection_remark) = ('"+stage_of_work_on_inspection+"', '"+stage_of_work_on_inspection_name+"', '"+observation+"', '"+inspection_remark+"')  WHERE delete_flag=0 and inspection_id = "+inspectionID+" and work_id ="+work_id, null);
+        } else {
+            try {
+
+                dataset.put(AppConstant.ACTION_REMARK, action_remark);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+        }
+        sync_data();
     }
 
     private final void focusOnView(final ScrollView your_scrollview, final MyCustomTextView your_EditBox) {
@@ -531,6 +632,19 @@ public class ViewInspectionInActionScreen extends AppCompatActivity implements V
                 }*/
             }
         }
+
+        if ("localImage".equalsIgnoreCase(type)) {
+            int i = Integer.parseInt(values);
+            if (!values.isEmpty()) {
+                myEditTextView.setText(imagelistvalues.get(i).getDescription());
+
+                image_view_preview.setVisibility(View.GONE);
+                imageView.setVisibility(View.VISIBLE);
+                imageView.setImageBitmap(imagelistvalues.get(i).getImage());
+
+            }
+        }
+
         imageView_close.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -870,7 +984,7 @@ public class ViewInspectionInActionScreen extends AppCompatActivity implements V
 
     private void Insert_inspectionList_Action(JSONArray jsonArray) {
         try {
-            db.execSQL(String.format("DELETE FROM "+DBHelper.INSPECTION_ACTION+" WHERE delete_flag=1;", null));
+            db.execSQL(String.format("DELETE FROM " + DBHelper.INSPECTION_ACTION + " WHERE delete_flag=1;", null));
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -880,7 +994,8 @@ public class ViewInspectionInActionScreen extends AppCompatActivity implements V
             if (jsonArray.length() > 0) {
                 for (int i = 0; i < jsonArray.length(); i++) {
                     String workID = jsonArray.getJSONObject(i).getString(AppConstant.WORK_ID);
-                    String id = jsonArray.getJSONObject(i).getString("id");
+                    //  String id = jsonArray.getJSONObject(i).getString("id");
+                    String onlineaction_id = jsonArray.getJSONObject(i).getString("id");
                     String inspection_id = jsonArray.getJSONObject(i).getString(AppConstant.INSPECTION_ID);
                     String date_of_action = jsonArray.getJSONObject(i).getString(AppConstant.DATE_OF_ACTION);
                     String action_taken = jsonArray.getJSONObject(i).getString(AppConstant.ACTION_TAKEN);
@@ -888,15 +1003,20 @@ public class ViewInspectionInActionScreen extends AppCompatActivity implements V
                     String dist_action = jsonArray.getJSONObject(i).getString(AppConstant.DISTRICT_ACTION);
                     String state_action = jsonArray.getJSONObject(i).getString(AppConstant.STATE_ACTION);
                     String sub_div_action = jsonArray.getJSONObject(i).getString(AppConstant.SUB_DIV_ACTION);
+                    String action_taken_officer = jsonArray.getJSONObject(i).getString(AppConstant.ACTION_TAKEN_OFFICER);
+                    String action_taken_officer_desig = jsonArray.getJSONObject(i).getString(AppConstant.ACTION_TAKEN_OFFICER_DESIGNATION);
 
                     ContentValues ActionList = new ContentValues();
 
                     ActionList.put(AppConstant.WORK_ID, workID);
+                    ActionList.put(AppConstant.ACTION_ID, onlineaction_id);
                     //   ActionList.put("id", id);
                     ActionList.put(AppConstant.INSPECTION_ID, inspection_id);
                     ActionList.put(AppConstant.DATE_OF_ACTION, date_of_action);
                     ActionList.put(AppConstant.ACTION_TAKEN, action_taken);
                     ActionList.put(AppConstant.ACTION_REMARK, action_remark);
+                    ActionList.put(AppConstant.ACTION_TAKEN_OFFICER, action_taken_officer);
+                    ActionList.put(AppConstant.ACTION_TAKEN_OFFICER_DESIGNATION, action_taken_officer_desig);
                     ActionList.put(AppConstant.DISTRICT_ACTION, dist_action);
                     ActionList.put(AppConstant.STATE_ACTION, state_action);
                     ActionList.put(AppConstant.SUB_DIV_ACTION, sub_div_action);
@@ -904,6 +1024,7 @@ public class ViewInspectionInActionScreen extends AppCompatActivity implements V
 
                     LoginScreen.db.insert(DBHelper.INSPECTION_ACTION, null, ActionList);
                 }
+
             } else {
                 Utils.showAlert(this, "No Record Found!");
             }
@@ -915,4 +1036,5 @@ public class ViewInspectionInActionScreen extends AppCompatActivity implements V
         }
 
     }
+
 }

@@ -104,7 +104,7 @@ public class ViewActions extends AppCompatActivity implements View.OnClickListen
         String work_id = getIntent().getStringExtra(AppConstant.WORK_ID);
         String inspection_id = getIntent().getStringExtra(AppConstant.INSPECTION_ID);
 
-        String actionList_sql = "select * from inspection_action where inspection_id ="+inspection_id+" and work_id ="+work_id;
+        String actionList_sql = "select * from inspection_action where action_remark != '' and inspection_id ="+inspection_id+" and work_id ="+work_id ;
         Log.d("actionList_sql", actionList_sql);
         Cursor actionList = getRawEvents(actionList_sql, null);
 
@@ -117,10 +117,23 @@ public class ViewActions extends AppCompatActivity implements View.OnClickListen
                     String state_action = actionList.getString(actionList.getColumnIndexOrThrow(AppConstant.STATE_ACTION));
                     String sub_div_action = actionList.getString(actionList.getColumnIndexOrThrow(AppConstant.SUB_DIV_ACTION));
                     String delete_flag = actionList.getString(actionList.getColumnIndexOrThrow(AppConstant.DELETE_FLAG));
+                    String actionId = null;
+                    if(delete_flag.equals("1")) {
+                         actionId = actionList.getString(actionList.getColumnIndexOrThrow(AppConstant.ACTION_ID));
+                    }
+                    
+                    String action_taken_officer = actionList.getString(actionList.getColumnIndexOrThrow(AppConstant.ACTION_TAKEN_OFFICER));
+                    String action_taken_officer_desig = actionList.getString(actionList.getColumnIndexOrThrow(AppConstant.ACTION_TAKEN_OFFICER_DESIGNATION));
 
                     BlockListValue actionListValue = new BlockListValue();
+//                    if(delete_flag.equals("1")) {
+//                        actionListValue.setActionID(Integer.parseInt(actionId));
+//                    }
+                    
                     actionListValue.setDate_of_Action(date_of_action);
                     actionListValue.setAction_remark(action_remark);
+                    actionListValue.setActionOffName(action_taken_officer);
+                    actionListValue.setActionOffDesignName(action_taken_officer_desig);
                     if(delete_flag.equals("1")) {
                         actionListValue.setDelete_Flag("Online");
                     }else if(delete_flag.equals("0")){

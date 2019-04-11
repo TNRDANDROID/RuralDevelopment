@@ -117,15 +117,16 @@ public class Dashboard extends AppCompatActivity implements Api.ServerResponseLi
             if (toCheck.getCount() < 1) {
                 fetchAllResponseFromApi();
             }
-        }else{
-            Cursor toCheck = getRawEvents("SELECT * FROM " + DBHelper.FINANCIAL_YEAR_TABLE_NAME, null);
-            if (toCheck.getCount() < 1){
-                download_layout.setVisibility(View.GONE);
-            }
-            else {
-                download_layout.setVisibility(View.VISIBLE);
-            }
         }
+//        else{
+//            Cursor toCheck = getRawEvents("SELECT * FROM " + DBHelper.FINANCIAL_YEAR_TABLE_NAME, null);
+//            if (toCheck.getCount() < 1){
+//                download_layout.setVisibility(View.GONE);
+//            }
+//            else {
+//                download_layout.setVisibility(View.VISIBLE);
+//            }
+//        }
         if (prefManager.getLevels().equalsIgnoreCase("B")) {
             getSchemeList();
         }
@@ -195,7 +196,7 @@ public class Dashboard extends AppCompatActivity implements Api.ServerResponseLi
         if (prefManager.getLevels().equalsIgnoreCase("D")) {
             pendingList_sql = "select * from(select * from " + DBHelper.INSPECTION_PENDING + " WHERE inspection_id in (select inspection_id from captured_photo))a left join (select * from observation)b on a.observation = b.id where delete_flag = 0 and inspection_remark != ''";
         } else if (prefManager.getLevels().equalsIgnoreCase("B")) {
-            pendingList_sql = "select * from " + DBHelper.INSPECTION_ACTION + " WHERE id in (select action_id from captured_photo) and delete_flag = 0";
+            pendingList_sql = "select * from " + DBHelper.INSPECTION_ACTION + " WHERE id in (select action_id from captured_photo) and delete_flag = 0 and action_remark != ''";
         }
         Cursor pendingList = getEvents(pendingList_sql, null);
         int count = pendingList.getCount();

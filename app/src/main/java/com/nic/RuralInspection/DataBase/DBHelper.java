@@ -126,6 +126,7 @@ public class DBHelper extends SQLiteOpenHelper {
                 "work_id TEXT," +
                 "latitude TEXT," +
                 "longitude TEXT," +
+                "level TEXT," +
                 "image blob,"+
                 "description TEXT)");
 
@@ -138,17 +139,21 @@ public class DBHelper extends SQLiteOpenHelper {
                 "work_id TEXT," +
                 "latitude TEXT," +
                 "longitude TEXT," +
+                "level TEXT," +
                 "image blob,"+
                 "description TEXT)");
 
         db.execSQL("CREATE TABLE "+ INSPECTION_ACTION  + "("
                 + "id INTEGER PRIMARY KEY AUTOINCREMENT," +
                 "work_id INTEGER," +
+                "action_id INTEGER," +
                 "inspection_id INTEGER," +
                 "date_of_action TEXT," +
                 "action_taken TEXT," +
                 "delete_flag INTEGER," +
                 "action_remark TEXT," +
+                "name TEXT," +
+                "desig_name TEXT," +
                 "created_date TEXT," +
                 "dist_action TEXT," +
                 "state_action TEXT," +
