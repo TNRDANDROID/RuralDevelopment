@@ -1132,8 +1132,8 @@ public class AddInspectionReportScreen extends AppCompatActivity implements View
 
     private void Insert_inspectionList_Images(JSONArray jsonArray) {
         try {
-           // db.delete(DBHelper.CAPTURED_PHOTO, null, null);
-            db.execSQL(String.format("DELETE FROM "+DBHelper.CAPTURED_PHOTO+" WHERE pending_flag IS NULL OR trim(pending_flag) = '';", null));
+            // db.delete(DBHelper.CAPTURED_PHOTO, null, null);
+            db.execSQL(String.format("DELETE FROM " + DBHelper.CAPTURED_PHOTO + " WHERE pending_flag IS NULL OR trim(pending_flag) = '';", null));
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -1145,8 +1145,11 @@ public class AddInspectionReportScreen extends AppCompatActivity implements View
                     String inspection_id = jsonArray.getJSONObject(i).getString(AppConstant.INSPECTION_ID);
                     String image = jsonArray.getJSONObject(i).getString(AppConstant.IMAGE);
                     String image_description = jsonArray.getJSONObject(i).getString("image_description");
+                    String image_id = jsonArray.getJSONObject(i).getString(AppConstant.IMAGE_ID);
+
 
                     ContentValues Imageist = new ContentValues();
+                    Imageist.put(AppConstant.IMAGE_ID, image_id);
                     Imageist.put(AppConstant.INSPECTION_ID, inspection_id);
                     Imageist.put(AppConstant.IMAGE, image);
                     Imageist.put(AppConstant.DESCRIPTION, image_description);
