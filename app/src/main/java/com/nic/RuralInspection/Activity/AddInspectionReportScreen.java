@@ -221,7 +221,13 @@ public class AddInspectionReportScreen extends AppCompatActivity implements View
             case R.id.submit :
                 if (!"Select Stage of Work".equalsIgnoreCase(stageListValues.get(sp_stage.getSelectedItemPosition()).getWorkStageName())) {
                     if (!"Select Observation".equalsIgnoreCase(observationList.get(sp_observation.getSelectedItemPosition()).getObservationName())) {
-                        submit();
+                        if(!remarkTv.getText().toString().isEmpty()) {
+                            submit();
+                        }
+                        else {
+                            Utils.showAlert(this, "Select Remark");
+                        }
+
                     } else {
                         Utils.showAlert(this, "Select Observation");
                     }
@@ -339,11 +345,8 @@ public class AddInspectionReportScreen extends AppCompatActivity implements View
             try {
                 dataset.put(AppConstant.KEY_SERVICE_ID, AppConstant.KEY_HIGH_VALUE_PROJECT_INSPECTION_SAVE);
                 dataset.put(AppConstant.WORK_ID, work_id);
-                dataset.put(AppConstant.STAGE_OF_WORK_ON_INSPECTION, stage_of_work_on_inspection);
                 dataset.put(AppConstant.DATE_OF_INSPECTION, date_of_inspection);
                // dataset.put(AppConstant.INSPECTED_BY, inspected_by);
-                dataset.put(AppConstant.OBSERVATION, observation);
-                dataset.put(AppConstant.INSPECTION_REMARK, inspection_remark);
                 dataset.put(AppConstant.CREATED_DATE, created_date);
                 dataset.put(AppConstant.CREATED_IMEI_NO, prefManager.getIMEI());
                 dataset.put(AppConstant.CREATED_USER_NAME, prefManager.getUserName());
@@ -611,6 +614,23 @@ public class AddInspectionReportScreen extends AppCompatActivity implements View
             }
 
         }
+        String authKey = dataset.toString();
+                        int maxLogSize = 2000;
+                        for(int i = 0; i <= authKey.length() / maxLogSize; i++) {
+                            int start = i * maxLogSize;
+                            int end = (i+1) * maxLogSize;
+                            end = end > authKey.length() ? authKey.length() : end;
+                            Log.v("to_send+_plain", authKey.substring(start, end));
+                     }
+
+        String authKey1 = Utils.encrypt(prefManager.getUserPassKey(), getResources().getString(R.string.init_vector), dataset.toString());
+
+                        for(int i = 0; i <= authKey1.length() / maxLogSize; i++) {
+                            int start = i * maxLogSize;
+                            int end = (i+1) * maxLogSize;
+                            end = end > authKey.length() ? authKey1.length() : end;
+                            Log.v("to_send_encryt", authKey1.substring(start, end));
+                     }
             sync_data();
     }
 
