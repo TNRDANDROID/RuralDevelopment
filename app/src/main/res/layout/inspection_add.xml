@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
     xmlns:customfontdemo="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
@@ -199,18 +198,7 @@
                             android:textSize="18sp"
                             customfontdemo:fontName="@string/font_circular_book" />
 
-                        <Spinner
-                            android:id="@+id/observation"
-                            android:layout_width="fill_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_alignParentEnd="true"
-                            android:layout_alignParentBottom="true"
-                            android:layout_centerHorizontal="true"
-                            android:layout_marginLeft="10dp"
-                            android:layout_marginEnd="-121dp"
-                            android:layout_marginRight="10dp"
-                            android:layout_marginBottom="0dp"
-                            android:gravity="center" />
+
 
                     </LinearLayout>
 
@@ -532,22 +520,84 @@
 
             </LinearLayout>
 
-            <com.nic.RuralInspection.Support.MyCustomTextView
-                android:id="@+id/take_photo"
+            <LinearLayout
+                android:id="@+id/download_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginLeft="15dp"
-                android:layout_marginTop="15dp"
-                android:layout_marginRight="15dp"
-                android:layout_marginBottom="15dp"
-                android:background="@drawable/login_button"
-                android:padding="15dp"
-                android:text="Take Photo"
-                android:textAlignment="center"
-                android:textAllCaps="false"
-                android:textColor="@android:color/white"
-                android:textSize="@dimen/menu_title_size" />
+                android:layout_below="@id/pending_upload_layout"
+                android:layout_marginTop="20dp"
+                android:orientation="vertical">
+
+                <android.support.v7.widget.CardView xmlns:card_view="http://schemas.android.com/apk/res-auto"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="35dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginRight="35dp"
+                    android:layout_marginBottom="10dp"
+
+                    android:foreground="?android:attr/selectableItemBackground"
+                    card_view:cardCornerRadius="5dp"
+                    card_view:cardElevation="5dp">
+
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:orientation="horizontal"
+                        android:padding="@dimen/_5sdp">
+
+                        <com.nic.RuralInspection.Support.MyCustomTextView
+                            android:id="@+id/take_photo"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_vertical"
+                            android:paddingLeft="5dp"
+                            android:paddingRight="5dp"
+                            android:text="Take Photo"
+                            android:textAlignment="center"
+                            android:textColor="#ff3838"
+                            android:textSize="18sp"
+                            android:textStyle="normal"
+                            customfontdemo:fontName="@string/font_normal" />
+
+                        <TextView
+                            android:visibility="gone"
+                            android:id="@+id/image_count"
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:layout_gravity="end"
+                            android:background="@drawable/circle"
+                            android:gravity="center"
+                            android:text="1"
+                            android:textAlignment="center"
+                            android:textColor="#FFF"
+                            android:textSize="@dimen/date_text_size" />
+                    </LinearLayout>
+
+                </android.support.v7.widget.CardView>
+
+
+
+            </LinearLayout>
+
+            <!--<com.nic.RuralInspection.Support.MyCustomTextView-->
+            <!--android:layout_width="130dp"-->
+            <!--android:layout_height="40dp"-->
+            <!--android:layout_gravity="center_horizontal"-->
+            <!--android:layout_marginLeft="15dp"-->
+            <!--android:layout_marginTop="15dp"-->
+            <!--android:layout_marginRight="15dp"-->
+            <!--android:layout_marginBottom="15dp"-->
+            <!--android:background="@drawable/rectangle_shape_green"-->
+            <!--android:padding="10dp"-->
+
+            <!--android:text="Take Photo"-->
+            <!--android:textAlignment="center"-->
+            <!--android:textAllCaps="false"-->
+            <!--android:textColor="@android:color/white"-->
+            <!--android:textSize="@dimen/menu_title_size" />-->
 
             <RelativeLayout
                 android:id="@+id/select_stage_view"
@@ -559,7 +609,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="@dimen/margin_left_20dp"
-                    android:layout_marginTop="@dimen/padding"
                     android:layout_marginRight="@dimen/margin_left_20dp"
                     android:text="Stage of Work at the time of Inspection"
                     android:textColor="@android:color/black"
@@ -659,6 +708,16 @@
                         android:textSize="@dimen/_5sdp"
                         android:visibility="visible"
                         customfontdemo:fontName="@string/font_normal" />
+
+                    <Spinner
+                        android:id="@+id/observation"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
+                        android:layout_centerInParent="true"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginRight="10dp"
+                        android:gravity="center" />
 
                 </LinearLayout>
             </RelativeLayout>
