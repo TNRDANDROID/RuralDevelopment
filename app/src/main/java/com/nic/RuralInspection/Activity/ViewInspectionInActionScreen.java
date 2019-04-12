@@ -249,7 +249,6 @@ public class ViewInspectionInActionScreen extends AppCompatActivity implements V
                 dataset.put(AppConstant.INSPECTION_ID, inspection_id);
                 dataset.put(AppConstant.CREATED_IMEI_NO, prefManager.getIMEI());
                 dataset.put(AppConstant.DATE_OF_ACTION, date_of_action);
-                dataset.put(AppConstant.ACTION_REMARK, action_remark);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -585,12 +584,19 @@ public class ViewInspectionInActionScreen extends AppCompatActivity implements V
             // db.rawQuery("UPDATE "+DBHelper.INSPECTION_PENDING+" SET (stage_of_work_on_inspection, stage_of_work_on_inspection_name, observation,inspection_remark) = ('"+stage_of_work_on_inspection+"', '"+stage_of_work_on_inspection_name+"', '"+observation+"', '"+inspection_remark+"')  WHERE delete_flag=0 and inspection_id = "+inspectionID+" and work_id ="+work_id, null);
         } else {
             try {
-
                 dataset.put(AppConstant.ACTION_REMARK, action_remark);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
 
+        }
+        String authKey = dataset.toString();
+        int maxLogSize = 2000;
+        for(int i = 0; i <= authKey.length() / maxLogSize; i++) {
+            int start = i * maxLogSize;
+            int end = (i+1) * maxLogSize;
+            end = end > authKey.length() ? authKey.length() : end;
+            Log.v("to_send_plain", authKey.substring(start, end));
         }
         sync_data();
     }
@@ -897,6 +903,28 @@ public class ViewInspectionInActionScreen extends AppCompatActivity implements V
                 Log.d("responseInspect_Action", "" + jsonObject.getJSONArray(AppConstant.JSON_DATA));
 
             }
+
+            if ("ActionImages".equals(urlType) && responseObj != null) {
+                String key = responseObj.getString(AppConstant.ENCODE_DATA);
+                String responseDecryptedKey = Utils.decrypt(prefManager.getUserPassKey(), key);
+                JSONObject jsonObject = new JSONObject(responseDecryptedKey);
+                if (jsonObject.getString("STATUS").equalsIgnoreCase("OK") && jsonObject.getString("RESPONSE").equalsIgnoreCase("OK")) {
+                    Insert_ActionList_Images(jsonObject.getJSONArray(AppConstant.JSON_DATA));
+                    String authKey = String.valueOf(jsonObject.getJSONArray(AppConstant.JSON_DATA));
+                    int maxLogSize = 3000;
+                    for(int i = 0; i <= authKey.length() / maxLogSize; i++) {
+                        int start = i * maxLogSize;
+                        int end = (i+1) * maxLogSize;
+                        end = end > authKey.length() ? authKey.length() : end;
+                        Log.v("imagesofAction", authKey.substring(start, end));
+                    }
+                } else if (jsonObject.getString("STATUS").equalsIgnoreCase("OK") && jsonObject.getString("RESPONSE").equalsIgnoreCase("NO_RECORD")) {
+                    // Utils.showAlert(this, "No Record Found");
+                    Log.d("ActionImages", jsonObject.getString("MESSAGE"));
+                }
+                Log.d("ActionImages", "" + jsonObject.getJSONArray(AppConstant.JSON_DATA));
+
+            }
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -971,6 +999,14 @@ public class ViewInspectionInActionScreen extends AppCompatActivity implements V
         }
     }
 
+    public void getActionImages() {
+        try {
+            new ApiService(this).makeJSONObjectRequest("ActionImages", Api.Method.POST, UrlGenerator.getInspectionServicesListUrl(), ActionImagesJsonParams(), "not cache", this);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
 
 
     public JSONObject InspectionListActionJsonParams() throws JSONException {
@@ -982,6 +1018,15 @@ public class ViewInspectionInActionScreen extends AppCompatActivity implements V
         return dataSet;
     }
 
+    public JSONObject ActionImagesJsonParams() throws JSONException {
+        String authKey = Utils.encrypt(prefManager.getUserPassKey(), getResources().getString(R.string.init_vector), Utils.ActionImages(this).toString());
+        JSONObject dataSet = new JSONObject();
+        dataSet.put(AppConstant.KEY_USER_NAME, prefManager.getUserName());
+        dataSet.put(AppConstant.DATA_CONTENT, authKey);
+        Log.d("Action_Images", "" + authKey);
+        return dataSet;
+    }
+
     private void Insert_inspectionList_Action(JSONArray jsonArray) {
         try {
             db.execSQL(String.format("DELETE FROM " + DBHelper.INSPECTION_ACTION + " WHERE delete_flag=1;", null));
@@ -989,8 +1034,6 @@ public class ViewInspectionInActionScreen extends AppCompatActivity implements V
             e.printStackTrace();
         }
         try {
-            updatedJsonArray = new JSONArray();
-            updatedJsonArray = jsonArray;
             if (jsonArray.length() > 0) {
                 for (int i = 0; i < jsonArray.length(); i++) {
                     String workID = jsonArray.getJSONObject(i).getString(AppConstant.WORK_ID);
@@ -1035,6 +1078,44 @@ public class ViewInspectionInActionScreen extends AppCompatActivity implements V
             a.printStackTrace();
         }
 
+    }
+
+    private void Insert_ActionList_Images(JSONArray jsonArray) {
+        try {
+            // db.delete(DBHelper.CAPTURED_PHOTO, null, null);
+            db.execSQL(String.format("DELETE FROM " + DBHelper.ACTION_PHOTO, null));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        try {
+            if (jsonArray.length() > 0) {
+                for (int i = 0; i < jsonArray.length(); i++) {
+                    String inspection_id = jsonArray.getJSONObject(i).getString(AppConstant.INSPECTION_ID);
+                    String action_id = jsonArray.getJSONObject(i).getString("action_id");
+                    String image_group_id = jsonArray.getJSONObject(i).getString("inspection_img_group_id");
+                    String description = jsonArray.getJSONObject(i).getString("action_image_description");
+                    String image = jsonArray.getJSONObject(i).getString("image");
+
+
+                    ContentValues Imageist = new ContentValues();
+                    Imageist.put(AppConstant.INSPECTION_ID, Integer.parseInt(inspection_id));
+                    Imageist.put(AppConstant.ACTION_ID, Integer.parseInt(action_id));
+                    Imageist.put(AppConstant.IMAGE, image);
+                    Imageist.put(AppConstant.DESCRIPTION, description);
+                    Imageist.put("level","BO");
+
+                    LoginScreen.db.insert(DBHelper.ACTION_PHOTO, null, Imageist);
+                }
+
+            } else {
+                Utils.showAlert(this, "No Record Found");
+            }
+
+        } catch (JSONException j) {
+            j.printStackTrace();
+        } catch (ArrayIndexOutOfBoundsException a) {
+            a.printStackTrace();
+        }
     }
 
 }

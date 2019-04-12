@@ -8,6 +8,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog;
@@ -1071,7 +1072,15 @@ public class DownloadActivity extends AppCompatActivity implements Api.ServerRes
                 String responseDecryptedKey = Utils.decrypt(prefManager.getUserPassKey(), key);
                 JSONObject jsonObject = new JSONObject(responseDecryptedKey);
                 if (jsonObject.getString("STATUS").equalsIgnoreCase("OK") && jsonObject.getString("RESPONSE").equalsIgnoreCase("OK")) {
-
+                   Insert_ActionList_Images(jsonObject.getJSONArray(AppConstant.JSON_DATA));
+                    String authKey = jsonObject.getJSONArray(AppConstant.JSON_DATA).toString();
+                        int maxLogSize = 3000;
+                        for(int i = 0; i <= authKey.length() / maxLogSize; i++) {
+                            int start = i * maxLogSize;
+                            int end = (i+1) * maxLogSize;
+                            end = end > authKey.length() ? authKey.length() : end;
+                            Log.v("to_send", authKey.substring(start, end));
+                     }
                 } else if (jsonObject.getString("STATUS").equalsIgnoreCase("OK") && jsonObject.getString("RESPONSE").equalsIgnoreCase("NO_RECORD")) {
                     // Utils.showAlert(this, "No Record Found");
                     Log.d("ActionImages", jsonObject.getString("MESSAGE"));
@@ -1282,7 +1291,7 @@ public class DownloadActivity extends AppCompatActivity implements Api.ServerRes
 
                     LoginScreen.db.insert(DBHelper.WORK_LIST_OPTIONAL, null, workListOptional);
                 }
-                callAlert();
+               // callAlert();
 
             } else {
                 Utils.showAlert(this, "No Record Found for Corrsponding Financial Year");
@@ -1436,6 +1445,48 @@ public class DownloadActivity extends AppCompatActivity implements Api.ServerRes
 
             } else {
                 Utils.showAlert(this, "No Record Found!");
+            }
+
+        } catch (JSONException j) {
+            j.printStackTrace();
+        } catch (ArrayIndexOutOfBoundsException a) {
+            a.printStackTrace();
+        }
+
+    }
+
+    private void Insert_ActionList_Images(JSONArray jsonArray) {
+        try {
+            // db.delete(DBHelper.CAPTURED_PHOTO, null, null);
+            db.execSQL(String.format("DELETE FROM " + DBHelper.ACTION_PHOTO, null));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        try {
+            updatedJsonArray = new JSONArray();
+            updatedJsonArray = jsonArray;
+            if (jsonArray.length() > 0) {
+                for (int i = 0; i < jsonArray.length(); i++) {
+                    String inspection_id = jsonArray.getJSONObject(i).getString(AppConstant.INSPECTION_ID);
+                    String action_id = jsonArray.getJSONObject(i).getString("action_id");
+                    String image_group_id = jsonArray.getJSONObject(i).getString("inspection_img_group_id");
+                    String description = jsonArray.getJSONObject(i).getString("action_image_description");
+                    String image = jsonArray.getJSONObject(i).getString("image");
+
+
+                    ContentValues Imageist = new ContentValues();
+                    Imageist.put(AppConstant.INSPECTION_ID, Integer.parseInt(inspection_id));
+                    Imageist.put(AppConstant.ACTION_ID, Integer.parseInt(action_id));
+                    Imageist.put(AppConstant.IMAGE, image);
+                    Imageist.put(AppConstant.DESCRIPTION, description);
+                    Imageist.put("level","BO");
+
+                    LoginScreen.db.insert(DBHelper.ACTION_PHOTO, null, Imageist);
+                }
+               // callAlert();
+
+            } else {
+                Utils.showAlert(this, "No Record Found");
             }
 
         } catch (JSONException j) {

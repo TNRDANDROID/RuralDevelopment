@@ -13,6 +13,7 @@ import com.nic.RuralInspection.Activity.ViewActionImageScreen;
 import com.nic.RuralInspection.Model.BlockListValue;
 import com.nic.RuralInspection.R;
 import com.nic.RuralInspection.Support.MyCustomTextView;
+import com.nic.RuralInspection.constant.AppConstant;
 import com.nic.RuralInspection.session.PrefManager;
 
 import java.util.List;
@@ -62,8 +63,15 @@ public class ViewActionAdapter extends RecyclerView.Adapter<ViewActionAdapter.My
     }
 
     public void actionImagePreviewScreen(int position) {
+        String inspect_id = String.valueOf(actionListValues.get(position).getInspectionID());
+        String action_id = String.valueOf(actionListValues.get(position).getActionID());
+        String delete_flag = String.valueOf(actionListValues.get(position).getDelete_Flag());
+
         Activity activity = (Activity) context;
         Intent intent = new Intent(context, ViewActionImageScreen.class);
+        intent.putExtra(AppConstant.INSPECTION_ID,inspect_id);
+        intent.putExtra(AppConstant.ACTION_ID,action_id);
+        intent.putExtra(AppConstant.DELETE_FLAG,delete_flag);
         activity.startActivity(intent);
         activity.overridePendingTransition(R.anim.slide_in, R.anim.slide_out);
     }

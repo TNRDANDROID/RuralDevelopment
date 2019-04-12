@@ -3,20 +3,26 @@ package com.nic.RuralInspection.Activity;
 import android.app.Activity;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Base64;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
 import com.nic.RuralInspection.Adapter.ViewActionImageAdapter;
+import com.nic.RuralInspection.DataBase.DBHelper;
 import com.nic.RuralInspection.Model.BlockListValue;
 import com.nic.RuralInspection.R;
 import com.nic.RuralInspection.Support.MyCustomTextView;
+import com.nic.RuralInspection.constant.AppConstant;
 import com.nic.RuralInspection.session.PrefManager;
 
 import java.util.ArrayList;
@@ -64,49 +70,55 @@ public class ViewActionImageScreen extends AppCompatActivity implements View.OnC
         back_img.setOnClickListener(this);
         home.setOnClickListener(this);
         title_tv.setText("View Action Image");
-//        retriveImageWithDescription();
+        retriveImageWithDescription();
     }
 
-//    public void retriveImageWithDescription() {
-//        imagePreviewlistvalues.clear();
-//        String id = getIntent().getStringExtra(AppConstant.INSPECTION_ID);
-//        int inspectionId = Integer.parseInt(id);
-//
-//
-//        String image_sql = "SELECT * FROM " + DBHelper.CAPTURED_PHOTO + " WHERE inspection_id = " + inspectionId+" and action_id is null ";
-//        Log.d("image_sql", image_sql);
-//        Cursor imageListPreview = getRawEvents(image_sql, null);
-//
-//        if (imageListPreview.getCount() > 0) {
-//            if (imageListPreview.moveToFirst()) {
-//                do {
-//                    String work_id = imageListPreview.getString(imageListPreview.getColumnIndexOrThrow(AppConstant.WORK_ID));
-//                    String latitude = imageListPreview.getString(imageListPreview.getColumnIndexOrThrow(AppConstant.LATITUDE));
-//                    String longitude = imageListPreview.getString(imageListPreview.getColumnIndexOrThrow(AppConstant.LONGITUDE));
-//                    String description = imageListPreview.getString(imageListPreview.getColumnIndexOrThrow(AppConstant.DESCRIPTION));
-//
-//                    byte[] photo = imageListPreview.getBlob(imageListPreview.getColumnIndexOrThrow(AppConstant.IMAGE));
-//                    byte[] decodedString = Base64.decode(photo, Base64.DEFAULT);
-//                    Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
-//
-//                    //  byte[] image =  imageListPreview.getBlob(imageListPreview.getColumnIndexOrThrow(AppConstant.IMAGE));
-//
-//
-//                    BlockListValue imageValue = new BlockListValue();
-//
-//                    imageValue.setWorkID(work_id);
-//                    imageValue.setLatitude(latitude);
-//                    imageValue.setLongitude(longitude);
-//                    imageValue.setDescription(description);
-//                    imageValue.setImage(decodedByte);
-//
-//                    imagePreviewlistvalues.add(imageValue);
-//
-//                } while (imageListPreview.moveToNext());
-//            }
-//        }
-//
-//    }
+    public void retriveImageWithDescription() {
+        imagePreviewlistvalues.clear();
+        String inspection_id = getIntent().getStringExtra(AppConstant.INSPECTION_ID);
+        String  action_id = getIntent().getStringExtra(AppConstant.ACTION_ID);
+        String  delete_flag = getIntent().getStringExtra(AppConstant.DELETE_FLAG);
+
+        String image_sql=null;
+        if(delete_flag.equals("Offline")) {
+            image_sql = "SELECT * FROM " + DBHelper.CAPTURED_PHOTO + " WHERE inspection_id = " + inspection_id+" and action_id ="+action_id;
+        }
+        else if(delete_flag.equals("Online")) {
+            image_sql = "SELECT * FROM " + DBHelper.ACTION_PHOTO + " WHERE inspection_id = " + inspection_id+" and action_id ="+action_id;
+        }
+        Log.d("Action_image_sql", image_sql);
+        Cursor imageListPreview = getRawEvents(image_sql, null);
+
+        if (imageListPreview.getCount() > 0) {
+            if (imageListPreview.moveToFirst()) {
+                do {
+                    String work_id = imageListPreview.getString(imageListPreview.getColumnIndexOrThrow(AppConstant.WORK_ID));
+                    String latitude = imageListPreview.getString(imageListPreview.getColumnIndexOrThrow(AppConstant.LATITUDE));
+                    String longitude = imageListPreview.getString(imageListPreview.getColumnIndexOrThrow(AppConstant.LONGITUDE));
+                    String description = imageListPreview.getString(imageListPreview.getColumnIndexOrThrow(AppConstant.DESCRIPTION));
+
+                    byte[] photo = imageListPreview.getBlob(imageListPreview.getColumnIndexOrThrow(AppConstant.IMAGE));
+                    byte[] decodedString = Base64.decode(photo, Base64.DEFAULT);
+                    Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+
+                    //  byte[] image =  imageListPreview.getBlob(imageListPreview.getColumnIndexOrThrow(AppConstant.IMAGE));
+
+
+                    BlockListValue imageValue = new BlockListValue();
+
+                    imageValue.setWorkID(work_id);
+                    imageValue.setLatitude(latitude);
+                    imageValue.setLongitude(longitude);
+                    imageValue.setDescription(description);
+                    imageValue.setImage(decodedByte);
+
+                    imagePreviewlistvalues.add(imageValue);
+
+                } while (imageListPreview.moveToNext());
+            }
+        }
+
+    }
 
     @Override
     public void onClick(View v) {

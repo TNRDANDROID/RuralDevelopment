@@ -120,20 +120,23 @@ public class ViewActions extends AppCompatActivity implements View.OnClickListen
                     String actionId = null;
                     if(delete_flag.equals("1")) {
                          actionId = actionList.getString(actionList.getColumnIndexOrThrow(AppConstant.ACTION_ID));
+                    }else {
+                        actionId = actionList.getString(actionList.getColumnIndexOrThrow("id"));
                     }
                     
                     String action_taken_officer = actionList.getString(actionList.getColumnIndexOrThrow(AppConstant.ACTION_TAKEN_OFFICER));
                     String action_taken_officer_desig = actionList.getString(actionList.getColumnIndexOrThrow(AppConstant.ACTION_TAKEN_OFFICER_DESIGNATION));
 
                     BlockListValue actionListValue = new BlockListValue();
-//                    if(delete_flag.equals("1")) {
-//                        actionListValue.setActionID(Integer.parseInt(actionId));
-//                    }
-                    
+
+                    actionListValue.setActionID(Integer.parseInt(actionId));
                     actionListValue.setDate_of_Action(date_of_action);
                     actionListValue.setAction_remark(action_remark);
                     actionListValue.setActionOffName(action_taken_officer);
                     actionListValue.setActionOffDesignName(action_taken_officer_desig);
+                    actionListValue.setInspectionID(Integer.parseInt(inspection_id));
+                    actionListValue.setDelete_Flag(delete_flag);
+
                     if(delete_flag.equals("1")) {
                         actionListValue.setDelete_Flag("Online");
                     }else if(delete_flag.equals("0")){
