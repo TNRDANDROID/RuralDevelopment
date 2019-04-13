@@ -7,7 +7,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 public class DBHelper extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "RuralInspection";
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 2;
     public static final String DISTRICT_TABLE_NAME = "DistrictList";
     public static final String BLOCK_TABLE_NAME = "BlockList";
     public static final String SCHEME_TABLE_NAME = "SchemeList";

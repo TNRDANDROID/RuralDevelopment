@@ -288,7 +288,7 @@ public class SelectBlockSchemeScreen extends AppCompatActivity implements View.O
 
     public void villageFilterSpinner(String filterVillage) {
        // String villageSql = "SELECT * FROM " + VILLAGE_TABLE_NAME + " WHERE bcode = " + filterVillage;
-        String villageSql = "select b.dcode as dcode,b.bcode as bcode,b.pvcode as pvcode,b.pvname as pvname from (select pvcode,bcode from "+DBHelper.WORK_LIST_OPTIONAL+" where bcode ='"+filterVillage+"' group by pvcode)a left outer join (select * from "+DBHelper.VILLAGE_TABLE_NAME+" where bcode ='"+filterVillage+"')b on a.pvcode = b.pvcode and a.bcode = b.bcode";
+        String villageSql = "select b.dcode as dcode,b.bcode as bcode,b.pvcode as pvcode,b.pvname as pvname from (select pvcode,bcode from "+DBHelper.WORK_LIST_OPTIONAL+" where bcode ='"+filterVillage+"' group by pvcode)a left outer join (select * from "+DBHelper.VILLAGE_TABLE_NAME+" where bcode ='"+filterVillage+"')b on a.pvcode = b.pvcode and a.bcode = b.bcode order by pvname";
         Log.d("villageSql", "" + villageSql);
         Cursor VillageList = getRawEvents(villageSql, null);
         Village.clear();
@@ -440,7 +440,7 @@ public class SelectBlockSchemeScreen extends AppCompatActivity implements View.O
 
     public void loadOfflineBlockListDBValues() {
 
-        Cursor BlockList = getRawEvents("select a.bcode as bcode,b.dcode as dcode,b.bname as bname from (select  bcode from "+DBHelper.WORK_LIST_OPTIONAL+"  group by bcode)a left join (select * from "+DBHelper.BLOCK_TABLE_NAME+")b on a.bcode = b.bcode", null);
+        Cursor BlockList = getRawEvents("select a.bcode as bcode,b.dcode as dcode,b.bname as bname from (select  bcode from "+DBHelper.WORK_LIST_OPTIONAL+"  group by bcode)a left join (select * from "+DBHelper.BLOCK_TABLE_NAME+")b on a.bcode = b.bcode order by bname", null);
        // Cursor BlockList = getRawEvents("SELECT * FROM " + BLOCK_TABLE_NAME, null);
         Block.clear();
         BlockListValue blockListValue = new BlockListValue();
@@ -493,7 +493,7 @@ public class SelectBlockSchemeScreen extends AppCompatActivity implements View.O
 
     public void loadOfflineSchemeListDBValues(String fin_Year) {
       //  String query = "SELECT * FROM " + DBHelper.SCHEME_TABLE_NAME + " Where fin_year = '" + fin_Year + "'";
-        String query = "select b.scheme_seq_id as scheme_seq_id,b.scheme_name as scheme_name,b.fin_year as fin_year from (SELECT * FROM "+DBHelper.WORK_LIST_OPTIONAL+" where fin_year = '"+fin_Year+"' group by scheme_id)a left join (select * from "+DBHelper.SCHEME_TABLE_NAME+" where fin_year = '"+fin_Year+"')b on a.scheme_id = b.scheme_seq_id and a.fin_year = b.fin_year";
+        String query = "select b.scheme_seq_id as scheme_seq_id,b.scheme_name as scheme_name,b.fin_year as fin_year from (SELECT * FROM "+DBHelper.WORK_LIST_OPTIONAL+" where fin_year = '"+fin_Year+"' group by scheme_id)a left join (select * from "+DBHelper.SCHEME_TABLE_NAME+" where fin_year = '"+fin_Year+"')b on a.scheme_id = b.scheme_seq_id and a.fin_year = b.fin_year order by scheme_name";
         Cursor SchemeList = getRawEvents(query, null);
         Log.d("SchemeQuery", "" + query);
 

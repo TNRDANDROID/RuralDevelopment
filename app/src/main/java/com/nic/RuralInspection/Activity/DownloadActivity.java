@@ -824,10 +824,10 @@ public class DownloadActivity extends AppCompatActivity implements Api.ServerRes
             if (!selected_block_tv.getText().equals("")) {
                 if (!selected_village_tv.getText().equals("")) {
                     if (!selected_scheme_tv.getText().equals("")) {
-                        getWorkListOptional();
                         getInspectionList_blockwise();
                         getInspectionList_Images_blockwise();
                         getAction_ForInspection();
+                        getWorkListOptional();
                         //getActionImages();
                     } else {
                         Utils.showAlert(this, "Select Scheme");
@@ -850,10 +850,10 @@ public class DownloadActivity extends AppCompatActivity implements Api.ServerRes
             if (!end_date.equals("")) {
                 if (!selected_officers_tv.getText().equals("")) {
                     if (CheckDates(start_date, end_date)) {
-                        getWorkListOptional();
                         getInspectionList_blockwise();
                         getInspectionList_Images_blockwise();
                         getAction_ForInspection();
+                        getWorkListOptional();
                       //  getActionImages();
                     } else {
                         Utils.showAlert(this, "End Date should be greater than start date");
@@ -1356,7 +1356,7 @@ public class DownloadActivity extends AppCompatActivity implements Api.ServerRes
         } catch (ArrayIndexOutOfBoundsException a) {
             a.printStackTrace();
         }
-
+        callAlert();
     }
 
 
@@ -1397,6 +1397,7 @@ public class DownloadActivity extends AppCompatActivity implements Api.ServerRes
         } catch (ArrayIndexOutOfBoundsException a) {
             a.printStackTrace();
         }
+        callAlert();
     }
 
     private void Insert_inspectionList_Action(JSONArray jsonArray) {
@@ -1452,6 +1453,7 @@ public class DownloadActivity extends AppCompatActivity implements Api.ServerRes
         } catch (ArrayIndexOutOfBoundsException a) {
             a.printStackTrace();
         }
+        callAlert();
 
     }
 
@@ -1498,7 +1500,7 @@ public class DownloadActivity extends AppCompatActivity implements Api.ServerRes
     }
 
     public void callAlert() {
-        if (workListInsert) {
+        if (workListInsert){
             Utils.showAlert(this, "Your Data Will be Downloaded Sucessfully!");
             workListInsert = false;
             inspectionListInsert = false;
