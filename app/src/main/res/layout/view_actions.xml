@@ -84,7 +84,8 @@
                             android:text="@string/view_action_image"
                             android:textSize="18sp"
                             app:colorSpace="150dp"
-                            app:colorSpeed="4dp" />
+                            app:colorSpeed="4dp"
+                            android:visibility="gone"/>
 
                         <!--<com.nic.RuralInspection.Support.MyCustomTextView-->
                         <!--android:id="@+id/view_image"-->

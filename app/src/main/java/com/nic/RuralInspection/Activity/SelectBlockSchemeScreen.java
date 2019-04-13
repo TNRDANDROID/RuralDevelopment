@@ -288,7 +288,7 @@ public class SelectBlockSchemeScreen extends AppCompatActivity implements View.O
 
     public void villageFilterSpinner(String filterVillage) {
        // String villageSql = "SELECT * FROM " + VILLAGE_TABLE_NAME + " WHERE bcode = " + filterVillage;
-        String villageSql = "select b.dcode as dcode,b.bcode as bcode,b.pvcode as pvcode,b.pvname as pvname from (select pvcode,bcode from "+DBHelper.WORK_LIST_OPTIONAL+" group by pvcode)a left outer join (select * from "+DBHelper.VILLAGE_TABLE_NAME+" )b on a.pvcode = b.pvcode and a.bcode = b.bcode where a.bcode =" + filterVillage;
+        String villageSql = "select b.dcode as dcode,b.bcode as bcode,b.pvcode as pvcode,b.pvname as pvname from (select pvcode,bcode from "+DBHelper.WORK_LIST_OPTIONAL+" where bcode ='"+filterVillage+"' group by pvcode)a left outer join (select * from "+DBHelper.VILLAGE_TABLE_NAME+" where bcode ='"+filterVillage+"')b on a.pvcode = b.pvcode and a.bcode = b.bcode";
         Log.d("villageSql", "" + villageSql);
         Cursor VillageList = getRawEvents(villageSql, null);
         Village.clear();

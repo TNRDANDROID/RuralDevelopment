@@ -1244,7 +1244,7 @@ public class Utils {
         }
 
 
-        Log.d("object", "" + dataSet);
+        Log.d("object_INSPECT", "" + dataSet);
         return dataSet;
     }
     public static JSONObject InspectionList_Image(Activity activity) throws JSONException {
@@ -1259,7 +1259,7 @@ public class Utils {
             dataSet.put(AppConstant.KEY_SERVICE_ID, AppConstant.KEY_INSPECTION_LIST_BLOCK_WISE_IMAGE_ACTION);
         }
 
-        Log.d("object", "" + dataSet);
+        Log.d("object_INSPECT_IMAGE", "" + dataSet);
         return dataSet;
     }
     public static JSONObject  InspectionList_Action(Activity activity) throws JSONException {
@@ -1267,8 +1267,10 @@ public class Utils {
         JSONObject dataSet = new JSONObject();
         dataSet.put(AppConstant.KEY_SERVICE_ID, AppConstant.KEY_INSPECTION_LIST_DISTRICT_WISE_ACTION);
         dataSet.put(AppConstant.DISTRICT_CODE, prefManager.getDistrictCode());
-        dataSet.put(AppConstant.BLOCK_CODE, prefManager.getBlockCodeJson());
-        Log.d("object", "" + dataSet);
+        if (prefManager.getLevels().equalsIgnoreCase("D")){
+            dataSet.put(AppConstant.BLOCK_CODE, prefManager.getBlockCodeJson());
+        }
+        Log.d("object_ACTION_LIST", "" + dataSet);
         return dataSet;
     }
 
@@ -1282,7 +1284,7 @@ public class Utils {
         }else {
             dataSet.put(AppConstant.BLOCK_CODE, prefManager.getBlockCode());
         }
-        Log.d("object", "" + dataSet);
+        Log.d("object_ACTIION_IMAGES", "" + dataSet);
         return dataSet;
     }
 

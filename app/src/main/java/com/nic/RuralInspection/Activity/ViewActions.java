@@ -144,10 +144,10 @@ public class ViewActions extends AppCompatActivity implements View.OnClickListen
                     }
 
                     if (dist_action == null   && state_action == null && sub_div_action == null){
-                        actionListValue.setActionresult("NO Action Taken Yet");
+                        actionListValue.setActionresult("Pending");
                     }else
                     if ((dist_action.equals("")   & state_action.equals("") & sub_div_action.equals(""))) {
-                        actionListValue.setActionresult("NO Action Taken Yet");
+                        actionListValue.setActionresult("Pending");
                     } else if (dist_action == "1" && state_action == "1" && sub_div_action == "1") {
                         actionListValue.setActionresult("Accepted");
                     } else {

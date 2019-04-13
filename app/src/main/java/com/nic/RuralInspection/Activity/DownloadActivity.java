@@ -828,7 +828,7 @@ public class DownloadActivity extends AppCompatActivity implements Api.ServerRes
                         getInspectionList_blockwise();
                         getInspectionList_Images_blockwise();
                         getAction_ForInspection();
-                        getActionImages();
+                        //getActionImages();
                     } else {
                         Utils.showAlert(this, "Select Scheme");
                     }
@@ -854,7 +854,7 @@ public class DownloadActivity extends AppCompatActivity implements Api.ServerRes
                         getInspectionList_blockwise();
                         getInspectionList_Images_blockwise();
                         getAction_ForInspection();
-                        getActionImages();
+                      //  getActionImages();
                     } else {
                         Utils.showAlert(this, "End Date should be greater than start date");
                     }
@@ -1291,7 +1291,7 @@ public class DownloadActivity extends AppCompatActivity implements Api.ServerRes
 
                     LoginScreen.db.insert(DBHelper.WORK_LIST_OPTIONAL, null, workListOptional);
                 }
-               // callAlert();
+                callAlert();
 
             } else {
                 Utils.showAlert(this, "No Record Found for Corrsponding Financial Year");
@@ -1569,7 +1569,7 @@ public class DownloadActivity extends AppCompatActivity implements Api.ServerRes
         public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
             // Do something with the date chosen by the user
             start_date_tv.setText(dayOfMonth + "-" + (monthOfYear + 1) + "-" + year);
-            String start_date = year+"-"+monthOfYear+"-"+dayOfMonth;
+            String start_date = year+"-"+(monthOfYear + 1)+"-"+dayOfMonth;
             prefManager.setKeyStartDate(start_date);
             cldr.set(Calendar.YEAR, year);
             cldr.set(Calendar.MONTH, (monthOfYear));
