@@ -193,6 +193,7 @@ public class DBHelper extends SQLiteOpenHelper {
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         if (oldVersion >= newVersion) {
             //drop table if already exists
+            db.execSQL("DROP TABLE IF EXISTS " + DISTRICT_TABLE_NAME);
             db.execSQL("DROP TABLE IF EXISTS " + BLOCK_TABLE_NAME);
             db.execSQL("DROP TABLE IF EXISTS " + VILLAGE_TABLE_NAME);
             db.execSQL("DROP TABLE IF EXISTS " + SCHEME_TABLE_NAME);
@@ -207,6 +208,8 @@ public class DBHelper extends SQLiteOpenHelper {
             db.execSQL("DROP TABLE IF EXISTS " + IMAGE_GROUP_ID_ONLINE);
             db.execSQL("DROP TABLE IF EXISTS " + INSPECTION_PENDING);
             db.execSQL("DROP TABLE IF EXISTS " + INSPECTED_OFFICER_LIST);
+            db.execSQL("DROP TABLE IF EXISTS " + LOCAL_IMAGE);
+            db.execSQL("DROP TABLE IF EXISTS " + ACTION_PHOTO);
             onCreate(db);
         }
     }
