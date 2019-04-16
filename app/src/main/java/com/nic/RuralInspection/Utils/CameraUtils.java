@@ -93,11 +93,13 @@ public class CameraUtils {
      */
     public static File getOutputMediaFile(int type) {
 
+        File mediaStorageDir = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/Android/data/com.nic.RuralInspection/files");
+
         // External sdcard location
-        File mediaStorageDir = new File(
-                Environment
-                        .getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),
-                ViewInspectionReportScreen.GALLERY_DIRECTORY_NAME);
+//        File mediaStorageDir = new File(
+//                Environment
+//                        .getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),
+//                ViewInspectionReportScreen.GALLERY_DIRECTORY_NAME);
 
         // Create the storage directory if it does not exist
         if (!mediaStorageDir.exists()) {
