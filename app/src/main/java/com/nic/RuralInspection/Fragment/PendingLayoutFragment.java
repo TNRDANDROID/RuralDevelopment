@@ -230,7 +230,7 @@ public void dashboard(){
 //        }
 //    }
     public JSONObject pending_Sync_Data(JSONObject dataset) {
-        String authKey = Utils.encrypt(prefManager.getUserPassKey(),getResources().getString(R.string.init_vector),dataset.toString().replaceAll(" ",""));
+        String authKey = Utils.encrypt(prefManager.getUserPassKey(),getResources().getString(R.string.init_vector),dataset.toString());
         JSONObject savedDataSet = new JSONObject();
         try {
             savedDataSet.put(AppConstant.KEY_USER_NAME, prefManager.getUserName());
