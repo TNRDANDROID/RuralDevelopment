@@ -850,11 +850,11 @@ public class DownloadActivity extends AppCompatActivity implements Api.ServerRes
             if (!end_date.equals("")) {
                 if (!selected_officers_tv.getText().equals("")) {
                     if (CheckDates(start_date, end_date)) {
+                        getActionImages();
                         getInspectionList_blockwise();
                         getInspectionList_Images_blockwise();
                         getAction_ForInspection();
                         getWorkListOptional();
-                      //  getActionImages();
                     } else {
                         Utils.showAlert(this, "End Date should be greater than start date");
                     }
