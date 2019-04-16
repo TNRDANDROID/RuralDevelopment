@@ -614,23 +614,23 @@ public class AddInspectionReportScreen extends AppCompatActivity implements View
             }
 
         }
-//        String authKey = dataset.toString();
-//                        int maxLogSize = 2000;
-//                        for(int i = 0; i <= authKey.length() / maxLogSize; i++) {
-//                            int start = i * maxLogSize;
-//                            int end = (i+1) * maxLogSize;
-//                            end = end > authKey.length() ? authKey.length() : end;
-//                            Log.v("to_send+_plain", authKey.substring(start, end));
-//                     }
+        String authKey = dataset.toString();
+                        int maxLogSize = 2000;
+                        for(int i = 0; i <= authKey.length() / maxLogSize; i++) {
+                            int start = i * maxLogSize;
+                            int end = (i+1) * maxLogSize;
+                            end = end > authKey.length() ? authKey.length() : end;
+                            Log.v("to_send+_plain", authKey.substring(start, end));
+                     }
 
-//        String authKey1 = Utils.encrypt(prefManager.getUserPassKey(), getResources().getString(R.string.init_vector), dataset.toString());
-//
-//                        for(int i = 0; i <= authKey1.length() / maxLogSize; i++) {
-//                            int start = i * maxLogSize;
-//                            int end = (i+1) * maxLogSize;
-//                            end = end > authKey.length() ? authKey1.length() : end;
-//                            Log.v("to_send_encryt", authKey1.substring(start, end));
-//                     }
+        String authKey1 = Utils.encrypt(prefManager.getUserPassKey(), getResources().getString(R.string.init_vector), dataset.toString());
+
+                        for(int i = 0; i <= authKey1.length() / maxLogSize; i++) {
+                            int start = i * maxLogSize;
+                            int end = (i+1) * maxLogSize;
+                            end = end > authKey.length() ? authKey1.length() : end;
+                            Log.v("to_send_encryt", authKey1.substring(start, end));
+                     }
             sync_data();
     }
 
@@ -953,7 +953,7 @@ public class AddInspectionReportScreen extends AppCompatActivity implements View
     }
 
     public JSONObject dataTobeSavedJsonParams() throws JSONException {
-        String authKey = Utils.encrypt(prefManager.getUserPassKey(), getResources().getString(R.string.init_vector), dataset.toString().replaceAll(" ", ""));
+        String authKey = Utils.encrypt(prefManager.getUserPassKey(), getResources().getString(R.string.init_vector), dataset.toString());
         JSONObject dataSet = new JSONObject();
         dataSet.put(AppConstant.KEY_USER_NAME, prefManager.getUserName());
         dataSet.put(AppConstant.DATA_CONTENT, authKey);

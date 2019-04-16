@@ -352,7 +352,13 @@ public class ViewInspectionInActionScreen extends AppCompatActivity implements V
 
 
         final LinearLayout mobileNumberLayout = (LinearLayout) dialog.findViewById(R.id.mobile_number_layout);
-
+        MyCustomTextView cancel = (MyCustomTextView) dialog.findViewById(R.id.tv_save_cancel);
+        cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
         Button done = (Button) dialog.findViewById(R.id.btn_save_inspection);
         done.setGravity(Gravity.CENTER);
         done.setVisibility(View.VISIBLE);
@@ -982,7 +988,7 @@ public class ViewInspectionInActionScreen extends AppCompatActivity implements V
     }
 
     public JSONObject dataTobeSavedJsonParams() throws JSONException {
-        String authKey = Utils.encrypt(prefManager.getUserPassKey(), getResources().getString(R.string.init_vector), dataset.toString().replaceAll(" ", ""));
+        String authKey = Utils.encrypt(prefManager.getUserPassKey(), getResources().getString(R.string.init_vector), dataset.toString());
         JSONObject dataSet = new JSONObject();
         dataSet.put(AppConstant.KEY_USER_NAME, prefManager.getUserName());
         dataSet.put(AppConstant.DATA_CONTENT, authKey);
