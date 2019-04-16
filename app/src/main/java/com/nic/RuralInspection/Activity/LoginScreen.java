@@ -143,6 +143,7 @@ public class LoginScreen extends AppCompatActivity implements View.OnClickListen
         if ((Utils.isOnline())) {
 
             try {
+                db.delete(DBHelper.DISTRICT_TABLE_NAME, null, null);
                 db.delete(DBHelper.BLOCK_TABLE_NAME, null, null);
                 db.delete(DBHelper.VILLAGE_TABLE_NAME, null, null);
                 db.delete(DBHelper.SCHEME_TABLE_NAME, null, null);
