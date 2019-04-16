@@ -824,11 +824,11 @@ public class DownloadActivity extends AppCompatActivity implements Api.ServerRes
             if (!selected_block_tv.getText().equals("")) {
                 if (!selected_village_tv.getText().equals("")) {
                     if (!selected_scheme_tv.getText().equals("")) {
+                       getActionImages();
                         getInspectionList_blockwise();
                         getInspectionList_Images_blockwise();
                         getAction_ForInspection();
                         getWorkListOptional();
-                        //getActionImages();
                     } else {
                         Utils.showAlert(this, "Select Scheme");
                     }
@@ -1073,14 +1073,14 @@ public class DownloadActivity extends AppCompatActivity implements Api.ServerRes
                 JSONObject jsonObject = new JSONObject(responseDecryptedKey);
                 if (jsonObject.getString("STATUS").equalsIgnoreCase("OK") && jsonObject.getString("RESPONSE").equalsIgnoreCase("OK")) {
                    Insert_ActionList_Images(jsonObject.getJSONArray(AppConstant.JSON_DATA));
-                    String authKey = jsonObject.getJSONArray(AppConstant.JSON_DATA).toString();
-                        int maxLogSize = 3000;
-                        for(int i = 0; i <= authKey.length() / maxLogSize; i++) {
-                            int start = i * maxLogSize;
-                            int end = (i+1) * maxLogSize;
-                            end = end > authKey.length() ? authKey.length() : end;
-                            Log.v("to_send", authKey.substring(start, end));
-                     }
+//                    String authKey = jsonObject.getJSONArray(AppConstant.JSON_DATA).toString();
+//                        int maxLogSize = 3000;
+//                        for(int i = 0; i <= authKey.length() / maxLogSize; i++) {
+//                            int start = i * maxLogSize;
+//                            int end = (i+1) * maxLogSize;
+//                            end = end > authKey.length() ? authKey.length() : end;
+//                            Log.v("to_send", authKey.substring(start, end));
+//                     }
                 } else if (jsonObject.getString("STATUS").equalsIgnoreCase("OK") && jsonObject.getString("RESPONSE").equalsIgnoreCase("NO_RECORD")) {
                     // Utils.showAlert(this, "No Record Found");
                     Log.d("ActionImages", jsonObject.getString("MESSAGE"));
