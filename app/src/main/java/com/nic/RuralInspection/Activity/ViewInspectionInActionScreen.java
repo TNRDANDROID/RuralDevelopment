@@ -888,6 +888,7 @@ public class ViewInspectionInActionScreen extends AppCompatActivity implements V
                     JSONObject jsonObject = new JSONObject(responseDecryptedBlockKey);
                     if (jsonObject.getString("STATUS").equalsIgnoreCase("OK") && jsonObject.getString("RESPONSE").equalsIgnoreCase("OK")) {
                         // loadBlockList(jsonObject.getJSONArray(AppConstant.JSON_DATA));
+                        getActionImages();
                         getAction_ForInspection();
                         Utils.showAlert(this, "Saved");
                         finish();
@@ -918,12 +919,12 @@ public class ViewInspectionInActionScreen extends AppCompatActivity implements V
                     Insert_ActionList_Images(jsonObject.getJSONArray(AppConstant.JSON_DATA));
                     String authKey = String.valueOf(jsonObject.getJSONArray(AppConstant.JSON_DATA));
                     int maxLogSize = 3000;
-                    for(int i = 0; i <= authKey.length() / maxLogSize; i++) {
-                        int start = i * maxLogSize;
-                        int end = (i+1) * maxLogSize;
-                        end = end > authKey.length() ? authKey.length() : end;
-                        Log.v("imagesofAction", authKey.substring(start, end));
-                    }
+//                    for(int i = 0; i <= authKey.length() / maxLogSize; i++) {
+//                        int start = i * maxLogSize;
+//                        int end = (i+1) * maxLogSize;
+//                        end = end > authKey.length() ? authKey.length() : end;
+//                        Log.v("imagesofAction", authKey.substring(start, end));
+//                    }
                 } else if (jsonObject.getString("STATUS").equalsIgnoreCase("OK") && jsonObject.getString("RESPONSE").equalsIgnoreCase("NO_RECORD")) {
                     // Utils.showAlert(this, "No Record Found");
                     Log.d("ActionImages", jsonObject.getString("MESSAGE"));
