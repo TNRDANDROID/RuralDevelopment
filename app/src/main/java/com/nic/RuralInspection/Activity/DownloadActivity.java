@@ -102,6 +102,7 @@ public class DownloadActivity extends AppCompatActivity implements Api.ServerRes
     private JSONArray updatedJsonArray;
     boolean clicked = false;
     ArrayList<JSONArray> myVillageCodelist;
+    ArrayList<JSONArray> myBlockCodelist;
 
 
 
@@ -419,7 +420,7 @@ public class DownloadActivity extends AppCompatActivity implements Api.ServerRes
         Cursor BlockList = getRawEvents(blockSql, null);
         Block.clear();
         final ArrayList<String> myBlockList = new ArrayList<String>();
-        final ArrayList<String> myBlockCodeList = new ArrayList<String>();
+        myBlockCodelist = new ArrayList<JSONArray>();
         if (BlockList.getCount() > 0) {
             if (BlockList.moveToFirst()) {
                 do {
@@ -436,11 +437,14 @@ public class DownloadActivity extends AppCompatActivity implements Api.ServerRes
         }
         for (int i = 0; i < Block.size(); i++) {
             myBlockList.add(Block.get(i).getBlockName());
-            myBlockCodeList.add(Block.get(i).getBlockCode());
+            JSONArray jsonArray = new JSONArray();
+            jsonArray.put(Block.get(i).getDistictCode());
+            jsonArray.put(Block.get(i).getBlockCode());
+           myBlockCodelist.add(jsonArray);
         }
 
         blockStrings = myBlockList.toArray(new String[myBlockList.size()]);
-        blockCodeStrings = myBlockCodeList.toArray(new String[myBlockCodeList.size()]);
+//        blockCodeStrings = myBlockCodeList.toArray(new String[myBlockCodeList.size()]);
         blockcheckedItems= new boolean[blockStrings.length];
 
     }
@@ -464,7 +468,7 @@ public class DownloadActivity extends AppCompatActivity implements Api.ServerRes
                 JSONArray blockCodeJsonArray = new JSONArray();
 
                 for (int i = 0; i < mUserItems.size(); i++) {
-                    blockCodeJsonArray.put(blockCodeStrings[mUserItems.get(i)]);
+                    blockCodeJsonArray.put(myBlockCodelist.get(mUserItems.get(i)));
                 }
                 prefManager.setBlockCodeJson(blockCodeJsonArray);
                 Log.d("blockcode", "" + blockCodeJsonArray);
