@@ -400,7 +400,12 @@ public class SelectBlockSchemeScreen extends AppCompatActivity implements View.O
 
     public void goto_next() {
         String blockCode;
-        if (!prefManager.getLevels().equalsIgnoreCase("B")) {
+        String districtCode = null;
+        if (prefManager.getLevels().equalsIgnoreCase("S")) {
+            districtCode = District.get(sp_district.getSelectedItemPosition()).getDistictCode();
+            blockCode = Block.get(sp_block.getSelectedItemPosition()).getBlockCode();
+        }
+       else if (prefManager.getLevels().equalsIgnoreCase("D")) {
             blockCode = Block.get(sp_block.getSelectedItemPosition()).getBlockCode();
         } else {
             blockCode = prefManager.getBlockCode();
@@ -418,6 +423,7 @@ public class SelectBlockSchemeScreen extends AppCompatActivity implements View.O
         Intent intent = new Intent(this, ProjectListScreen.class);
         //intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         intent.putExtra(AppConstant.BLOCK_CODE, blockCode);
+        intent.putExtra(AppConstant.DISTRICT_CODE, districtCode);
         intent.putExtra(AppConstant.PV_CODE, pvCode);
         intent.putExtra(AppConstant.SCHEME_SEQUENTIAL_ID, sequentialID);
         intent.putExtra(AppConstant.IS_HIGH_VALUE_PROJECT, highValueProject);

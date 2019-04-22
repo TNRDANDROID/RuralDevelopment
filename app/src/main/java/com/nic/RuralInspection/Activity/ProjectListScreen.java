@@ -121,6 +121,7 @@ public class ProjectListScreen extends AppCompatActivity implements View.OnClick
 
     private void retrieve() {
         projectListValues.clear();
+        String selectedDistrict = getIntent().getStringExtra(AppConstant.DISTRICT_CODE);
         String selectedBlock = getIntent().getStringExtra(AppConstant.BLOCK_CODE);
         String selectedVillage = getIntent().getStringExtra(AppConstant.PV_CODE);
         String selectedScheme = getIntent().getStringExtra(AppConstant.SCHEME_SEQUENTIAL_ID);
@@ -128,30 +129,26 @@ public class ProjectListScreen extends AppCompatActivity implements View.OnClick
 
         String condition = "";
 
-        if (selectedBlock != null || selectedVillage != null || selectedScheme != null || high_value != null) {
-            condition += " where";
-
-            if (high_value != null) {
-                condition += " a.is_high_value = '" + high_value + "'";
+        if (selectedDistrict != null) {
+            if (high_value != null ) {
+                condition += " and";
             }
+            condition += " a.dcode = " + selectedDistrict;
+
             if (selectedBlock != null) {
-                if (high_value != null) {
-                    condition += " and";
-                }
-                condition += " a.bcode = " + selectedBlock;
-
-                if (selectedVillage != null) {
-                    condition += " and a.pvcode = " + selectedVillage;
-                }
-
-            }
-            if (selectedScheme != null) {
-                if (high_value != null || selectedBlock != null) {
-                    condition += " and";
-                }
-                condition += " a.scheme_id = " + selectedScheme;
+                condition += " and a.bcode = " + selectedBlock;
             }
 
+            if (selectedVillage != null) {
+                condition += " and a.pvcode = " + selectedVillage;
+            }
+
+        }
+        if (selectedScheme != null) {
+            if (high_value != null || selectedBlock != null || selectedDistrict != null) {
+                condition += " and";
+            }
+            condition += " a.scheme_id = " + selectedScheme;
         }
 
         String worklist_sql = "select a.bcode as bcode,a.pvcode as pvcode,a.scheme_id as scheme_id,a.work_group_id as work_group_id,a.work_type_id as work_type_id,a.work_id as work_id,a.work_name as work_name,a.as_value as as_value,a.ts_value as ts_value,a.is_high_value as is_high_value,b.work_stage_code as work_stage_code,b.work_stage_order as work_stage_order,b.work_stage_name as  work_stage_name from (select * from " + DBHelper.WORK_LIST_OPTIONAL + " WHERE dcode = " + prefManager.getDistrictCode() + " AND fin_year = '" + prefManager.getFinancialyearName() + "')a left join (select * from " + DBHelper.WORK_STAGE_TABLE + ")b on a.work_group_id = b.work_group_id and a.work_type_id = b.work_type_id and a.current_stage_of_work=b.work_stage_code " + condition + "  order by b.work_stage_order ";

@@ -59,6 +59,7 @@ public class PrefManager {
     private static final String KEY_ACTION_STAGE_LEVEL = "Action_Stage_Level";
     private static final String KEY_DELETE_ID = "deleteId";
     private static final String KEY_BLOCK_CODE_JSON = "block_code_json";
+    private static final String KEY_DISTRICT_CODE_JSON = "district_code_json";
     private static final String KEY_INSPECTED_OFF_CODE_JSON = "inspected_off_code_json";
     private static final String KEY_VILLAGE_CODE_JSON = "village_code_json";
     private static final String KEY_SCHEME_SEQUENTIAL_ID_JSON = "SchemeSeqId_json";
@@ -395,6 +396,29 @@ public class PrefManager {
 
         }
         Log.d("prefBlockJson",""+jsonData);
+        return jsonData;
+    }
+
+    public void setDistrictCodeJson(JSONArray jsonarray) {
+        editor.putString(KEY_DISTRICT_CODE_JSON, jsonarray.toString());
+        editor.commit();
+    }
+
+    private String getDistrictCodeJsonList() {
+        return pref.getString(KEY_DISTRICT_CODE_JSON, null);
+    }
+
+    public JSONArray getDistrictCodeJson() {
+        JSONArray jsonData = null;
+        String strJson = getDistrictCodeJsonList();//second parameter is necessary ie.,Value to return if this preference does not exist.
+        try {
+            if (strJson != null) {
+                jsonData = new JSONArray(strJson);
+            }
+        } catch (Exception e) {
+
+        }
+        Log.d("prefDistrictJson",""+jsonData);
         return jsonData;
     }
 

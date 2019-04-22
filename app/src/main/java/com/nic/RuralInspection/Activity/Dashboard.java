@@ -56,7 +56,7 @@ import static com.nic.RuralInspection.Activity.LoginScreen.db;
 
 public class Dashboard extends AppCompatActivity implements Api.ServerResponseListener, View.OnClickListener, MyDialog.myOnClickListener,AppVersionHelper.myAppVersionInterface {
     private ImageView logout;
-    private static LinearLayout  block_user_layout, pending_upload_layout,download_layout;
+    private static LinearLayout  block_user_layout, pending_upload_layout,download_layout,district_user_layout,state_user_layout;
     private CardView uploadInspectionReport;
     private static PrefManager prefManager;
     private ProgressHUD progressHUD;
@@ -92,6 +92,8 @@ public class Dashboard extends AppCompatActivity implements Api.ServerResponseLi
         uploadInspectionReport = (CardView) findViewById(R.id.upload_inspection_report);
         pending_upload_layout = (LinearLayout) findViewById(R.id.pending_upload_layout);
         block_user_layout = (LinearLayout) findViewById(R.id.block_user_layout);
+        district_user_layout = (LinearLayout) findViewById(R.id.district_user_layout);
+        state_user_layout = (LinearLayout) findViewById(R.id.state_user_layout);
         download_layout = (LinearLayout) findViewById(R.id.download_layout);
         block_user_tv = (MyCustomTextView) findViewById(R.id.block_user_tv);
         upload_inspection_report_tv = (MyCustomTextView) findViewById(R.id.upload_inspection_report_tv);
@@ -129,6 +131,10 @@ public class Dashboard extends AppCompatActivity implements Api.ServerResponseLi
 //        }
         if (prefManager.getLevels().equalsIgnoreCase("B")) {
             getSchemeList();
+        }
+        if(prefManager.getLevels().equalsIgnoreCase("S")){
+            state_user_layout.setVisibility(View.VISIBLE);
+            district_user_layout.setVisibility(View.GONE );
         }
 
     }
@@ -179,6 +185,7 @@ public class Dashboard extends AppCompatActivity implements Api.ServerResponseLi
         getObservationList();
         getBlockList();
         getDistrictList();
+        getBlockListAll();
         // getServiceList();
         // getInspectionServiceList();
 //        if (prefManager.getLevels().equalsIgnoreCase("D")) {
@@ -193,7 +200,7 @@ public class Dashboard extends AppCompatActivity implements Api.ServerResponseLi
 
     public static void getPendingCount() {
         String pendingList_sql = "";
-        if (prefManager.getLevels().equalsIgnoreCase("D")) {
+        if (prefManager.getLevels().equalsIgnoreCase("D") || prefManager.getLevels().equalsIgnoreCase("S")) {
             pendingList_sql = "select * from(select * from " + DBHelper.INSPECTION_PENDING + " WHERE inspection_id in (select inspection_id from captured_photo))a left join (select * from observation)b on a.observation = b.id where delete_flag = 0 and inspection_remark != ''";
         } else if (prefManager.getLevels().equalsIgnoreCase("B")) {
             pendingList_sql = "select * from " + DBHelper.INSPECTION_ACTION + " WHERE id in (select action_id from captured_photo) and delete_flag = 0 and action_remark != ''";
@@ -213,6 +220,13 @@ public class Dashboard extends AppCompatActivity implements Api.ServerResponseLi
     public void getDistrictList() {
         try {
             new ApiService(this).makeJSONObjectRequest("DistrictList", Api.Method.POST, UrlGenerator.getServicesListUrl(), districtListJsonParams(), "not cache", this);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+    public void getBlockListAll() {
+        try {
+            new ApiService(this).makeJSONObjectRequest("BlockListAll", Api.Method.POST, UrlGenerator.getServicesListUrl(), blockListAllJsonParams(), "not cache", this);
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -282,7 +296,14 @@ public class Dashboard extends AppCompatActivity implements Api.ServerResponseLi
         Log.d("districtList", "" + authKey);
         return dataSet;
     }
-
+    public JSONObject blockListAllJsonParams() throws JSONException {
+        String authKey = Utils.encrypt(prefManager.getUserPassKey(), getResources().getString(R.string.init_vector), Utils.blockListAllJsonParams().toString());
+        JSONObject dataSet = new JSONObject();
+        dataSet.put(AppConstant.KEY_USER_NAME, prefManager.getUserName());
+        dataSet.put(AppConstant.DATA_CONTENT, authKey);
+        Log.d("blockListAll", "" + authKey);
+        return dataSet;
+    }
     public JSONObject blockListJsonParams() throws JSONException {
         String authKey = Utils.encrypt(prefManager.getUserPassKey(), getResources().getString(R.string.init_vector), Utils.blockListDistrictWiseJsonParams(this).toString());
         JSONObject dataSet = new JSONObject();
@@ -477,6 +498,18 @@ public class Dashboard extends AppCompatActivity implements Api.ServerResponseLi
                 }
 
             }
+            if (prefManager.getLevels().equalsIgnoreCase("S")) {
+                if ("BlockListAll".equals(urlType) && responseObj != null) {
+                    String key = responseObj.getString(AppConstant.ENCODE_DATA);
+                    String responseDecryptedBlockKey = Utils.decrypt(prefManager.getUserPassKey(), key);
+                    JSONObject jsonObject = new JSONObject(responseDecryptedBlockKey);
+                    if (jsonObject.getString("STATUS").equalsIgnoreCase("OK") && jsonObject.getString("RESPONSE").equalsIgnoreCase("OK")) {
+                        loadBlockList(jsonObject.getJSONArray(AppConstant.JSON_DATA));
+                    }
+                    Log.d("BlockListAll", "" + responseDecryptedBlockKey);
+                }
+
+            }
             if ("DistrictList".equals(urlType) && responseObj != null) {
                 String key = responseObj.getString(AppConstant.ENCODE_DATA);
                 String responseDecryptedBlockKey = Utils.decrypt(prefManager.getUserPassKey(), key);
@@ -589,7 +622,7 @@ public class Dashboard extends AppCompatActivity implements Api.ServerResponseLi
                 districtListValues.put(AppConstant.DISTRICT_NAME, districtName);
 
                 LoginScreen.db.insert(DBHelper.DISTRICT_TABLE_NAME, null, districtListValues);
-                Log.d("LocalDBblockList", "" + districtListValues);
+                Log.d("LocalDBdistrictList", "" + districtListValues);
 
             }
         } catch (JSONException j) {

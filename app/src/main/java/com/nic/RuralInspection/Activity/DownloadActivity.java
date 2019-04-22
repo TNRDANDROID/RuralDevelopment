@@ -312,7 +312,7 @@ public class DownloadActivity extends AppCompatActivity implements Api.ServerRes
                     String districtCode = DistrictList.getString(DistrictList.getColumnIndexOrThrow(AppConstant.DISTRICT_CODE));
                     String districtName= DistrictList.getString(DistrictList.getColumnIndexOrThrow(AppConstant.DISTRICT_NAME));
                     districtList.setDistictCode(districtCode);
-                    districtList.setDistictCode(districtName);
+                    districtList.setDistrictName(districtName);
                     District.add(districtList);
                 } while (DistrictList.moveToNext());
             }
@@ -344,13 +344,13 @@ public class DownloadActivity extends AppCompatActivity implements Api.ServerRes
                 } else if (mDistrictItems.contains(position)) {
                     mDistrictItems.remove(Integer.valueOf(position));
                 }
-                JSONArray blockCodeJsonArray = new JSONArray();
+                JSONArray districtCodeJsonArray = new JSONArray();
 
                 for (int i = 0; i < mDistrictItems.size(); i++) {
-                    blockCodeJsonArray.put(districtCodeStrings[mDistrictItems.get(i)]);
+                    districtCodeJsonArray.put(districtCodeStrings[mDistrictItems.get(i)]);
                 }
-                prefManager.setBlockCodeJson(blockCodeJsonArray);
-                Log.d("districtcode", "" + blockCodeJsonArray);
+                prefManager.setDistrictCodeJson(districtCodeJsonArray);
+                Log.d("districtcode", "" + districtCodeJsonArray);
 
                 loadOfflineBlockListDBValues();
 
@@ -407,13 +407,14 @@ public class DownloadActivity extends AppCompatActivity implements Api.ServerRes
 
         String blockSql = null;
         if (prefManager.getLevels().equalsIgnoreCase("S")){
-          //  JSONArray filterBlock = prefManager.getDistrictCodeJson();
-            //blockSql = "SELECT * FROM " + DBHelper.BLOCK_TABLE_NAME + " WHERE dcode in" + filterBlock.toString().replace("[", "(").replace("]", ")") + " order by dname";
+            JSONArray filterBlock = prefManager.getDistrictCodeJson();
+            blockSql = "SELECT * FROM " + DBHelper.BLOCK_TABLE_NAME + " WHERE dcode in" + filterBlock.toString().replace("[", "(").replace("]", ")") + " order by bname";
         }
         else if (prefManager.getLevels().equalsIgnoreCase("D")){
             String filterBlock = prefManager.getDistrictCode();
             blockSql = "SELECT * FROM "+BLOCK_TABLE_NAME+" order by bname";
         }
+        Log.d("District",""+blockSql);
 
         Cursor BlockList = getRawEvents(blockSql, null);
         Block.clear();
@@ -809,13 +810,44 @@ public class DownloadActivity extends AppCompatActivity implements Api.ServerRes
 
     public void download() {
         if (Utils.isOnline()) {
-            if (!prefManager.getLevels().equalsIgnoreCase("B")) {
+            if(prefManager.getLevels().equalsIgnoreCase("S")) {
+                projectListScreenStateUser();
+            }
+            else if (!prefManager.getLevels().equalsIgnoreCase("B")) {
                 projectListScreenDistrictUser();
             } else {
                 projectListScreenBlockUser();
             }
         } else {
             Utils.showAlert(this, getResources().getString(R.string.no_internet));
+        }
+    }
+
+    public void projectListScreenStateUser() {
+        if (!selected_finyear_tv.getText().equals("")) {
+            if(!selected_district_tv.getText().equals("")) {
+                if (!selected_block_tv.getText().equals("")) {
+                    if (!selected_village_tv.getText().equals("")) {
+                        if (!selected_scheme_tv.getText().equals("")) {
+                            getActionImages();
+                            getInspectionList_blockwise();
+                            getInspectionList_Images_blockwise();
+                            getAction_ForInspection();
+                            getWorkListOptional();
+                        } else {
+                            Utils.showAlert(this, "Select Scheme");
+                        }
+                    } else {
+                        Utils.showAlert(this, "Select Village");
+                    }
+                } else {
+                    Utils.showAlert(this, "Select Block");
+                }
+            }else{
+                Utils.showAlert(this, "Select District");
+            }
+        } else {
+            Utils.showAlert(this, "Select Financial year");
         }
     }
 

@@ -1098,10 +1098,10 @@ public class Utils {
     }
 
 
-    public static JSONObject blockListJsonParams() throws JSONException {
+    public static JSONObject blockListAllJsonParams() throws JSONException {
         JSONObject dataSet = new JSONObject();
         dataSet.put(AppConstant.KEY_SERVICE_ID, AppConstant.KEY_BLOCK_LIST_ALL);
-        Log.d("blockList", "" + dataSet);
+        Log.d("blockListAll", "" + dataSet);
         return dataSet;
     }
 
