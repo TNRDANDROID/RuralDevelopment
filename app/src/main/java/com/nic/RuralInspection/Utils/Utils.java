@@ -1109,10 +1109,14 @@ public class Utils {
     public static JSONObject blockListDistrictWiseJsonParams(Activity activity) throws JSONException {
         prefManager = new PrefManager(activity);
         JSONObject dataSet = new JSONObject();
-        dataSet.put(AppConstant.KEY_SERVICE_ID, AppConstant.KEY_BLOCK_LIST_DISTRICT_WISE);
+        if(prefManager.getLevels().equalsIgnoreCase("D")) {
+            dataSet.put(AppConstant.KEY_SERVICE_ID, AppConstant.KEY_BLOCK_LIST_DISTRICT_WISE);
 //        JSONArray jsonArray = new JSONArray();
 //        jsonArray.put(prefManager.getDistrictCode());
-        dataSet.put(AppConstant.DISTRICT_CODE, prefManager.getDistrictCode());
+            dataSet.put(AppConstant.DISTRICT_CODE, prefManager.getDistrictCode());
+        }else if(prefManager.getLevels().equalsIgnoreCase("S")){
+            dataSet.put(AppConstant.KEY_SERVICE_ID, AppConstant.KEY_BLOCK_LIST_ALL);
+        }
         Log.d("blockListDistrictWise", "" + dataSet);
         return dataSet;
     }
@@ -1124,8 +1128,13 @@ public class Utils {
     public static JSONObject villageListDistrictWiseJsonParams(Activity activity) throws JSONException {
         prefManager = new PrefManager(activity);
         JSONObject dataSet = new JSONObject();
-        dataSet.put(AppConstant.KEY_SERVICE_ID, AppConstant.KEY_VILLAGE_LIST_DISTRICT_WISE);
-        dataSet.put(AppConstant.DISTRICT_CODE, prefManager.getDistrictCode());
+        if(prefManager.getLevels().equalsIgnoreCase("D")) {
+            dataSet.put(AppConstant.KEY_SERVICE_ID, AppConstant.KEY_VILLAGE_LIST_DISTRICT_WISE);
+            dataSet.put(AppConstant.DISTRICT_CODE, prefManager.getDistrictCode());
+
+        }else if(prefManager.getLevels().equalsIgnoreCase("S")){
+            dataSet.put(AppConstant.KEY_SERVICE_ID, AppConstant.KEY_VILLAGE_LIST_ALL);
+        }
         Log.d("villageListDistrictWise", "" + dataSet);
         return dataSet;
     }

@@ -185,7 +185,6 @@ public class Dashboard extends AppCompatActivity implements Api.ServerResponseLi
         getObservationList();
         getBlockList();
         getDistrictList();
-        getBlockListAll();
         // getServiceList();
         // getInspectionServiceList();
 //        if (prefManager.getLevels().equalsIgnoreCase("D")) {
@@ -220,13 +219,6 @@ public class Dashboard extends AppCompatActivity implements Api.ServerResponseLi
     public void getDistrictList() {
         try {
             new ApiService(this).makeJSONObjectRequest("DistrictList", Api.Method.POST, UrlGenerator.getServicesListUrl(), districtListJsonParams(), "not cache", this);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-    }
-    public void getBlockListAll() {
-        try {
-            new ApiService(this).makeJSONObjectRequest("BlockListAll", Api.Method.POST, UrlGenerator.getServicesListUrl(), blockListAllJsonParams(), "not cache", this);
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -294,14 +286,6 @@ public class Dashboard extends AppCompatActivity implements Api.ServerResponseLi
         dataSet.put(AppConstant.KEY_USER_NAME, prefManager.getUserName());
         dataSet.put(AppConstant.DATA_CONTENT, authKey);
         Log.d("districtList", "" + authKey);
-        return dataSet;
-    }
-    public JSONObject blockListAllJsonParams() throws JSONException {
-        String authKey = Utils.encrypt(prefManager.getUserPassKey(), getResources().getString(R.string.init_vector), Utils.blockListAllJsonParams().toString());
-        JSONObject dataSet = new JSONObject();
-        dataSet.put(AppConstant.KEY_USER_NAME, prefManager.getUserName());
-        dataSet.put(AppConstant.DATA_CONTENT, authKey);
-        Log.d("blockListAll", "" + authKey);
         return dataSet;
     }
     public JSONObject blockListJsonParams() throws JSONException {
@@ -486,7 +470,7 @@ public class Dashboard extends AppCompatActivity implements Api.ServerResponseLi
         try {
             String urlType = serverResponse.getApi();
             JSONObject responseObj = serverResponse.getJsonResponse();
-            if (prefManager.getLevels().equalsIgnoreCase("D")) {
+            if (prefManager.getLevels().equalsIgnoreCase("D") || (prefManager.getLevels().equalsIgnoreCase("S"))) {
                 if ("BlockList".equals(urlType) && responseObj != null) {
                     String key = responseObj.getString(AppConstant.ENCODE_DATA);
                     String responseDecryptedBlockKey = Utils.decrypt(prefManager.getUserPassKey(), key);
@@ -495,18 +479,6 @@ public class Dashboard extends AppCompatActivity implements Api.ServerResponseLi
                         loadBlockList(jsonObject.getJSONArray(AppConstant.JSON_DATA));
                     }
                     Log.d("BlockList", "" + responseDecryptedBlockKey);
-                }
-
-            }
-            if (prefManager.getLevels().equalsIgnoreCase("S")) {
-                if ("BlockListAll".equals(urlType) && responseObj != null) {
-                    String key = responseObj.getString(AppConstant.ENCODE_DATA);
-                    String responseDecryptedBlockKey = Utils.decrypt(prefManager.getUserPassKey(), key);
-                    JSONObject jsonObject = new JSONObject(responseDecryptedBlockKey);
-                    if (jsonObject.getString("STATUS").equalsIgnoreCase("OK") && jsonObject.getString("RESPONSE").equalsIgnoreCase("OK")) {
-                        loadBlockList(jsonObject.getJSONArray(AppConstant.JSON_DATA));
-                    }
-                    Log.d("BlockListAll", "" + responseDecryptedBlockKey);
                 }
 
             }
@@ -690,7 +662,7 @@ public class Dashboard extends AppCompatActivity implements Api.ServerResponseLi
 
 
                 LoginScreen.db.insert(DBHelper.VILLAGE_TABLE_NAME, null, villageListValues);
-                // Log.d("LocalDBblockList", "" + blockListValues);
+                 Log.d("LocalDBVilageList", "" + villageListValues);
 
             }
 
