@@ -406,6 +406,7 @@ public class SelectBlockSchemeScreen extends AppCompatActivity implements View.O
             blockCode = Block.get(sp_block.getSelectedItemPosition()).getBlockCode();
         }
        else if (prefManager.getLevels().equalsIgnoreCase("D")) {
+            districtCode = prefManager.getDistrictCode();
             blockCode = Block.get(sp_block.getSelectedItemPosition()).getBlockCode();
         } else {
             blockCode = prefManager.getBlockCode();

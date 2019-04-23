@@ -1128,7 +1128,7 @@ public class Utils {
     public static JSONObject villageListDistrictWiseJsonParams(Activity activity) throws JSONException {
         prefManager = new PrefManager(activity);
         JSONObject dataSet = new JSONObject();
-        if(prefManager.getLevels().equalsIgnoreCase("D")) {
+        if(prefManager.getLevels().equalsIgnoreCase("D") || prefManager.getLevels().equalsIgnoreCase("B") ) {
             dataSet.put(AppConstant.KEY_SERVICE_ID, AppConstant.KEY_VILLAGE_LIST_DISTRICT_WISE);
             dataSet.put(AppConstant.DISTRICT_CODE, prefManager.getDistrictCode());
 
@@ -1211,7 +1211,7 @@ public class Utils {
         JSONObject dataSet = new JSONObject();
         dataSet.put(AppConstant.KEY_SERVICE_ID, AppConstant.KEY_SCHEME_LIST_DISTRICT_FINYEAR_WISE);
         dataSet.put(AppConstant.DISTRICT_CODE, prefManager.getDistrictCode());
-        if(prefManager.getLevels().equalsIgnoreCase("D")){
+        if(prefManager.getLevels().equalsIgnoreCase("D") || prefManager.getLevels().equalsIgnoreCase("S")){
             dataSet.put(AppConstant.FIN_YEAR,prefManager.getFinYearJson());
         }
         Log.d("objectFinYear", "" + dataSet);

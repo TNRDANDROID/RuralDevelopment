@@ -413,7 +413,7 @@ public class DownloadActivity extends AppCompatActivity implements Api.ServerRes
         }
         else if (prefManager.getLevels().equalsIgnoreCase("D")){
             String filterBlock = prefManager.getDistrictCode();
-            blockSql = "SELECT * FROM "+BLOCK_TABLE_NAME+" order by bname";
+            blockSql = "SELECT * FROM "+BLOCK_TABLE_NAME+" where dcode = "+filterBlock+" order by bname";
         }
         Log.d("District",""+blockSql);
 
@@ -473,7 +473,7 @@ public class DownloadActivity extends AppCompatActivity implements Api.ServerRes
                 prefManager.setBlockCodeJson(blockCodeJsonArray);
                 Log.d("blockcode", "" + blockCodeJsonArray);
 
-                loadOfflineVillgeListDBValues();
+              // loadOfflineVillgeListDBValues();
 
             }
         });
@@ -498,6 +498,8 @@ public class DownloadActivity extends AppCompatActivity implements Api.ServerRes
                     select_block_layout.setVisibility(View.GONE);
                 }
                 selected_block_tv.setText(item);
+
+                loadOfflineVillgeListDBValues();
             }
         });
 
@@ -628,12 +630,29 @@ public class DownloadActivity extends AppCompatActivity implements Api.ServerRes
     }
     public void loadOfflineVillgeListDBValues() {
 
-//        String villageSql = "SELECT * FROM " + DBHelper.VILLAGE_TABLE_NAME + " WHERE bcode in" + filterVillage.toString().replace("[", "(").replace("]", ")") + " order by bcode";
         String villageSql = null;
-
-        if (prefManager.getLevels().equalsIgnoreCase("D")){
+        if (prefManager.getLevels().equalsIgnoreCase("D") || prefManager.getLevels().equalsIgnoreCase("S")){
             JSONArray filterVillage = prefManager.getBlockCodeJson();
-            villageSql = "SELECT * FROM " + DBHelper.VILLAGE_TABLE_NAME + " WHERE bcode in" + filterVillage.toString().replace("[", "(").replace("]", ")") + " order by pvname asc";
+            db.execSQL("CREATE TEMPORARY TABLE IF NOT EXISTS tempData (dcode INTEGER, bcode INTEGER);");
+            db.execSQL("delete from tempData");
+
+            for (int i = 0;i<= filterVillage.length();i++) {
+                try {
+                    Log.d("insert","INSERT INTO tempData (dcode, bcode) VALUES "+filterVillage.getJSONArray(i).toString().replace("[", "(").replace("]", ")"));
+                    db.execSQL("INSERT INTO tempData (dcode, bcode) VALUES"+filterVillage.getJSONArray(i).toString().replace("[", "(").replace("]", ")")+";");
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+            villageSql = "SELECT *\n" +
+                    "FROM village_table_name\n" +
+                    "WHERE EXISTS (\n" +
+                    "  SELECT NULL\n" +
+                    "  FROM  tempData\n" +
+                    "  WHERE tempData.dcode = village_table_name.dcode\n" +
+                    "    AND tempData.bcode = village_table_name.bcode\n" +
+                    ") order by pvname";
+          //  villageSql = "SELECT * FROM " + DBHelper.VILLAGE_TABLE_NAME + " WHERE bcode in" + filterVillage.toString().replace("[", "(").replace("]", ")") + " order by pvname asc";
         }
         else if (prefManager.getLevels().equalsIgnoreCase("B")){
             String filterVillage = prefManager.getBlockCode();
@@ -669,6 +688,7 @@ public class DownloadActivity extends AppCompatActivity implements Api.ServerRes
         for (int i = 0; i < Village.size(); i++) {
             myVillageList.add(Village.get(i).getVillageListPvName());
             JSONArray jsonArray = new JSONArray();
+            jsonArray.put(Village.get(i).getVillageListDistrictCode());
             jsonArray.put(Village.get(i).getVillageListBlockCode());
             jsonArray.put(Village.get(i).getVillageListPvCode());
 

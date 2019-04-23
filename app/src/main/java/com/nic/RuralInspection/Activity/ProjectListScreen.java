@@ -168,16 +168,16 @@ public class ProjectListScreen extends AppCompatActivity implements View.OnClick
                 }
                 condition += " a.scheme_id = " + selectedScheme;
             }
-            if (selectedScheme != null) {
-                if (high_value != null || selectedBlock != null) {
-                    condition += " and";
-                }
-                condition += " a.scheme_id = " + selectedScheme;
-            }
-
+        }
+        String dcode;
+        if(prefManager.getLevels().equalsIgnoreCase("S")) {
+            dcode = selectedDistrict;
+        }
+        else {
+            dcode = prefManager.getDistrictCode();
         }
 
-        String worklist_sql = "select a.bcode as bcode,a.pvcode as pvcode,a.scheme_id as scheme_id,a.work_group_id as work_group_id,a.work_type_id as work_type_id,a.work_id as work_id,a.work_name as work_name,a.as_value as as_value,a.ts_value as ts_value,a.is_high_value as is_high_value,b.work_stage_code as work_stage_code,b.work_stage_order as work_stage_order,b.work_stage_name as  work_stage_name from (select * from " + DBHelper.WORK_LIST_OPTIONAL + " WHERE dcode = " + prefManager.getDistrictCode() + " AND fin_year = '" + prefManager.getFinancialyearName() + "')a left join (select * from " + DBHelper.WORK_STAGE_TABLE + ")b on a.work_group_id = b.work_group_id and a.work_type_id = b.work_type_id and a.current_stage_of_work=b.work_stage_code " + condition + "  order by b.work_stage_order ";
+        String worklist_sql = "select a.bcode as bcode,a.pvcode as pvcode,a.scheme_id as scheme_id,a.work_group_id as work_group_id,a.work_type_id as work_type_id,a.work_id as work_id,a.work_name as work_name,a.as_value as as_value,a.ts_value as ts_value,a.is_high_value as is_high_value,b.work_stage_code as work_stage_code,b.work_stage_order as work_stage_order,b.work_stage_name as  work_stage_name from (select * from " + DBHelper.WORK_LIST_OPTIONAL + " WHERE dcode = " + dcode + " AND fin_year = '" + prefManager.getFinancialyearName() + "')a left join (select * from " + DBHelper.WORK_STAGE_TABLE + ")b on a.work_group_id = b.work_group_id and a.work_type_id = b.work_type_id and a.current_stage_of_work=b.work_stage_code " + condition + "  order by b.work_stage_order ";
         Log.d("sql", worklist_sql);
         Cursor worklist = getRawEvents(worklist_sql, null);
 
