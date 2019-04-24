@@ -1315,4 +1315,22 @@ public class Utils {
 
         return parsedDate;
     }
+
+    public static boolean CheckDates(String d1, String d2) {
+        SimpleDateFormat dfDate = new SimpleDateFormat("dd-MM-yyyy");
+        boolean b = false;
+        try {
+            if (dfDate.parse(d1).before(dfDate.parse(d2))) {
+                b = true;//If start date is before end date
+            } else if (dfDate.parse(d1).equals(dfDate.parse(d2))) {
+                b = true;//If two dates are equal
+            } else {
+                b = false; //If start date is after the end date
+            }
+        } catch (ParseException e) {
+// TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        return b;
+    }
 }

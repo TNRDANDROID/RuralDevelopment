@@ -905,7 +905,7 @@ public class DownloadActivity extends AppCompatActivity implements Api.ServerRes
         if (!start_date.equals("")) {
             if (!end_date.equals("")) {
                 if (!selected_officers_tv.getText().equals("")) {
-                    if (CheckDates(start_date, end_date)) {
+                    if (Utils.CheckDates(start_date, end_date)) {
                         getActionImages();
                         getInspectionList_blockwise();
                         getInspectionList_Images_blockwise();
@@ -927,23 +927,6 @@ public class DownloadActivity extends AppCompatActivity implements Api.ServerRes
     }
 
 
-    public static boolean CheckDates(String d1, String d2) {
-        SimpleDateFormat dfDate = new SimpleDateFormat("dd-MM-yyyy");
-        boolean b = false;
-        try {
-            if (dfDate.parse(d1).before(dfDate.parse(d2))) {
-                b = true;//If start date is before end date
-            } else if (dfDate.parse(d1).equals(dfDate.parse(d2))) {
-                b = true;//If two dates are equal
-            } else {
-                b = false; //If start date is after the end date
-            }
-        } catch (ParseException e) {
-// TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-        return b;
-    }
 
     public void getSchemeList() {
         try {
