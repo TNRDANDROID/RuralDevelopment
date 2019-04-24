@@ -150,7 +150,7 @@ public class LoginScreen extends AppCompatActivity implements View.OnClickListen
                 db.delete(DBHelper.FINANCIAL_YEAR_TABLE_NAME, null, null);
                 db.delete(DBHelper.WORK_STAGE_TABLE, null, null);
                 db.delete(DBHelper.WORK_LIST_OPTIONAL, null, null);
-                db.delete(DBHelper.OBSERVATION_TABLE, null, null);
+                db.delete(DBHelper.OBSERVATION_TABLE,   null, null);
                 db.execSQL(String.format("DELETE FROM " + DBHelper.INSPECTION_ACTION + " WHERE delete_flag=1;", null));
 
 
