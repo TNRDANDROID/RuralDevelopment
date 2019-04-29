@@ -445,8 +445,14 @@ public class AddInspectionReportScreen extends AppCompatActivity implements View
                         imageValue.put(AppConstant.LONGITUDE, offlanTextValue);
                         imageValue.put(AppConstant.IMAGE, image_str.trim());
                         imageValue.put(AppConstant.DESCRIPTION, description);
+                        imageValue.put(AppConstant.DISTRICT_CODE, prefManager.getDistrictCode());
                         imageValue.put("pending_flag", 1);
-                        imageValue.put("level", "D");
+                        if(prefManager.getLevels().equalsIgnoreCase("D")) {
+                            imageValue.put("level", "D");
+                        }else if(prefManager.getLevels().equalsIgnoreCase("S")) {
+                            imageValue.put("level", "S");
+                        }
+
 
                         if (!Utils.isOnline()) {
                             long rowInserted = LoginScreen.db.insert(DBHelper.CAPTURED_PHOTO, null, imageValue);
@@ -609,6 +615,9 @@ public class AddInspectionReportScreen extends AppCompatActivity implements View
                 dataset.put(AppConstant.STAGE_OF_WORK_ON_INSPECTION, stage_of_work_on_inspection);
                 dataset.put(AppConstant.OBSERVATION, observation);
                 dataset.put(AppConstant.INSPECTION_REMARK, inspection_remark);
+                if(prefManager.getLevels().equalsIgnoreCase("S")) {
+                    dataset.put(AppConstant.DISTRICT_CODE, prefManager.getDistrictCode());
+                }
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -1017,7 +1026,7 @@ public class AddInspectionReportScreen extends AppCompatActivity implements View
         try {
             String urlType = serverResponse.getApi();
             JSONObject responseObj = serverResponse.getJsonResponse();
-            if (prefManager.getLevels().equalsIgnoreCase("D")) {
+            if (prefManager.getLevels().equalsIgnoreCase("D") || prefManager.getLevels().equalsIgnoreCase("S") ) {
                 if ("save_data".equals(urlType) && responseObj != null) {
                     String key = responseObj.getString(AppConstant.ENCODE_DATA);
                     String responseDecryptedBlockKey = Utils.decrypt(prefManager.getUserPassKey(), key);

@@ -90,6 +90,7 @@ public class DBHelper extends SQLiteOpenHelper {
                 + "inspection_id INTEGER PRIMARY KEY AUTOINCREMENT," +
                 "id INTEGER," +
                 "work_id TEXT," +
+                "dcode INTEGER," +
                 "stage_of_work_on_inspection TEXT," +
                 "stage_of_work_on_inspection_name TEXT," +
                 "date_of_inspection TEXT," +

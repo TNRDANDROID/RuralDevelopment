@@ -59,17 +59,17 @@ public class PendingLayoutAdapter extends RecyclerView.Adapter<PendingLayoutAdap
     public void onBindViewHolder(PendingLayoutAdapter.MyViewHolder holder, final int position) {
 
         holder.pend_work_id.setText(pendingListValues.get(position).getWorkID());
-        if(prefManager.getLevels().equalsIgnoreCase("D")){
+        if(prefManager.getLevels().equalsIgnoreCase("D") || prefManager.getLevels().equalsIgnoreCase("S")){
             holder.pend_stage.setText(pendingListValues.get(position).getWorkStageName());
         }
 
-        if (prefManager.getLevels().equalsIgnoreCase("D")) {
+        if (prefManager.getLevels().equalsIgnoreCase("D") || prefManager.getLevels().equalsIgnoreCase("S")) {
             holder.pend_inspected_date.setText(Utils.formatDate(pendingListValues.get(position).getDate_of_inspection()));
         }else if(prefManager.getLevels().equalsIgnoreCase("B")){
             holder.pend_inspected_date.setText(Utils.formatDate(pendingListValues.get(position).getDate_of_Action()));
         }
 
-        if (prefManager.getLevels().equalsIgnoreCase("D")) {
+        if (prefManager.getLevels().equalsIgnoreCase("D") || prefManager.getLevels().equalsIgnoreCase("S")) {
             holder.pend_observation.setText(pendingListValues.get(position).getObservation());
         }else if(prefManager.getLevels().equalsIgnoreCase("B")){
             holder.pend_observation.setText(pendingListValues.get(position).getAction_remark());
@@ -86,7 +86,7 @@ public class PendingLayoutAdapter extends RecyclerView.Adapter<PendingLayoutAdap
             @Override
             public void onClick(View v) {
 
-                if (prefManager.getLevels().equalsIgnoreCase("D")) {
+                if (prefManager.getLevels().equalsIgnoreCase("D") || prefManager.getLevels().equalsIgnoreCase("S")) {
                    UploadPending_Inspection(position);
                 }else
                 if (prefManager.getLevels().equalsIgnoreCase("B")) {
@@ -99,7 +99,7 @@ public class PendingLayoutAdapter extends RecyclerView.Adapter<PendingLayoutAdap
         holder.del_inspection_report.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (prefManager.getLevels().equalsIgnoreCase("D")) {
+                if (prefManager.getLevels().equalsIgnoreCase("D") || prefManager.getLevels().equalsIgnoreCase("S")) {
                     deletePending_Inspection(position);
                 }else
                 if (prefManager.getLevels().equalsIgnoreCase("B")) {
@@ -155,6 +155,10 @@ public class PendingLayoutAdapter extends RecyclerView.Adapter<PendingLayoutAdap
         String created_ipaddress = pendingListValues.get(position).getCreatedIpAddress();
         String created_username = pendingListValues.get(position).getCreatedUserName();
         String Observation = pendingListValues.get(position).getObservation();
+        String dcode = null;
+        if(prefManager.getLevels().equalsIgnoreCase("S")) {
+            dcode = pendingListValues.get(position).getDistictCode();
+        }
 
 
         try {
@@ -167,6 +171,9 @@ public class PendingLayoutAdapter extends RecyclerView.Adapter<PendingLayoutAdap
             dataset.put(AppConstant.CREATED_DATE, created_date);
             dataset.put(AppConstant.CREATED_IMEI_NO, created_ipaddress);
             dataset.put(AppConstant.CREATED_USER_NAME, created_username);
+            if(prefManager.getLevels().equalsIgnoreCase("S")) {
+                dataset.put(AppConstant.DISTRICT_CODE, dcode);
+            }
         } catch (JSONException e) {
             e.printStackTrace();
         }

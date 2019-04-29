@@ -261,18 +261,19 @@ public class DownloadActivity extends AppCompatActivity implements Api.ServerRes
                     select_fin_year_layout.setVisibility(View.GONE);
                 }
                 selected_finyear_tv.setText(item);
-                if (Utils.isOnline()) {
-                    try {
-                        db.delete(DBHelper.SCHEME_TABLE_NAME, null, null);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }if(mFinYearItems.size() > 0) {
-                        getSchemeList();
+                if(prefManager.getLevels().equalsIgnoreCase("D")) {
+                    if (Utils.isOnline()) {
+                        try {
+                            db.delete(DBHelper.SCHEME_TABLE_NAME, null, null);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }if(mFinYearItems.size() > 0) {
+                            getSchemeList();
+                        }
+                    } else {
+                        loadOfflineSchemeListDBValues();
                     }
-                } else {
-                    loadOfflineSchemeListDBValues();
                 }
-
             }
         });
 
@@ -378,6 +379,20 @@ public class DownloadActivity extends AppCompatActivity implements Api.ServerRes
                     select_district_layout.setVisibility(View.GONE);
                 }
                 selected_district_tv.setText(item);
+                if(prefManager.getLevels().equalsIgnoreCase("S")) {
+                    if (Utils.isOnline()) {
+                        try {
+                            db.delete(DBHelper.SCHEME_TABLE_NAME, null, null);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }if(mFinYearItems.size() > 0 && mDistrictItems.size() > 0) {
+                            getSchemeList();
+                        }
+                    } else {
+                        loadOfflineSchemeListDBValues();
+                    }
+                }
+
             }
         });
 
@@ -420,6 +435,7 @@ public class DownloadActivity extends AppCompatActivity implements Api.ServerRes
         Cursor BlockList = getRawEvents(blockSql, null);
         Block.clear();
         final ArrayList<String> myBlockList = new ArrayList<String>();
+        final ArrayList<String> block_myBlockCodeList = new ArrayList<String>();
         myBlockCodelist = new ArrayList<JSONArray>();
         if (BlockList.getCount() > 0) {
             if (BlockList.moveToFirst()) {
@@ -437,14 +453,23 @@ public class DownloadActivity extends AppCompatActivity implements Api.ServerRes
         }
         for (int i = 0; i < Block.size(); i++) {
             myBlockList.add(Block.get(i).getBlockName());
-            JSONArray jsonArray = new JSONArray();
-            jsonArray.put(Block.get(i).getDistictCode());
-            jsonArray.put(Block.get(i).getBlockCode());
-           myBlockCodelist.add(jsonArray);
+
+            if (prefManager.getLevels().equalsIgnoreCase("S")) {
+                JSONArray jsonArray = new JSONArray();
+                jsonArray.put(Block.get(i).getDistictCode());
+                jsonArray.put(Block.get(i).getBlockCode());
+                myBlockCodelist.add(jsonArray);
+            }
+            if (prefManager.getLevels().equalsIgnoreCase("D")) {
+                block_myBlockCodeList.add(Block.get(i).getBlockCode());
+            }
+
         }
 
         blockStrings = myBlockList.toArray(new String[myBlockList.size()]);
-//        blockCodeStrings = myBlockCodeList.toArray(new String[myBlockCodeList.size()]);
+        if (prefManager.getLevels().equalsIgnoreCase("D")) {
+         blockCodeStrings = block_myBlockCodeList.toArray(new String[block_myBlockCodeList.size()]);
+        }
         blockcheckedItems= new boolean[blockStrings.length];
 
     }
@@ -468,7 +493,13 @@ public class DownloadActivity extends AppCompatActivity implements Api.ServerRes
                 JSONArray blockCodeJsonArray = new JSONArray();
 
                 for (int i = 0; i < mUserItems.size(); i++) {
-                    blockCodeJsonArray.put(myBlockCodelist.get(mUserItems.get(i)));
+                    if(prefManager.getLevels().equalsIgnoreCase("S")) {
+                        blockCodeJsonArray.put(myBlockCodelist.get(mUserItems.get(i)));
+                    }
+                    if (prefManager.getLevels().equalsIgnoreCase("D")) {
+                        blockCodeJsonArray.put(blockCodeStrings[mUserItems.get(i)]);
+                    }
+
                 }
                 prefManager.setBlockCodeJson(blockCodeJsonArray);
                 Log.d("blockcode", "" + blockCodeJsonArray);
@@ -631,7 +662,7 @@ public class DownloadActivity extends AppCompatActivity implements Api.ServerRes
     public void loadOfflineVillgeListDBValues() {
 
         String villageSql = null;
-        if (prefManager.getLevels().equalsIgnoreCase("D") || prefManager.getLevels().equalsIgnoreCase("S")){
+        if (prefManager.getLevels().equalsIgnoreCase("S")){
             JSONArray filterVillage = prefManager.getBlockCodeJson();
             db.execSQL("CREATE TEMPORARY TABLE IF NOT EXISTS tempData (dcode INTEGER, bcode INTEGER);");
             db.execSQL("delete from tempData");
@@ -652,7 +683,11 @@ public class DownloadActivity extends AppCompatActivity implements Api.ServerRes
                     "  WHERE tempData.dcode = village_table_name.dcode\n" +
                     "    AND tempData.bcode = village_table_name.bcode\n" +
                     ") order by pvname";
-          //  villageSql = "SELECT * FROM " + DBHelper.VILLAGE_TABLE_NAME + " WHERE bcode in" + filterVillage.toString().replace("[", "(").replace("]", ")") + " order by pvname asc";
+
+        }
+        else if(prefManager.getLevels().equalsIgnoreCase("D")) {
+            JSONArray filterVillage = prefManager.getBlockCodeJson();
+            villageSql = "SELECT * FROM " + DBHelper.VILLAGE_TABLE_NAME + " WHERE bcode in" + filterVillage.toString().replace("[", "(").replace("]", ")") + " order by pvname asc";
         }
         else if (prefManager.getLevels().equalsIgnoreCase("B")){
             String filterVillage = prefManager.getBlockCode();
@@ -688,7 +723,9 @@ public class DownloadActivity extends AppCompatActivity implements Api.ServerRes
         for (int i = 0; i < Village.size(); i++) {
             myVillageList.add(Village.get(i).getVillageListPvName());
             JSONArray jsonArray = new JSONArray();
-            jsonArray.put(Village.get(i).getVillageListDistrictCode());
+            if(prefManager.getLevels().equalsIgnoreCase("S")) {
+                jsonArray.put(Village.get(i).getVillageListDistrictCode());
+            }
             jsonArray.put(Village.get(i).getVillageListBlockCode());
             jsonArray.put(Village.get(i).getVillageListPvCode());
 
@@ -1044,7 +1081,7 @@ public class DownloadActivity extends AppCompatActivity implements Api.ServerRes
                 if (jsonObject.getString("STATUS").equalsIgnoreCase("OK") && jsonObject.getString("RESPONSE").equalsIgnoreCase("OK")) {
                     loadSchemeList(jsonObject.getJSONArray(AppConstant.JSON_DATA));
                 }
-               // Log.d("schemeAll", "" + responseDecryptedSchemeKey);
+               Log.d("schemeAll", "" + responseDecryptedSchemeKey);
 //                int maxLogSize = 1000;
 //                        for(int i = 0; i <= responseDecryptedSchemeKey.length() / maxLogSize; i++) {
 //                            int start = i * maxLogSize;
@@ -1329,6 +1366,7 @@ public class DownloadActivity extends AppCompatActivity implements Api.ServerRes
                     workListOptional.put(AppConstant.PV_CODE, pvCode);
 
                     LoginScreen.db.insert(DBHelper.WORK_LIST_OPTIONAL, null, workListOptional);
+                    Log.d("LocalDBworkList", "" + workListOptional);
                 }
                 callAlert();
 

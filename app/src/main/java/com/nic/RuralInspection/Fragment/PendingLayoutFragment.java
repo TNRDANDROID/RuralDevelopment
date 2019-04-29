@@ -84,7 +84,7 @@ public class PendingLayoutFragment extends Fragment implements View.OnClickListe
         pendingLayoutAdapter = new PendingLayoutAdapter(getActivity(), pendingListValues,this );
         pending_recycler_view.setAdapter(pendingLayoutAdapter);
         pending_recycler_view.setNestedScrollingEnabled(false);
-        if (prefManager.getLevels().equalsIgnoreCase("D")) {
+        if (prefManager.getLevels().equalsIgnoreCase("D") || prefManager.getLevels().equalsIgnoreCase("S") ) {
             retrievePendingdata_Inspection();
         }else if(prefManager.getLevels().equalsIgnoreCase("B")) {
             retrievePendingdata_Action();
@@ -113,6 +113,7 @@ public class PendingLayoutFragment extends Fragment implements View.OnClickListe
                     String created_ipaddress = pendingList.getString(pendingList.getColumnIndexOrThrow(AppConstant.CREATED_IMEI_NO));
                     String created_username = pendingList.getString(pendingList.getColumnIndexOrThrow(AppConstant.CREATED_USER_NAME));
                     String Observation = pendingList.getString(pendingList.getColumnIndexOrThrow(AppConstant.OBSERVATION_NAME));
+                    String dcode = pendingList.getString(pendingList.getColumnIndexOrThrow(AppConstant.DISTRICT_CODE));
 
 
                     BlockListValue pendingListValue = new BlockListValue();
@@ -128,6 +129,9 @@ public class PendingLayoutFragment extends Fragment implements View.OnClickListe
                     pendingListValue.setCreatedIpAddress(created_ipaddress);
                     pendingListValue.setWorkStageName(stage_of_work_on_inspection_name);
                     pendingListValue.setObservation(Observation);
+                    if(prefManager.getLevels().equalsIgnoreCase("S")) {
+                        pendingListValue.setDistictCode(dcode);
+                    }
                     pendingListValues.add(pendingListValue);
 
                 } while (pendingList.moveToNext());

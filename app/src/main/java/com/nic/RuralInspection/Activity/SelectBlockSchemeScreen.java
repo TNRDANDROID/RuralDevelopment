@@ -117,6 +117,11 @@ public class SelectBlockSchemeScreen extends AppCompatActivity implements View.O
         }else {
             district_layout.setVisibility(View.GONE);
         }
+        if (prefManager.getLevels().equalsIgnoreCase("B")) {
+            block_layout.setVisibility(View.GONE);
+        }else {
+            block_layout.setVisibility(View.VISIBLE);
+        }
 
         done.setOnClickListener(this);
         homeimg.setOnClickListener(this);
@@ -155,6 +160,8 @@ public class SelectBlockSchemeScreen extends AppCompatActivity implements View.O
 
                     pref_district = District.get(position).getDistrictName();
                     prefManager.setDistrictName(pref_district);
+                    blockFilterSpinner(District.get(position).getDistictCode());
+                    prefManager.setDistrictCode(District.get(position).getDistictCode());
 
                 }
             }
@@ -271,24 +278,8 @@ public class SelectBlockSchemeScreen extends AppCompatActivity implements View.O
         }
     }
 
-    public void selectFinancialYear() {
-        String fin_Year = "SELECT distinct(fin_year) FROM " + SCHEME_TABLE_NAME;
-        String Fin_Year_DB = null;
-        Cursor selectFinYearInDB = getRawEvents(fin_Year, null);
-        if (selectFinYearInDB.moveToFirst()) {
-            do {
-                Fin_Year_DB = selectFinYearInDB.getString(0);
-                Log.d("inspectionID", "" + Fin_Year_DB);
-            } while (selectFinYearInDB.moveToNext());
-        }
-        if (!Fin_Year_DB.equalsIgnoreCase(prefManager.getFinancialyearName())) {
-            Utils.showAlert(this, "Data Not Available for this Financial Year! please turn on your Mobile Network");
-        }
-    }
-
     public void villageFilterSpinner(String filterVillage) {
-       // String villageSql = "SELECT * FROM " + VILLAGE_TABLE_NAME + " WHERE bcode = " + filterVillage;
-        String villageSql = "select b.dcode as dcode,b.bcode as bcode,b.pvcode as pvcode,b.pvname as pvname from (select pvcode,bcode from "+DBHelper.WORK_LIST_OPTIONAL+" where bcode ='"+filterVillage+"' group by pvcode)a left outer join (select * from "+DBHelper.VILLAGE_TABLE_NAME+" where bcode ='"+filterVillage+"')b on a.pvcode = b.pvcode and a.bcode = b.bcode order by pvname";
+        String villageSql = "select b.dcode as dcode,b.bcode as bcode,b.pvcode as pvcode,b.pvname as pvname from (select pvcode,bcode,dcode from "+DBHelper.WORK_LIST_OPTIONAL+" where dcode = "+prefManager.getDistrictCode()+" and bcode ='"+filterVillage+"' group by pvcode)a left outer join (select * from "+DBHelper.VILLAGE_TABLE_NAME+" where dcode = "+prefManager.getDistrictCode()+" and bcode ='"+filterVillage+"')b on a.pvcode = b.pvcode and a.bcode = b.bcode order by pvname";
         Log.d("villageSql", "" + villageSql);
         Cursor VillageList = getRawEvents(villageSql, null);
         Village.clear();
@@ -315,6 +306,32 @@ public class SelectBlockSchemeScreen extends AppCompatActivity implements View.O
             }
         }
         sp_village.setAdapter(new CommonAdapter(this, Village, "VillageList"));
+    }
+
+    public void blockFilterSpinner(String filterBlock) {
+
+        String blocksql = "select a.bcode as bcode,b.dcode as dcode,b.bname as bname from (select  bcode,dcode from "+DBHelper.WORK_LIST_OPTIONAL+" where dcode = "+filterBlock+"  group by bcode)a left join (select * from "+DBHelper.BLOCK_TABLE_NAME+" where dcode = "+filterBlock+")b on a.bcode = b.bcode and a.dcode = b.dcode order by bname";
+        Log.d("blocksql",blocksql);
+        Cursor BlockList = getRawEvents(blocksql, null);
+        Block.clear();
+        BlockListValue blockListValue = new BlockListValue();
+        blockListValue.setBlockName("Select Block");
+        Block.add(blockListValue);
+        if (BlockList.getCount() > 0) {
+            if (BlockList.moveToFirst()) {
+                do {
+                    BlockListValue blockList = new BlockListValue();
+                    String districtCode = BlockList.getString(BlockList.getColumnIndexOrThrow(AppConstant.DISTRICT_CODE));
+                    String blockCode = BlockList.getString(BlockList.getColumnIndexOrThrow(AppConstant.BLOCK_CODE));
+                    String blockName = BlockList.getString(BlockList.getColumnIndexOrThrow(AppConstant.BLOCK_NAME));
+                    blockList.setDistictCode(districtCode);
+                    blockList.setBlockCode(blockCode);
+                    blockList.setBlockName(blockName);
+                    Block.add(blockList);
+                } while (BlockList.moveToNext());
+            }
+        }
+        sp_block.setAdapter(new CommonAdapter(this, Block, "BlockList"));
     }
 
     @Override
@@ -354,7 +371,27 @@ public class SelectBlockSchemeScreen extends AppCompatActivity implements View.O
     }
 
     public void projectListScreenStateUser(){
-
+        if (!"Select Financial year".equalsIgnoreCase(FinYearList.get(sp_financialYear.getSelectedItemPosition()).getFinancialYear())) {
+            if (!"Select District".equalsIgnoreCase(District.get(sp_district.getSelectedItemPosition()).getDistrictName())) {
+                if (!"Select Block".equalsIgnoreCase(Block.get(sp_block.getSelectedItemPosition()).getBlockName())) {
+                    if (!"Select Village".equalsIgnoreCase(Village.get(sp_village.getSelectedItemPosition()).getVillageListPvName())) {
+                        if (!"Select Scheme".equalsIgnoreCase(Scheme.get(sp_scheme.getSelectedItemPosition()).getSchemeName())) {
+                            goto_next();
+                        } else {
+                            Utils.showAlert(this, "Select Scheme");
+                        }
+                    } else {
+                        Utils.showAlert(this, "Select Village");
+                    }
+                } else {
+                    Utils.showAlert(this, "Select Block");
+                }
+            } else {
+            Utils.showAlert(this, "Select District");
+            }
+        } else {
+            Utils.showAlert(this, "Select Financial year");
+        }
     }
 
     public void projectListScreenDistrictUser() {
@@ -436,18 +473,44 @@ public class SelectBlockSchemeScreen extends AppCompatActivity implements View.O
     public void loadOfflineDBValues() {
         if (prefManager.getLevels().equalsIgnoreCase("D")) {
             loadOfflineBlockListDBValues();
-        } else {
-            block_layout.setVisibility(View.GONE);
         }
         if (!prefManager.getLevels().equalsIgnoreCase("B")) {
             loadOfflineVillgeListDBValues();
         }
+        if (prefManager.getLevels().equalsIgnoreCase("S")) {
+            loadOfflineDistrictListDBValues();
+        }
         loadOfflineFinYearListDBValues();
     }
 
-    public void loadOfflineBlockListDBValues() {
+    public void loadOfflineDistrictListDBValues() {
 
-        Cursor BlockList = getRawEvents("select a.bcode as bcode,b.dcode as dcode,b.bname as bname from (select  bcode from "+DBHelper.WORK_LIST_OPTIONAL+"  group by bcode)a left join (select * from "+DBHelper.BLOCK_TABLE_NAME+")b on a.bcode = b.bcode order by bname", null);
+        Cursor DistrictList = getRawEvents("select a.dcode as dcode,b.dname as dname from (select dcode from "+DBHelper.WORK_LIST_OPTIONAL+"  group by dcode)a \n" +
+                "left join (select * from "+DBHelper.DISTRICT_TABLE_NAME+")b \n" +
+                "on a.dcode = b.dcode order by dname", null);
+        // Cursor BlockList = getRawEvents("SELECT * FROM " + BLOCK_TABLE_NAME, null);
+        District.clear();
+        BlockListValue districtListValue = new BlockListValue();
+        districtListValue.setDistrictName("Select District");
+        District.add(districtListValue);
+        if (DistrictList.getCount() > 0) {
+            if (DistrictList.moveToFirst()) {
+                do {
+                    BlockListValue districtList = new BlockListValue();
+                    String districtCode = DistrictList.getString(DistrictList.getColumnIndexOrThrow(AppConstant.DISTRICT_CODE));
+                    String districtName= DistrictList.getString(DistrictList.getColumnIndexOrThrow(AppConstant.DISTRICT_NAME));
+                    districtList.setDistictCode(districtCode);
+                    districtList.setDistrictName(districtName);
+                    District.add(districtList);
+                } while (DistrictList.moveToNext());
+            }
+        }
+        sp_district.setAdapter(new CommonAdapter(this, District, "DistrictList"));
+    }
+
+    public void loadOfflineBlockListDBValues() {
+        String blocksql = "select a.bcode as bcode,b.dcode as dcode,b.bname as bname from (select  bcode,dcode from "+DBHelper.WORK_LIST_OPTIONAL+" where dcode = "+prefManager.getDistrictCode()+"  group by bcode)a left join (select * from "+DBHelper.BLOCK_TABLE_NAME+" where dcode = "+prefManager.getDistrictCode()+")b on a.bcode = b.bcode and a.dcode = b.dcode order by bname";
+        Cursor BlockList = getRawEvents(blocksql, null);
        // Cursor BlockList = getRawEvents("SELECT * FROM " + BLOCK_TABLE_NAME, null);
         Block.clear();
         BlockListValue blockListValue = new BlockListValue();

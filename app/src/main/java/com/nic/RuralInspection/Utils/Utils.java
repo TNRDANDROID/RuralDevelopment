@@ -1153,7 +1153,7 @@ public class Utils {
     public static JSONObject workListOptional(Activity activity) throws JSONException {
         prefManager = new PrefManager(activity);
         JSONObject dataSet = new JSONObject();
-        if (prefManager.getLevels().equalsIgnoreCase("D")) {
+        if (prefManager.getLevels().equalsIgnoreCase("D") || prefManager.getLevels().equalsIgnoreCase("S") ) {
             dataSet.put(AppConstant.KEY_SERVICE_ID, AppConstant.KEY_WORK_LIST_OPTIONAL);
 
         } else if (prefManager.getLevels().equalsIgnoreCase("B")) {
@@ -1166,11 +1166,16 @@ public class Utils {
             dataSet.put(AppConstant.END_DATE,prefManager.getKeyEndDate());
             dataSet.put(AppConstant.INSPECTED_BY,prefManager.getInspectedOfficersCodeJson());
 
-        } else if (prefManager.getLevels().equalsIgnoreCase("D")) {
+        } else if (prefManager.getLevels().equalsIgnoreCase("D") || prefManager.getLevels().equalsIgnoreCase("S") ) {
             dataSet.put(AppConstant.BLOCK_CODE, prefManager.getBlockCodeJson());
             dataSet.put(AppConstant.PV_CODE, prefManager.getVillagePvCodeJson());
             dataSet.put(AppConstant.SCHEME_ID, prefManager.getSchemeSeqIdJson());
-            dataSet.put(AppConstant.DISTRICT_CODE, prefManager.getDistrictCode());
+            if(prefManager.getLevels().equalsIgnoreCase("D")) {
+                dataSet.put(AppConstant.DISTRICT_CODE, prefManager.getDistrictCode());
+            }
+            else if(prefManager.getLevels().equalsIgnoreCase("S")) {
+                dataSet.put(AppConstant.DISTRICT_CODE, prefManager.getDistrictCodeJson());
+            }
             dataSet.put(AppConstant.FINANCIAL_YEAR, prefManager.getFinYearJson());
         }
         Log.d("habitationListDist", "" + dataSet);
@@ -1210,7 +1215,13 @@ public class Utils {
         prefManager = new PrefManager(activity);
         JSONObject dataSet = new JSONObject();
         dataSet.put(AppConstant.KEY_SERVICE_ID, AppConstant.KEY_SCHEME_LIST_DISTRICT_FINYEAR_WISE);
-        dataSet.put(AppConstant.DISTRICT_CODE, prefManager.getDistrictCode());
+        if(prefManager.getLevels().equalsIgnoreCase("S")){
+            dataSet.put(AppConstant.DISTRICT_CODE, prefManager.getDistrictCodeJson());
+        }
+        else{
+            dataSet.put(AppConstant.DISTRICT_CODE, prefManager.getDistrictCode());
+        }
+
         if(prefManager.getLevels().equalsIgnoreCase("D") || prefManager.getLevels().equalsIgnoreCase("S")){
             dataSet.put(AppConstant.FIN_YEAR,prefManager.getFinYearJson());
         }
@@ -1243,9 +1254,14 @@ public class Utils {
     public static JSONObject InspectionListblockWise(Activity activity) throws JSONException {
         prefManager = new PrefManager(activity);
         JSONObject dataSet = new JSONObject();
-        if (prefManager.getLevels().equalsIgnoreCase("D")) {
+        if (prefManager.getLevels().equalsIgnoreCase("D") ||  prefManager.getLevels().equalsIgnoreCase("S")) {
             dataSet.put(AppConstant.KEY_SERVICE_ID, AppConstant.KEY_INSPECTION_LIST_DISTRICT_WISE);
-            dataSet.put(AppConstant.DISTRICT_CODE, prefManager.getDistrictCode());
+            if(prefManager.getLevels().equalsIgnoreCase("S")){
+                dataSet.put(AppConstant.DISTRICT_CODE, prefManager.getDistrictCodeJson());
+            }
+            else{
+                dataSet.put(AppConstant.DISTRICT_CODE, prefManager.getDistrictCode());
+            }
             dataSet.put(AppConstant.BLOCK_CODE, prefManager.getBlockCodeJson());
         }
         else  if (prefManager.getLevels().equalsIgnoreCase("B")){
@@ -1259,9 +1275,14 @@ public class Utils {
     public static JSONObject InspectionList_Image(Activity activity) throws JSONException {
         prefManager = new PrefManager(activity);
         JSONObject dataSet = new JSONObject();
-        if (prefManager.getLevels().equalsIgnoreCase("D")) {
+        if (prefManager.getLevels().equalsIgnoreCase("D") || prefManager.getLevels().equalsIgnoreCase("S")) {
             dataSet.put(AppConstant.KEY_SERVICE_ID, AppConstant.KEY_INSPECTION_LIST_DISTRICT_WISE_IMAGE);
-            dataSet.put(AppConstant.DISTRICT_CODE, prefManager.getDistrictCode());
+            if(prefManager.getLevels().equalsIgnoreCase("S")){
+                dataSet.put(AppConstant.DISTRICT_CODE, prefManager.getDistrictCodeJson());
+            }
+            else{
+                dataSet.put(AppConstant.DISTRICT_CODE, prefManager.getDistrictCode());
+            }
             dataSet.put(AppConstant.BLOCK_CODE,prefManager.getBlockCodeJson());
 
         }else  if (prefManager.getLevels().equalsIgnoreCase("B")){
@@ -1275,8 +1296,13 @@ public class Utils {
         prefManager = new PrefManager(activity);
         JSONObject dataSet = new JSONObject();
         dataSet.put(AppConstant.KEY_SERVICE_ID, AppConstant.KEY_INSPECTION_LIST_DISTRICT_WISE_ACTION);
-        dataSet.put(AppConstant.DISTRICT_CODE, prefManager.getDistrictCode());
-        if (prefManager.getLevels().equalsIgnoreCase("D")){
+        if(prefManager.getLevels().equalsIgnoreCase("S")){
+            dataSet.put(AppConstant.DISTRICT_CODE, prefManager.getDistrictCodeJson());
+        }
+        else{
+            dataSet.put(AppConstant.DISTRICT_CODE, prefManager.getDistrictCode());
+        }
+        if (!prefManager.getLevels().equalsIgnoreCase("B")){
             dataSet.put(AppConstant.BLOCK_CODE, prefManager.getBlockCodeJson());
         }
         Log.d("object_ACTION_LIST", "" + dataSet);
@@ -1287,11 +1313,18 @@ public class Utils {
         prefManager = new PrefManager(activity);
         JSONObject dataSet = new JSONObject();
         dataSet.put(AppConstant.KEY_SERVICE_ID, AppConstant.KEY_BLOCK_ACTION_IMAGES);
-        dataSet.put(AppConstant.DISTRICT_CODE, prefManager.getDistrictCode());
-        if(prefManager.getLevels().equalsIgnoreCase("D")){
-            dataSet.put(AppConstant.BLOCK_CODE,prefManager.getBlockCodeJson());
-        }else {
+
+        if(prefManager.getLevels().equalsIgnoreCase("S")){
+            dataSet.put(AppConstant.DISTRICT_CODE, prefManager.getDistrictCodeJson());
+        }
+        else{
+            dataSet.put(AppConstant.DISTRICT_CODE, prefManager.getDistrictCode());
+        }
+
+        if(prefManager.getLevels().equalsIgnoreCase("B")){
             dataSet.put(AppConstant.BLOCK_CODE, prefManager.getBlockCode());
+        }else {
+            dataSet.put(AppConstant.BLOCK_CODE,prefManager.getBlockCodeJson());
         }
         Log.d("object_ACTIION_IMAGES", "" + dataSet);
         return dataSet;
