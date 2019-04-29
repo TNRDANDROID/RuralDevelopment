@@ -199,11 +199,18 @@ public class Dashboard extends AppCompatActivity implements Api.ServerResponseLi
 
     public static void getPendingCount() {
         String pendingList_sql = "";
+        String level="";
+        if(prefManager.getLevels().equalsIgnoreCase("D")) {
+            level = "D";
+        }else if(prefManager.getLevels().equalsIgnoreCase("S")) {
+            level = "S";
+        }
         if (prefManager.getLevels().equalsIgnoreCase("D") || prefManager.getLevels().equalsIgnoreCase("S")) {
-            pendingList_sql = "select * from(select * from " + DBHelper.INSPECTION_PENDING + " WHERE inspection_id in (select inspection_id from captured_photo))a left join (select * from observation)b on a.observation = b.id where delete_flag = 0 and inspection_remark != ''";
+            pendingList_sql = "select * from(select * from " + DBHelper.INSPECTION_PENDING + " WHERE inspection_id in (select inspection_id from captured_photo))a left join (select * from observation)b on a.observation = b.id where delete_flag = 0 and inspection_remark != '' and level ='"+level+"'";
         } else if (prefManager.getLevels().equalsIgnoreCase("B")) {
             pendingList_sql = "select * from " + DBHelper.INSPECTION_ACTION + " WHERE id in (select action_id from captured_photo) and delete_flag = 0 and action_remark != ''";
         }
+        Log.d("pendingCount",pendingList_sql);
         Cursor pendingList = getEvents(pendingList_sql, null);
         int count = pendingList.getCount();
         if (count > 0) {

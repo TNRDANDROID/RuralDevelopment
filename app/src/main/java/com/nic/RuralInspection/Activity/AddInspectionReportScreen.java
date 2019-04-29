@@ -338,6 +338,12 @@ public class AddInspectionReportScreen extends AppCompatActivity implements View
             inspectionValue.put(AppConstant.CREATED_DATE, created_date);
             inspectionValue.put(AppConstant.CREATED_IMEI_NO, prefManager.getIMEI());
             inspectionValue.put(AppConstant.CREATED_USER_NAME, prefManager.getUserName());
+            inspectionValue.put(AppConstant.DISTRICT_CODE, prefManager.getDistrictCode());
+            if(prefManager.getLevels().equalsIgnoreCase("D")) {
+                inspectionValue.put("level", "D");
+            }else if(prefManager.getLevels().equalsIgnoreCase("S")) {
+                inspectionValue.put("level", "S");
+            }
             inspectionValue.put("delete_flag", 0);
 
             LoginScreen.db.insert(DBHelper.INSPECTION_PENDING, null, inspectionValue);
@@ -445,7 +451,6 @@ public class AddInspectionReportScreen extends AppCompatActivity implements View
                         imageValue.put(AppConstant.LONGITUDE, offlanTextValue);
                         imageValue.put(AppConstant.IMAGE, image_str.trim());
                         imageValue.put(AppConstant.DESCRIPTION, description);
-                        imageValue.put(AppConstant.DISTRICT_CODE, prefManager.getDistrictCode());
                         imageValue.put("pending_flag", 1);
                         if(prefManager.getLevels().equalsIgnoreCase("D")) {
                             imageValue.put("level", "D");
@@ -519,8 +524,13 @@ public class AddInspectionReportScreen extends AppCompatActivity implements View
             }
         });
         if (!values.isEmpty()) {
-
-            Cursor imageList = getRawEvents("SELECT * FROM " + DBHelper.LOCAL_IMAGE +" WHERE level='D' and work_id="+work_id, null);
+            String level = "";
+            if(prefManager.getLevels().equalsIgnoreCase("D")) {
+                level = "D";
+            }else if(prefManager.getLevels().equalsIgnoreCase("S")) {
+                level = "S";
+            }
+            Cursor imageList = getRawEvents("SELECT * FROM " + DBHelper.LOCAL_IMAGE +" WHERE level='"+level+"' and work_id="+work_id, null);
 
             if (imageList.getCount() > 0) {
                 imagelistvalues.clear();
