@@ -213,6 +213,7 @@ public class Dashboard extends AppCompatActivity implements Api.ServerResponseLi
         Log.d("pendingCount",pendingList_sql);
         Cursor pendingList = getEvents(pendingList_sql, null);
         int count = pendingList.getCount();
+        Log.d("pending_count",String.valueOf(count));
         if (count > 0) {
             pending_upload_layout.setVisibility(View.VISIBLE);
             count_tv.setText(String.valueOf(count));

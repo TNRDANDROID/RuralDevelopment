@@ -213,9 +213,14 @@ public class ViewInspectionReportScreen extends AppCompatActivity implements Vie
     }
 
     private void retrievePendingdata() {
-
+        String level = "";
+        if(prefManager.getLevels().equalsIgnoreCase("D")) {
+            level = "D";
+        }else if(prefManager.getLevels().equalsIgnoreCase("S")) {
+            level = "S";
+        }
         String workId = getIntent().getStringExtra(AppConstant.WORK_ID);
-        String pendingList_sql = "select * from(select * from " + DBHelper.INSPECTION_PENDING + " WHERE inspection_id in (select inspection_id from " + DBHelper.CAPTURED_PHOTO + "))a left join (select * from " + DBHelper.OBSERVATION_TABLE + ")b on a.observation = b.id where delete_flag = 0 and inspection_remark != '' and work_id ="+workId;
+        String pendingList_sql = "select * from(select * from " + DBHelper.INSPECTION_PENDING + " WHERE inspection_id in (select inspection_id from " + DBHelper.CAPTURED_PHOTO + "))a left join (select * from " + DBHelper.OBSERVATION_TABLE + ")b on a.observation = b.id where delete_flag = 0 and level='"+level+"' and inspection_remark != '' and work_id ="+workId;
         Log.d("sql", pendingList_sql);
         Cursor pendingList = getRawEvents(pendingList_sql, null);
 

@@ -497,9 +497,6 @@ public class AddInspectionReportScreen extends AppCompatActivity implements View
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
-//                    if (Utils.isOnline()) {
-//                        sync_data();
-//                    }
                 }
                 dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
                 dialog.dismiss();
@@ -546,9 +543,6 @@ public class AddInspectionReportScreen extends AppCompatActivity implements View
                         byte[] photo = imageList.getBlob(imageList.getColumnIndexOrThrow(AppConstant.IMAGE));
                         byte[] decodedString = Base64.decode(photo, Base64.DEFAULT);
                         Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
-
-                        //  byte[] image =  imageListPreview.getBlob(imageListPreview.getColumnIndexOrThrow(AppConstant.IMAGE));
-
 
                         BlockListValue imageValue = new BlockListValue();
 

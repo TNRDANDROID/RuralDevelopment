@@ -199,7 +199,6 @@
                             customfontdemo:fontName="@string/font_circular_book" />
 
 
-
                     </LinearLayout>
 
 
@@ -563,7 +562,6 @@
                             customfontdemo:fontName="@string/font_normal" />
 
                         <TextView
-                            android:visibility="gone"
                             android:id="@+id/image_count"
                             android:layout_width="20dp"
                             android:layout_height="20dp"
@@ -573,11 +571,11 @@
                             android:text="1"
                             android:textAlignment="center"
                             android:textColor="#FFF"
-                            android:textSize="@dimen/date_text_size" />
+                            android:textSize="@dimen/date_text_size"
+                            android:visibility="gone" />
                     </LinearLayout>
 
                 </android.support.v7.widget.CardView>
-
 
 
             </LinearLayout>
