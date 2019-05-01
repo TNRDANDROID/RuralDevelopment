@@ -442,10 +442,11 @@ public class SelectBlockSchemeScreen extends AppCompatActivity implements View.O
             districtCode = District.get(sp_district.getSelectedItemPosition()).getDistictCode();
             blockCode = Block.get(sp_block.getSelectedItemPosition()).getBlockCode();
         }
-       else if (prefManager.getLevels().equalsIgnoreCase("D")) {
+       else if (prefManager.getLevels().equalsIgnoreCase("D") ) {
             districtCode = prefManager.getDistrictCode();
             blockCode = Block.get(sp_block.getSelectedItemPosition()).getBlockCode();
         } else {
+            districtCode = prefManager.getDistrictCode();
             blockCode = prefManager.getBlockCode();
         }
         String pvCode = Village.get(sp_village.getSelectedItemPosition()).getVillageListPvCode();
