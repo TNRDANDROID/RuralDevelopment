@@ -115,7 +115,7 @@ public class ViewInspectionInActionScreen extends AppCompatActivity implements V
 
 
     private static String imageStoragePath;
-    private ImageView back_img, image_view_preview;
+    private ImageView back_img, image_view_preview,home_img;
     private MyCustomTextView district_tv, scheme_name_tv, block_name_tv, block_user_tv, village_name_tv, fin_year_tv, take_photo, title_tv,submit;
     private MyCustomTextView projectName, amountTv, levelTv, inspected_date, remark, observation;
     private LinearLayout village_layout, block_layout;
@@ -167,7 +167,8 @@ public class ViewInspectionInActionScreen extends AppCompatActivity implements V
 
         scrollView = (ScrollView) findViewById(R.id.scroll_view);
 //        action_tv = (MyCustomTextView) findViewById(R.id.action_tv);
-        back_img = (ImageView) findViewById(R.id.backimg);
+        back_img = (ImageView) findViewById(R.id.back_img);
+        home_img = (ImageView) findViewById(R.id.home_img);
 
         district_tv.setText(prefManager.getDistrictName());
         scheme_name_tv.setText(prefManager.getSchemeName());
@@ -182,6 +183,7 @@ public class ViewInspectionInActionScreen extends AppCompatActivity implements V
         observation.setText(getIntent().getStringExtra(AppConstant.OBSERVATION));
         title_tv.setText("Take Action");
         back_img.setOnClickListener(this);
+        home_img.setOnClickListener(this);
         take_photo.setOnClickListener(this);
         submit.setOnClickListener(this);
 
@@ -207,7 +209,11 @@ public class ViewInspectionInActionScreen extends AppCompatActivity implements V
                 }
 
                 break;
-            case R.id.backimg:
+            case R.id.back_img:
+                onBackPress();
+                break;
+
+            case R.id.home_img:
                 onBackPress();
                 break;
 
@@ -859,6 +865,14 @@ public class ViewInspectionInActionScreen extends AppCompatActivity implements V
                         .show();
             }
         }
+    }
+    public void dashboard() {
+        Intent intent = new Intent(this, Dashboard.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(intent);
+        finish();
+        super.onBackPressed();
+        overridePendingTransition(R.anim.slide_enter, R.anim.slide_exit);
     }
 
     public void onBackPress() {
