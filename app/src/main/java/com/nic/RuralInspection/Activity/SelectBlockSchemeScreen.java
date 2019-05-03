@@ -259,7 +259,7 @@ public class SelectBlockSchemeScreen extends AppCompatActivity implements View.O
         if (worklist.getCount() > 0) {
             loadOfflineDBValues();
         } else {
-            Utils.showAlert(this, "Please Download Data First and Come Here for Further Process");
+            Utils.showAlert(this, "Please download the data first,then come here for further process");
 
             int timeout = 2000; // make the activity visible for 2 seconds
 
