@@ -149,7 +149,7 @@ public class DownloadActivity extends AppCompatActivity implements Api.ServerRes
         back_img.setOnClickListener(this);
         homeimg.setOnClickListener(this);
         done.setOnClickListener(this);
-        title_tv.setText("Download");
+
 
         btn_view_finyear.setOnClickListener(this);
         btn_view_district.setOnClickListener(this);
@@ -169,10 +169,12 @@ public class DownloadActivity extends AppCompatActivity implements Api.ServerRes
 
 //        home.setOnClickListener(this);
         if (prefManager.getLevels().equalsIgnoreCase("B")) {
+            title_tv.setText("Downloaded Unsatisfied Works");
             block_hide_layout.setVisibility(View.GONE);
             download_values_action_layout.setVisibility(View.VISIBLE);
             download_values_inspection_layout.setVisibility(View.GONE);
         } else {
+            title_tv.setText("Download Works For Inspection");
             download_values_action_layout.setVisibility(View.GONE);
             download_values_inspection_layout.setVisibility(View.VISIBLE);
         }

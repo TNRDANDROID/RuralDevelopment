@@ -174,7 +174,7 @@ public class InspectionListAdapter extends RecyclerView.Adapter<InspectionListAd
             params2.height = 35;
             holder.ins_result_tv_on_ff.setLayoutParams(params2);
             holder.ins_result_tv_on_ff.setBackgroundResource(R.drawable.login_button);
-            holder.ins_result_tv_on_ff.setText("Take Action");
+            holder.ins_result_tv_on_ff.setText("Record Action");
             ins_result_tv_on_ff_params.addRule(RelativeLayout.ALIGN_PARENT_END);
             holder.ins_result_tv_on_ff.setPadding(15, 15, 15, 15);
             holder.ins_result_tv_on_ff.setLayoutParams(ins_result_tv_on_ff_params);

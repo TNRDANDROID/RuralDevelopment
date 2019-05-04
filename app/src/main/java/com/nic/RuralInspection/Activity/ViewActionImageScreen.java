@@ -69,7 +69,7 @@ public class ViewActionImageScreen extends AppCompatActivity implements View.OnC
         back_img = (ImageView) findViewById(R.id.backimg);
         back_img.setOnClickListener(this);
         home.setOnClickListener(this);
-        title_tv.setText("View Action Image");
+        title_tv.setText("Record Action Taken Images");
         retriveImageWithDescription();
     }
 

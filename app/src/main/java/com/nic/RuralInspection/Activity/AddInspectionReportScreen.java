@@ -182,7 +182,7 @@ public class AddInspectionReportScreen extends AppCompatActivity implements View
         scheme_name_tv.setText(prefManager.getSchemeName());
         block_name_tv.setText(prefManager.getBlockName());
         fin_year_tv.setText(prefManager.getFinancialyearName());
-        title_tv.setText("Add Inspection");
+        title_tv.setText("Inspection Observation");
 
 
         projectName.setText(getIntent().getStringExtra(AppConstant.WORK_NAME));

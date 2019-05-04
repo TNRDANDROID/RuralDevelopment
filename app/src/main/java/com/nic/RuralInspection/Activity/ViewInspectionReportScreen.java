@@ -141,10 +141,10 @@ public class ViewInspectionReportScreen extends AppCompatActivity implements Vie
             block_user_tv.setText(prefManager.getBlockName());
         }
         if(!prefManager.getLevels().equalsIgnoreCase("B")) {
-            title_tv.setText("View Inspection");
+            title_tv.setText("View Inspected Work Details");
         }
         else{
-            title_tv.setText("View Action");
+            title_tv.setText("Record Action Taken");
         }
         // retrievedata();
         retrievedata_inspection();

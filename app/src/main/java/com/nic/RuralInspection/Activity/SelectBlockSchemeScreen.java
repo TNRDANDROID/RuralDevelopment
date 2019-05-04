@@ -110,7 +110,6 @@ public class SelectBlockSchemeScreen extends AppCompatActivity implements View.O
         back_img = (ImageView) findViewById(R.id.backimg);
         title_tv = (MyCustomTextView) findViewById(R.id.title_tv);
         back_img.setOnClickListener(this);
-        title_tv.setText("WorkList Filter");
 
         if(prefManager.getLevels().equalsIgnoreCase("S")) {
             district_layout.setVisibility(View.VISIBLE);
@@ -118,8 +117,11 @@ public class SelectBlockSchemeScreen extends AppCompatActivity implements View.O
             district_layout.setVisibility(View.GONE);
         }
         if (prefManager.getLevels().equalsIgnoreCase("B")) {
+            title_tv.setText("Select a Work For Action");
             block_layout.setVisibility(View.GONE);
         }else {
+            title_tv.setText("Select a Work For Inspection");
+
             block_layout.setVisibility(View.VISIBLE);
         }
 

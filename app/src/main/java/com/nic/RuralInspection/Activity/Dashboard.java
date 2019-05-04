@@ -60,7 +60,7 @@ public class Dashboard extends AppCompatActivity implements Api.ServerResponseLi
     private CardView uploadInspectionReport;
     private static PrefManager prefManager;
     private ProgressHUD progressHUD;
-    private static MyCustomTextView district_tv, block_user_tv, upload_inspection_report_tv, count_tv, title_tv;
+    private static MyCustomTextView district_tv, block_user_tv, upload_inspection_report_tv, count_tv, title_tv,off_name,ins_off_title,download_tv;
     private JSONArray updatedJsonArray;
     private static final int PERMISSIONS_REQUEST_READ_PHONE_STATE = 999;
     TelephonyManager telephonyManager;
@@ -100,13 +100,19 @@ public class Dashboard extends AppCompatActivity implements Api.ServerResponseLi
         count_tv = (MyCustomTextView) findViewById(R.id.count_tv);
         district_tv = (MyCustomTextView) findViewById(R.id.district_tv);
         title_tv = (MyCustomTextView) findViewById(R.id.title_tv);
+        off_name = (MyCustomTextView) findViewById(R.id.off_name);
+        download_tv = (MyCustomTextView) findViewById(R.id.download_tv);
+        ins_off_title = (MyCustomTextView)findViewById(R.id.ins_off_title);
+        off_name.setText(prefManager.getInspectedOfficerName());
         uploadInspectionReport.setOnClickListener(this);
         pending_upload_layout.setOnClickListener(this);
         download_layout.setOnClickListener(this);
         logout.setOnClickListener(this);
-        title_tv.setText("Dashboard");
+        title_tv.setText("Home Page");
         district_tv.setText(prefManager.getDistrictName());
         if (prefManager.getLevels().equalsIgnoreCase("B")) {
+            ins_off_title.setText("Action Taken Officer Name");
+            download_tv.setText("Downloaded Unsatisfied Inspected Works");
             block_user_layout.setVisibility(View.VISIBLE);
             block_user_tv.setText(prefManager.getBlockName());
             upload_inspection_report_tv.setText(getResources().getString(R.string.action_taken_tv));

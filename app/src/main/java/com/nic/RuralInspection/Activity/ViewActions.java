@@ -72,7 +72,7 @@ public class ViewActions extends AppCompatActivity implements View.OnClickListen
         viewActionRecycleView.setHasFixedSize(true);
         viewActionRecycleView.setNestedScrollingEnabled(false);
         viewActionRecycleView.setFocusable(false);
-        title_tv.setText("View Actions");
+        title_tv.setText("Record Action Taken");
         retrieveActiondata();
         viewActionRecycleView.setAdapter(viewActionAdapter);
     }

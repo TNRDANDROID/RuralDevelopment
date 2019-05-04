@@ -181,7 +181,7 @@ public class ViewInspectionInActionScreen extends AppCompatActivity implements V
         inspected_date.setText(getIntent().getStringExtra(AppConstant.DATE_OF_INSPECTION));
         remark.setText(getIntent().getStringExtra(AppConstant.INSPECTION_REMARK));
         observation.setText(getIntent().getStringExtra(AppConstant.OBSERVATION));
-        title_tv.setText("Take Action");
+        title_tv.setText("Record Action");
         back_img.setOnClickListener(this);
         home_img.setOnClickListener(this);
         take_photo.setOnClickListener(this);
