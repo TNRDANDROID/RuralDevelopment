@@ -16,12 +16,24 @@
         android:layout_alignParentTop="true"
         android:layout_gravity="bottom" />
 
-
+    <com.nic.RuralInspection.Support.MyCustomTextView
+        android:id="@+id/qc"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_10sdp"
+        android:layout_below="@+id/header"
+        android:layout_centerInParent="true"
+        android:padding="3dp"
+        android:text="Quality Control Application"
+        android:textColor="@android:color/black"
+        android:textSize="26sp"
+        android:textStyle="bold"
+        customfontdemo:fontName="@string/font_circular_bold" />
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
 
-        android:layout_below="@+id/header"
+        android:layout_below="@+id/qc"
         android:layout_centerInParent="true"
         android:orientation="vertical">
 

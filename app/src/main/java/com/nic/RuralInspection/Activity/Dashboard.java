@@ -112,7 +112,7 @@ public class Dashboard extends AppCompatActivity implements Api.ServerResponseLi
         district_tv.setText(prefManager.getDistrictName());
         if (prefManager.getLevels().equalsIgnoreCase("B")) {
             ins_off_title.setText("Action Taken Officer Name");
-            download_tv.setText("Downloaded Unsatisfied Inspected Works");
+            download_tv.setText("Downloaded Works graded as U/SRI");
             block_user_layout.setVisibility(View.VISIBLE);
             block_user_tv.setText(prefManager.getBlockName());
             upload_inspection_report_tv.setText(getResources().getString(R.string.action_taken_tv));

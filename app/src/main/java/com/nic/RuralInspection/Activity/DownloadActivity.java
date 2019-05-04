@@ -169,7 +169,7 @@ public class DownloadActivity extends AppCompatActivity implements Api.ServerRes
 
 //        home.setOnClickListener(this);
         if (prefManager.getLevels().equalsIgnoreCase("B")) {
-            title_tv.setText("Downloaded Unsatisfied Works");
+            title_tv.setText("Downloaded Works graded as U/SRI");
             block_hide_layout.setVisibility(View.GONE);
             download_values_action_layout.setVisibility(View.VISIBLE);
             download_values_inspection_layout.setVisibility(View.GONE);

@@ -103,7 +103,7 @@ public class ProjectListScreen extends AppCompatActivity implements View.OnClick
             block_user_tv.setText(prefManager.getBlockName());
             village_layout.setVisibility(View.VISIBLE);
             village_name_tv.setText(prefManager.getVillageListPvName());
-            title_tv.setText("View Unsatisfied Work List");
+            title_tv.setText("View U/SRI Works");
         }else{
             title_tv.setText("Work List");
         }
