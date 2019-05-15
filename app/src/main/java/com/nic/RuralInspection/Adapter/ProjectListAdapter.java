@@ -89,12 +89,12 @@ public class ProjectListAdapter extends RecyclerView.Adapter<ProjectListAdapter.
 
     public void viewInspectionReport(int position) {
 
-        String workid = projectListValues.get(position).getWorkID();
-        String workName = projectListValues.get(position).getWorkName();
-        String workGroupID = projectListValues.get(position).getWorkGroupID();
-        String workTypeID = projectListValues.get(position).getWorkTypeID();
-        String stageName = projectListValues.get(position).getWorkStageName();
-        String asAmount = projectListValues.get(position).getAsAmount();
+        String workid = projectListFiltered.get(position).getWorkID();
+        String workName = projectListFiltered.get(position).getWorkName();
+        String workGroupID = projectListFiltered.get(position).getWorkGroupID();
+        String workTypeID = projectListFiltered.get(position).getWorkTypeID();
+        String stageName = projectListFiltered.get(position).getWorkStageName();
+        String asAmount = projectListFiltered.get(position).getAsAmount();
         Log.d("viewworkId",""+workid);
         prefManager.setKeyActionProjectName(workName);
         prefManager.setKeyActionAmount(asAmount);
@@ -118,13 +118,13 @@ public class ProjectListAdapter extends RecyclerView.Adapter<ProjectListAdapter.
 
     public void addInspectionReport(int position) {
 
-        String workid = projectListValues.get(position).getWorkID();
-        String workName = projectListValues.get(position).getWorkName();
-        String workGroupID = projectListValues.get(position).getWorkGroupID();
-        String workTypeID = projectListValues.get(position).getWorkTypeID();
-        String stageName = projectListValues.get(position).getWorkStageName();
-        String stageCode = projectListValues.get(position).getWorkStageCode();
-        String asAmount = projectListValues.get(position).getAsAmount();
+        String workid = projectListFiltered.get(position).getWorkID();
+        String workName = projectListFiltered.get(position).getWorkName();
+        String workGroupID = projectListFiltered.get(position).getWorkGroupID();
+        String workTypeID = projectListFiltered.get(position).getWorkTypeID();
+        String stageName = projectListFiltered.get(position).getWorkStageName();
+        String stageCode = projectListFiltered.get(position).getWorkStageCode();
+        String asAmount = projectListFiltered.get(position).getAsAmount();
 
         Activity activity = (Activity) context;
         Intent intent = new Intent(context, AddInspectionReportScreen.class);
@@ -146,9 +146,9 @@ public class ProjectListAdapter extends RecyclerView.Adapter<ProjectListAdapter.
     @Override
     public void onBindViewHolder(final ProjectListAdapter.MyViewHolder holder, final int position) {
 //        final BlockListValue blockListValue = projectListFiltered.get(position);
-        holder.projectName.setText(projectListValues.get(position).getWorkName());
-        holder.amountTv.setText(projectListValues.get(position).getAsAmount());
-        holder.levelTv.setText(projectListValues.get(position).getWorkStageName());
+        holder.projectName.setText(projectListFiltered.get(position).getWorkName());
+        holder.amountTv.setText(projectListFiltered.get(position).getAsAmount());
+        holder.levelTv.setText(projectListFiltered.get(position).getWorkStageName());
         if (!prefManager.getLevels().equalsIgnoreCase("B")) {
             holder.addReport.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -169,7 +169,7 @@ public class ProjectListAdapter extends RecyclerView.Adapter<ProjectListAdapter.
 
     @Override
     public int getItemCount() {
-        return projectListValues.size();
+        return projectListFiltered.size();
     }
 
     public void loadDBValues() {
@@ -192,8 +192,6 @@ public class ProjectListAdapter extends RecyclerView.Adapter<ProjectListAdapter.
                         // here we are looking for name or phone number match
                         if (row.getWorkName().toLowerCase().contains(charString.toLowerCase()) || row.getWorkName().contains(charSequence)) {
                             filteredList.add(row);
-                        } else {
-
                         }
                     }
 
