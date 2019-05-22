@@ -128,7 +128,7 @@ public class ProjectListAdapter extends RecyclerView.Adapter<ProjectListAdapter.
         String stageName = projectListFiltered.get(position).getWorkStageName();
         String stageCode = projectListFiltered.get(position).getWorkStageCode();
         String asAmount = projectListFiltered.get(position).getAsAmount();
-//        to check inspection to be only once per day
+                                                    /* to check inspection to be only once per day */
         SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
         String date_of_inspection = sdf.format(new Date());
 
