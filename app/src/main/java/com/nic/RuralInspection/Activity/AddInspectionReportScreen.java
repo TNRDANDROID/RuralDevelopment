@@ -118,9 +118,10 @@ public class AddInspectionReportScreen extends AppCompatActivity implements View
 
     private static String imageStoragePath;
     private MyCustomTextView projectName, amountTv, levelTv;
-    private Spinner sp_observation, sp_stage;
+    private Spinner sp_observation, sp_stage ,sp_ae;
     private List<BlockListValue> stageListValues = new ArrayList<>();
     private List<BlockListValue> observationList = new ArrayList<>();
+    private List<BlockListValue> AEList = new ArrayList<>();
     private ImageView back_img,homeimg,home;
     LocationManager mlocManager = null;
     LocationListener mlocListener;
@@ -137,6 +138,7 @@ public class AddInspectionReportScreen extends AppCompatActivity implements View
     private SelectBlockSchemeScreen selectBlockSchemeScreen = new SelectBlockSchemeScreen();
     static int inspectionID = 0;
     private List<BlockListValue> imagelistvalues = new ArrayList<>();
+    private boolean imageboolean;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -146,6 +148,7 @@ public class AddInspectionReportScreen extends AppCompatActivity implements View
         intializeUI();
         viewStage();
         viewObservation();
+        viewAE();
     }
 
     public void intializeUI() {
@@ -165,6 +168,7 @@ public class AddInspectionReportScreen extends AppCompatActivity implements View
         title_tv = (MyCustomTextView) findViewById(R.id.title_tv);
         sp_observation = (Spinner) findViewById(R.id.observation);
         sp_stage = (Spinner) findViewById(R.id.stageSelect);
+        sp_ae = (Spinner) findViewById(R.id.sp_ae);
         remarkTv = (EditText) findViewById(R.id.remark);
         remarkTv.setScroller(new Scroller(this));
         remarkTv.setVerticalScrollBarEnabled(true);
@@ -183,6 +187,8 @@ public class AddInspectionReportScreen extends AppCompatActivity implements View
         block_name_tv.setText(prefManager.getBlockName());
         fin_year_tv.setText(prefManager.getFinancialyearName());
         title_tv.setText("Inspection Observation");
+
+        imageboolean = false;
 
 
         projectName.setText(getIntent().getStringExtra(AppConstant.WORK_NAME));
@@ -219,21 +225,27 @@ public class AddInspectionReportScreen extends AppCompatActivity implements View
                 dashboard();
                 break;
             case R.id.submit :
-                if (!"Select Stage of Work".equalsIgnoreCase(stageListValues.get(sp_stage.getSelectedItemPosition()).getWorkStageName())) {
-                    if (!"Select Observation".equalsIgnoreCase(observationList.get(sp_observation.getSelectedItemPosition()).getObservationName())) {
-                        if(!remarkTv.getText().toString().isEmpty()) {
-                            submit();
-                        }
-                        else {
-                            Utils.showAlert(this, "Select Remark");
-                        }
+                if(imageboolean) {
+                    if (!"Select Stage of Work".equalsIgnoreCase(stageListValues.get(sp_stage.getSelectedItemPosition()).getWorkStageName())) {
+                        if (!"Select Observation".equalsIgnoreCase(observationList.get(sp_observation.getSelectedItemPosition()).getObservationName())) {
+                            if(!remarkTv.getText().toString().isEmpty()) {
+                                submit();
+                            }
+                            else {
+                                Utils.showAlert(this, "Select Remark");
+                            }
 
+                        } else {
+                            Utils.showAlert(this, "Select Observation");
+                        }
                     } else {
-                        Utils.showAlert(this, "Select Observation");
+                        Utils.showAlert(this, "Select Stage of Work");
                     }
-                } else {
-                    Utils.showAlert(this, "Select Stage of Work");
                 }
+                else {
+                    Utils.showAlert(this,"Please Take photo");
+                }
+
                 break;
         }
     }
@@ -308,9 +320,42 @@ public class AddInspectionReportScreen extends AppCompatActivity implements View
         sp_observation.setAdapter(new CommonAdapter(this, observationList, "ObservationList"));
 
     }
+/*To load AEList spinner*/
+    public void viewAE() {
+        AEList.clear();
+
+        String sql = "select * from "+DBHelper.AE_OFFICER_LISTS +" where dcode ="+prefManager.getDistrictCode()+" and bcode = "+prefManager.getKeySpinnerSelectedBlockcode() ;
+        Cursor stages = getRawEvents(sql, null);
+        Log.d("ae_list_sql", sql);
+
+        BlockListValue aelist = new BlockListValue();
+        aelist.setAEName("Select AE");
+        AEList.add(aelist);
+
+        if (stages.getCount() > 0) {
+            if (stages.moveToFirst()) {
+                do {
+                    BlockListValue aelistval = new BlockListValue();
+                    String dcode = stages.getString(stages.getColumnIndexOrThrow(AppConstant.DISTRICT_CODE));
+                    String bcode = stages.getString(stages.getColumnIndexOrThrow(AppConstant.BLOCK_CODE));
+                    String user_name = stages.getString(stages.getColumnIndexOrThrow(AppConstant.KEY_AE_USER_NAME));
+                    String name = stages.getString(stages.getColumnIndexOrThrow(AppConstant.KEY_AE_NAME));
+                    String desig_name  = stages.getString(stages.getColumnIndexOrThrow(AppConstant.KEY_AE_DESIGNATION_NAME));
+                    aelistval.setDistictCode(dcode);
+                    aelistval.setBlockCode(bcode);
+                    aelistval.setAEUserName(user_name);
+                    aelistval.setAEName(name);
+                    aelistval.setAEDesignation(desig_name);
+                    AEList.add(aelistval);
+                } while (stages.moveToNext());
+            }
+        }
+        sp_ae.setAdapter(new CommonAdapter(this, AEList, "AEList"));
+    }
 
 
     public void imageWithDescription(final MyCustomTextView action_tv, final String type, final ScrollView scrollView) {
+        imageboolean = true;
         dataset = new JSONObject();
 
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
@@ -592,6 +637,7 @@ public class AddInspectionReportScreen extends AppCompatActivity implements View
         String stage_of_work_on_inspection = stageListValues.get(sp_stage.getSelectedItemPosition()).getWorkStageCode();
         String stage_of_work_on_inspection_name = stageListValues.get(sp_stage.getSelectedItemPosition()).getWorkStageName();
         int observation = observationList.get(sp_observation.getSelectedItemPosition()).getObservationID();
+        String ae_username = AEList.get(sp_ae.getSelectedItemPosition()).getAEUserName();
         String inspection_remark = remarkTv.getText().toString();
 
         if (!Utils.isOnline()) {
@@ -601,6 +647,7 @@ public class AddInspectionReportScreen extends AppCompatActivity implements View
             inspectionValue.put(AppConstant.STAGE_OF_WORK_ON_INSPECTION_NAME, stage_of_work_on_inspection_name);
             inspectionValue.put(AppConstant.OBSERVATION, observation);
             inspectionValue.put(AppConstant.INSPECTION_REMARK, inspection_remark);
+           inspectionValue.put(AppConstant.AE_USERNAME, ae_username);
 
             long rowUpdated = LoginScreen.db.update(DBHelper.INSPECTION_PENDING, inspectionValue, "work_id  = ? AND delete_flag = ? and inspection_id = ?", new String[]{work_id,"0", String.valueOf(inspectionID) });
 
@@ -619,6 +666,7 @@ public class AddInspectionReportScreen extends AppCompatActivity implements View
                 dataset.put(AppConstant.STAGE_OF_WORK_ON_INSPECTION, stage_of_work_on_inspection);
                 dataset.put(AppConstant.OBSERVATION, observation);
                 dataset.put(AppConstant.INSPECTION_REMARK, inspection_remark);
+                dataset.put(AppConstant.AE_USERNAME, ae_username);
                 if(prefManager.getLevels().equalsIgnoreCase("S")) {
                     dataset.put(AppConstant.DISTRICT_CODE, prefManager.getDistrictCode());
                 }

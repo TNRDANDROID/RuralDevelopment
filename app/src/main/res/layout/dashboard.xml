@@ -440,7 +440,7 @@
                             android:layout_gravity="center_vertical"
                             android:paddingLeft="5dp"
                             android:paddingRight="5dp"
-                            android:text="Download Works For Inspecion"
+                            android:text="Download Works For Inspection"
                             android:textAlignment="center"
                             android:textColor="#FF0000"
                             android:textSize="18sp"

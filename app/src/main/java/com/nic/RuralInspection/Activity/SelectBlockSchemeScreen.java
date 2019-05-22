@@ -185,7 +185,7 @@ public class SelectBlockSchemeScreen extends AppCompatActivity implements View.O
                     pref_Block = Block.get(position).getBlockName();
                     prefManager.setBlockName(pref_Block);
 //                    prefManager.setBlockCode(Block.get(position).getBlockCode());
-//                    prefManager.setKeySpinnerSelectedBlockcode(Block.get(position).getBlockCode());
+                   prefManager.setKeySpinnerSelectedBlockcode(Block.get(position).getBlockCode());
                     villageFilterSpinner(Block.get(position).getBlockCode());
 
                 }
@@ -593,7 +593,7 @@ public class SelectBlockSchemeScreen extends AppCompatActivity implements View.O
     }
 
     public void loadOfflineFinYearListDBValues() {
-
+        FinYearList.clear();
         //Cursor FinYear = getRawEvents("SELECT fin_year FROM " + DBHelper.FINANCIAL_YEAR_TABLE_NAME, null);
         Cursor FinYear = getRawEvents("select  fin_year from "+DBHelper.WORK_LIST_OPTIONAL+" group by fin_year", null);
 
@@ -642,5 +642,11 @@ public class SelectBlockSchemeScreen extends AppCompatActivity implements View.O
     public Cursor getRawEvents(String sql, String string) {
         Cursor cursor = db.rawQuery(sql, null);
         return cursor;
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+     //   checkdata_offline();
     }
 }

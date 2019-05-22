@@ -64,6 +64,8 @@ public class CommonAdapter extends BaseAdapter {
             tv_type.setText(BlockListValue.getWorkStageName());
         }else if(type.equalsIgnoreCase("ObservationList")){
             tv_type.setText(BlockListValue.getObservationName());
+        }else if(type.equalsIgnoreCase("AEList")){
+            tv_type.setText(BlockListValue.getAEName());
         }
         return view;
     }

@@ -120,6 +120,7 @@ public class PendingLayoutFragment extends Fragment implements View.OnClickListe
                     String created_username = pendingList.getString(pendingList.getColumnIndexOrThrow(AppConstant.CREATED_USER_NAME));
                     String Observation = pendingList.getString(pendingList.getColumnIndexOrThrow(AppConstant.OBSERVATION_NAME));
                     String dcode = pendingList.getString(pendingList.getColumnIndexOrThrow(AppConstant.DISTRICT_CODE));
+                    String ae_username = pendingList.getString(pendingList.getColumnIndexOrThrow(AppConstant.AE_USERNAME));
 
 
                     BlockListValue pendingListValue = new BlockListValue();
@@ -135,6 +136,7 @@ public class PendingLayoutFragment extends Fragment implements View.OnClickListe
                     pendingListValue.setCreatedIpAddress(created_ipaddress);
                     pendingListValue.setWorkStageName(stage_of_work_on_inspection_name);
                     pendingListValue.setObservation(Observation);
+                    pendingListValue.setAEUserName(ae_username);
                     if(prefManager.getLevels().equalsIgnoreCase("S")) {
                         pendingListValue.setDistictCode(dcode);
                     }

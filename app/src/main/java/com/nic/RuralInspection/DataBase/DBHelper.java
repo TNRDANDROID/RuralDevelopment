@@ -25,6 +25,7 @@ public class DBHelper extends SQLiteOpenHelper {
     public static final String IMAGE_GROUP_ID_ONLINE = "image_grouping_online";
     public static final String IMAGE_GROUP_ID_OFFLINE = "image_grouping_offline";
     public static final String INSPECTED_OFFICER_LIST = "inspected_officers_list";
+    public static final String AE_OFFICER_LISTS = "ae_officer_list";
 
     private Context context;
 
@@ -119,6 +120,7 @@ public class DBHelper extends SQLiteOpenHelper {
                 "created_date TEXT," +
                 "imei_no TEXT," +
                 "delete_flag INTEGER," +
+                "ae_username TEXT," +
                 "created_username TEXT)");
 
         db.execSQL("CREATE TABLE "+ CAPTURED_PHOTO + "("
@@ -189,6 +191,12 @@ public class DBHelper extends SQLiteOpenHelper {
                 + "inspection_user_id INTEGER ," +
                 "name TEXT," +
                 "desig_name TEXT)");
+        db.execSQL("CREATE TABLE " + AE_OFFICER_LISTS  + " ("
+                + "dcode INTEGER ," +
+                "bcode INTEGER," +
+                "user_name TEXT," +
+                "name TEXT," +
+                "desig_name TEXT)");
 
     }
 
@@ -213,6 +221,7 @@ public class DBHelper extends SQLiteOpenHelper {
             db.execSQL("DROP TABLE IF EXISTS " + INSPECTED_OFFICER_LIST);
             db.execSQL("DROP TABLE IF EXISTS " + LOCAL_IMAGE);
             db.execSQL("DROP TABLE IF EXISTS " + ACTION_PHOTO);
+            db.execSQL("DROP TABLE IF EXISTS " + AE_OFFICER_LISTS);
             onCreate(db);
         }
     }

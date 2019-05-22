@@ -764,7 +764,7 @@
                         customfontdemo:fontName="@string/font_normal" />
 
                     <Spinner
-                        android:id="@+id/se_rd"
+                        android:id="@+id/sp_ae"
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
                         android:layout_alignParentEnd="true"

@@ -1139,6 +1139,16 @@ public class Utils {
         return dataSet;
     }
 
+    public static JSONObject aeListDistrictWiseJsonParams(Activity activity) throws JSONException {
+        prefManager = new PrefManager(activity);
+        JSONObject dataSet = new JSONObject();
+        if(prefManager.getLevels().equalsIgnoreCase("D") || prefManager.getLevels().equalsIgnoreCase("S") ) {
+            dataSet.put(AppConstant.KEY_SERVICE_ID, AppConstant.KEY_AE_LIST);
+        }
+        Log.d("ae_list", "" + dataSet);
+        return dataSet;
+    }
+
 
     public static JSONObject villageListDistrictBlockWiseJsonParams() throws JSONException {
         JSONObject dataSet = new JSONObject();

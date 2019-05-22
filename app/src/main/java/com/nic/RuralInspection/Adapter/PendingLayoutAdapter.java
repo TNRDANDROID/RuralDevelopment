@@ -155,6 +155,7 @@ public class PendingLayoutAdapter extends RecyclerView.Adapter<PendingLayoutAdap
         String created_ipaddress = pendingListValues.get(position).getCreatedIpAddress();
         String created_username = pendingListValues.get(position).getCreatedUserName();
         String Observation = pendingListValues.get(position).getObservation();
+        String ae_username = pendingListValues.get(position).getAEUserName();
         String dcode = null;
         if(prefManager.getLevels().equalsIgnoreCase("S")) {
             dcode = pendingListValues.get(position).getDistictCode();
@@ -165,6 +166,7 @@ public class PendingLayoutAdapter extends RecyclerView.Adapter<PendingLayoutAdap
             dataset.put(AppConstant.KEY_SERVICE_ID, AppConstant.KEY_HIGH_VALUE_PROJECT_INSPECTION_SAVE);
             dataset.put(AppConstant.WORK_ID, work_id);
             dataset.put(AppConstant.STAGE_OF_WORK_ON_INSPECTION, stage_of_work_on_inspection);
+            dataset.put(AppConstant.AE_USERNAME, ae_username);
             dataset.put(AppConstant.DATE_OF_INSPECTION, date_of_inspection);
             dataset.put(AppConstant.OBSERVATION, observation);
             dataset.put(AppConstant.INSPECTION_REMARK, inspection_remark);

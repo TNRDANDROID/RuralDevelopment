@@ -90,6 +90,7 @@ public class AppConstant {
 
     public static String STAGE_OF_WORK_ON_INSPECTION = "stage_of_work_on_inspection";
     public static String STAGE_OF_WORK_ON_INSPECTION_NAME = "stage_of_work_on_inspection_name";
+    public static String AE_USERNAME = "ae_username";
     public static String DATE_OF_INSPECTION = "date_of_inspection";
     public static String INSPECTED_BY = "inspected_by";
     public static String OBSERVATION = "observation";
@@ -133,5 +134,13 @@ public class AppConstant {
     public static String KEY_VERSION_CHECK= "version_check";
 
     public static String KEY_BLOCK_ACTION_IMAGES = "high_value_project_insp_img_group_action_images_block_wise";
+
+    // AE_LIST //
+
+    public static String KEY_AE_LIST = "ae_list";
+    public static String KEY_AE_USER_NAME = "user_name";
+    public static String KEY_AE_NAME = "name";
+    public static String KEY_AE_DESIGNATION_NAME = "desig_name";
+
 
 }

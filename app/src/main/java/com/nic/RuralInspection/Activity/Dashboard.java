@@ -193,11 +193,9 @@ public class Dashboard extends AppCompatActivity implements Api.ServerResponseLi
         getDistrictList();
         // getServiceList();
         // getInspectionServiceList();
-//        if (prefManager.getLevels().equalsIgnoreCase("D")) {
-//            getBlockList();
-//        } else {
-//          block_layout.setVisibility(View.GONE);
-//        }
+        if (!prefManager.getLevels().equalsIgnoreCase("B")) {
+            getAEList();
+        }
         getVillageList();
         getFinYearList();
         getInspectedOfficersName();
@@ -294,6 +292,14 @@ public class Dashboard extends AppCompatActivity implements Api.ServerResponseLi
             e.printStackTrace();
         }
     }
+
+    public void getAEList() {
+        try {
+            new ApiService(this).makeJSONObjectRequest("AEList", Api.Method.POST, UrlGenerator.getInspectionServicesListUrl(), ae_ListJsonParams(), "not cache", this);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
     public JSONObject districtListJsonParams() throws JSONException {
         String authKey = Utils.encrypt(prefManager.getUserPassKey(), getResources().getString(R.string.init_vector), Utils.districtListJsonParams(this).toString());
         JSONObject dataSet = new JSONObject();
@@ -367,6 +373,14 @@ public class Dashboard extends AppCompatActivity implements Api.ServerResponseLi
         return dataSet;
     }
 
+    public JSONObject ae_ListJsonParams() throws JSONException {
+        String authKey = Utils.encrypt(prefManager.getUserPassKey(), getResources().getString(R.string.init_vector), Utils.aeListDistrictWiseJsonParams(this).toString());
+        JSONObject dataSet = new JSONObject();
+        dataSet.put(AppConstant.KEY_USER_NAME, prefManager.getUserName());
+        dataSet.put(AppConstant.DATA_CONTENT, authKey);
+        Log.d("AEList", "" + authKey);
+        return dataSet;
+    }
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
@@ -558,6 +572,15 @@ public class Dashboard extends AppCompatActivity implements Api.ServerResponseLi
                 if (jsonObject.getString("STATUS").equalsIgnoreCase("OK") && jsonObject.getString("RESPONSE").equalsIgnoreCase("OK")) {
                     loadInspectedOfficersName(jsonObject.getJSONArray(AppConstant.JSON_DATA));
                     Log.d("InspectedOfficers", "" + jsonObject.getJSONArray(AppConstant.JSON_DATA));
+                }
+            }
+            if ("AEList".equals(urlType) && responseObj != null) {
+                String key = responseObj.getString(AppConstant.ENCODE_DATA);
+                String responseDecryptedSchemeKey = Utils.decrypt(prefManager.getUserPassKey(), key);
+                JSONObject jsonObject = new JSONObject(responseDecryptedSchemeKey);
+                if (jsonObject.getString("STATUS").equalsIgnoreCase("OK") && jsonObject.getString("RESPONSE").equalsIgnoreCase("OK")) {
+                  loadAEList(jsonObject.getJSONArray(AppConstant.JSON_DATA));
+                    Log.d("AEList", "" + jsonObject.getJSONArray(AppConstant.JSON_DATA));
                 }
             }
         } catch (JSONException e) {
@@ -820,6 +843,46 @@ public class Dashboard extends AppCompatActivity implements Api.ServerResponseLi
 
                 LoginScreen.db.insert(DBHelper.INSPECTED_OFFICER_LIST, null, inspectedOfficerDetails);
                 Log.d("DBInspectedOfficersList", "" + inspectedOfficerDetails);
+
+            }
+        } catch (JSONException j) {
+            j.printStackTrace();
+        } catch (ArrayIndexOutOfBoundsException a) {
+            a.printStackTrace();
+        }
+        if (progressHUD != null) {
+            progressHUD.cancel();
+        }
+    }
+/*To insert AE List*/
+    private void loadAEList(JSONArray jsonArray) {
+        try {
+            db.delete(DBHelper.AE_OFFICER_LISTS, null, null);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        progressHUD = ProgressHUD.show(this, "Downloading...", true, false, null);
+
+        try {
+            updatedJsonArray = new JSONArray();
+            updatedJsonArray = jsonArray;
+
+            for (int i = 0; i < jsonArray.length(); i++) {
+                Integer dcode = jsonArray.getJSONObject(i).getInt(AppConstant.DISTRICT_CODE);
+                Integer bcode = jsonArray.getJSONObject(i).getInt(AppConstant.BLOCK_CODE);
+                String user_name = jsonArray.getJSONObject(i).getString(AppConstant.KEY_AE_USER_NAME);
+                String name = jsonArray.getJSONObject(i).getString(AppConstant.KEY_AE_NAME);
+                String desig_name = jsonArray.getJSONObject(i).getString(AppConstant.KEY_AE_DESIGNATION_NAME);
+
+                ContentValues AEDetails = new ContentValues();
+                AEDetails.put(AppConstant.DISTRICT_CODE, dcode);
+                AEDetails.put(AppConstant.BLOCK_CODE, bcode);
+                AEDetails.put(AppConstant.KEY_AE_USER_NAME, user_name);
+                AEDetails.put(AppConstant.KEY_AE_NAME, name);
+                AEDetails.put(AppConstant.KEY_AE_DESIGNATION_NAME, desig_name);
+
+                LoginScreen.db.insert(DBHelper.AE_OFFICER_LISTS, null, AEDetails);
+                Log.d("DBAEList", "" + AEDetails);
 
             }
         } catch (JSONException j) {

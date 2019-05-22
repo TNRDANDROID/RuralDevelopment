@@ -58,6 +58,33 @@ public class BlockListValue {
     private String ActionOffName;
     private String ActionOffDesignName;
     private String districtName;
+    private String AEUserName;
+    private String AEName;
+    private String AEDesignation;
+
+    public String getAEUserName() {
+        return AEUserName;
+    }
+
+    public void setAEUserName(String AEUserName) {
+        this.AEUserName = AEUserName;
+    }
+
+    public String getAEName() {
+        return AEName;
+    }
+
+    public void setAEName(String AEName) {
+        this.AEName = AEName;
+    }
+
+    public String getAEDesignation() {
+        return AEDesignation;
+    }
+
+    public void setAEDesignation(String AEDesignation) {
+        this.AEDesignation = AEDesignation;
+    }
 
     public String getDistrictName() {
         return districtName;

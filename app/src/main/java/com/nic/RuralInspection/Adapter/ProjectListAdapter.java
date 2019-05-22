@@ -22,10 +22,13 @@ import com.nic.RuralInspection.DataBase.DBHelper;
 import com.nic.RuralInspection.Model.BlockListValue;
 import com.nic.RuralInspection.R;
 import com.nic.RuralInspection.Support.MyCustomTextView;
+import com.nic.RuralInspection.Utils.Utils;
 import com.nic.RuralInspection.constant.AppConstant;
 import com.nic.RuralInspection.session.PrefManager;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -125,21 +128,49 @@ public class ProjectListAdapter extends RecyclerView.Adapter<ProjectListAdapter.
         String stageName = projectListFiltered.get(position).getWorkStageName();
         String stageCode = projectListFiltered.get(position).getWorkStageCode();
         String asAmount = projectListFiltered.get(position).getAsAmount();
+//        to check inspection to be only once per day
+        SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
+        String date_of_inspection = sdf.format(new Date());
 
-        Activity activity = (Activity) context;
-        Intent intent = new Intent(context, AddInspectionReportScreen.class);
+        int count = 0;
 
-        intent.putExtra(AppConstant.WORK_ID, workid);
-        intent.putExtra(AppConstant.WORK_NAME, workName);
-        intent.putExtra(AppConstant.WORK_GROUP_ID, workGroupID);
-        intent.putExtra(AppConstant.WORK_TYPE_ID, workTypeID);
-        intent.putExtra(AppConstant.WORK_SATGE_NAME, stageName);
-        intent.putExtra(AppConstant.WORK_STAGE_CODE, stageCode);
-        intent.putExtra(AppConstant.AS_AMOUNT, asAmount);
+        String sql = "select * from " + DBHelper.INSPECTION+ " where work_id = '"+workid+ "' and date_of_inspection = '"+date_of_inspection+"'";
+        Cursor stages = getRawEvents(sql, null);
+        Log.d("date_sql", sql);
+        if(stages.getCount() > 0){
+           count = stages.getCount();
+        }
+        else {
+            SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd");
+            String date_of_inspection1 = sdf1.format(new Date());
 
-        //intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        activity.startActivity(intent);
-        activity.overridePendingTransition(R.anim.slide_in, R.anim.slide_out);
+            String sql1 = "select * from " + DBHelper.INSPECTION_PENDING+ " where work_id = '"+workid+ "' and date_of_inspection = '"+date_of_inspection1+"'";
+            Cursor stages1 = getRawEvents(sql1, null);
+            if(stages1.getCount() > 0){
+                count = stages1.getCount();
+            }
+
+        }
+        if(count > 0){
+            Log.d("already_there","found");
+            Utils.showAlert(this.context,"Already Inspected");
+        }
+        else {
+            Activity activity = (Activity) context;
+            Intent intent = new Intent(context, AddInspectionReportScreen.class);
+
+            intent.putExtra(AppConstant.WORK_ID, workid);
+            intent.putExtra(AppConstant.WORK_NAME, workName);
+            intent.putExtra(AppConstant.WORK_GROUP_ID, workGroupID);
+            intent.putExtra(AppConstant.WORK_TYPE_ID, workTypeID);
+            intent.putExtra(AppConstant.WORK_SATGE_NAME, stageName);
+            intent.putExtra(AppConstant.WORK_STAGE_CODE, stageCode);
+            intent.putExtra(AppConstant.AS_AMOUNT, asAmount);
+
+            //intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            activity.startActivity(intent);
+            activity.overridePendingTransition(R.anim.slide_in, R.anim.slide_out);
+        }
     }
 
 
