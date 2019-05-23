@@ -11,11 +11,9 @@ import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
-import android.graphics.drawable.Drawable;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.net.Uri;
@@ -228,13 +226,15 @@ public class AddInspectionReportScreen extends AppCompatActivity implements View
                 if(imageboolean) {
                     if (!"Select Stage of Work".equalsIgnoreCase(stageListValues.get(sp_stage.getSelectedItemPosition()).getWorkStageName())) {
                         if (!"Select Observation".equalsIgnoreCase(observationList.get(sp_observation.getSelectedItemPosition()).getObservationName())) {
-                            if(!remarkTv.getText().toString().isEmpty()) {
-                                submit();
+                            if (!"Select AE".equalsIgnoreCase(AEList.get(sp_ae.getSelectedItemPosition()).getAEName())) {
+                                if (!remarkTv.getText().toString().isEmpty()) {
+                                    submit();
+                                } else {
+                                    Utils.showAlert(this, "Select Remark");
+                                }
+                            } else {
+                                Utils.showAlert(this, "Select AE");
                             }
-                            else {
-                                Utils.showAlert(this, "Select Remark");
-                            }
-
                         } else {
                             Utils.showAlert(this, "Select Observation");
                         }
