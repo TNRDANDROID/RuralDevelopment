@@ -65,12 +65,14 @@ public class AppVersionHelper implements Api.ServerResponseListener {
             JSONObject responseObj = serverResponse.getJsonResponse();
 
             if ("versionCheck".equals(urlType) && responseObj != null) {
+
                 String version = responseObj.getString("version");
 
-                if (responseObj.getString(AppConstant.KEY_APP_CODE).equalsIgnoreCase("I") && (!version.equalsIgnoreCase("1") )) {
+                if (responseObj.getString(AppConstant.KEY_APP_CODE).equalsIgnoreCase("I") && (version.equalsIgnoreCase(Utils.getVersionName(mContext)))) {
                     myListener.onAppVersionCallback("Update");
                 } else {
                     myListener.onAppVersionCallback("Don't update");
+                    Log.d("VersionCode",""+Utils.getVersionName(mContext));
                 }
                 Log.d("version_check", "" + responseObj);
             } else {

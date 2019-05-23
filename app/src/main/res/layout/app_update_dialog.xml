@@ -16,7 +16,7 @@
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
             android:layout_marginTop="@dimen/margin"
-            android:text="Rural Inspection Update"
+            android:text="Rural Work Inspection Update"
             android:textAllCaps="true"
             android:textColor="@android:color/black"
             android:textSize="@dimen/menu_title_size"
@@ -47,7 +47,7 @@
             android:gravity="center"
             android:lineSpacingExtra="5dp"
             android:padding="@dimen/padding"
-            android:text="You need to update Rural Inspection"
+            android:text="You need to update Rural Work Inspection"
             android:textAppearance="@style/TextAppearance.AppCompat.Title"
             customfontdemo:fontName="@string/font_medium" />
 
@@ -59,7 +59,7 @@
             android:gravity="center"
             android:lineSpacingExtra="5dp"
             android:padding="@dimen/padding"
-            android:text="This version of Rural Inspection is no longer supported. Please go to Official Site and install new version"
+            android:text="This version of Rural Work Inspection is no longer supported. Please go to Official Site and install new version"
             android:textAppearance="@style/TextAppearance.AppCompat.Title"
             customfontdemo:fontName="@string/font_normal" />
 

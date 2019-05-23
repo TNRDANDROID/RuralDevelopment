@@ -129,6 +129,7 @@ public class ViewInspectionInActionScreen extends AppCompatActivity implements V
     EditText remarkTv;
     static JSONObject dataset;
     private JSONArray updatedJsonArray;
+    private boolean imagebooleanAction;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -194,18 +195,21 @@ public class ViewInspectionInActionScreen extends AppCompatActivity implements V
             block_layout.setVisibility(View.VISIBLE);
             block_user_tv.setText(prefManager.getBlockName());
         }
-
-
+        imagebooleanAction = false;
     }
 
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.submit:
-                if (!remark_action_tv.getText().toString().isEmpty()) {
-                    submit();
+                if (imagebooleanAction) {
+                    if (!remark_action_tv.getText().toString().isEmpty()) {
+                        submit();
+                    } else {
+                        Utils.showAlert(this, "Enter Remark");
+                    }
                 } else {
-                    Utils.showAlert(this, "Enter Remark");
+                    Utils.showAlert(this, "Take Photo");
                 }
 
                 break;
@@ -225,6 +229,7 @@ public class ViewInspectionInActionScreen extends AppCompatActivity implements V
 
 
     public void imageWithDescription(final MyCustomTextView action_tv, final String type, final ScrollView scrollView) {
+        imagebooleanAction = true;
         dataset = new JSONObject();
 
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
