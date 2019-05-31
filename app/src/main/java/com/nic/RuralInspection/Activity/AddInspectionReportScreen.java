@@ -84,6 +84,7 @@ import static com.nic.RuralInspection.Activity.LoginScreen.db;
 
 public class AddInspectionReportScreen extends AppCompatActivity implements View.OnClickListener, Api.ServerResponseListener {
 
+
     private ScrollView scrollView;
     private MyCustomTextView take_photo,submit;
     private MyCustomTextView district_tv, scheme_name_tv, block_name_tv, fin_year_tv, title_tv;
