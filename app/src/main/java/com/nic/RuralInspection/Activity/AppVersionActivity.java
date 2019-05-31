@@ -22,6 +22,7 @@ public class AppVersionActivity extends AppCompatActivity implements View.OnClic
         setContentView(R.layout.app_update_dialog);
         intializeUI();
 
+
     }
 
     public void intializeUI(){
