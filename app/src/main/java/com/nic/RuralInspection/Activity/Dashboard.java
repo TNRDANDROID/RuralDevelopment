@@ -646,13 +646,13 @@ public class Dashboard extends AppCompatActivity implements Api.ServerResponseLi
 //            progressHUD = ProgressHUD.show(Dashboard.this, "Downloading", true, false, null);
 //        }
 
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
-            if (progressHUD != null) {
-                progressHUD.cancel();
-            }
-        }
+//        @Override
+//        protected void onPostExecute(Void aVoid) {
+//            super.onPostExecute(aVoid);
+//            if (progressHUD != null) {
+//                progressHUD.cancel();
+//            }
+//        }
     }
 
     public class InsertDistrictTask extends AsyncTask<JSONObject ,Void ,Void> {
@@ -693,14 +693,14 @@ public class Dashboard extends AppCompatActivity implements Api.ServerResponseLi
 //            progressHUD = ProgressHUD.show(Dashboard.this, "Downloading", true, false, null);
 //        }
 
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
-            if (progressHUD != null) {
-                progressHUD.cancel();
-            }
-
-        }
+//        @Override
+//        protected void onPostExecute(Void aVoid) {
+//            super.onPostExecute(aVoid);
+//            if (progressHUD != null) {
+//                progressHUD.cancel();
+//            }
+//
+//        }
     }
 
     public class InsertSchemeTask extends AsyncTask<JSONObject ,Void ,Void> {
@@ -782,11 +782,11 @@ public class Dashboard extends AppCompatActivity implements Api.ServerResponseLi
             return null;
         }
 
-//        @Override
-//        protected void onPreExecute() {
-//            super.onPreExecute();
-//            progressHUD = ProgressHUD.show(Dashboard.this, "Downloading", true, false, null);
-//        }
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            progressHUD = ProgressHUD.show(Dashboard.this, "loading...", true, false, null);
+        }
 
         @Override
         protected void onPostExecute(Void aVoid) {
@@ -868,20 +868,20 @@ public class Dashboard extends AppCompatActivity implements Api.ServerResponseLi
             return null;
         }
 
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            progressHUD = ProgressHUD.show(Dashboard.this, "Downloading", true, false, null);
-        }
+//        @Override
+//        protected void onPreExecute() {
+//            super.onPreExecute();
+//            progressHUD = ProgressHUD.show(Dashboard.this, "loading...", true, false, null);
+//        }
 
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
-            if (progressHUD != null) {
-                progressHUD.cancel();
-            }
-
-        }
+//        @Override
+//        protected void onPostExecute(Void aVoid) {
+//            super.onPostExecute(aVoid);
+//            if (progressHUD != null) {
+//                progressHUD.cancel();
+//            }
+//
+//        }
     }
 
     public class InsertObservationTask extends AsyncTask<JSONObject ,Void ,Void> {
@@ -1024,14 +1024,14 @@ public class Dashboard extends AppCompatActivity implements Api.ServerResponseLi
 //            progressHUD = ProgressHUD.show(Dashboard.this, "Downloading", true, false, null);
 //        }
 
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
-            if (progressHUD != null) {
-                progressHUD.cancel();
-            }
-
-        }
+//        @Override
+//        protected void onPostExecute(Void aVoid) {
+//            super.onPostExecute(aVoid);
+//            if (progressHUD != null) {
+//                progressHUD.cancel();
+//            }
+//
+//        }
     }
 
     @Override
