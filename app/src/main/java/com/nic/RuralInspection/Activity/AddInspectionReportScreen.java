@@ -475,6 +475,7 @@ public class AddInspectionReportScreen extends AppCompatActivity implements View
                             //Log.d("imageInByte_string",string);
                             Log.d("image_str", image_str);
                         } catch (Exception e) {
+                            imageboolean = false;
                             Utils.showAlert(AddInspectionReportScreen.this, "Atleast Capture one Photo");
                             break;
                             //e.printStackTrace();

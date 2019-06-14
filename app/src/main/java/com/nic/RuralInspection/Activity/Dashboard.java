@@ -7,9 +7,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -54,17 +56,16 @@ import static com.nic.RuralInspection.Activity.LoginScreen.db;
  * Created by AchanthiSundar on 28-12-2018.
  */
 
-public class Dashboard extends AppCompatActivity implements Api.ServerResponseListener, View.OnClickListener, MyDialog.myOnClickListener,AppVersionHelper.myAppVersionInterface {
+public class Dashboard extends AppCompatActivity implements Api.ServerResponseListener, View.OnClickListener, MyDialog.myOnClickListener, AppVersionHelper.myAppVersionInterface {
     private ImageView logout;
-    private static LinearLayout  block_user_layout, pending_upload_layout,download_layout,district_user_layout,state_user_layout;
+    private static LinearLayout block_user_layout, pending_upload_layout, download_layout, district_user_layout, state_user_layout;
     private CardView uploadInspectionReport;
     private static PrefManager prefManager;
     private ProgressHUD progressHUD;
-    private static MyCustomTextView district_tv, block_user_tv, upload_inspection_report_tv, count_tv, title_tv,off_name,ins_off_title,download_tv;
+    private static MyCustomTextView district_tv, block_user_tv, upload_inspection_report_tv, count_tv, title_tv, off_name, ins_off_title, download_tv;
     private JSONArray updatedJsonArray;
     private static final int PERMISSIONS_REQUEST_READ_PHONE_STATE = 999;
-    TelephonyManager telephonyManager;
-    String imei;
+    // String imei;
     private List<BlockListValue> pendingUpload = new ArrayList<>();
     private Fragment mContent;
 
@@ -102,7 +103,7 @@ public class Dashboard extends AppCompatActivity implements Api.ServerResponseLi
         title_tv = (MyCustomTextView) findViewById(R.id.title_tv);
         off_name = (MyCustomTextView) findViewById(R.id.off_name);
         download_tv = (MyCustomTextView) findViewById(R.id.download_tv);
-        ins_off_title = (MyCustomTextView)findViewById(R.id.ins_off_title);
+        ins_off_title = (MyCustomTextView) findViewById(R.id.ins_off_title);
         off_name.setText(prefManager.getInspectedOfficerName());
         uploadInspectionReport.setOnClickListener(this);
         pending_upload_layout.setOnClickListener(this);
@@ -138,39 +139,27 @@ public class Dashboard extends AppCompatActivity implements Api.ServerResponseLi
         if (prefManager.getLevels().equalsIgnoreCase("B")) {
             getSchemeList();
         }
-        if(prefManager.getLevels().equalsIgnoreCase("S")){
+        if (prefManager.getLevels().equalsIgnoreCase("S")) {
             state_user_layout.setVisibility(View.VISIBLE);
-            district_user_layout.setVisibility(View.GONE );
+            district_user_layout.setVisibility(View.GONE);
         }
 
-    }
-    private void checkAppVersion() {
-        new AppVersionHelper(this,Dashboard.this).callAppVersionCheckApi();
-    }
-    private void getImei() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (checkSelfPermission(Manifest.permission.READ_PHONE_STATE)
-                    != PackageManager.PERMISSION_GRANTED) {
-                requestPermissions(new String[]{Manifest.permission.READ_PHONE_STATE},
-                        PERMISSIONS_REQUEST_READ_PHONE_STATE);
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        getMobileDetails();
-                    }
-                }, 500);
-
-            } else {
-                getMobileDetails();
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                getImei();
             }
-        } else {
-            getMobileDetails();
+        }, 4000);
 
-        }
     }
 
-    private void getMobileDetails() {
-        telephonyManager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
+    private void checkAppVersion() {
+        new AppVersionHelper(this, Dashboard.this).callAppVersionCheckApi();
+    }
+
+    public void getImei() {
+        String myAndroidDeviceId = "";
+        TelephonyManager mTelephony = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
             //    ActivityCompat#requestPermissions
@@ -181,10 +170,33 @@ public class Dashboard extends AppCompatActivity implements Api.ServerResponseLi
             // for ActivityCompat#requestPermissions for more details.
             return;
         }
-        imei = telephonyManager.getDeviceId();
-        prefManager.setImei(imei);
-        Log.d("imei", imei);
+        if (mTelephony.getDeviceId() != null) {
+            myAndroidDeviceId = mTelephony.getDeviceId();
+        } else {
+            myAndroidDeviceId = Settings.Secure.getString(getApplicationContext().getContentResolver(), Settings.Secure.ANDROID_ID);
+        }
+       // return myAndroidDeviceId;
+
+        prefManager.setImei(myAndroidDeviceId);
+        Log.d("imei", myAndroidDeviceId);
     }
+
+//    private void getMobileDetails() {
+//        telephonyManager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
+//        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
+//            // TODO: Consider calling
+//            //    ActivityCompat#requestPermissions
+//            // here to request the missing permissions, and then overriding
+//            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+//            //                                          int[] grantResults)
+//            // to handle the case where the user grants the permission. See the documentation
+//            // for ActivityCompat#requestPermissions for more details.
+//            return;
+//        }
+//        String imei = telephonyManager.getDeviceId();
+//        prefManager.setImei(imei);
+//        Log.d("imei", imei);
+//    }
 
     public void fetchAllResponseFromApi() {
         getStageList();
@@ -504,7 +516,7 @@ public class Dashboard extends AppCompatActivity implements Api.ServerResponseLi
                     String responseDecryptedBlockKey = Utils.decrypt(prefManager.getUserPassKey(), key);
                     JSONObject jsonObject = new JSONObject(responseDecryptedBlockKey);
                     if (jsonObject.getString("STATUS").equalsIgnoreCase("OK") && jsonObject.getString("RESPONSE").equalsIgnoreCase("OK")) {
-                        loadBlockList(jsonObject.getJSONArray(AppConstant.JSON_DATA));
+                        new InsertBlockTask().execute(jsonObject);
                     }
                     Log.d("BlockList", "" + responseDecryptedBlockKey);
                 }
@@ -515,7 +527,7 @@ public class Dashboard extends AppCompatActivity implements Api.ServerResponseLi
                 String responseDecryptedBlockKey = Utils.decrypt(prefManager.getUserPassKey(), key);
                 JSONObject jsonObject = new JSONObject(responseDecryptedBlockKey);
                 if (jsonObject.getString("STATUS").equalsIgnoreCase("OK") && jsonObject.getString("RESPONSE").equalsIgnoreCase("OK")) {
-                    loadDistrictList(jsonObject.getJSONArray(AppConstant.JSON_DATA));
+                    new InsertDistrictTask().execute(jsonObject);
                 }
                 Log.d("DistrictList", "" + responseDecryptedBlockKey);
             }
@@ -524,7 +536,7 @@ public class Dashboard extends AppCompatActivity implements Api.ServerResponseLi
                 String responseDecryptedSchemeKey = Utils.decrypt(prefManager.getUserPassKey(), key);
                 JSONObject jsonObject = new JSONObject(responseDecryptedSchemeKey);
                 if (jsonObject.getString("STATUS").equalsIgnoreCase("OK") && jsonObject.getString("RESPONSE").equalsIgnoreCase("OK")) {
-                    loadSchemeList(jsonObject.getJSONArray(AppConstant.JSON_DATA));
+                    new InsertSchemeTask().execute(jsonObject);
                 }
             }
 
@@ -533,7 +545,7 @@ public class Dashboard extends AppCompatActivity implements Api.ServerResponseLi
                 String responseDecryptedBlockKey = Utils.decrypt(prefManager.getUserPassKey(), key);
                 JSONObject jsonObject = new JSONObject(responseDecryptedBlockKey);
                 if (jsonObject.getString("STATUS").equalsIgnoreCase("OK") && jsonObject.getString("RESPONSE").equalsIgnoreCase("OK")) {
-                    loadVillageList(jsonObject.getJSONArray(AppConstant.JSON_DATA));
+                    new InsertVillageTask().execute(jsonObject);
                 }
                 Log.d("VillageList", "" + responseDecryptedBlockKey);
             }
@@ -543,7 +555,7 @@ public class Dashboard extends AppCompatActivity implements Api.ServerResponseLi
                 String responseDecryptedSchemeKey = Utils.decrypt(prefManager.getUserPassKey(), key);
                 JSONObject jsonObject = new JSONObject(responseDecryptedSchemeKey);
                 if (jsonObject.getString("STATUS").equalsIgnoreCase("OK") && jsonObject.getString("RESPONSE").equalsIgnoreCase("OK")) {
-                    loadFinYearList(jsonObject.getJSONArray(AppConstant.JSON_DATA));
+                    new InsertFinYearTask().execute(jsonObject);
                 }
                 Log.d("FinYear", "" + responseDecryptedSchemeKey);
             }
@@ -552,7 +564,7 @@ public class Dashboard extends AppCompatActivity implements Api.ServerResponseLi
                 String responseDecryptedKey = Utils.decrypt(prefManager.getUserPassKey(), key);
                 JSONObject jsonObject = new JSONObject(responseDecryptedKey);
                 if (jsonObject.getString("STATUS").equalsIgnoreCase("OK") && jsonObject.getString("RESPONSE").equalsIgnoreCase("OK")) {
-                    loadStageList(jsonObject.getJSONArray(AppConstant.JSON_DATA));
+                    new InsertStageTask().execute(jsonObject);
                 }
                 Log.d("StageList", "" + responseDecryptedKey);
             }
@@ -561,7 +573,13 @@ public class Dashboard extends AppCompatActivity implements Api.ServerResponseLi
                 String responseDecryptedKey = Utils.decrypt(prefManager.getUserPassKey(), key);
                 JSONObject jsonObject = new JSONObject(responseDecryptedKey);
                 if (jsonObject.getString("STATUS").equalsIgnoreCase("OK") && jsonObject.getString("RESPONSE").equalsIgnoreCase("OK")) {
-                    loadObservationList(jsonObject.getJSONArray(AppConstant.JSON_DATA));
+                    new InsertObservationTask().execute(jsonObject);
+//                    new Handler().postDelayed(new Runnable() {
+//                        @Override
+//                        public void run() {
+//                            getImei();
+//                        }
+//                    }, 4000);
                 }
                 Log.d("ResObservationList", "" + responseDecryptedKey);
             }
@@ -570,7 +588,7 @@ public class Dashboard extends AppCompatActivity implements Api.ServerResponseLi
                 String responseDecryptedSchemeKey = Utils.decrypt(prefManager.getUserPassKey(), key);
                 JSONObject jsonObject = new JSONObject(responseDecryptedSchemeKey);
                 if (jsonObject.getString("STATUS").equalsIgnoreCase("OK") && jsonObject.getString("RESPONSE").equalsIgnoreCase("OK")) {
-                    loadInspectedOfficersName(jsonObject.getJSONArray(AppConstant.JSON_DATA));
+                    new InsertInspectedOfficersTask().execute(jsonObject);
                     Log.d("InspectedOfficers", "" + jsonObject.getJSONArray(AppConstant.JSON_DATA));
                 }
             }
@@ -579,7 +597,7 @@ public class Dashboard extends AppCompatActivity implements Api.ServerResponseLi
                 String responseDecryptedSchemeKey = Utils.decrypt(prefManager.getUserPassKey(), key);
                 JSONObject jsonObject = new JSONObject(responseDecryptedSchemeKey);
                 if (jsonObject.getString("STATUS").equalsIgnoreCase("OK") && jsonObject.getString("RESPONSE").equalsIgnoreCase("OK")) {
-                  loadAEList(jsonObject.getJSONArray(AppConstant.JSON_DATA));
+                    new InsertAETask().execute(jsonObject);
                     Log.d("AEList", "" + jsonObject.getJSONArray(AppConstant.JSON_DATA));
                 }
             }
@@ -588,310 +606,431 @@ public class Dashboard extends AppCompatActivity implements Api.ServerResponseLi
         }
     }
 
-    private void loadBlockList(JSONArray jsonArray) {
-        progressHUD = ProgressHUD.show(this, "Loading...", true, false, null);
-        try {
-            updatedJsonArray = new JSONArray();
-            updatedJsonArray = jsonArray;
-            for (int i = 0; i < jsonArray.length(); i++) {
-                String districtCode = jsonArray.getJSONObject(i).getString(AppConstant.DISTRICT_CODE);
-                String blockCode = jsonArray.getJSONObject(i).getString(AppConstant.BLOCK_CODE);
-                String blockName = jsonArray.getJSONObject(i).getString(AppConstant.BLOCK_NAME);
+    public class InsertBlockTask extends AsyncTask<JSONObject ,Void ,Void> {
 
-                ContentValues blockListValues = new ContentValues();
-                blockListValues.put(AppConstant.DISTRICT_CODE, districtCode);
-                blockListValues.put(AppConstant.BLOCK_CODE, blockCode);
-                blockListValues.put(AppConstant.BLOCK_NAME, blockName);
+        @Override
+        protected Void doInBackground(JSONObject... params) {
 
-                LoginScreen.db.insert(DBHelper.BLOCK_TABLE_NAME, null, blockListValues);
-                Log.d("LocalDBblockList", "" + blockListValues);
-
-            }
-        } catch (JSONException j) {
-            j.printStackTrace();
-        } catch (ArrayIndexOutOfBoundsException a) {
-            a.printStackTrace();
-        }
-        if (progressHUD != null) {
-            progressHUD.cancel();
-        }
-    }
-
-    private void loadDistrictList(JSONArray jsonArray) {
-        progressHUD = ProgressHUD.show(this, "Loading...", true, false, null);
-        try {
-            updatedJsonArray = new JSONArray();
-            updatedJsonArray = jsonArray;
-            for (int i = 0; i < jsonArray.length(); i++) {
-                String districtCode = jsonArray.getJSONObject(i).getString(AppConstant.DISTRICT_CODE);
-                String districtName = jsonArray.getJSONObject(i).getString(AppConstant.DISTRICT_NAME);
-
-                ContentValues districtListValues = new ContentValues();
-                districtListValues.put(AppConstant.DISTRICT_CODE, districtCode);
-                districtListValues.put(AppConstant.DISTRICT_NAME, districtName);
-
-                LoginScreen.db.insert(DBHelper.DISTRICT_TABLE_NAME, null, districtListValues);
-                Log.d("LocalDBdistrictList", "" + districtListValues);
-
-            }
-        } catch (JSONException j) {
-            j.printStackTrace();
-        } catch (ArrayIndexOutOfBoundsException a) {
-            a.printStackTrace();
-        }
-        if (progressHUD != null) {
-            progressHUD.cancel();
-        }
-    }
-
-    private void loadSchemeList(JSONArray jsonArray) {
-        try {
-            db.delete(DBHelper.SCHEME_TABLE_NAME, null, null);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        progressHUD = ProgressHUD.show(this, "Downloading...", true, false, null);
-
-        try {
-            updatedJsonArray = new JSONArray();
-            updatedJsonArray = jsonArray;
-
-            for (int i = 0; i < jsonArray.length(); i++) {
-                String schemeSequentialID = jsonArray.getJSONObject(i).getString(AppConstant.SCHEME_SEQUENTIAL_ID);
-                String schemeName = jsonArray.getJSONObject(i).getString(AppConstant.SCHEME_NAME);
-                String fin_year = jsonArray.getJSONObject(i).getString(AppConstant.FINANCIAL_YEAR);
-
-                ContentValues schemeListLocalDbValues = new ContentValues();
-                schemeListLocalDbValues.put(AppConstant.SCHEME_SEQUENTIAL_ID, schemeSequentialID);
-                schemeListLocalDbValues.put(AppConstant.SCHEME_NAME, schemeName);
-                schemeListLocalDbValues.put(AppConstant.FINANCIAL_YEAR, fin_year);
-
-                LoginScreen.db.insert(DBHelper.SCHEME_TABLE_NAME, null, schemeListLocalDbValues);
-                Log.d("LocalDBSchemeList", "" + schemeListLocalDbValues);
-
-            }
-        } catch (JSONException j) {
-            j.printStackTrace();
-        } catch (ArrayIndexOutOfBoundsException a) {
-            a.printStackTrace();
-        }
-        if (progressHUD != null) {
-            progressHUD.cancel();
-        }
-    }
-
-    private void loadVillageList(JSONArray jsonArray) {
-        progressHUD = ProgressHUD.show(this, "Loading...", true, false, null);
-        try {
-            updatedJsonArray = new JSONArray();
-            updatedJsonArray = jsonArray;
-            for (int i = 0; i < jsonArray.length(); i++) {
-                String districtCode = jsonArray.getJSONObject(i).getString(AppConstant.DISTRICT_CODE);
-                String blockCode = jsonArray.getJSONObject(i).getString(AppConstant.BLOCK_CODE);
-                String pvcode = jsonArray.getJSONObject(i).getString(AppConstant.PV_CODE);
-                String pvname = jsonArray.getJSONObject(i).getString(AppConstant.PV_NAME);
-
-                ContentValues villageListValues = new ContentValues();
-                villageListValues.put(AppConstant.DISTRICT_CODE, districtCode);
-                villageListValues.put(AppConstant.BLOCK_CODE, blockCode);
-                villageListValues.put(AppConstant.PV_CODE, pvcode);
-                villageListValues.put(AppConstant.PV_NAME, pvname);
-
-
-                LoginScreen.db.insert(DBHelper.VILLAGE_TABLE_NAME, null, villageListValues);
-                 Log.d("LocalDBVilageList", "" + villageListValues);
-
-            }
-
-        } catch (JSONException j) {
-            j.printStackTrace();
-        } catch (ArrayIndexOutOfBoundsException a) {
-            a.printStackTrace();
-        }
-        if (progressHUD != null) {
-            progressHUD.cancel();
-        }
-    }
-
-
-
-    private void loadFinYearList(JSONArray jsonArray) {
-        progressHUD = ProgressHUD.show(this, "Loading...", true, false, null);
-        try {
-            updatedJsonArray = new JSONArray();
-            updatedJsonArray = jsonArray;
-
-            for (int i = 0; i < jsonArray.length(); i++) {
-                String financialYear = jsonArray.getJSONObject(i).getString(AppConstant.FINANCIAL_YEAR);
-
-                ContentValues FinYearListLocalDbValues = new ContentValues();
-                FinYearListLocalDbValues.put(AppConstant.FINANCIAL_YEAR, financialYear);
-
-
-                LoginScreen.db.insert(DBHelper.FINANCIAL_YEAR_TABLE_NAME, null, FinYearListLocalDbValues);
-                Log.d("LocalDBSchemeList", "" + FinYearListLocalDbValues);
-
-            }
-
-        } catch (JSONException j) {
-            j.printStackTrace();
-        } catch (ArrayIndexOutOfBoundsException a) {
-            a.printStackTrace();
-        }
-        if (progressHUD != null) {
-            progressHUD.cancel();
-        }
-    }
-
-    private void loadStageList(JSONArray jsonArray) {
-        progressHUD = ProgressHUD.show(this, "Loading...", true, false, null);
-
-        try {
-            //  progressHUD = ProgressHUD.show(this.context, "Loading...", true, false, null);
-            updatedJsonArray = new JSONArray();
-            updatedJsonArray = jsonArray;
-
-            for (int i = 0; i < jsonArray.length(); i++) {
-                String workGroupID = jsonArray.getJSONObject(i).getString(AppConstant.WORK_GROUP_ID);
-                String workTypeID = jsonArray.getJSONObject(i).getString(AppConstant.WORK_TYPE_ID);
-                String workStageOrder = jsonArray.getJSONObject(i).getString(AppConstant.WORK_STAGE_ORDER);
-                String workStageCode = jsonArray.getJSONObject(i).getString(AppConstant.WORK_STAGE_CODE);
-                String workStageName = jsonArray.getJSONObject(i).getString(AppConstant.WORK_SATGE_NAME);
-
-                ContentValues WorkStageLocalDbValues = new ContentValues();
-                WorkStageLocalDbValues.put(AppConstant.WORK_GROUP_ID, workGroupID);
-                WorkStageLocalDbValues.put(AppConstant.WORK_TYPE_ID, workTypeID);
-                WorkStageLocalDbValues.put(AppConstant.WORK_STAGE_ORDER, workStageOrder);
-                WorkStageLocalDbValues.put(AppConstant.WORK_STAGE_CODE, workStageCode);
-                WorkStageLocalDbValues.put(AppConstant.WORK_SATGE_NAME, workStageName);
-
-                LoginScreen.db.insert(DBHelper.WORK_STAGE_TABLE, null, WorkStageLocalDbValues);
-                // Log.d("LocalDBSchemeList", "" + WorkStageLocalDbValues);
-
-            }
-
-        } catch (JSONException j) {
-            j.printStackTrace();
-        } catch (ArrayIndexOutOfBoundsException a) {
-            a.printStackTrace();
-        }
-        if (progressHUD != null) {
-            progressHUD.cancel();
-        }
-    }
-
-    private void loadObservationList(JSONArray jsonArray) {
-        progressHUD = ProgressHUD.show(this, "Loading...", true, false, null);
-
-        try {
-            //  progressHUD = ProgressHUD.show(this.context, "Loading...", true, false, null);
-            updatedJsonArray = new JSONArray();
-            updatedJsonArray = jsonArray;
-
-            for (int i = 0; i < jsonArray.length(); i++) {
-                int observation_id = jsonArray.getJSONObject(i).getInt(AppConstant.OBSERVATION_ID);
-                String observation_name = jsonArray.getJSONObject(i).getString(AppConstant.OBSERVATION_NAME);
-
-                ContentValues ObservationLocalDbValues = new ContentValues();
-                ObservationLocalDbValues.put(AppConstant.OBSERVATION_ID, observation_id);
-                ObservationLocalDbValues.put(AppConstant.OBSERVATION_NAME, observation_name);
-
-                LoginScreen.db.insert(DBHelper.OBSERVATION_TABLE, null, ObservationLocalDbValues);
-                // Log.d("LocalDBSchemeList", "" + WorkStageLocalDbValues);
-
-            }
-
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    getImei();
+            if (params.length > 0) {
+                JSONArray jsonArray = new JSONArray();
+                try {
+                    jsonArray = params[0].getJSONArray(AppConstant.JSON_DATA);
+                } catch (JSONException e) {
+                    e.printStackTrace();
                 }
-            }, 4000);
+                for (int i = 0; i < jsonArray.length(); i++) {
 
+                    try {
+                        String districtCode = jsonArray.getJSONObject(i).getString(AppConstant.DISTRICT_CODE);
+                        String blockCode = jsonArray.getJSONObject(i).getString(AppConstant.BLOCK_CODE);
+                        String blockName = jsonArray.getJSONObject(i).getString(AppConstant.BLOCK_NAME);
 
-        } catch (JSONException j) {
-            j.printStackTrace();
-        } catch (ArrayIndexOutOfBoundsException a) {
-            a.printStackTrace();
+                        ContentValues blockListValues = new ContentValues();
+                        blockListValues.put(AppConstant.DISTRICT_CODE, districtCode);
+                        blockListValues.put(AppConstant.BLOCK_CODE, blockCode);
+                        blockListValues.put(AppConstant.BLOCK_NAME, blockName);
+
+                        LoginScreen.db.insert(DBHelper.BLOCK_TABLE_NAME, null, blockListValues);
+                        Log.d("LocalDBblockList", "" + blockListValues);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+            return null;
         }
-        if (progressHUD != null) {
-            progressHUD.cancel();
+
+//        @Override
+//        protected void onPreExecute() {
+//            super.onPreExecute();
+//            progressHUD = ProgressHUD.show(Dashboard.this, "Downloading", true, false, null);
+//        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            if (progressHUD != null) {
+                progressHUD.cancel();
+            }
         }
     }
 
-    private void loadInspectedOfficersName(JSONArray jsonArray) {
-        try {
-            db.delete(DBHelper.INSPECTED_OFFICER_LIST, null, null);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        progressHUD = ProgressHUD.show(this, "Downloading...", true, false, null);
+    public class InsertDistrictTask extends AsyncTask<JSONObject ,Void ,Void> {
 
-        try {
-            updatedJsonArray = new JSONArray();
-            updatedJsonArray = jsonArray;
+        @Override
+        protected Void doInBackground(JSONObject... params) {
 
-            for (int i = 0; i < jsonArray.length(); i++) {
-                String inspected_UserName = jsonArray.getJSONObject(i).getString(AppConstant.INSPECTED_USER_NAME);
-                String inspected_UserId = jsonArray.getJSONObject(i).getString(AppConstant.INSPECTED_USER_ID);
-                String inspected_DesigName = jsonArray.getJSONObject(i).getString(AppConstant.INSPECTED_DESIGATION_NAME);
+            if (params.length > 0) {
+                JSONArray jsonArray = new JSONArray();
+                try {
+                    jsonArray = params[0].getJSONArray(AppConstant.JSON_DATA);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                for (int i = 0; i < jsonArray.length(); i++) {
 
-                ContentValues inspectedOfficerDetails = new ContentValues();
-                inspectedOfficerDetails.put(AppConstant.INSPECTED_USER_ID, inspected_UserId);
-                inspectedOfficerDetails.put(AppConstant.INSPECTED_USER_NAME, inspected_UserName);
-                inspectedOfficerDetails.put(AppConstant.INSPECTED_DESIGATION_NAME, inspected_DesigName);
+                    try {
+                        String districtCode = jsonArray.getJSONObject(i).getString(AppConstant.DISTRICT_CODE);
+                        String districtName = jsonArray.getJSONObject(i).getString(AppConstant.DISTRICT_NAME);
 
-                LoginScreen.db.insert(DBHelper.INSPECTED_OFFICER_LIST, null, inspectedOfficerDetails);
-                Log.d("DBInspectedOfficersList", "" + inspectedOfficerDetails);
+                        ContentValues districtListValues = new ContentValues();
+                        districtListValues.put(AppConstant.DISTRICT_CODE, districtCode);
+                        districtListValues.put(AppConstant.DISTRICT_NAME, districtName);
 
+                        LoginScreen.db.insert(DBHelper.DISTRICT_TABLE_NAME, null, districtListValues);
+                        Log.d("LocalDBdistrictList", "" + districtListValues);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
             }
-        } catch (JSONException j) {
-            j.printStackTrace();
-        } catch (ArrayIndexOutOfBoundsException a) {
-            a.printStackTrace();
+            return null;
         }
-        if (progressHUD != null) {
-            progressHUD.cancel();
+
+//        @Override
+//        protected void onPreExecute() {
+//            super.onPreExecute();
+//            progressHUD = ProgressHUD.show(Dashboard.this, "Downloading", true, false, null);
+//        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            if (progressHUD != null) {
+                progressHUD.cancel();
+            }
+
         }
     }
-/*To insert AE List*/
-    private void loadAEList(JSONArray jsonArray) {
-        try {
-            db.delete(DBHelper.AE_OFFICER_LISTS, null, null);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        progressHUD = ProgressHUD.show(this, "Downloading...", true, false, null);
 
-        try {
-            updatedJsonArray = new JSONArray();
-            updatedJsonArray = jsonArray;
+    public class InsertSchemeTask extends AsyncTask<JSONObject ,Void ,Void> {
 
-            for (int i = 0; i < jsonArray.length(); i++) {
-                Integer dcode = jsonArray.getJSONObject(i).getInt(AppConstant.DISTRICT_CODE);
-                Integer bcode = jsonArray.getJSONObject(i).getInt(AppConstant.BLOCK_CODE);
-                String user_name = jsonArray.getJSONObject(i).getString(AppConstant.KEY_AE_USER_NAME);
-                String name = jsonArray.getJSONObject(i).getString(AppConstant.KEY_AE_NAME);
-                String desig_name = jsonArray.getJSONObject(i).getString(AppConstant.KEY_AE_DESIGNATION_NAME);
+        @Override
+        protected Void doInBackground(JSONObject... params) {
 
-                ContentValues AEDetails = new ContentValues();
-                AEDetails.put(AppConstant.DISTRICT_CODE, dcode);
-                AEDetails.put(AppConstant.BLOCK_CODE, bcode);
-                AEDetails.put(AppConstant.KEY_AE_USER_NAME, user_name);
-                AEDetails.put(AppConstant.KEY_AE_NAME, name);
-                AEDetails.put(AppConstant.KEY_AE_DESIGNATION_NAME, desig_name);
-
-                LoginScreen.db.insert(DBHelper.AE_OFFICER_LISTS, null, AEDetails);
-                Log.d("DBAEList", "" + AEDetails);
-
+            try {
+                db.delete(DBHelper.SCHEME_TABLE_NAME, null, null);
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-        } catch (JSONException j) {
-            j.printStackTrace();
-        } catch (ArrayIndexOutOfBoundsException a) {
-            a.printStackTrace();
+
+            if (params.length > 0) {
+                JSONArray jsonArray = new JSONArray();
+                try {
+                    jsonArray = params[0].getJSONArray(AppConstant.JSON_DATA);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                for (int i = 0; i < jsonArray.length(); i++) {
+
+                    try {
+                        String schemeSequentialID = jsonArray.getJSONObject(i).getString(AppConstant.SCHEME_SEQUENTIAL_ID);
+                        String schemeName = jsonArray.getJSONObject(i).getString(AppConstant.SCHEME_NAME);
+                        String fin_year = jsonArray.getJSONObject(i).getString(AppConstant.FINANCIAL_YEAR);
+
+                        ContentValues schemeListLocalDbValues = new ContentValues();
+                        schemeListLocalDbValues.put(AppConstant.SCHEME_SEQUENTIAL_ID, schemeSequentialID);
+                        schemeListLocalDbValues.put(AppConstant.SCHEME_NAME, schemeName);
+                        schemeListLocalDbValues.put(AppConstant.FINANCIAL_YEAR, fin_year);
+
+                        LoginScreen.db.insert(DBHelper.SCHEME_TABLE_NAME, null, schemeListLocalDbValues);
+                        Log.d("LocalDBSchemeList", "" + schemeListLocalDbValues);
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+            return null;
         }
-        if (progressHUD != null) {
-            progressHUD.cancel();
+    }
+
+    public class InsertVillageTask extends AsyncTask<JSONObject ,Void ,Void> {
+
+        @Override
+        protected Void doInBackground(JSONObject... params) {
+
+            if (params.length > 0) {
+                JSONArray jsonArray = new JSONArray();
+                try {
+                    jsonArray = params[0].getJSONArray(AppConstant.JSON_DATA);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                for (int i = 0; i < jsonArray.length(); i++) {
+
+                    try {
+                        String districtCode = jsonArray.getJSONObject(i).getString(AppConstant.DISTRICT_CODE);
+                        String blockCode = jsonArray.getJSONObject(i).getString(AppConstant.BLOCK_CODE);
+                        String pvcode = jsonArray.getJSONObject(i).getString(AppConstant.PV_CODE);
+                        String pvname = jsonArray.getJSONObject(i).getString(AppConstant.PV_NAME);
+
+                        ContentValues villageListValues = new ContentValues();
+                        villageListValues.put(AppConstant.DISTRICT_CODE, districtCode);
+                        villageListValues.put(AppConstant.BLOCK_CODE, blockCode);
+                        villageListValues.put(AppConstant.PV_CODE, pvcode);
+                        villageListValues.put(AppConstant.PV_NAME, pvname);
+
+
+                        LoginScreen.db.insert(DBHelper.VILLAGE_TABLE_NAME, null, villageListValues);
+                        Log.d("LocalDBVilageList", "" + villageListValues);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+            return null;
+        }
+
+//        @Override
+//        protected void onPreExecute() {
+//            super.onPreExecute();
+//            progressHUD = ProgressHUD.show(Dashboard.this, "Downloading", true, false, null);
+//        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            if (progressHUD != null) {
+                progressHUD.cancel();
+            }
+
+        }
+    }
+
+    public class InsertFinYearTask extends AsyncTask<JSONObject ,Void ,Void> {
+
+        @Override
+        protected Void doInBackground(JSONObject... params) {
+
+            if (params.length > 0) {
+                JSONArray jsonArray = new JSONArray();
+                try {
+                    jsonArray = params[0].getJSONArray(AppConstant.JSON_DATA);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                for (int i = 0; i < jsonArray.length(); i++) {
+
+                    try {
+                        String financialYear = jsonArray.getJSONObject(i).getString(AppConstant.FINANCIAL_YEAR);
+
+                        ContentValues FinYearListLocalDbValues = new ContentValues();
+                        FinYearListLocalDbValues.put(AppConstant.FINANCIAL_YEAR, financialYear);
+
+
+                        LoginScreen.db.insert(DBHelper.FINANCIAL_YEAR_TABLE_NAME, null, FinYearListLocalDbValues);
+                        Log.d("LocalDBFinyearList", "" + FinYearListLocalDbValues);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+            return null;
+        }
+    }
+
+    public class InsertStageTask extends AsyncTask<JSONObject ,Void ,Void> {
+
+        @Override
+        protected Void doInBackground(JSONObject... params) {
+
+            if (params.length > 0) {
+                JSONArray jsonArray = new JSONArray();
+                try {
+                    jsonArray = params[0].getJSONArray(AppConstant.JSON_DATA);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                for (int i = 0; i < jsonArray.length(); i++) {
+
+                    try {
+                        String workGroupID = jsonArray.getJSONObject(i).getString(AppConstant.WORK_GROUP_ID);
+                        String workTypeID = jsonArray.getJSONObject(i).getString(AppConstant.WORK_TYPE_ID);
+                        String workStageOrder = jsonArray.getJSONObject(i).getString(AppConstant.WORK_STAGE_ORDER);
+                        String workStageCode = jsonArray.getJSONObject(i).getString(AppConstant.WORK_STAGE_CODE);
+                        String workStageName = jsonArray.getJSONObject(i).getString(AppConstant.WORK_SATGE_NAME);
+
+                        ContentValues WorkStageLocalDbValues = new ContentValues();
+                        WorkStageLocalDbValues.put(AppConstant.WORK_GROUP_ID, workGroupID);
+                        WorkStageLocalDbValues.put(AppConstant.WORK_TYPE_ID, workTypeID);
+                        WorkStageLocalDbValues.put(AppConstant.WORK_STAGE_ORDER, workStageOrder);
+                        WorkStageLocalDbValues.put(AppConstant.WORK_STAGE_CODE, workStageCode);
+                        WorkStageLocalDbValues.put(AppConstant.WORK_SATGE_NAME, workStageName);
+
+                        LoginScreen.db.insert(DBHelper.WORK_STAGE_TABLE, null, WorkStageLocalDbValues);
+                         Log.d("LocalDBStageList", "" + WorkStageLocalDbValues);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            progressHUD = ProgressHUD.show(Dashboard.this, "Downloading", true, false, null);
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            if (progressHUD != null) {
+                progressHUD.cancel();
+            }
+
+        }
+    }
+
+    public class InsertObservationTask extends AsyncTask<JSONObject ,Void ,Void> {
+
+        @Override
+        protected Void doInBackground(JSONObject... params) {
+
+            if (params.length > 0) {
+                JSONArray jsonArray = new JSONArray();
+                try {
+                    jsonArray = params[0].getJSONArray(AppConstant.JSON_DATA);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                for (int i = 0; i < jsonArray.length(); i++) {
+
+                    try {
+                        int observation_id = jsonArray.getJSONObject(i).getInt(AppConstant.OBSERVATION_ID);
+                        String observation_name = jsonArray.getJSONObject(i).getString(AppConstant.OBSERVATION_NAME);
+
+                        ContentValues ObservationLocalDbValues = new ContentValues();
+                        ObservationLocalDbValues.put(AppConstant.OBSERVATION_ID, observation_id);
+                        ObservationLocalDbValues.put(AppConstant.OBSERVATION_NAME, observation_name);
+
+                        LoginScreen.db.insert(DBHelper.OBSERVATION_TABLE, null, ObservationLocalDbValues);
+                        Log.d("LocalDBObservationList", "" + ObservationLocalDbValues);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+            return null;
+        }
+    }
+
+    public class InsertInspectedOfficersTask extends AsyncTask<JSONObject ,Void ,Void> {
+
+        @Override
+        protected Void doInBackground(JSONObject... params) {
+
+            try {
+                db.delete(DBHelper.INSPECTED_OFFICER_LIST, null, null);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            if (params.length > 0) {
+                JSONArray jsonArray = new JSONArray();
+                try {
+                    jsonArray = params[0].getJSONArray(AppConstant.JSON_DATA);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                for (int i = 0; i < jsonArray.length(); i++) {
+
+                    try {
+                        String inspected_UserName = jsonArray.getJSONObject(i).getString(AppConstant.INSPECTED_USER_NAME);
+                        String inspected_UserId = jsonArray.getJSONObject(i).getString(AppConstant.INSPECTED_USER_ID);
+                        String inspected_DesigName = jsonArray.getJSONObject(i).getString(AppConstant.INSPECTED_DESIGATION_NAME);
+
+                        ContentValues inspectedOfficerDetails = new ContentValues();
+                        inspectedOfficerDetails.put(AppConstant.INSPECTED_USER_ID, inspected_UserId);
+                        inspectedOfficerDetails.put(AppConstant.INSPECTED_USER_NAME, inspected_UserName);
+                        inspectedOfficerDetails.put(AppConstant.INSPECTED_DESIGATION_NAME, inspected_DesigName);
+
+                        LoginScreen.db.insert(DBHelper.INSPECTED_OFFICER_LIST, null, inspectedOfficerDetails);
+                        Log.d("DBInspectedOfficersList", "" + inspectedOfficerDetails);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+            return null;
+        }
+
+//        @Override
+//        protected void onPreExecute() {
+//            super.onPreExecute();
+//            progressHUD = ProgressHUD.show(Dashboard.this, "Downloading", true, false, null);
+//        }
+
+ //       @Override
+//        protected void onPostExecute(Void aVoid) {
+//            super.onPostExecute(aVoid);
+//            if (progressHUD != null) {
+//                progressHUD.cancel();
+//            }
+//
+//        }
+    }
+
+    /*To insert AE List*/
+    public class InsertAETask extends AsyncTask<JSONObject ,Void ,Void> {
+
+        @Override
+        protected Void doInBackground(JSONObject... params) {
+
+            try {
+                db.delete(DBHelper.AE_OFFICER_LISTS, null, null);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            if (params.length > 0) {
+                JSONArray jsonArray = new JSONArray();
+                try {
+                    jsonArray = params[0].getJSONArray(AppConstant.JSON_DATA);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                for (int i = 0; i < jsonArray.length(); i++) {
+
+                    try {
+                        Integer dcode = jsonArray.getJSONObject(i).getInt(AppConstant.DISTRICT_CODE);
+                        Integer bcode = jsonArray.getJSONObject(i).getInt(AppConstant.BLOCK_CODE);
+                        String user_name = jsonArray.getJSONObject(i).getString(AppConstant.KEY_AE_USER_NAME);
+                        String name = jsonArray.getJSONObject(i).getString(AppConstant.KEY_AE_NAME);
+                        String desig_name = jsonArray.getJSONObject(i).getString(AppConstant.KEY_AE_DESIGNATION_NAME);
+
+                        ContentValues AEDetails = new ContentValues();
+                        AEDetails.put(AppConstant.DISTRICT_CODE, dcode);
+                        AEDetails.put(AppConstant.BLOCK_CODE, bcode);
+                        AEDetails.put(AppConstant.KEY_AE_USER_NAME, user_name);
+                        AEDetails.put(AppConstant.KEY_AE_NAME, name);
+                        AEDetails.put(AppConstant.KEY_AE_DESIGNATION_NAME, desig_name);
+
+                        LoginScreen.db.insert(DBHelper.AE_OFFICER_LISTS, null, AEDetails);
+                        Log.d("DBAEList", "" + AEDetails);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+            return null;
+        }
+
+//        @Override
+//        protected void onPreExecute() {
+//            super.onPreExecute();
+//            progressHUD = ProgressHUD.show(Dashboard.this, "Downloading", true, false, null);
+//        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            if (progressHUD != null) {
+                progressHUD.cancel();
+            }
+
         }
     }
 

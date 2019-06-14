@@ -140,23 +140,23 @@ public class LoginScreen extends AppCompatActivity implements View.OnClickListen
     }
 
     private void checkLoginScreen() {
-        if ((Utils.isOnline())) {
-
-            try {
-                db.delete(DBHelper.DISTRICT_TABLE_NAME, null, null);
-                db.delete(DBHelper.BLOCK_TABLE_NAME, null, null);
-                db.delete(DBHelper.VILLAGE_TABLE_NAME, null, null);
-                db.delete(DBHelper.SCHEME_TABLE_NAME, null, null);
-                db.delete(DBHelper.FINANCIAL_YEAR_TABLE_NAME, null, null);
-                db.delete(DBHelper.WORK_STAGE_TABLE, null, null);
-                db.delete(DBHelper.WORK_LIST_OPTIONAL, null, null);
-                db.delete(DBHelper.OBSERVATION_TABLE,   null, null);
-                db.execSQL(String.format("DELETE FROM " + DBHelper.INSPECTION_ACTION + " WHERE delete_flag=1;", null));
-
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
+//        if ((Utils.isOnline())) {
+//
+//            try {
+//                db.delete(DBHelper.DISTRICT_TABLE_NAME, null, null);
+//                db.delete(DBHelper.BLOCK_TABLE_NAME, null, null);
+//                db.delete(DBHelper.VILLAGE_TABLE_NAME, null, null);
+//                db.delete(DBHelper.SCHEME_TABLE_NAME, null, null);
+//                db.delete(DBHelper.FINANCIAL_YEAR_TABLE_NAME, null, null);
+//                db.delete(DBHelper.WORK_STAGE_TABLE, null, null);
+//                db.delete(DBHelper.WORK_LIST_OPTIONAL, null, null);
+//                db.delete(DBHelper.OBSERVATION_TABLE,   null, null);
+//                db.execSQL(String.format("DELETE FROM " + DBHelper.INSPECTION_ACTION + " WHERE delete_flag=1;", null));
+//
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//            }
+//        }
         final String username = userName.getText().toString().trim();
         final String password = passwordEditText.getText().toString().trim();
         prefManager.setUserPassword(password);

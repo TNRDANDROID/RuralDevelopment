@@ -7,8 +7,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 
+import com.nic.RuralInspection.DataBase.DBHelper;
 import com.nic.RuralInspection.R;
 import com.nic.RuralInspection.Support.MyCustomTextView;
+
+import static com.nic.RuralInspection.Activity.LoginScreen.db;
 
 
 /**
@@ -56,6 +59,22 @@ public class MyDialog {
 //                    ImageLoader imgLoader = new ImageLoader(activity);
 //                    imgLoader.clearCache();
 //                }
+                if(type.equalsIgnoreCase("Logout")) {
+                    try {
+                        db.delete(DBHelper.DISTRICT_TABLE_NAME, null, null);
+                        db.delete(DBHelper.BLOCK_TABLE_NAME, null, null);
+                        db.delete(DBHelper.VILLAGE_TABLE_NAME, null, null);
+                        db.delete(DBHelper.SCHEME_TABLE_NAME, null, null);
+                        db.delete(DBHelper.FINANCIAL_YEAR_TABLE_NAME, null, null);
+                        db.delete(DBHelper.WORK_STAGE_TABLE, null, null);
+                        db.delete(DBHelper.WORK_LIST_OPTIONAL, null, null);
+                        db.delete(DBHelper.OBSERVATION_TABLE,   null, null);
+                        db.execSQL(String.format("DELETE FROM " + DBHelper.INSPECTION_ACTION + " WHERE delete_flag=1;", null));
+
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
             }
         });
         Button btnCancel = (Button) dialogView.findViewById(R.id.btn_cancel);
