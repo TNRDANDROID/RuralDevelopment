@@ -1126,7 +1126,7 @@ public class DownloadActivity extends AppCompatActivity implements Api.ServerRes
                     Insert_inspectionList_Images(jsonObject.getJSONArray(AppConstant.JSON_DATA));
                 } else if (jsonObject.getString("STATUS").equalsIgnoreCase("OK") && jsonObject.getString("RESPONSE").equalsIgnoreCase("NO_RECORD")) {
                     // Utils.showAlert(this, "No Record Found");
-                    Log.d("responseInspect_Action", jsonObject.getString("MESSAGE"));
+                    Log.d("responseInspect_Images", jsonObject.getString("MESSAGE"));
                 }
                 Log.d("response_Images", "" + jsonObject.getJSONArray(AppConstant.JSON_DATA));
 
@@ -1139,7 +1139,7 @@ public class DownloadActivity extends AppCompatActivity implements Api.ServerRes
                     Insert_inspectionList_Action(jsonObject.getJSONArray(AppConstant.JSON_DATA));
                 } else if (jsonObject.getString("STATUS").equalsIgnoreCase("OK") && jsonObject.getString("RESPONSE").equalsIgnoreCase("NO_RECORD")) {
                     // Utils.showAlert(this, "No Record Found");
-                    Log.d("responseInspect_Action", jsonObject.getString("MESSAGE"));
+                    Log.d("InspectionBlock_Action", jsonObject.getString("MESSAGE"));
                 }
                 Log.d("responseInspect_Action", "" + jsonObject.getJSONArray(AppConstant.JSON_DATA));
 
