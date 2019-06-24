@@ -3,6 +3,7 @@ package com.nic.RuralInspection.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Typeface;
 import android.os.Bundle;
@@ -23,6 +24,7 @@ import android.widget.TextView;
 import com.android.volley.VolleyError;
 import com.nic.RuralInspection.DataBase.DBHelper;
 import com.nic.RuralInspection.R;
+import com.nic.RuralInspection.Support.MyCustomTextView;
 import com.nic.RuralInspection.Support.MyEditTextView;
 import com.nic.RuralInspection.Utils.FontCache;
 import com.nic.RuralInspection.Utils.UrlGenerator;
@@ -58,6 +60,7 @@ public class LoginScreen extends AppCompatActivity implements View.OnClickListen
     public static DBHelper dbHelper;
     public static SQLiteDatabase db;
     JSONObject jsonObject;
+    private MyCustomTextView versionNumber;
 
     String sb;
     private PrefManager prefManager;
@@ -80,7 +83,7 @@ public class LoginScreen extends AppCompatActivity implements View.OnClickListen
         prefManager = new PrefManager(this);
         login_btn = (Button) findViewById(R.id.btn_sign_in);
         userName = (MyEditTextView) findViewById(R.id.user_name);
-
+        versionNumber = (MyCustomTextView) findViewById(R.id.tv_version_number);
         inputLayoutEmail = (TextInputLayout) findViewById(R.id.input_layout_email);
         inputLayoutPassword = (TextInputLayout) findViewById(R.id.input_layout_password);
         passwordEditText = (ShowHidePasswordEditText) findViewById(R.id.password);
@@ -104,6 +107,13 @@ public class LoginScreen extends AppCompatActivity implements View.OnClickListen
         });
         passwordEditText.setTypeface(Typeface.createFromAsset(getAssets(), "fonts/Avenir-Roman.ttf"));
         randString = Utils.randomChar();
+        try {
+            String versionName = getPackageManager()
+                    .getPackageInfo(getPackageName(), 0).versionName;
+            versionNumber.setText(getResources().getString(R.string.version) + " " + versionName);
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override

@@ -35,4 +35,5 @@
     <string name="ok_label">OK</string>
     <string name="dismiss_label">Dismiss</string>
     <string name="clear_all_label">Clear all</string>
+    <string name="version"><u>Version</u></string>
 </resources>
