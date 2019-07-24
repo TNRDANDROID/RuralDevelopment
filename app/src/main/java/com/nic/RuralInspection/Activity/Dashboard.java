@@ -201,7 +201,9 @@ public class Dashboard extends AppCompatActivity implements Api.ServerResponseLi
     public void fetchAllResponseFromApi() {
         getStageList();
         getObservationList();
-        getBlockList();
+        if (prefManager.getLevels().equalsIgnoreCase("D") || (prefManager.getLevels().equalsIgnoreCase("S"))) {
+            getBlockList();
+        }
         getDistrictList();
         // getServiceList();
         // getInspectionServiceList();
@@ -510,7 +512,6 @@ public class Dashboard extends AppCompatActivity implements Api.ServerResponseLi
         try {
             String urlType = serverResponse.getApi();
             JSONObject responseObj = serverResponse.getJsonResponse();
-            if (prefManager.getLevels().equalsIgnoreCase("D") || (prefManager.getLevels().equalsIgnoreCase("S"))) {
                 if ("BlockList".equals(urlType) && responseObj != null) {
                     String key = responseObj.getString(AppConstant.ENCODE_DATA);
                     String responseDecryptedBlockKey = Utils.decrypt(prefManager.getUserPassKey(), key);
@@ -521,7 +522,6 @@ public class Dashboard extends AppCompatActivity implements Api.ServerResponseLi
                     Log.d("BlockList", "" + responseDecryptedBlockKey);
                 }
 
-            }
             if ("DistrictList".equals(urlType) && responseObj != null) {
                 String key = responseObj.getString(AppConstant.ENCODE_DATA);
                 String responseDecryptedBlockKey = Utils.decrypt(prefManager.getUserPassKey(), key);
