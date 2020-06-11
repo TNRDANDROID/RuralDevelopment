@@ -230,14 +230,14 @@ public class AddInspectionReportScreen extends AppCompatActivity implements View
                 if(imageboolean) {
                     if (!"Select Stage of Work".equalsIgnoreCase(stageListValues.get(sp_stage.getSelectedItemPosition()).getWorkStageName())) {
                         if (!"Select Observation".equalsIgnoreCase(observationList.get(sp_observation.getSelectedItemPosition()).getObservationName())) {
-                            if (!"Select AE".equalsIgnoreCase(AEList.get(sp_ae.getSelectedItemPosition()).getAEName())) {
+                            if (!"Select AE/Overseer".equalsIgnoreCase(AEList.get(sp_ae.getSelectedItemPosition()).getAEName())) {
                                 if (!remarkTv.getText().toString().isEmpty()) {
                                     submit();
                                 } else {
                                     Utils.showAlert(this, "Select Remark");
                                 }
                             } else {
-                                Utils.showAlert(this, "Select AE");
+                                Utils.showAlert(this, "Select AE/Overseer");
                             }
                         } else {
                             Utils.showAlert(this, "Select Observation");
@@ -333,7 +333,7 @@ public class AddInspectionReportScreen extends AppCompatActivity implements View
         Log.d("ae_list_sql", sql);
 
         BlockListValue aelist = new BlockListValue();
-        aelist.setAEName("Select AE");
+        aelist.setAEName("Select AE/Overseer");
         AEList.add(aelist);
 
         if (stages.getCount() > 0) {

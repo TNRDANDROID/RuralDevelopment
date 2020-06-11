@@ -3,8 +3,10 @@ package com.nic.RuralInspection.Adapter;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,14 +17,19 @@ import android.widget.RelativeLayout;
 import com.hanks.htextview.rainbow.RainbowTextView;
 import com.nic.RuralInspection.Activity.ImagePreviewActionScreen;
 import com.nic.RuralInspection.Activity.ImagePreviewScreen;
+import com.nic.RuralInspection.Activity.LoginScreen;
 import com.nic.RuralInspection.Activity.ViewActions;
 import com.nic.RuralInspection.Activity.ViewInspectionInActionScreen;
+import com.nic.RuralInspection.DataBase.DBHelper;
 import com.nic.RuralInspection.Model.BlockListValue;
 import com.nic.RuralInspection.R;
 import com.nic.RuralInspection.Support.MyCustomTextView;
+import com.nic.RuralInspection.Utils.Utils;
 import com.nic.RuralInspection.constant.AppConstant;
 import com.nic.RuralInspection.session.PrefManager;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -95,25 +102,53 @@ public class InspectionListAdapter extends RecyclerView.Adapter<InspectionListAd
         String actionRemark = inspectionlistvalues.get(position).getInspection_remark();
         String actionObservatuion = inspectionlistvalues.get(position).getObservation();
         String inspection_id = inspectionlistvalues.get(position).getOnlineInspectID();
+        /* to check inspection to be only once per day */
 
+        SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
+        String date_of_action = sdf.format(new Date());
 
-        Activity activity = (Activity) context;
-        Intent intent = new Intent(context, ViewInspectionInActionScreen.class);
+        int count = 0;
 
-        intent.putExtra(AppConstant.WORK_ID, actionWorkid);
-        intent.putExtra(AppConstant.INSPECTION_ID, inspection_id);
-        intent.putExtra(AppConstant.WORK_NAME, actionProjectName);
+        String sql = "select * from " + DBHelper.INSPECTION_ACTION+ " where work_id = '"+actionWorkid+ "' and date_of_action = '"+date_of_action+"'";
+        Cursor stages = getRawEvents(sql, null);
+        Log.d("date_sql", sql);
+        if(stages.getCount() > 0){
+            count = stages.getCount();
+        }
+        else {
+            SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd");
+            String date_of_action1 = sdf1.format(new Date());
 
-        intent.putExtra(AppConstant.WORK_SATGE_NAME, actionStageLevel);
-        intent.putExtra(AppConstant.AS_AMOUNT, actionAmount);
+            String sql1 = "select * from " + DBHelper.INSPECTION_ACTION+ " where work_id = '"+actionWorkid+ "' and date_of_action = '"+date_of_action1+"'";
+            Cursor stages1 = getRawEvents(sql1, null);
+            if(stages1.getCount() > 0){
+                count = stages1.getCount();
+            }
 
-        intent.putExtra(AppConstant.DATE_OF_INSPECTION, actionDateOfInspection);
-        intent.putExtra(AppConstant.INSPECTION_REMARK, actionRemark);
-        intent.putExtra(AppConstant.OBSERVATION, actionObservatuion);
+        }
+        if(count > 0){
+            Log.d("already_there","found");
+            Utils.showAlert(this.context,"Already Record Taken");
+        }
+        else {
+            Activity activity = (Activity) context;
+            Intent intent = new Intent(context, ViewInspectionInActionScreen.class);
 
-        //intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        activity.startActivity(intent);
-        activity.overridePendingTransition(R.anim.slide_in, R.anim.slide_out);
+            intent.putExtra(AppConstant.WORK_ID, actionWorkid);
+            intent.putExtra(AppConstant.INSPECTION_ID, inspection_id);
+            intent.putExtra(AppConstant.WORK_NAME, actionProjectName);
+
+            intent.putExtra(AppConstant.WORK_SATGE_NAME, actionStageLevel);
+            intent.putExtra(AppConstant.AS_AMOUNT, actionAmount);
+
+            intent.putExtra(AppConstant.DATE_OF_INSPECTION, actionDateOfInspection);
+            intent.putExtra(AppConstant.INSPECTION_REMARK, actionRemark);
+            intent.putExtra(AppConstant.OBSERVATION, actionObservatuion);
+
+            //intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            activity.startActivity(intent);
+            activity.overridePendingTransition(R.anim.slide_in, R.anim.slide_out);
+        }
     }
 
     public void imagePreviewScreen(int position) {
@@ -233,5 +268,10 @@ public class InspectionListAdapter extends RecyclerView.Adapter<InspectionListAd
         intent.putExtra(AppConstant.WORK_ID, work_id);
         activity.startActivity(intent);
         activity.overridePendingTransition(R.anim.slide_in, R.anim.slide_out);
+    }
+
+    public Cursor getRawEvents(String sql, String string) {
+        Cursor cursor = LoginScreen.db.rawQuery(sql, null);
+        return cursor;
     }
 }
