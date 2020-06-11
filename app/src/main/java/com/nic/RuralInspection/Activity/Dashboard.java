@@ -68,8 +68,6 @@ public class Dashboard extends AppCompatActivity implements Api.ServerResponseLi
     // String imei;
     private List<BlockListValue> pendingUpload = new ArrayList<>();
     private Fragment mContent;
-    // dummy commit
-
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
