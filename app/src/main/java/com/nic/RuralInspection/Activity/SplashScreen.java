@@ -31,8 +31,6 @@ public class SplashScreen extends AppCompatActivity implements View.OnClickListe
     private static int SPLASH_TIME_OUT = 2000;
     private PrefManager prefManager;
 
-    //check
-
 
 
     @Override
